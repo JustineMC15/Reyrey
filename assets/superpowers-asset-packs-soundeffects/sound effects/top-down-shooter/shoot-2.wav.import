@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://jww7i57ct6qn"
+path="res://.godot/imported/shoot-2.wav-8701a3a37d1d3aff3b525f2ff299c50b.sample"
+
+[deps]
+
+source_file="res://assets/superpowers-asset-packs-soundeffects/sound effects/top-down-shooter/shoot-2.wav"
+dest_files=["res://.godot/imported/shoot-2.wav-8701a3a37d1d3aff3b525f2ff299c50b.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

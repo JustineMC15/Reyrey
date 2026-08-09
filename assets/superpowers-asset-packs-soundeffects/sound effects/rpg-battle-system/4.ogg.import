@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://cgx1j5x8oj77d"
+path="res://.godot/imported/4.ogg-eee6c13c196c9da19795eca4dc95ad49.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/superpowers-asset-packs-soundeffects/sound effects/rpg-battle-system/4.ogg"
+dest_files=["res://.godot/imported/4.ogg-eee6c13c196c9da19795eca4dc95ad49.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

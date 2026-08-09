@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://cgxsmkll3pnjj"
+path="res://.godot/imported/voice-4.ogg-107a8082e17c2265d432c570fe4bc3eb.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/superpowers-asset-packs-soundeffects/sound effects/ninja-adventure/voice-4.ogg"
+dest_files=["res://.godot/imported/voice-4.ogg-107a8082e17c2265d432c570fe4bc3eb.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

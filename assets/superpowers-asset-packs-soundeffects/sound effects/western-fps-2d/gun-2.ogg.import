@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://boo78vphkp1bd"
+path="res://.godot/imported/gun-2.ogg-d82c28bda2432bc413cb4d360e92e13e.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/superpowers-asset-packs-soundeffects/sound effects/western-fps-2d/gun-2.ogg"
+dest_files=["res://.godot/imported/gun-2.ogg-d82c28bda2432bc413cb4d360e92e13e.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

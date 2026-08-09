@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://b0imfef4bx0ro"
+path="res://.godot/imported/explosion-2.ogg-800523656ddcf9fae42ac8701a76ef93.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/superpowers-asset-packs-soundeffects/sound effects/western-fps-2d/explosion-2.ogg"
+dest_files=["res://.godot/imported/explosion-2.ogg-800523656ddcf9fae42ac8701a76ef93.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

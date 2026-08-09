@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bjxstg2ekpsdf"
+path="res://.godot/imported/9.wav-72be6e169f39b04194d881b4497ad933.sample"
+
+[deps]
+
+source_file="res://assets/superpowers-asset-packs-soundeffects/sound effects/medieval-fantasy/9.wav"
+dest_files=["res://.godot/imported/9.wav-72be6e169f39b04194d881b4497ad933.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

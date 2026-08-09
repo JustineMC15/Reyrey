@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bjvqbiba3p4pv"
+path="res://.godot/imported/sword-2.wav-cabb909900523d6ec9d2625f2f395b81.sample"
+
+[deps]
+
+source_file="res://assets/superpowers-asset-packs-soundeffects/sound effects/top-down-shooter/sword-2.wav"
+dest_files=["res://.godot/imported/sword-2.wav-cabb909900523d6ec9d2625f2f395b81.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2
