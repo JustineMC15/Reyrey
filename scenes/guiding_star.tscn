@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://c20o6wohk6hul"]
+
+[ext_resource type="Script" uid="uid://parddgsx0u4x" path="res://scripts/guiding_star.gd" id="1_x5lqt"]
+[ext_resource type="Texture2D" uid="uid://dgy2oaiv4xsfo" path="res://assets/enemies/reyrey_star_128px.png" id="2_rvajp"]
+[ext_resource type="PackedScene" uid="uid://dju6fqkukuw3u" path="res://scenes/killzone.tscn" id="2_x5lqt"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yyssn"]
+atlas = ExtResource("2_rvajp")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_vlew8"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yyssn")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_vlew8"]
+radius = 60.074955
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_3c02t"]
+radius = 43.011627
+
+[node name="GuidingStar" type="CharacterBody2D" unique_id=222027155 groups=["enemies"]]
+collision_layer = 2
+motion_mode = 1
+script = ExtResource("1_x5lqt")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=293379373]
+sprite_frames = SubResource("SpriteFrames_vlew8")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1729227675]
+shape = SubResource("CircleShape2D_vlew8")
+
+[node name="Killzone" parent="." unique_id=167120335 instance=ExtResource("2_x5lqt")]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone" unique_id=1663164920]
+shape = SubResource("CircleShape2D_3c02t")
+
+[node name="DamageTimer" type="Timer" parent="Killzone" unique_id=1382377933]
+wait_time = 0.5
+
+[connection signal="body_exited" from="Killzone" to="Killzone" method="_on_body_exited"]
+[connection signal="timeout" from="Killzone/DamageTimer" to="Killzone" method="_on_damage_timer_timeout"]
