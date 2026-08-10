@@ -602,6 +602,8 @@ animations = [{
 radius = 19.0
 height = 126.0
 
+[sub_resource type="GDScript" id="GDScript_tuyoq"]
+
 [node name="Player" type="CharacterBody2D" unique_id=454930995]
 script = ExtResource("1_qlg0r")
 
@@ -623,9 +625,13 @@ shape = SubResource("CapsuleShape2D_vlew8")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1719968446]
 offset = Vector2(0, -200)
-zoom = Vector2(0.9, 0.9)
-limit_left = -938
+zoom = Vector2(0.8, 0.8)
+limit_left = -900
+limit_bottom = 651
 drag_horizontal_enabled = true
 drag_vertical_enabled = true
 drag_top_margin = 0.7
-drag_bottom_margin = 0.3
+drag_bottom_margin = 0.4
+
+[node name="Timer" type="Timer" parent="." unique_id=732489540]
+script = SubResource("GDScript_tuyoq")

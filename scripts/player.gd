@@ -23,6 +23,7 @@ func _on_animation_finished() -> void:
 		slash_effect.stop()
 		slash_effect.visible = false
 func _ready() -> void:
+	add_to_group("player")
 	floor_snap_length = 9.0
 	slash_effect.visible = false
 	animated_sprite_2d.animation_finished.connect(_on_animation_finished)
@@ -66,7 +67,6 @@ func _physics_process(delta: float) -> void:
 		velocity.x = direction * SPEED
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
-
 	# Move
 	move_and_slide()
 
