@@ -34,6 +34,11 @@ var jumps_used: int = 0
 @onready var fire_sprite: AnimatedSprite2D = $DoubleJumpFire/AnimatedSprite2D
 @onready var fire_sound: AudioStreamPlayer2D = $DoubleJumpFire/AudioStreamPlayer2D
 @onready var fire_hitbox: Area2D = $DoubleJumpFire/Area2D
+@onready var standing_collision = $CollisionShape2D
+@onready var air_collision = $AirCollisionShape2D
+@onready var sword_sound: AudioStreamPlayer2D = $SwordSound
+@onready var damage_sound: AudioStreamPlayer2D = $DamageSound
+@onready var death_sound: AudioStreamPlayer2D = $DeathSound
 var input_locked: bool = false
 func lock_input() -> void:
 	input_locked = true
@@ -65,6 +70,7 @@ func take_damage(amount: int) -> void:
 	if invincible:
 		return
 	invincible = true
+	damage_sound.play()
 	health -= amount
 	health_changed.emit(health, max_health)
 	print("Player HP: ", health)
@@ -74,7 +80,9 @@ func take_damage(amount: int) -> void:
 		return
 	await get_tree().create_timer(INVINCIBILITY_TIME).timeout
 	invincible = false
-func die() -> void:
+func die() -> void: #Death sound needs work
+	#death_sound.play()
+	#await death_sound.finished
 	get_tree().reload_current_scene.call_deferred()
 func _on_fire_animation_finished() -> void:
 	double_jump_fire.visible = false
@@ -89,6 +97,7 @@ func _ready() -> void:
 	animated_sprite_2d.animation_finished.connect(_on_animation_finished)
 	fire_sprite.animation_finished.connect(_on_fire_animation_finished)
 func _physics_process(delta: float) -> void:
+	
 	if input_locked:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 		if not is_on_floor():
@@ -153,7 +162,8 @@ func _physics_process(delta: float) -> void:
 		velocity.x = direction * SPEED
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
-	# Move
+	standing_collision.disabled = not is_on_floor()
+	air_collision.disabled = is_on_floor()
 	move_and_slide()
 	# Animations
 	# Attack
@@ -164,6 +174,7 @@ func _physics_process(delta: float) -> void:
 		slash_effect.visible = true
 		slash_effect.flip_h = animated_sprite_2d.flip_h
 		slash_effect.play("slash")
+		sword_sound.play()
 	if is_attacking and animated_sprite_2d.animation == "attack":
 		if animated_sprite_2d.frame == 3 and not sword_has_hit:
 			sword_has_hit = true

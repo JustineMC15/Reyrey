@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bod0t5nbbhh0v"
+path="res://.godot/imported/Metal Hit.mp3-fa0e93d77db0c78d86688f1cc43fa597.mp3str"
+
+[deps]
+
+source_file="res://assets/sound/sfx/Metal Hit.mp3"
+dest_files=["res://.godot/imported/Metal Hit.mp3-fa0e93d77db0c78d86688f1cc43fa597.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
