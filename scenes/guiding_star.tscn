@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://c20o6wohk6hul"]
 
 [ext_resource type="Script" uid="uid://parddgsx0u4x" path="res://scripts/guiding_star.gd" id="1_x5lqt"]
-[ext_resource type="Texture2D" uid="uid://dgy2oaiv4xsfo" path="res://assets/enemies/reyrey_star_128px.png" id="2_rvajp"]
+[ext_resource type="Texture2D" uid="uid://dgy2oaiv4xsfo" path="res://assets/characters/enemies/reyrey_star_128px.png" id="2_rvajp"]
 [ext_resource type="PackedScene" uid="uid://dju6fqkukuw3u" path="res://scenes/killzone.tscn" id="2_x5lqt"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yyssn"]

@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://uo765u2b8vtg"
+path="res://.godot/imported/no-ammo.ogg-56cee901154bf3a84b51131b2a6f9dc8.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/sound/superpowers-asset-packs-soundeffects/sound effects/western-fps-2d/no-ammo.ogg"
+dest_files=["res://.godot/imported/no-ammo.ogg-56cee901154bf3a84b51131b2a6f9dc8.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

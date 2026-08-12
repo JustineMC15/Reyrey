@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://ckbcsolgijvxw"
+path="res://.godot/imported/scream-4.ogg-750dca9d7e24d1f393c76ecc5b651fe3.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/sound/superpowers-asset-packs-soundeffects/sound effects/western-fps-2d/scream-4.ogg"
+dest_files=["res://.godot/imported/scream-4.ogg-750dca9d7e24d1f393c76ecc5b651fe3.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

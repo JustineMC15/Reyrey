@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://llrvuhrc7s32"
+path="res://.godot/imported/dinosaur-4.wav-c46eebca9ea1c322c209f362137438c6.sample"
+
+[deps]
+
+source_file="res://assets/sound/superpowers-asset-packs-soundeffects/sound effects/prehistoric-platformer/dinosaur-4.wav"
+dest_files=["res://.godot/imported/dinosaur-4.wav-c46eebca9ea1c322c209f362137438c6.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

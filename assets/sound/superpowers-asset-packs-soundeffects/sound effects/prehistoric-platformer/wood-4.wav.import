@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://dt6ufh8va4gdb"
+path="res://.godot/imported/wood-4.wav-f70ecc673dc26a500b20ecab3f5cafea.sample"
+
+[deps]
+
+source_file="res://assets/sound/superpowers-asset-packs-soundeffects/sound effects/prehistoric-platformer/wood-4.wav"
+dest_files=["res://.godot/imported/wood-4.wav-f70ecc673dc26a500b20ecab3f5cafea.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bw7uh54570frq"]
 
-[ext_resource type="AudioStream" uid="uid://c3mofgadqcegc" path="res://assets/sound/Medieval Rondo.ogg" id="1_05ggv"]
+[ext_resource type="AudioStream" uid="uid://c3mofgadqcegc" path="res://assets/sound/music/Medieval Rondo.ogg" id="1_05ggv"]
 
 [node name="Music" type="AudioStreamPlayer" unique_id=894955860]
 stream = ExtResource("1_05ggv")

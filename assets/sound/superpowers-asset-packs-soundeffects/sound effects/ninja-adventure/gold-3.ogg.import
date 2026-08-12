@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://byhowq4yuf5yp"
+path="res://.godot/imported/gold-3.ogg-be63a04559adfcacf9462f4944a02b07.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/sound/superpowers-asset-packs-soundeffects/sound effects/ninja-adventure/gold-3.ogg"
+dest_files=["res://.godot/imported/gold-3.ogg-be63a04559adfcacf9462f4944a02b07.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

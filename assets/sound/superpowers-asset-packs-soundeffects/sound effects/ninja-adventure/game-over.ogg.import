@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://cf811e5p5idrd"
+path="res://.godot/imported/game-over.ogg-8f6eaee5b86d189602355827b90bf728.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/sound/superpowers-asset-packs-soundeffects/sound effects/ninja-adventure/game-over.ogg"
+dest_files=["res://.godot/imported/game-over.ogg-8f6eaee5b86d189602355827b90bf728.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
