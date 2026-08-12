@@ -3272,7 +3272,7 @@ corner_radius_bottom_right = 2
 corner_radius_bottom_left = 2
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4pxbc"]
-size = Vector2(243, 206)
+size = Vector2(208.5, 206)
 
 [node name="Room_02" type="Node2D" unique_id=1602108746]
 
@@ -3372,5 +3372,5 @@ target_scene_path = "res://scenes/Rooms/room_01-tutorial.tscn"
 target_gate_id = "tutorial_exit"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Transition" unique_id=1128700579]
-position = Vector2(-616, -108)
+position = Vector2(-664.25, -104)
 shape = SubResource("RectangleShape2D_4pxbc")
