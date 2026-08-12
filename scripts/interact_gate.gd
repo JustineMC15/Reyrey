@@ -20,6 +20,7 @@ func _ready() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if not body.is_in_group("player"):
 		return
+	print("shrine door entered")
 	player_inside = true
 	_show_prompt()
 
@@ -30,6 +31,7 @@ func _on_body_exited(body: Node2D) -> void:
 	_hide_prompt()
 
 func _show_prompt() -> void:
+	print("show_prompt called, panel=", prompt_panel)
 	if not prompt_panel:
 		return
 	prompt_panel.show()

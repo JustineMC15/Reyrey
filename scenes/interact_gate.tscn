@@ -1,0 +1,57 @@
+[gd_scene format=3 uid="uid://65o0wpmgpsyw"]
+
+[ext_resource type="Script" uid="uid://cobwunaxv7751" path="res://scripts/interact_gate.gd" id="1_rxm5p"]
+[ext_resource type="FontFile" uid="uid://dlinrvj4uxc6w" path="res://assets/fonts/Seshat.otf" id="2_0m01g"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hdxto"]
+size = Vector2(133, 212)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_28do2"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[node name="ShrineDoor" type="Area2D" unique_id=1013456222 node_paths=PackedStringArray("prompt_panel")]
+collision_layer = 3
+collision_mask = 3
+script = ExtResource("1_rxm5p")
+gate_id = "shrine_door"
+target_scene_path = "res://scenes/Rooms/shrine_01.tscn"
+target_gate_id = "shrine_entry"
+prompt_panel = NodePath("PromptLayer/ShrinePanel")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=173916701]
+position = Vector2(-4.5, -15)
+shape = SubResource("RectangleShape2D_hdxto")
+
+[node name="PromptLayer" type="CanvasLayer" parent="." unique_id=1301380475]
+
+[node name="ShrinePanel" type="Panel" parent="PromptLayer" unique_id=1989182547]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 5665.5
+offset_top = -533.0
+offset_right = 6065.5
+offset_bottom = -383.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(-200, 176)
+pivot_offset_ratio = Vector2(200, 326)
+theme_override_styles/panel = SubResource("StyleBoxFlat_28do2")
+
+[node name="Label" type="Label" parent="PromptLayer/ShrinePanel" unique_id=138296025]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_0m01g")
+theme_override_font_sizes/font_size = 48
+text = "ENTER
+E"
+horizontal_alignment = 1
+vertical_alignment = 1
