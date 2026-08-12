@@ -144,7 +144,10 @@ func _physics_process(delta: float) -> void:
 			fire_attack()
 	# Gravity
 	if not is_on_floor():
-		velocity.y += (GRAVITY_FALL if velocity.y > 0 else GRAVITY_RISE) * delta
+		if coyote_timer > 0.0:
+			velocity.y = 0.0
+		else:
+			velocity.y += (GRAVITY_FALL if velocity.y > 0 else GRAVITY_RISE) * delta
 	if Input.is_action_just_released("jump") and velocity.y < 0:
 		velocity.y *= SHORT_HOP_CUT
 	# Input direction
@@ -181,6 +184,12 @@ func _physics_process(delta: float) -> void:
 			sword_attack()
 	if not is_attacking:
 		if is_on_floor():
+			if direction == 0:
+				animated_sprite_2d.play("idle")
+			else:
+				animated_sprite_2d.play("run")
+		elif coyote_timer > 0.0:
+			# Treat the player as grounded visually during coyote time
 			if direction == 0:
 				animated_sprite_2d.play("idle")
 			else:
