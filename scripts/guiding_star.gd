@@ -13,9 +13,13 @@ enum MovementType {
 @export var movement_speed: float = 2.0
 var start_position: Vector2
 var movement_time: float = 0.0
+
+@onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
+
 func _ready() -> void:
 	add_to_group("enemies")
 	start_position = position
+
 func _physics_process(delta: float) -> void:
 	# Spin
 	rotation += spin_speed * delta
@@ -29,12 +33,21 @@ func _physics_process(delta: float) -> void:
 			position = start_position + Vector2(offset, 0)
 		MovementType.DIAGONAL:
 			position = start_position + Vector2(-offset, offset)
+
 func take_damage(amount: int) -> void:
 	health -= amount
+	flash_damage()
 	if health <= 0:
 		die()
+
+func flash_damage() -> void:
+	animated_sprite_2d.modulate = Color(5, 5, 5, 1)
+	await get_tree().create_timer(0.1).timeout
+	animated_sprite_2d.modulate = Color.WHITE
+
 func die() -> void:
 	queue_free()
+
 func spin_once() -> void:
 	var tween = create_tween()
 	tween.tween_property(
