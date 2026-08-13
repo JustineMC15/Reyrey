@@ -1,6 +1,7 @@
 extends Node
 var abilities: Dictionary = {
 	"double_jump": false,
+	"dash": false,
 }
 # --- Room / Gate transition state ---
 var pending_spawn_gate_id: String = ""
@@ -94,6 +95,11 @@ var ability_data: Dictionary = {
 		"name": "Spark Flame",
 		"tin_text": "Combustion. Whoever wrote this world's laws decided that flame needs something to eat before it's allowed to exist. No exceptions, not even for me. I can stop a heart, I can stop a star, and I still have to feed the fire before it will hold you up. Pathetic economy. Eternity doesn't need to be fed. I checked.",
 		"reynauld_text": "It kicks like a mule and smells like my eyebrows. Effective, though. I've decided not to ask what it's burning. Whatever it is, it isn't coin, and that's the only ingredient I ever worry about running out of.",
+	},
+	"dash": {
+		"name": "Holy Lance",
+		"tin_text": "...",
+		"reynauld_text": "...",
 	},
 }
 
