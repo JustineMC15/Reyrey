@@ -21,6 +21,7 @@ var is_attacking: bool = false
 
 var max_health := 5
 var health := max_health
+var is_dead: bool = false
 
 var max_mp := 3
 var mp := max_mp
@@ -52,22 +53,28 @@ var dash_empowered: bool = false
 # Footsteps
 @export var footstep_sounds: Array[AudioStream] = []
 var last_footstep_frame: int = -1
+
 @onready var detection_area: Area2D = $DetectionArea
 @onready var dash_hitbox: Area2D = $DashHitbox
 @onready var sword_hitbox: Area2D = $SwordHitbox
 @onready var slash_effect = $SlashEffect
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
+@onready var death_animation: AnimatedSprite2D = $DeathAnimation
+
 @onready var double_jump_fire: Node2D = $DoubleJumpFire
 @onready var fire_sprite: AnimatedSprite2D = $DoubleJumpFire/AnimatedSprite2D
 @onready var fire_sound: AudioStreamPlayer2D = $DoubleJumpFire/AudioStreamPlayer2D
 @onready var fire_hitbox: Area2D = $DoubleJumpFire/Area2D
+
 @onready var standing_collision = $CollisionShape2D
 @onready var air_collision = $AirCollisionShape2D
+
 @onready var sword_sound: AudioStreamPlayer2D = $SwordSound
 @onready var damage_sound: AudioStreamPlayer2D = $DamageSound
 @onready var death_sound: AudioStreamPlayer2D = $DeathSound
 @onready var jump_sound: AudioStreamPlayer2D = $JumpSound
 @onready var footstep_sound: AudioStreamPlayer2D = $FootstepSound
+
 # Dash Effect
 @onready var dash_effect: Node2D = $DashEffect
 @onready var dash_sprite: AnimatedSprite2D = $DashEffect/AnimatedSprite2D
@@ -141,11 +148,12 @@ func flash_damage() -> void:
 
 	await get_tree().create_timer(0.1).timeout
 
-	animated_sprite_2d.modulate = Color.WHITE
+	if not is_dead:
+		animated_sprite_2d.modulate = Color.WHITE
 
 
 func take_damage(amount: int) -> void:
-	if invincible:
+	if invincible or is_dead:
 		return
 
 	invincible = true
@@ -153,8 +161,6 @@ func take_damage(amount: int) -> void:
 
 	health -= amount
 	health_changed.emit(health, max_health)
-
-	print("Player HP: ", health)
 
 	flash_damage()
 
@@ -164,13 +170,49 @@ func take_damage(amount: int) -> void:
 
 	await get_tree().create_timer(INVINCIBILITY_TIME).timeout
 
-	invincible = false
+	if not is_dead:
+		invincible = false
 
 
 func die() -> void:
-	# Death sound needs work
-	# death_sound.play()
-	# await death_sound.finished
+	if is_dead:
+		return
+
+	is_dead = true
+	invincible = true
+	is_dashing = false
+	velocity = Vector2.ZERO
+
+	# Disable player interactions
+	detection_area.monitoring = false
+	sword_hitbox.monitoring = false
+	fire_hitbox.monitoring = false
+	dash_hitbox.monitoring = false
+
+	# Disable collisions
+	standing_collision.set_deferred("disabled", true)
+	air_collision.set_deferred("disabled", true)
+
+	# Stop player effects
+	cancel_attack()
+	double_jump_fire.visible = false
+	dash_effect.visible = false
+
+	# Hide normal player sprite
+	animated_sprite_2d.visible = false
+
+	# Show death animation
+	death_animation.visible = true
+	death_animation.flip_h = animated_sprite_2d.flip_h
+	death_animation.play("death")
+
+	# Play death sound
+	death_sound.pitch_scale = 1.2
+	death_sound.play()
+	# Wait for the death sound to finish
+	await death_sound.finished
+
+	# Temporary respawn behavior
 	get_tree().reload_current_scene.call_deferred()
 
 
@@ -181,7 +223,8 @@ func _on_fire_animation_finished() -> void:
 
 func _ready() -> void:
 	add_to_group("player")
-	print("DetectionArea found: ", detection_area)
+	$DetectionArea.add_to_group("player_detection")
+
 	floor_snap_length = 4.0
 
 	slash_effect.visible = false
@@ -193,11 +236,18 @@ func _ready() -> void:
 	dash_effect.visible = false
 	dash_hitbox.monitoring = false
 
+	death_animation.visible = false
+
 	animated_sprite_2d.animation_finished.connect(_on_animation_finished)
 	fire_sprite.animation_finished.connect(_on_fire_animation_finished)
 
 
 func _physics_process(delta: float) -> void:
+
+	# Stop ALL player processing while dead.
+	if is_dead:
+		return
+
 
 	# Dash cooldown
 	if dash_cooldown_timer > 0.0:

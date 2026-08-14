@@ -5,12 +5,15 @@ class_name TransitionGate
 @export var target_scene_path: String = ""
 @export var target_gate_id: String = ""
 
+
 func _ready() -> void:
 	add_to_group("gates")
-	body_entered.connect(_on_body_entered)
+	area_entered.connect(_on_area_entered)
 
-func _on_body_entered(body: Node2D) -> void:
+
+func _on_area_entered(area: Area2D) -> void:
 	if not GameState.can_trigger_gate():
 		return
-	if body.is_in_group("player"):
+
+	if area.is_in_group("player_detection"):
 		GameState.go_to_room(target_scene_path, target_gate_id)

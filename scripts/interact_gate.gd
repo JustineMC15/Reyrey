@@ -10,28 +10,28 @@ var player_inside := false
 
 func _ready() -> void:
 	add_to_group("gates")
-	body_entered.connect(_on_body_entered)
-	body_exited.connect(_on_body_exited)
+	area_entered.connect(_on_area_entered)
+	area_exited.connect(_on_area_exited)
 
 	if prompt_panel:
 		prompt_panel.modulate.a = 0.0
 		prompt_panel.hide()
-
-func _on_body_entered(body: Node2D) -> void:
-	if not body.is_in_group("player"):
+		
+func _on_area_entered(area: Area2D) -> void:
+	if not area.is_in_group("player_detection"):
 		return
-	print("shrine door entered")
+
 	player_inside = true
 	_show_prompt()
 
-func _on_body_exited(body: Node2D) -> void:
-	if not body.is_in_group("player"):
+func _on_area_exited(area: Area2D) -> void:
+	if not area.is_in_group("player_detection"):
 		return
+
 	player_inside = false
 	_hide_prompt()
 
 func _show_prompt() -> void:
-	print("show_prompt called, panel=", prompt_panel)
 	if not prompt_panel:
 		return
 	prompt_panel.show()
