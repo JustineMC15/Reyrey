@@ -10,7 +10,7 @@ const GRAVITY_FALL := GRAVITY_RISE * 1.5
 const SHORT_HOP_CUT := 0.5
 
 # How long the player can jump after leaving a platform.
-const COYOTE_TIME = 0.15
+const COYOTE_TIME = 0.13
 
 # How long a jump press is remembered before landing.
 const JUMP_BUFFER_TIME = 0.15
@@ -52,7 +52,7 @@ var dash_empowered: bool = false
 # Footsteps
 @export var footstep_sounds: Array[AudioStream] = []
 var last_footstep_frame: int = -1
-
+@onready var detection_area: Area2D = $DetectionArea
 @onready var dash_hitbox: Area2D = $DashHitbox
 @onready var sword_hitbox: Area2D = $SwordHitbox
 @onready var slash_effect = $SlashEffect
@@ -181,8 +181,8 @@ func _on_fire_animation_finished() -> void:
 
 func _ready() -> void:
 	add_to_group("player")
-
-	floor_snap_length = 9.0
+	print("DetectionArea found: ", detection_area)
+	floor_snap_length = 4.0
 
 	slash_effect.visible = false
 	sword_hitbox.monitoring = false

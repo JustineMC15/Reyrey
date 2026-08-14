@@ -11093,30 +11093,6 @@ texture = ExtResource("88_gylmf")
 texture_region_size = Vector2i(80, 112)
 0:0/0 = 0
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_edsys"]
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_u0tvq"]
-texture = SubResource("CompressedTexture2D_edsys")
-texture_region_size = Vector2i(20, 20)
-0:0/0 = 0
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_bojp5"]
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1048n"]
-texture = SubResource("CompressedTexture2D_bojp5")
-texture_region_size = Vector2i(12, 24)
-0:0/0 = 0
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_22nhy"]
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wquh5"]
-texture = SubResource("CompressedTexture2D_22nhy")
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_3lhi1"]
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2r07l"]
-texture = SubResource("CompressedTexture2D_3lhi1")
-
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qhs8c"]
 texture = ExtResource("89_gfnil")
 texture_region_size = Vector2i(80, 32)
@@ -20530,10 +20506,6 @@ sources/39 = SubResource("TileSetAtlasSource_shhii")
 sources/40 = SubResource("TileSetAtlasSource_f3bdf")
 sources/41 = SubResource("TileSetAtlasSource_ru67j")
 sources/42 = SubResource("TileSetAtlasSource_m207i")
-sources/43 = SubResource("TileSetAtlasSource_u0tvq")
-sources/44 = SubResource("TileSetAtlasSource_1048n")
-sources/45 = SubResource("TileSetAtlasSource_wquh5")
-sources/46 = SubResource("TileSetAtlasSource_2r07l")
 sources/47 = SubResource("TileSetAtlasSource_qhs8c")
 sources/48 = SubResource("TileSetAtlasSource_8owhk")
 sources/49 = SubResource("TileSetAtlasSource_3ck4q")

@@ -587,6 +587,9 @@ height = 126.0
 radius = 19.0
 height = 105.0
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hdxto"]
+size = Vector2(100, 100)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_pf23h"]
 atlas = ExtResource("6_jej6c")
 region = Rect2(0, 0, 355, 365)
@@ -1607,6 +1610,7 @@ size = Vector2(198.875, 185.5)
 size = Vector2(81, 178)
 
 [node name="Player" type="CharacterBody2D" unique_id=454930995 groups=["player"]]
+safe_margin = 1.0
 script = ExtResource("1_qlg0r")
 footstep_sounds = Array[AudioStream]([ExtResource("16_a8ls1")])
 
@@ -1625,6 +1629,14 @@ shape = SubResource("CapsuleShape2D_8jhjc")
 [node name="AirCollisionShape2D" type="CollisionShape2D" parent="." unique_id=1578958998]
 position = Vector2(0, -69)
 shape = SubResource("CapsuleShape2D_ncv88")
+
+[node name="DetectionArea" type="Area2D" parent="." unique_id=1512649415]
+collision_layer = 0
+collision_mask = 255
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=247318060]
+position = Vector2(0, -50)
+shape = SubResource("RectangleShape2D_hdxto")
 
 [node name="DoubleJumpFire" type="Node2D" parent="." unique_id=1458323283]
 visible = false

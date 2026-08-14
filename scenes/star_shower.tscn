@@ -1,0 +1,66 @@
+[gd_scene format=3 uid="uid://co8tuwgaj20is"]
+
+[ext_resource type="Script" uid="uid://dndvky4af4hf1" path="res://scripts/star_shower.gd" id="1_b5pxj"]
+[ext_resource type="PackedScene" uid="uid://dju6fqkukuw3u" path="res://scenes/killzone.tscn" id="2_b5pxj"]
+[ext_resource type="Texture2D" uid="uid://r726c7wx6rba" path="res://assets/characters/enemies/pop_star.png" id="2_ejfsv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_adae0"]
+atlas = ExtResource("2_ejfsv")
+region = Rect2(0, 0, 1254, 1254)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_vlew8"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_adae0")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_vlew8"]
+radius = 60.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_dtla0"]
+radius = 43.011627
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_b5pxj"]
+radius = 600.0
+
+[node name="StarShower" type="CharacterBody2D" unique_id=1450154183 groups=["enemies"]]
+collision_layer = 2
+script = ExtResource("1_b5pxj")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2066198239]
+scale = Vector2(0.09, 0.09)
+sprite_frames = SubResource("SpriteFrames_vlew8")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=882905916]
+scale = Vector2(0.95, 0.95)
+shape = SubResource("CircleShape2D_vlew8")
+
+[node name="Killzone" parent="." unique_id=167120335 instance=ExtResource("2_b5pxj")]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone" unique_id=66352716]
+scale = Vector2(0.9, 0.9)
+shape = SubResource("CircleShape2D_dtla0")
+
+[node name="DamageTimer" type="Timer" parent="Killzone" unique_id=1593752382]
+wait_time = 0.5
+
+[node name="DetectionArea" type="Area2D" parent="." unique_id=1146299464]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=106121224]
+shape = SubResource("CircleShape2D_b5pxj")
+
+[node name="ShootPoint" type="Marker2D" parent="." unique_id=675582561]
+
+[node name="ShootTimer" type="Timer" parent="." unique_id=1564897020]
+wait_time = 3.0
+
+[connection signal="body_exited" from="Killzone" to="Killzone" method="_on_body_exited"]
+[connection signal="timeout" from="Killzone/DamageTimer" to="Killzone" method="_on_damage_timer_timeout"]
+[connection signal="body_entered" from="DetectionArea" to="." method="_on_detection_area_body_entered"]
+[connection signal="body_exited" from="DetectionArea" to="." method="_on_detection_area_body_exited"]
+[connection signal="timeout" from="ShootTimer" to="." method="_on_shoot_timer_timeout"]

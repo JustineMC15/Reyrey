@@ -1,18 +1,18 @@
-[gd_scene format=3 uid="uid://c20o6wohk6hul"]
+[gd_scene format=3 uid="uid://co3yy7ttsykfw"]
 
-[ext_resource type="Script" uid="uid://parddgsx0u4x" path="res://scripts/guiding_star.gd" id="1_x5lqt"]
-[ext_resource type="Texture2D" uid="uid://cl4xk7pftojtx" path="res://assets/characters/enemies/guiding_star.png" id="2_rvajp"]
-[ext_resource type="PackedScene" uid="uid://dju6fqkukuw3u" path="res://scenes/killzone.tscn" id="2_x5lqt"]
+[ext_resource type="Script" uid="uid://daayfirdirrdk" path="res://scripts/star_saw.gd" id="1_cjcv6"]
+[ext_resource type="Texture2D" uid="uid://ec6f5dph6n2n" path="res://assets/characters/enemies/star_saw.png" id="2_cjcv6"]
+[ext_resource type="PackedScene" uid="uid://dju6fqkukuw3u" path="res://scenes/killzone.tscn" id="3_cflhd"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_yyssn"]
-atlas = ExtResource("2_rvajp")
+[sub_resource type="AtlasTexture" id="AtlasTexture_qver3"]
+atlas = ExtResource("2_cjcv6")
 region = Rect2(0, 0, 1254, 1254)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_vlew8"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_yyssn")
+"texture": SubResource("AtlasTexture_qver3")
 }],
 "loop": 1,
 "name": &"default",
@@ -25,10 +25,10 @@ radius = 60.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_3c02t"]
 radius = 43.011627
 
-[node name="GuidingStar" type="CharacterBody2D" unique_id=222027155 groups=["enemies"]]
+[node name="StarSaw" type="CharacterBody2D" unique_id=222027155 groups=["enemies"]]
 collision_layer = 2
 motion_mode = 1
-script = ExtResource("1_x5lqt")
+script = ExtResource("1_cjcv6")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=293379373]
 scale = Vector2(0.11, 0.11)
@@ -37,7 +37,7 @@ sprite_frames = SubResource("SpriteFrames_vlew8")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1729227675]
 shape = SubResource("CircleShape2D_vlew8")
 
-[node name="Killzone" parent="." unique_id=167120335 instance=ExtResource("2_x5lqt")]
+[node name="Killzone" parent="." unique_id=167120335 instance=ExtResource("3_cflhd")]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone" unique_id=1663164920]
 shape = SubResource("CircleShape2D_3c02t")

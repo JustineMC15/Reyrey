@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b85jxp5k5swgy"
-path="res://.godot/imported/moss_blob_2x2.png-aba29b7b0909a355f8ea50eb18a40302.ctex"
+uid="uid://cf7plh5tshqcq"
+path="res://.godot/imported/MONTAGE_aureth.png-896c437ddc7385ff19b84df8262b9af3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/environment/Texture/Ground/tileset_aureth_stabilized/aureth/moss_blob_2x2.png"
-dest_files=["res://.godot/imported/moss_blob_2x2.png-aba29b7b0909a355f8ea50eb18a40302.ctex"]
+source_file="res://assets/environment/Texture/MONTAGE_aureth.png"
+dest_files=["res://.godot/imported/MONTAGE_aureth.png-896c437ddc7385ff19b84df8262b9af3.ctex"]
 
 [params]
 

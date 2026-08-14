@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d0rgik7v2fio7"
-path="res://.godot/imported/hole_block_2x2.png-cc5df9d15e769b9df7b825743221d882.ctex"
+uid="uid://btgi6kbnox3pf"
+path="res://.godot/imported/star_shower.png-15749e4a4249a9811ba95312eb05a4b5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/environment/Texture/Ground/tileset_aureth_stabilized/aureth/hole_block_2x2.png"
-dest_files=["res://.godot/imported/hole_block_2x2.png-cc5df9d15e769b9df7b825743221d882.ctex"]
+source_file="res://assets/characters/enemies/star_shower.png"
+dest_files=["res://.godot/imported/star_shower.png-15749e4a4249a9811ba95312eb05a4b5.ctex"]
 
 [params]
 

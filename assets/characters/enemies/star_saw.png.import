@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dtdwtg3cu4h88"
-path="res://.godot/imported/single_tile_floater.png-7716299af63c3b5e9a90d5366e3da1d5.ctex"
+uid="uid://ec6f5dph6n2n"
+path="res://.godot/imported/star_saw.png-f05003797956287f10662a71b8422dc0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/environment/Texture/Ground/tileset_aureth_stabilized/aureth/single_tile_floater.png"
-dest_files=["res://.godot/imported/single_tile_floater.png-7716299af63c3b5e9a90d5366e3da1d5.ctex"]
+source_file="res://assets/characters/enemies/star_saw.png"
+dest_files=["res://.godot/imported/star_saw.png-f05003797956287f10662a71b8422dc0.ctex"]
 
 [params]
 

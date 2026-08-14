@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dcqfud4x6hxj2"
-path="res://.godot/imported/cap_2x1.png-a622f967143d57731cb36bc8f39573b8.ctex"
+uid="uid://bqw31f26eqkrd"
+path="res://.godot/imported/axiom.png-79e1af8c4b74eee95eab1eb692226a6f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/environment/Texture/Ground/tileset_aureth_stabilized/aureth/cap_2x1.png"
-dest_files=["res://.godot/imported/cap_2x1.png-a622f967143d57731cb36bc8f39573b8.ctex"]
+source_file="res://assets/environment/Texture/axiom.png"
+dest_files=["res://.godot/imported/axiom.png-79e1af8c4b74eee95eab1eb692226a6f.ctex"]
 
 [params]
 

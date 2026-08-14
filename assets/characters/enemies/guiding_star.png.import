@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://clat6rre85406"
-path="res://.godot/imported/single_tile_alt.png-786929919f794955fbcc50225bff0d0e.ctex"
+uid="uid://cl4xk7pftojtx"
+path="res://.godot/imported/guiding_star.png-755ea2659086cd82ab29cc6e8b41fd9a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/environment/Texture/Ground/tileset_aureth_stabilized/aureth/single_tile_alt.png"
-dest_files=["res://.godot/imported/single_tile_alt.png-786929919f794955fbcc50225bff0d0e.ctex"]
+source_file="res://assets/characters/enemies/guiding_star.png"
+dest_files=["res://.godot/imported/guiding_star.png-755ea2659086cd82ab29cc6e8b41fd9a.ctex"]
 
 [params]
 

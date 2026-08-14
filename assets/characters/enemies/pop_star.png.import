@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bnw08bw0pymsu"
-path="res://.godot/imported/hole_block_3x3_a.png-310f9aab355219f4752eae310bda8f33.ctex"
+uid="uid://r726c7wx6rba"
+path="res://.godot/imported/pop_star.png-619ceddc056a5193259f88c0726e5295.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/environment/Texture/Ground/tileset_aureth_stabilized/aureth/hole_block_3x3_a.png"
-dest_files=["res://.godot/imported/hole_block_3x3_a.png-310f9aab355219f4752eae310bda8f33.ctex"]
+source_file="res://assets/characters/enemies/pop_star.png"
+dest_files=["res://.godot/imported/pop_star.png-619ceddc056a5193259f88c0726e5295.ctex"]
 
 [params]
 
