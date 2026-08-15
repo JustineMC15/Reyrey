@@ -3,8 +3,8 @@
 [ext_resource type="Texture2D" uid="uid://cxy8f5ejdk2q1" path="res://assets/environment/background/Alchemy Decor.png" id="1_gofeg"]
 [ext_resource type="Texture2D" uid="uid://dif45mcou0cid" path="res://assets/environment/background/Angel Statue.png" id="2_nlror"]
 [ext_resource type="Texture2D" uid="uid://d1ef5mbmh4i26" path="res://assets/environment/background/Autumn Background layers_layer 5.png" id="3_u1mh4"]
-[ext_resource type="Texture2D" uid="uid://by54ja2n03cbn" path="res://assets/environment/background/Other Tiles1.png" id="4_86ynh"]
-[ext_resource type="Texture2D" uid="uid://dkemwoql7pahp" path="res://assets/environment/background/Other Tiles2.png" id="5_j1gj1"]
+[ext_resource type="Texture2D" uid="uid://by54ja2n03cbn" path="res://assets/environment/Texture/Other Tiles1.png" id="4_gofeg"]
+[ext_resource type="Texture2D" uid="uid://dkemwoql7pahp" path="res://assets/environment/Texture/Other Tiles2.png" id="5_nlror"]
 [ext_resource type="Texture2D" uid="uid://b3rdag5l5m8cq" path="res://assets/environment/background/Pine forest sheet.png" id="6_yqfp6"]
 [ext_resource type="Texture2D" uid="uid://cna3s0p4dw5dy" path="res://assets/environment/background/Pine Trees.png" id="7_fuw4l"]
 [ext_resource type="Texture2D" uid="uid://btxewtqkerm78" path="res://assets/environment/background/Pixel Art Bonsai.png" id="8_y6b5g"]
@@ -86,6 +86,7 @@
 [ext_resource type="Texture2D" uid="uid://cnld3g4vj8uv" path="res://assets/environment/background/bg_grasslands.png" id="84_qsndd"]
 [ext_resource type="Texture2D" uid="uid://ciykk0tx3exf" path="res://assets/environment/background/bg_shroom.png" id="85_tu88u"]
 [ext_resource type="Texture2D" uid="uid://cyy3tp6hhh5na" path="res://assets/environment/background/Birch1.png" id="86_hm2yv"]
+[ext_resource type="Texture2D" uid="uid://h48lno48vivl" path="res://assets/environment/shrines/shrine_02.jpg" id="86_nlror"]
 [ext_resource type="Texture2D" uid="uid://d1md3dwtayxvw" path="res://assets/environment/background/Birch2.png" id="87_525ca"]
 [ext_resource type="Texture2D" uid="uid://c8jlsdwx77bs0" path="res://assets/environment/background/Birch3.png" id="88_gylmf"]
 [ext_resource type="Texture2D" uid="uid://ds8261dbfgiww" path="res://assets/environment/background/Boat.png" id="89_gfnil"]
@@ -118,8 +119,8 @@
 [ext_resource type="Texture2D" uid="uid://b8u31fbqwf08l" path="res://assets/environment/background/env_objects_far.png" id="116_p70oi"]
 [ext_resource type="Texture2D" uid="uid://cu4drrppllj1e" path="res://assets/environment/background/env_rock.png" id="117_5cpn3"]
 [ext_resource type="Texture2D" uid="uid://d10kq4g8w1gks" path="res://assets/environment/background/env_trees.png" id="118_qfl1l"]
-[ext_resource type="Texture2D" uid="uid://j2mw8c0g4e8h" path="res://assets/environment/background/Floor Tiles1.png" id="119_ecn6o"]
-[ext_resource type="Texture2D" uid="uid://djtmnd5xu8jll" path="res://assets/environment/background/Floor Tiles2.png" id="120_q6xri"]
+[ext_resource type="Texture2D" uid="uid://j2mw8c0g4e8h" path="res://assets/environment/Texture/Floor Tiles1.png" id="119_u1mh4"]
+[ext_resource type="Texture2D" uid="uid://djtmnd5xu8jll" path="res://assets/environment/Texture/Floor Tiles2.png" id="120_86ynh"]
 [ext_resource type="Texture2D" uid="uid://3s8mq3uijwyr" path="res://assets/environment/background/Flowering Tree.png" id="121_as6ke"]
 [ext_resource type="Texture2D" uid="uid://cwcemkui18ltm" path="res://assets/environment/background/GandalfHardcore Animated Water Tiles.png" id="122_4jmca"]
 [ext_resource type="Texture2D" uid="uid://pdcbq8bj80ri" path="res://assets/environment/background/GandalfHardcore Background layers_layer 1.png" id="123_khf22"]
@@ -169,7 +170,7 @@ texture_region_size = Vector2i(1024, 345)
 0:0/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_yi7ck"]
-texture = ExtResource("4_86ynh")
+texture = ExtResource("4_gofeg")
 0:0/0 = 0
 1:0/0 = 0
 2:0/0 = 0
@@ -345,7 +346,7 @@ texture = ExtResource("4_86ynh")
 7:13/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_umeoy"]
-texture = ExtResource("5_j1gj1")
+texture = ExtResource("5_nlror")
 0:0/0 = 0
 1:0/0 = 0
 2:0/0 = 0
@@ -11078,6 +11079,11 @@ texture = ExtResource("85_tu88u")
 texture_region_size = Vector2i(1024, 512)
 0:0/0 = 0
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_u1mh4"]
+texture = ExtResource("86_nlror")
+texture_region_size = Vector2i(768, 1344)
+0:0/0 = 0
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_f3bdf"]
 texture = ExtResource("86_hm2yv")
 texture_region_size = Vector2i(80, 112)
@@ -17279,7 +17285,7 @@ texture = ExtResource("118_qfl1l")
 7:33/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wvdhk"]
-texture = ExtResource("119_ecn6o")
+texture = ExtResource("119_u1mh4")
 0:0/0 = 0
 1:0/0 = 0
 2:0/0 = 0
@@ -17846,7 +17852,7 @@ texture = ExtResource("119_ecn6o")
 17:35/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mybn5"]
-texture = ExtResource("120_q6xri")
+texture = ExtResource("120_86ynh")
 0:0/0 = 0
 1:0/0 = 0
 2:0/0 = 0
@@ -20616,3 +20622,4 @@ sources/155 = SubResource("TileSetAtlasSource_6e2wm")
 sources/156 = SubResource("TileSetAtlasSource_amuw7")
 sources/2 = SubResource("TileSetAtlasSource_b4ibx")
 sources/3 = SubResource("TileSetAtlasSource_yvvub")
+sources/4 = SubResource("TileSetAtlasSource_u1mh4")

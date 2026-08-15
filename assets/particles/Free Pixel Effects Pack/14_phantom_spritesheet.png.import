@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://djtmnd5xu8jll"
-path="res://.godot/imported/Floor Tiles2.png-079e561d17fb7cf2428a15f014d96705.ctex"
+uid="uid://d2cd5rg8vk64q"
+path="res://.godot/imported/14_phantom_spritesheet.png-f7adc19c9ec1beef2ab732c446397875.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/environment/background/Floor Tiles2.png"
-dest_files=["res://.godot/imported/Floor Tiles2.png-079e561d17fb7cf2428a15f014d96705.ctex"]
+source_file="res://assets/particles/Free Pixel Effects Pack/14_phantom_spritesheet.png"
+dest_files=["res://.godot/imported/14_phantom_spritesheet.png-f7adc19c9ec1beef2ab732c446397875.ctex"]
 
 [params]
 

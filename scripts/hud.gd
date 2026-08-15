@@ -21,8 +21,11 @@ func _ready() -> void:
 	player.health_changed.connect(_on_player_health_changed)
 	player.mp_changed.connect(_on_player_mp_changed)
 
-func _on_player_health_changed(current_health, _max_health) -> void:
+func _on_player_health_changed(current_health, max_health) -> void:
+	hp_bar.max_value = max_health
 	hp_bar.value = current_health
+
+	hp_damage_bar.max_value = max_health
 
 	var tween := create_tween()
 	tween.tween_property(
@@ -31,8 +34,13 @@ func _on_player_health_changed(current_health, _max_health) -> void:
 		current_health,
 		0.3
 	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-func _on_player_mp_changed(current_mp, _max_mp) -> void:
+
+
+func _on_player_mp_changed(current_mp, max_mp) -> void:
+	mp_bar.max_value = max_mp
 	mp_bar.value = current_mp
+
+	mp_damage_bar.max_value = max_mp
 
 	var tween := create_tween()
 	tween.tween_property(

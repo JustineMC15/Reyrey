@@ -14,9 +14,11 @@
 [ext_resource type="AudioStream" uid="uid://bf0pdsaqe0bbn" path="res://assets/sound/sfx/sword_sfx.wav" id="9_y4r1p"]
 [ext_resource type="AudioStream" uid="uid://d6gan3ldw81i" path="res://assets/sound/sfx/thud2.wav" id="10_d2wvv"]
 [ext_resource type="AudioStream" uid="uid://c5dready3pc12" path="res://assets/sound/sfx/audiomass-output.mp3" id="11_d2wvv"]
+[ext_resource type="Texture2D" uid="uid://cwijr37w5o5jr" path="res://assets/particles/ApyrYoun - Visual Effects v01/wave slash 01.png" id="12_fulsm"]
 [ext_resource type="AudioStream" uid="uid://lv1x0oxqxece" path="res://assets/sound/player_movement_samples/30_Jump_03.wav" id="15_oprun"]
 [ext_resource type="AudioStream" uid="uid://bpmfg3tpjk4jw" path="res://assets/sound/player_movement_samples/03_Step_grass_03.wav" id="16_a8ls1"]
 [ext_resource type="Texture2D" uid="uid://tgo4pm5ll8be" path="res://assets/particles/VFX Free Pack/Effect_BloodImpact/60fps/Spritesheets/Effect_BloodImpact_1_60x63.png" id="17_qfm1y"]
+[ext_resource type="Texture2D" uid="uid://bwpducg7vqtep" path="res://assets/particles/ApyrYoun - Visual Effects v01/impact 01.png" id="19_4r5pv"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_oprun"]
 atlas = ExtResource("2_qlg0r")
@@ -1528,6 +1530,91 @@ animations = [{
 "speed": 30.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_3rsyo"]
+atlas = ExtResource("12_fulsm")
+region = Rect2(128, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5lhw1"]
+atlas = ExtResource("12_fulsm")
+region = Rect2(64, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cwl8n"]
+atlas = ExtResource("12_fulsm")
+region = Rect2(0, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wtpuy"]
+atlas = ExtResource("12_fulsm")
+region = Rect2(128, 64, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kp546"]
+atlas = ExtResource("12_fulsm")
+region = Rect2(64, 64, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8ddhv"]
+atlas = ExtResource("12_fulsm")
+region = Rect2(0, 64, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ypfsk"]
+atlas = ExtResource("12_fulsm")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h8fhv"]
+atlas = ExtResource("12_fulsm")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1776x"]
+atlas = ExtResource("12_fulsm")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b6n08"]
+atlas = ExtResource("12_fulsm")
+region = Rect2(128, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gik8q"]
+atlas = ExtResource("12_fulsm")
+region = Rect2(64, 128, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qarp1"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3rsyo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5lhw1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cwl8n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wtpuy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kp546")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8ddhv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ypfsk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h8fhv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1776x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b6n08")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gik8q")
+}],
+"loop": 0,
+"name": &"wind",
+"speed": 30.0
+}]
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_4r5pv"]
 atlas = ExtResource("6_tuyoq")
 region = Rect2(0, 0, 64, 47)
@@ -2059,6 +2146,42 @@ animations = [{
 "speed": 60.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_4cvqp"]
+atlas = ExtResource("19_4r5pv")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cev0d"]
+atlas = ExtResource("19_4r5pv")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4tr32"]
+atlas = ExtResource("19_4r5pv")
+region = Rect2(0, 64, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_calqp"]
+atlas = ExtResource("19_4r5pv")
+region = Rect2(64, 64, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_nca3n"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4cvqp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cev0d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4tr32")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_calqp")
+}],
+"loop": 0,
+"name": &"jumpwind",
+"speed": 24.0
+}]
+
 [node name="Player" type="CharacterBody2D" unique_id=454930995 groups=["player"]]
 safe_margin = 1.0
 script = ExtResource("1_qlg0r")
@@ -2120,7 +2243,7 @@ shape = SubResource("RectangleShape2D_vlew8")
 [node name="DashEffect" type="Node2D" parent="." unique_id=1466392250]
 visible = false
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="DashEffect" unique_id=1400940402]
+[node name="HolyEffect" type="AnimatedSprite2D" parent="DashEffect" unique_id=1400940402]
 modulate = Color(1, 1, 1, 0.8156863)
 position = Vector2(-144.91998, -97.999985)
 rotation = 1.5707964
@@ -2133,6 +2256,15 @@ flip_v = true
 visible = false
 stream = ExtResource("9_f1ej7")
 pitch_scale = 5.0
+
+[node name="WindEffect" type="AnimatedSprite2D" parent="DashEffect" unique_id=1530269881]
+modulate = Color(1, 1, 1, 0.5)
+position = Vector2(-109.99999, -94)
+scale = Vector2(3.9375002, 2.875)
+sprite_frames = SubResource("SpriteFrames_qarp1")
+animation = &"wind"
+frame = 10
+frame_progress = 1.0
 
 [node name="SlashEffect" type="AnimatedSprite2D" parent="." unique_id=399051764]
 position = Vector2(1.9073486e-06, -71.00001)
@@ -2164,8 +2296,8 @@ offset = Vector2(0, -100)
 zoom = Vector2(0.8, 0.8)
 limit_left = -900
 limit_top = -9999979
-limit_right = 11970
-limit_bottom = 1470
+limit_right = 12460
+limit_bottom = 400
 drag_horizontal_enabled = true
 drag_vertical_enabled = true
 drag_top_margin = 0.7
@@ -2194,3 +2326,14 @@ position = Vector2(0, -80)
 scale = Vector2(6, 6)
 sprite_frames = SubResource("SpriteFrames_3c02t")
 animation = &"death"
+
+[node name="JumpEffect" type="AnimatedSprite2D" parent="." unique_id=927775568]
+visible = false
+modulate = Color(1, 1, 1, 0.5)
+position = Vector2(0, -20)
+rotation = 1.5707964
+scale = Vector2(1.6, 1.6)
+sprite_frames = SubResource("SpriteFrames_nca3n")
+animation = &"jumpwind"
+frame = 3
+frame_progress = 1.0

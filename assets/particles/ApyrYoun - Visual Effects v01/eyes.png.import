@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://by54ja2n03cbn"
-path="res://.godot/imported/Other Tiles1.png-fecd80a0150bcba4350b99411f74d881.ctex"
+uid="uid://c75mam3tnqjgn"
+path="res://.godot/imported/eyes.png-8b27645aa81b7a559c98f2e1953685b6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/environment/background/Other Tiles1.png"
-dest_files=["res://.godot/imported/Other Tiles1.png-fecd80a0150bcba4350b99411f74d881.ctex"]
+source_file="res://assets/particles/ApyrYoun - Visual Effects v01/eyes.png"
+dest_files=["res://.godot/imported/eyes.png-8b27645aa81b7a559c98f2e1953685b6.ctex"]
 
 [params]
 

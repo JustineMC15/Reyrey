@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://j2mw8c0g4e8h"
-path="res://.godot/imported/Floor Tiles1.png-8c7272fdb5d4d283d167cf6126cb0332.ctex"
+uid="uid://dajdkmqcaawjo"
+path="res://.godot/imported/11_fire_spritesheet.png-7a338fd9ce7733b637f543f058492e9a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/environment/background/Floor Tiles1.png"
-dest_files=["res://.godot/imported/Floor Tiles1.png-8c7272fdb5d4d283d167cf6126cb0332.ctex"]
+source_file="res://assets/particles/Free Pixel Effects Pack/11_fire_spritesheet.png"
+dest_files=["res://.godot/imported/11_fire_spritesheet.png-7a338fd9ce7733b637f543f058492e9a.ctex"]
 
 [params]
 

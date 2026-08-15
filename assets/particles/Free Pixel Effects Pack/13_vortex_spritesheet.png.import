@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dkemwoql7pahp"
-path="res://.godot/imported/Other Tiles2.png-54df5115d278690254c9fea1f2a28406.ctex"
+uid="uid://clubnyir7cv8x"
+path="res://.godot/imported/13_vortex_spritesheet.png-615c06de879328b46fd9f37d252962e1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/environment/background/Other Tiles2.png"
-dest_files=["res://.godot/imported/Other Tiles2.png-54df5115d278690254c9fea1f2a28406.ctex"]
+source_file="res://assets/particles/Free Pixel Effects Pack/13_vortex_spritesheet.png"
+dest_files=["res://.godot/imported/13_vortex_spritesheet.png-615c06de879328b46fd9f37d252962e1.ctex"]
 
 [params]
 

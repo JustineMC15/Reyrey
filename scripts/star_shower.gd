@@ -1,5 +1,5 @@
 extends CharacterBody2D
-
+@export var enemy_id: String = ""
 var max_health := 4
 var health := max_health
 var base_damage := 1

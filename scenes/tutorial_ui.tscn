@@ -41,7 +41,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_58d3m")
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 40
 text = "MOVE
 A       D
 ◀       ▶"
@@ -73,7 +73,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_58d3m")
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 40
 text = "JUMP
 ⬆ / SPACE"
 horizontal_alignment = 1
@@ -104,7 +104,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_58d3m")
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 40
 text = "ATTACK
 MOUSE1 / F"
 horizontal_alignment = 1
@@ -165,7 +165,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_58d3m")
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 40
 text = "ENTER
 E"
 horizontal_alignment = 1
@@ -195,8 +195,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_58d3m")
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 40
 text = "LEAVE SHRINE
 E"
 horizontal_alignment = 1

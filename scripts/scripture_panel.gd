@@ -16,13 +16,28 @@ func _ready() -> void:
 	prompt_panel.modulate.a = 0.0
 	prompt_panel.hide()
 
+	# Fade out if this ability was already claimed
+	if GameState.has_ability(ability_id):
+		modulate.a = 1.0
+
+		var tween := create_tween()
+		tween.tween_property(self, "modulate:a", 0.0, 0.5)
+		tween.tween_callback(queue_free)
+
+		return
+
 func _process(_delta: float) -> void:
 	if activated or not player_inside:
 		return
 	if Input.is_action_just_pressed("interact"):
 		activated = true
 		prompt_panel.hide()
+
 		GameState.claim_ability(ability_id, player_ref, claim_icon)
+
+		if player_ref.has_method("restore_full_mp"):
+			player_ref.restore_full_mp()
+
 		queue_free()
 
 func _on_area_entered(area: Area2D) -> void:

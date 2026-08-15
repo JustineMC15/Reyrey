@@ -5,6 +5,9 @@
 [ext_resource type="AudioStream" uid="uid://di7n3wbh2tuml" path="res://assets/sound/sfx/172206__fins__teleport.wav" id="3_vesgx"]
 [ext_resource type="Texture2D" uid="uid://j70ujplhxad5" path="res://assets/particles/VFX Free Pack/Effect_TheVortex/60fps/Spritesheets/Effect_TheVortex_1_429x429.png" id="4_uqimk"]
 [ext_resource type="AudioStream" uid="uid://bn4ko56e0pfxo" path="res://assets/sound/sfx/sonar_ping.mp3" id="5_5wfwj"]
+[ext_resource type="Texture2D" uid="uid://dkm3tn1wp4r47" path="res://assets/characters/enemies/popbubblerage.png" id="6_uqimk"]
+[ext_resource type="Texture2D" uid="uid://n1fhxgbi8hk1" path="res://assets/particles/PNG (Black background)/circle_01.png" id="7_5wfwj"]
+[ext_resource type="AudioStream" uid="uid://b8hxd1awwah3q" path="res://assets/sound/sfx/pop.ogg" id="8_wwa6i"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_adae0"]
 atlas = ExtResource("2_3pi0l")
@@ -410,6 +413,158 @@ animations = [{
 "speed": 90.0
 }]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_vesgx"]
+radius = 700.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w3w6d"]
+atlas = ExtResource("6_uqimk")
+region = Rect2(3224, 0, 403, 403)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lgtqd"]
+atlas = ExtResource("6_uqimk")
+region = Rect2(3627, 0, 403, 403)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yeeww"]
+atlas = ExtResource("6_uqimk")
+region = Rect2(4030, 0, 403, 403)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l5yws"]
+atlas = ExtResource("6_uqimk")
+region = Rect2(4433, 0, 403, 403)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_auxft"]
+atlas = ExtResource("6_uqimk")
+region = Rect2(4836, 0, 403, 403)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ffirk"]
+atlas = ExtResource("6_uqimk")
+region = Rect2(5239, 0, 403, 403)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tpyr1"]
+atlas = ExtResource("6_uqimk")
+region = Rect2(5642, 0, 403, 403)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lwvyj"]
+atlas = ExtResource("6_uqimk")
+region = Rect2(6045, 0, 403, 403)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lyg7p"]
+atlas = ExtResource("6_uqimk")
+region = Rect2(6448, 0, 403, 403)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ra0d5"]
+atlas = ExtResource("6_uqimk")
+region = Rect2(6851, 0, 403, 403)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sf2a7"]
+atlas = ExtResource("6_uqimk")
+region = Rect2(7254, 0, 403, 403)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5wfwj"]
+atlas = ExtResource("6_uqimk")
+region = Rect2(0, 0, 403, 403)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wwa6i"]
+atlas = ExtResource("6_uqimk")
+region = Rect2(403, 0, 403, 403)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tgdkp"]
+atlas = ExtResource("6_uqimk")
+region = Rect2(806, 0, 403, 403)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3gcim"]
+atlas = ExtResource("6_uqimk")
+region = Rect2(1209, 0, 403, 403)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ms2sp"]
+atlas = ExtResource("6_uqimk")
+region = Rect2(1612, 0, 403, 403)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v4fa3"]
+atlas = ExtResource("6_uqimk")
+region = Rect2(2015, 0, 403, 403)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a0l0c"]
+atlas = ExtResource("6_uqimk")
+region = Rect2(2418, 0, 403, 403)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4nik8"]
+atlas = ExtResource("6_uqimk")
+region = Rect2(2821, 0, 403, 403)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_bekt7"]
+animations = [{
+"frames": [{
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_w3w6d")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_lgtqd")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_yeeww")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_l5yws")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_auxft")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_ffirk")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_tpyr1")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_lwvyj")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_lyg7p")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_ra0d5")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_sf2a7")
+}],
+"loop": 0,
+"name": &"explode",
+"speed": 60.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5wfwj")
+}, {
+"duration": 5.0,
+"texture": SubResource("AtlasTexture_wwa6i")
+}, {
+"duration": 5.0,
+"texture": SubResource("AtlasTexture_tgdkp")
+}, {
+"duration": 5.0,
+"texture": SubResource("AtlasTexture_3gcim")
+}, {
+"duration": 5.0,
+"texture": SubResource("AtlasTexture_ms2sp")
+}, {
+"duration": 6.0,
+"texture": SubResource("AtlasTexture_v4fa3")
+}, {
+"duration": 6.0,
+"texture": SubResource("AtlasTexture_a0l0c")
+}, {
+"duration": 6.0,
+"texture": SubResource("AtlasTexture_4nik8")
+}],
+"loop": 0,
+"name": &"focus",
+"speed": 60.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bekt7"]
+radius = 38.0
+
 [node name="PopStar" type="CharacterBody2D" unique_id=1450154183 groups=["enemies"]]
 collision_layer = 2
 script = ExtResource("1_3pi0l")
@@ -434,3 +589,40 @@ animation = &"death"
 [node name="HitSound" type="AudioStreamPlayer2D" parent="." unique_id=1147007798]
 stream = ExtResource("5_5wfwj")
 pitch_scale = 6.0
+
+[node name="DetectionArea" type="Area2D" parent="." unique_id=1092101945]
+collision_layer = 4
+collision_mask = 5
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=1889453506]
+shape = SubResource("CircleShape2D_vesgx")
+
+[node name="ShootTimer" type="Timer" parent="." unique_id=1032786898]
+wait_time = 1.5
+
+[node name="PopAttack" type="Node2D" parent="." unique_id=478512138]
+modulate = Color(1, 1, 1, 0.70000005)
+scale = Vector2(0.4, 0.4)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="PopAttack" unique_id=1565804702]
+scale = Vector2(0.2, 0.2)
+sprite_frames = SubResource("SpriteFrames_bekt7")
+animation = &"explode"
+frame = 10
+frame_progress = 1.0
+
+[node name="Area2D" type="Area2D" parent="PopAttack" unique_id=1404848281]
+collision_layer = 4
+collision_mask = 5
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PopAttack/Area2D" unique_id=1080490963]
+shape = SubResource("CircleShape2D_bekt7")
+
+[node name="PointLight2D" type="PointLight2D" parent="PopAttack" unique_id=1534515310]
+color = Color(5.45419, 7.4511666, 7.4511666, 1)
+texture = ExtResource("7_5wfwj")
+
+[node name="AttackSound" type="AudioStreamPlayer2D" parent="PopAttack" unique_id=1024754762]
+stream = ExtResource("8_wwa6i")
+volume_db = 15.0
+pitch_scale = 1.2
