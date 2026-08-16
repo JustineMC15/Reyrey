@@ -428,6 +428,7 @@ sprite_frames = SubResource("SpriteFrames_vlew8")
 shape = SubResource("CircleShape2D_vlew8")
 
 [node name="Killzone" parent="." unique_id=167120335 instance=ExtResource("3_cflhd")]
+base_damage = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone" unique_id=1663164920]
 shape = SubResource("CircleShape2D_3c02t")

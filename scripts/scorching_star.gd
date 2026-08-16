@@ -4,7 +4,6 @@ extends CharacterBody2D
 
 var max_health := 8
 var health := max_health
-var base_damage := 1
 
 @export var spin_speed: float = 2.0
 
@@ -77,11 +76,6 @@ func _physics_process(delta: float) -> void:
 	if can_attack and not is_attacking:
 		check_for_player()
 
-
-# ============================================================
-# ATTACK
-# ============================================================
-
 func check_for_player() -> void:
 	var bodies := attack_area.get_overlapping_bodies()
 
@@ -97,10 +91,6 @@ func attack() -> void:
 
 	is_attacking = true
 	can_attack = false
-
-	# --------------------------------
-	# CHARGE
-	# --------------------------------
 
 	attack_effect.visible = true
 	attack_effect.play("charge")
@@ -121,10 +111,6 @@ func attack() -> void:
 	if is_dying:
 		return
 
-	# --------------------------------
-	# FIRE / EXPLOSION
-	# --------------------------------
-
 	attack_effect.play("explosion")
 	fire_sound.play()
 	deal_explosion_damage()
@@ -134,10 +120,6 @@ func attack() -> void:
 
 	if is_dying:
 		return
-
-	# --------------------------------
-	# REMOVE GLOW
-	# --------------------------------
 
 	var fade_tween := create_tween()
 
@@ -153,10 +135,6 @@ func attack() -> void:
 	attack_effect.visible = false
 
 	is_attacking = false
-
-	# --------------------------------
-	# COOLDOWN
-	# --------------------------------
 
 	await get_tree().create_timer(attack_cooldown).timeout
 
@@ -176,11 +154,6 @@ func deal_explosion_damage() -> void:
 		if distance <= attack_radius:
 			if body.has_method("take_damage"):
 				body.take_damage(attack_damage)
-
-
-# ============================================================
-# DAMAGE
-# ============================================================
 
 func take_damage(amount: int) -> void:
 	if is_dying:
@@ -205,11 +178,6 @@ func flash_damage() -> void:
 
 	if not is_dying and not is_attacking:
 		animated_sprite_2d.modulate = Color.WHITE
-
-
-# ============================================================
-# DEATH
-# ============================================================
 
 func die() -> void:
 	if is_dying:
@@ -246,18 +214,3 @@ func die() -> void:
 	await death_effect.animation_finished
 
 	queue_free()
-
-
-# ============================================================
-# SPIN
-# ============================================================
-
-func spin_once() -> void:
-	var tween = create_tween()
-
-	tween.tween_property(
-		self,
-		"rotation",
-		rotation + TAU,
-		0.6
-	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)

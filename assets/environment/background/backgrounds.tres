@@ -147,18 +147,6 @@
 [ext_resource type="Texture2D" uid="uid://c6o8mvo08ci1r" path="res://assets/environment/background/Normal Background layers_layer 5.png" id="144_fokvy"]
 [ext_resource type="Texture2D" uid="uid://b5lkvudgnkbfs" path="res://assets/environment/background/Ores.png" id="145_44372"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_o14ub"]
-texture = ExtResource("1_gofeg")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-1:0/0 = 0
-1:1/0 = 0
-2:1/0 = 0
-0:1/0 = 0
-3:0/0 = 0
-3:1/0 = 0
-4:1/0 = 0
-
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_v5ble"]
 texture = ExtResource("2_nlror")
 texture_region_size = Vector2i(64, 64)
@@ -20476,7 +20464,6 @@ texture_region_size = Vector2i(64, 64)
 
 [resource]
 tile_size = Vector2i(1536, 1024)
-sources/0 = SubResource("TileSetAtlasSource_o14ub")
 sources/1 = SubResource("TileSetAtlasSource_v5ble")
 sources/6 = SubResource("TileSetAtlasSource_jhdyc")
 sources/7 = SubResource("TileSetAtlasSource_jyuw1")

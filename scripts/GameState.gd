@@ -6,8 +6,8 @@ var abilities: Dictionary = {
 }
 
 # --- Persistent Player Stats ---
-var max_mp: int = 3
-var current_mp: int = 3
+var max_mp: int = 6
+var current_mp: int = 6
 
 # --- Room / Gate transition state ---
 var pending_spawn_gate_id: String = ""
@@ -17,11 +17,6 @@ var checkpoint_id: String = ""
 var checkpoint_room_name: String = ""
 var checkpoint_activated: bool = false
 var activated_checkpoints: Dictionary = {}
-
-
-# --- Enemy death persistence (for later, when enemies exist) ---
-# Key format: "RoomName/EnemyStableID" -> true
-var dead_enemies: Dictionary = {}
 
 
 # --- Fade overlay, built in code so you don't need a separate scene ---
@@ -35,11 +30,11 @@ var shrine_count: int = 0
 var claimed_shrines: Dictionary = {}
 
 const SHRINE_MP_GAINS: Array[int] = [
-	2, 2, 2, 2, 2,
-	1, 1, 1, 1, 1, 1,
-	1, 0, 0, 1, 0, 0
+	3, 3, 3, 2, 2,
+	2, 2, 2, 2, 1,
+	1, 1, 1, 1, 1,
+	1, 1
 ]
-
 
 func is_shrine_claimed(shrine_id: String) -> bool:
 	return claimed_shrines.has(shrine_id)
@@ -236,22 +231,6 @@ func _build_fade_overlay() -> void:
 	_fade_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_fade_layer.add_child(_fade_rect)
-
-
-# --- Enemy death helpers ---
-func mark_enemy_dead(room_name: String, enemy_id: String) -> void:
-	dead_enemies[room_name + "/" + enemy_id] = true
-
-
-func is_enemy_dead(room_name: String, enemy_id: String) -> bool:
-	return dead_enemies.has(room_name + "/" + enemy_id)
-
-
-func clear_room_enemy_deaths(room_name: String) -> void:
-	for key in dead_enemies.keys():
-		if key.begins_with(room_name + "/"):
-			dead_enemies.erase(key)
-
 
 # --- Room transition ---
 func can_trigger_gate() -> bool:

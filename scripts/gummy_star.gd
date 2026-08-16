@@ -276,16 +276,6 @@ func die() -> void:
 	await death_effect.animation_finished
 
 	queue_free()
-
-func spin_once() -> void:
-	var tween = create_tween()
-
-	tween.tween_property(
-		self,
-		"rotation",
-		rotation + TAU,
-		0.6
-	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 func _on_slow_field_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
 		if body.has_method("set_slowed"):

@@ -105,14 +105,3 @@ func die() -> void:
 	await death_effect.animation_finished
 
 	queue_free()
-
-
-func spin_once() -> void:
-	var tween = create_tween()
-
-	tween.tween_property(
-		self,
-		"rotation",
-		rotation + TAU,
-		0.6
-	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)

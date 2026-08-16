@@ -4,12 +4,11 @@
 [ext_resource type="TileSet" uid="uid://cjiwsrq76ltm1" path="res://assets/environment/Texture/texture.tres" id="3_27di5"]
 [ext_resource type="Shader" uid="uid://dcuyyydwb365i" path="res://scripts/room_01-tutorial.gdshader" id="3_na7fd"]
 [ext_resource type="Texture2D" uid="uid://db4b3a0ovamwa" path="res://assets/environment/Texture/TX_Village_Props_64x64.png" id="4_8isxr"]
-[ext_resource type="Texture2D" uid="uid://udxv4qon5205" path="res://assets/environment/Texture/TX Chest Animation.png" id="6_t3sgo"]
-[ext_resource type="Texture2D" uid="uid://1x2kyy5h1tvj" path="res://assets/environment/Texture/TX Village Props.png" id="7_0q6r3"]
 [ext_resource type="Script" uid="uid://xeo4tykcck1q" path="res://scripts/scripture_panel.gd" id="10_8eylq"]
 [ext_resource type="PackedScene" uid="uid://deakhov6xdl5c" path="res://scenes/checkpoint.tscn" id="10_lmwtt"]
 [ext_resource type="TileSet" uid="uid://cm1ylf07s3t6y" path="res://assets/environment/tiles/terrain.tres" id="11_8eylq"]
 [ext_resource type="Texture2D" uid="uid://diwmqox7qwm8b" path="res://assets/environment/Texture/scripture.png" id="12_6e5d3"]
+[ext_resource type="FontFile" uid="uid://dlinrvj4uxc6w" path="res://assets/fonts/Seshat.otf" id="15_4ht1o"]
 [ext_resource type="PackedScene" uid="uid://c1xyel26uy0by" path="res://scenes/player.tscn" id="21_vshm5"]
 [ext_resource type="Script" uid="uid://de4weqecqrqsr" path="res://scripts/jump_tutorial_trigger.gd" id="22_pf002"]
 [ext_resource type="Script" uid="uid://c6odu6vkdrff5" path="res://scripts/attack_tutorial_trigger.gd" id="23_oc2b2"]
@@ -1348,522 +1347,19 @@ texture_region_size = Vector2i(32, 32)
 62:60/0 = 0
 56:61/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4ht1o"]
-texture = ExtResource("6_t3sgo")
-texture_region_size = Vector2i(70, 70)
-0:0/0 = 0
-1:0/0 = 0
-2:0/0 = 0
-3:0/0 = 0
-4:0/0 = 0
-5:0/0 = 0
-6:0/0 = 0
-0:1/0 = 0
-1:1/0 = 0
-2:1/0 = 0
-3:1/0 = 0
-4:1/0 = 0
-5:1/0 = 0
-6:1/0 = 0
-0:2/0 = 0
-1:2/0 = 0
-2:2/0 = 0
-3:2/0 = 0
-4:2/0 = 0
-5:2/0 = 0
-6:2/0 = 0
-0:3/0 = 0
-1:3/0 = 0
-2:3/0 = 0
-3:3/0 = 0
-4:3/0 = 0
-5:3/0 = 0
-6:3/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_474lb"]
-texture = ExtResource("7_0q6r3")
-texture_region_size = Vector2i(32, 32)
-1:0/0 = 0
-2:0/0 = 0
-3:0/0 = 0
-4:0/0 = 0
-5:0/0 = 0
-6:0/0 = 0
-12:0/0 = 0
-13:0/0 = 0
-1:1/0 = 0
-2:1/0 = 0
-3:1/0 = 0
-4:1/0 = 0
-5:1/0 = 0
-6:1/0 = 0
-8:1/0 = 0
-9:1/0 = 0
-10:1/0 = 0
-12:1/0 = 0
-13:1/0 = 0
-1:2/0 = 0
-2:2/0 = 0
-5:2/0 = 0
-8:2/0 = 0
-9:2/0 = 0
-11:2/0 = 0
-12:2/0 = 0
-1:3/0 = 0
-2:3/0 = 0
-3:3/0 = 0
-4:3/0 = 0
-5:3/0 = 0
-6:3/0 = 0
-7:3/0 = 0
-8:3/0 = 0
-9:3/0 = 0
-10:3/0 = 0
-11:3/0 = 0
-12:3/0 = 0
-11:4/0 = 0
-12:4/0 = 0
-1:5/0 = 0
-2:5/0 = 0
-3:5/0 = 0
-5:5/0 = 0
-6:5/0 = 0
-7:5/0 = 0
-8:5/0 = 0
-10:5/0 = 0
-11:5/0 = 0
-12:5/0 = 0
-13:5/0 = 0
-1:6/0 = 0
-3:6/0 = 0
-5:6/0 = 0
-6:6/0 = 0
-7:6/0 = 0
-8:6/0 = 0
-9:6/0 = 0
-10:6/0 = 0
-11:6/0 = 0
-12:6/0 = 0
-1:7/0 = 0
-3:7/0 = 0
-4:7/0 = 0
-6:7/0 = 0
-7:7/0 = 0
-6:8/0 = 0
-7:8/0 = 0
-8:8/0 = 0
-9:8/0 = 0
-10:8/0 = 0
-11:8/0 = 0
-12:8/0 = 0
-1:9/0 = 0
-2:9/0 = 0
-3:9/0 = 0
-4:9/0 = 0
-1:10/0 = 0
-2:10/0 = 0
-3:10/0 = 0
-5:10/0 = 0
-6:10/0 = 0
-7:10/0 = 0
-10:10/0 = 0
-11:10/0 = 0
-12:10/0 = 0
-13:10/0 = 0
-13:11/0 = 0
-13:12/0 = 0
-12:13/0 = 0
-13:13/0 = 0
-2:6/0 = 0
-2:7/0 = 0
-15:0/0 = 0
-16:0/0 = 0
-22:0/0 = 0
-23:0/0 = 0
-27:0/0 = 0
-28:0/0 = 0
-30:0/0 = 0
-31:0/0 = 0
-14:1/0 = 0
-15:1/0 = 0
-16:1/0 = 0
-20:1/0 = 0
-22:1/0 = 0
-23:1/0 = 0
-24:1/0 = 0
-25:1/0 = 0
-26:1/0 = 0
-27:1/0 = 0
-28:1/0 = 0
-29:1/0 = 0
-30:1/0 = 0
-31:1/0 = 0
-14:2/0 = 0
-15:2/0 = 0
-16:2/0 = 0
-29:2/0 = 0
-14:3/0 = 0
-15:3/0 = 0
-16:3/0 = 0
-18:3/0 = 0
-19:3/0 = 0
-22:3/0 = 0
-24:3/0 = 0
-25:3/0 = 0
-27:3/0 = 0
-29:3/0 = 0
-16:4/0 = 0
-18:4/0 = 0
-20:4/0 = 0
-22:4/0 = 0
-29:4/0 = 0
-14:5/0 = 0
-15:5/0 = 0
-16:5/0 = 0
-17:5/0 = 0
-18:5/0 = 0
-20:5/0 = 0
-21:5/0 = 0
-22:5/0 = 0
-23:5/0 = 0
-25:5/0 = 0
-26:5/0 = 0
-27:5/0 = 0
-28:5/0 = 0
-14:6/0 = 0
-14:7/0 = 0
-16:7/0 = 0
-17:7/0 = 0
-18:7/0 = 0
-19:7/0 = 0
-20:7/0 = 0
-22:7/0 = 0
-23:7/0 = 0
-24:7/0 = 0
-25:7/0 = 0
-18:8/0 = 0
-20:8/0 = 0
-22:8/0 = 0
-23:8/0 = 0
-24:8/0 = 0
-25:8/0 = 0
-27:8/0 = 0
-28:8/0 = 0
-29:8/0 = 0
-18:9/0 = 0
-22:9/0 = 0
-23:9/0 = 0
-24:9/0 = 0
-25:9/0 = 0
-27:9/0 = 0
-28:9/0 = 0
-29:9/0 = 0
-14:10/0 = 0
-15:10/0 = 0
-17:10/0 = 0
-5:11/0 = 0
-6:11/0 = 0
-7:11/0 = 0
-10:11/0 = 0
-11:11/0 = 0
-12:11/0 = 0
-14:11/0 = 0
-15:11/0 = 0
-17:11/0 = 0
-18:11/0 = 0
-19:11/0 = 0
-20:11/0 = 0
-21:11/0 = 0
-22:11/0 = 0
-23:11/0 = 0
-25:11/0 = 0
-26:11/0 = 0
-27:11/0 = 0
-28:11/0 = 0
-29:11/0 = 0
-0:12/0 = 0
-1:12/0 = 0
-2:12/0 = 0
-3:12/0 = 0
-4:12/0 = 0
-5:12/0 = 0
-6:12/0 = 0
-7:12/0 = 0
-10:12/0 = 0
-11:12/0 = 0
-12:12/0 = 0
-14:12/0 = 0
-15:12/0 = 0
-17:12/0 = 0
-18:12/0 = 0
-19:12/0 = 0
-20:12/0 = 0
-21:12/0 = 0
-22:12/0 = 0
-23:12/0 = 0
-0:13/0 = 0
-1:13/0 = 0
-2:13/0 = 0
-3:13/0 = 0
-6:13/0 = 0
-20:13/0 = 0
-21:13/0 = 0
-22:13/0 = 0
-23:13/0 = 0
-27:13/0 = 0
-28:13/0 = 0
-1:14/0 = 0
-2:14/0 = 0
-7:14/0 = 0
-8:14/0 = 0
-9:14/0 = 0
-12:14/0 = 0
-13:14/0 = 0
-14:14/0 = 0
-23:14/0 = 0
-26:14/0 = 0
-27:14/0 = 0
-28:14/0 = 0
-29:14/0 = 0
-30:14/0 = 0
-1:15/0 = 0
-3:15/0 = 0
-7:15/0 = 0
-9:15/0 = 0
-10:15/0 = 0
-12:15/0 = 0
-13:15/0 = 0
-14:15/0 = 0
-16:15/0 = 0
-17:15/0 = 0
-18:15/0 = 0
-19:15/0 = 0
-20:15/0 = 0
-21:15/0 = 0
-22:15/0 = 0
-23:15/0 = 0
-24:15/0 = 0
-25:15/0 = 0
-26:15/0 = 0
-27:15/0 = 0
-28:15/0 = 0
-29:15/0 = 0
-30:15/0 = 0
-0:16/0 = 0
-1:16/0 = 0
-2:16/0 = 0
-3:16/0 = 0
-4:16/0 = 0
-7:16/0 = 0
-8:16/0 = 0
-9:16/0 = 0
-10:16/0 = 0
-12:16/0 = 0
-13:16/0 = 0
-14:16/0 = 0
-16:16/0 = 0
-17:16/0 = 0
-18:16/0 = 0
-19:16/0 = 0
-20:16/0 = 0
-21:16/0 = 0
-22:16/0 = 0
-23:16/0 = 0
-24:16/0 = 0
-25:16/0 = 0
-26:16/0 = 0
-27:16/0 = 0
-28:16/0 = 0
-29:16/0 = 0
-30:16/0 = 0
-5:17/0 = 0
-7:17/0 = 0
-9:17/0 = 0
-10:17/0 = 0
-14:17/0 = 0
-15:17/0 = 0
-19:17/0 = 0
-21:17/0 = 0
-22:17/0 = 0
-23:17/0 = 0
-24:17/0 = 0
-25:17/0 = 0
-27:17/0 = 0
-28:17/0 = 0
-29:17/0 = 0
-1:18/0 = 0
-2:18/0 = 0
-3:18/0 = 0
-4:18/0 = 0
-5:18/0 = 0
-6:18/0 = 0
-7:18/0 = 0
-9:18/0 = 0
-11:18/0 = 0
-12:18/0 = 0
-14:18/0 = 0
-15:18/0 = 0
-16:18/0 = 0
-18:18/0 = 0
-19:18/0 = 0
-20:18/0 = 0
-23:18/0 = 0
-28:18/0 = 0
-5:19/0 = 0
-11:19/0 = 0
-12:19/0 = 0
-13:19/0 = 0
-14:19/0 = 0
-15:19/0 = 0
-16:19/0 = 0
-17:19/0 = 0
-18:19/0 = 0
-19:19/0 = 0
-20:19/0 = 0
-23:19/0 = 0
-24:19/0 = 0
-25:19/0 = 0
-26:19/0 = 0
-28:19/0 = 0
-1:20/0 = 0
-2:20/0 = 0
-3:20/0 = 0
-5:20/0 = 0
-7:20/0 = 0
-9:20/0 = 0
-11:20/0 = 0
-13:20/0 = 0
-14:20/0 = 0
-16:20/0 = 0
-17:20/0 = 0
-18:20/0 = 0
-19:20/0 = 0
-22:20/0 = 0
-23:20/0 = 0
-24:20/0 = 0
-25:20/0 = 0
-26:20/0 = 0
-27:20/0 = 0
-1:21/0 = 0
-2:21/0 = 0
-3:21/0 = 0
-4:21/0 = 0
-5:21/0 = 0
-6:21/0 = 0
-7:21/0 = 0
-8:21/0 = 0
-9:21/0 = 0
-11:21/0 = 0
-12:21/0 = 0
-13:21/0 = 0
-14:21/0 = 0
-16:21/0 = 0
-17:21/0 = 0
-18:21/0 = 0
-19:21/0 = 0
-23:21/0 = 0
-24:21/0 = 0
-28:21/0 = 0
-29:21/0 = 0
-30:21/0 = 0
-1:22/0 = 0
-2:22/0 = 0
-3:22/0 = 0
-4:22/0 = 0
-5:22/0 = 0
-6:22/0 = 0
-7:22/0 = 0
-8:22/0 = 0
-9:22/0 = 0
-10:22/0 = 0
-11:22/0 = 0
-12:22/0 = 0
-13:22/0 = 0
-14:22/0 = 0
-15:22/0 = 0
-16:22/0 = 0
-17:22/0 = 0
-21:22/0 = 0
-22:22/0 = 0
-23:22/0 = 0
-24:22/0 = 0
-25:22/0 = 0
-26:22/0 = 0
-27:22/0 = 0
-28:22/0 = 0
-29:22/0 = 0
-30:22/0 = 0
-2:23/0 = 0
-3:23/0 = 0
-4:23/0 = 0
-5:23/0 = 0
-6:23/0 = 0
-7:23/0 = 0
-8:23/0 = 0
-9:23/0 = 0
-10:23/0 = 0
-11:23/0 = 0
-12:23/0 = 0
-13:23/0 = 0
-14:23/0 = 0
-15:23/0 = 0
-16:23/0 = 0
-17:23/0 = 0
-21:23/0 = 0
-22:23/0 = 0
-23:23/0 = 0
-24:23/0 = 0
-25:23/0 = 0
-26:23/0 = 0
-27:23/0 = 0
-28:23/0 = 0
-29:23/0 = 0
-1:24/0 = 0
-2:24/0 = 0
-3:24/0 = 0
-4:24/0 = 0
-6:24/0 = 0
-7:24/0 = 0
-8:24/0 = 0
-9:24/0 = 0
-2:25/0 = 0
-3:25/0 = 0
-30:25/0 = 0
-31:25/0 = 0
-2:26/0 = 0
-3:26/0 = 0
-30:26/0 = 0
-31:26/0 = 0
-29:27/0 = 0
-30:27/0 = 0
-31:27/0 = 0
-29:28/0 = 0
-30:28/0 = 0
-31:28/0 = 0
-28:29/0 = 0
-29:29/0 = 0
-30:29/0 = 0
-31:29/0 = 0
-28:30/0 = 0
-29:30/0 = 0
-30:30/0 = 0
-31:30/0 = 0
-
 [sub_resource type="TileSet" id="TileSet_vshm5"]
 tile_size = Vector2i(64, 64)
 physics_layer_0/collision_layer = 1
-sources/11 = SubResource("TileSetAtlasSource_4ht1o")
-sources/12 = SubResource("TileSetAtlasSource_474lb")
 sources/1 = SubResource("TileSetAtlasSource_8isxr")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5newe"]
 size = Vector2(490.5, 313)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vlew8"]
-size = Vector2(470.625, 328)
+size = Vector2(685, 328)
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_bekt7"]
-distance = -281.0
+distance = -348.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8jhjc"]
 size = Vector2(73, 32)
@@ -1876,6 +1372,9 @@ size = Vector2(67.25, 30.3125)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bekt7"]
 size = Vector2(216, 314.1875)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_474lb"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_na7fd"]
 load_path = "res://.godot/imported/scripture.png-b43b5f516bfc444fd6353960782d182a.ctex"
@@ -1926,7 +1425,7 @@ collision_mask = 5
 script = ExtResource("22_pf002")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="JumpTutorialTrigger" unique_id=62684244]
-position = Vector2(1015.75, -217.5)
+position = Vector2(850, -154)
 shape = SubResource("RectangleShape2D_5newe")
 
 [node name="AttackTutorialTrigger" type="Area2D" parent="." unique_id=1091539762]
@@ -1936,7 +1435,7 @@ collision_mask = 5
 script = ExtResource("23_oc2b2")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackTutorialTrigger" unique_id=1755280831]
-position = Vector2(2587.5, -275)
+position = Vector2(2561, -275)
 shape = SubResource("RectangleShape2D_vlew8")
 
 [node name="TutorialUI" parent="." unique_id=973987082 instance=ExtResource("24_28do2")]
@@ -1961,10 +1460,11 @@ shape = SubResource("RectangleShape2D_pf002")
 position = Vector2(7665.375, -475.15625)
 shape = SubResource("RectangleShape2D_oc2b2")
 
-[node name="DoubleJump" type="Area2D" parent="." unique_id=1053454201]
+[node name="DoubleJump" type="Area2D" parent="." unique_id=1053454201 node_paths=PackedStringArray("prompt_panel")]
 collision_layer = 4
 collision_mask = 5
 script = ExtResource("10_8eylq")
+prompt_panel = NodePath("ScripturePanel")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DoubleJump" unique_id=1294642395]
 position = Vector2(9554, -154.90625)
@@ -1975,11 +1475,39 @@ position = Vector2(9557, -87.00003)
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("12_6e5d3")
 
-[node name="Dash" type="Area2D" parent="." unique_id=342602966]
+[node name="ScripturePanel" type="Panel" parent="DoubleJump" unique_id=295310091]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_474lb")
+
+[node name="Label" type="Label" parent="DoubleJump/ScripturePanel" unique_id=506767627]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 9446.0
+offset_top = -292.0
+offset_right = 9662.0
+offset_bottom = -192.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("15_4ht1o")
+theme_override_font_sizes/font_size = 32
+text = "CLAIM
+E"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Dash" type="Area2D" parent="." unique_id=342602966 node_paths=PackedStringArray("prompt_panel")]
 collision_layer = 4
 collision_mask = 5
 script = ExtResource("10_8eylq")
 ability_id = "dash"
+prompt_panel = NodePath("ScripturePanel")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Dash" unique_id=1477770599]
 position = Vector2(417.39893, -154.59998)
@@ -1989,6 +1517,33 @@ shape = SubResource("RectangleShape2D_bekt7")
 position = Vector2(418.4004, -90.60004)
 scale = Vector2(0.2, 0.2)
 texture = SubResource("CompressedTexture2D_na7fd")
+
+[node name="ScripturePanel" type="Panel" parent="Dash" unique_id=1279514844]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_474lb")
+
+[node name="Label" type="Label" parent="Dash/ScripturePanel" unique_id=186540912]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 310.0
+offset_top = -300.0
+offset_right = 525.0
+offset_bottom = -200.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("15_4ht1o")
+theme_override_font_sizes/font_size = 32
+text = "CLAIM
+E"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Transition" type="Area2D" parent="." unique_id=349824578]
 collision_layer = 4
@@ -2039,8 +1594,13 @@ movement_speed = 2.5
 
 [node name="Player" parent="." unique_id=1560496528 instance=ExtResource("21_vshm5")]
 
-[connection signal="body_entered" from="JumpTutorialTrigger" to="JumpTutorialTrigger" method="_on_body_entered"]
-[connection signal="body_exited" from="JumpTutorialTrigger" to="JumpTutorialTrigger" method="_on_body_exited"]
-[connection signal="body_entered" from="AttackTutorialTrigger" to="AttackTutorialTrigger" method="_on_body_entered"]
-[connection signal="body_exited" from="AttackTutorialTrigger" to="AttackTutorialTrigger" method="_on_body_exited"]
+[node name="Camera2D" parent="Player" index="10" unique_id=1719968446]
+limit_enabled = true
+limit_left = -987
+limit_top = -1753
+limit_right = 12449
+limit_bottom = 408
+
 [connection signal="body_entered" from="InstaKillzone" to="InstaKillzone" method="_on_body_entered"]
+
+[editable path="Player"]

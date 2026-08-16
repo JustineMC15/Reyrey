@@ -1506,6 +1506,7 @@ movement_distance = 0.0
 movement_speed = 0.0
 attack_damage = 2
 attack_radius = 300.0
+charge_time = 0.85
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=293379373]
 scale = Vector2(0.11, 0.11)
@@ -1515,6 +1516,7 @@ sprite_frames = SubResource("SpriteFrames_vlew8")
 shape = SubResource("CircleShape2D_vlew8")
 
 [node name="ContactDamage" parent="." unique_id=167120335 instance=ExtResource("3_l1wgq")]
+base_damage = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ContactDamage" unique_id=1663164920]
 shape = SubResource("CircleShape2D_3c02t")
