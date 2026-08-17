@@ -148,10 +148,10 @@ func die() -> void:
 	animated_sprite_2d.visible = false
 
 	# Disable collision
-	$CollisionShape2D.set_deferred("disabled", true)
+	#$CollisionShape2D.set_deferred("disabled", true)
 
 	# Disable contact damage
-	$ContactDamage/CollisionShape2D.set_deferred("disabled", true)
+	#$ContactDamage/CollisionShape2D.set_deferred("disabled", true)
 
 	# Stop movement
 	velocity = Vector2.ZERO

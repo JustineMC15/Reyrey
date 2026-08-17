@@ -18,7 +18,7 @@
 [ext_resource type="Texture2D" uid="uid://cbmhwby8ebu2" path="res://assets/environment/tiles/sheet (3).svg" id="11_0otd2"]
 [ext_resource type="Texture2D" uid="uid://by54ja2n03cbn" path="res://assets/environment/Texture/Other Tiles1.png" id="11_ncmrc"]
 [ext_resource type="Texture2D" uid="uid://dkemwoql7pahp" path="res://assets/environment/Texture/Other Tiles2.png" id="12_8n56n"]
-[ext_resource type="Texture2D" uid="uid://c7a77mknk6a3" path="res://assets/environment/background/Dungeon Tile Set.png" id="14_0otd2"]
+[ext_resource type="Texture2D" uid="uid://c7a77mknk6a3" path="res://assets/environment/designs/Dungeon Tile Set.png" id="14_0otd2"]
 [ext_resource type="Texture2D" uid="uid://djtmnd5xu8jll" path="res://assets/environment/Texture/Floor Tiles2.png" id="14_otkod"]
 [ext_resource type="Texture2D" uid="uid://cf7plh5tshqcq" path="res://assets/environment/Texture/MONTAGE_aureth.png" id="17_cxtkv"]
 

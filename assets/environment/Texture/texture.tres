@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://udxv4qon5205" path="res://assets/environment/Texture/TX Chest Animation.png" id="3_s42sn"]
 [ext_resource type="Texture2D" uid="uid://1x2kyy5h1tvj" path="res://assets/environment/Texture/TX Village Props.png" id="4_oha24"]
 [ext_resource type="Texture2D" uid="uid://j2mw8c0g4e8h" path="res://assets/environment/Texture/Floor Tiles1.png" id="5_axdwx"]
-[ext_resource type="Texture2D" uid="uid://c7a77mknk6a3" path="res://assets/environment/background/Dungeon Tile Set.png" id="5_s42sn"]
+[ext_resource type="Texture2D" uid="uid://c7a77mknk6a3" path="res://assets/environment/designs/Dungeon Tile Set.png" id="5_s42sn"]
 [ext_resource type="Texture2D" uid="uid://djtmnd5xu8jll" path="res://assets/environment/Texture/Floor Tiles2.png" id="6_a1iab"]
 [ext_resource type="Texture2D" uid="uid://b04in1db6l5cu" path="res://assets/environment/tiles/platformerPack_industrial_tilesheet.png" id="6_oha24"]
 [ext_resource type="Texture2D" uid="uid://b8vq0e4xxbv36" path="res://assets/environment/Texture/MONTAGE_darkforest.png" id="8_30gd4"]

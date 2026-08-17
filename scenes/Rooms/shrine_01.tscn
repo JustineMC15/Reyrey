@@ -16,7 +16,7 @@
 [ext_resource type="Texture2D" uid="uid://by54ja2n03cbn" path="res://assets/environment/Texture/Other Tiles1.png" id="15_p578s"]
 [ext_resource type="Texture2D" uid="uid://dkemwoql7pahp" path="res://assets/environment/Texture/Other Tiles2.png" id="16_4rwsf"]
 [ext_resource type="Texture2D" uid="uid://24hslnh680it" path="res://assets/environment/tiles/medieval_tilesheet_2X.png" id="17_m0s4r"]
-[ext_resource type="Texture2D" uid="uid://c7a77mknk6a3" path="res://assets/environment/background/Dungeon Tile Set.png" id="18_yb11u"]
+[ext_resource type="Texture2D" uid="uid://c7a77mknk6a3" path="res://assets/environment/designs/Dungeon Tile Set.png" id="18_yb11u"]
 [ext_resource type="Texture2D" uid="uid://djtmnd5xu8jll" path="res://assets/environment/Texture/Floor Tiles2.png" id="19_betbc"]
 [ext_resource type="Texture2D" uid="uid://bx086dmwelcrb" path="res://assets/environment/tiles/part1.svg" id="20_uqbcf"]
 [ext_resource type="PackedScene" uid="uid://c1xyel26uy0by" path="res://scenes/player.tscn" id="21_8di1k"]
@@ -3009,7 +3009,7 @@ tile_set = SubResource("TileSet_jhdin")
 
 [node name="Player" parent="." unique_id=454930995 instance=ExtResource("21_8di1k")]
 
-[node name="Camera2D" parent="Player" index="9" unique_id=1719968446]
+[node name="Camera2D" parent="Player" index="10" unique_id=1719968446]
 limit_enabled = true
 limit_left = -840
 limit_top = -2384

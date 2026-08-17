@@ -3,6 +3,12 @@ extends Node
 var abilities: Dictionary = {
 	"double_jump": false,
 	"dash": false,
+	"ground_slam": false,
+	"glide": false,
+	"dash_chain": false,
+	"wall_cling": false,
+	"recall": false,
+	"ledge_grab": false,
 }
 
 # --- Persistent Player Stats ---
@@ -310,11 +316,21 @@ func _position_player_at_checkpoint() -> void:
 	for checkpoint in checkpoints:
 		if checkpoint.checkpoint_id == checkpoint_id:
 			print("RESPAWNING AT CHECKPOINT: ", checkpoint_id)
+
+			var camera = player.get_node_or_null("Camera2D")
+
+			if camera:
+				camera.position_smoothing_enabled = false
+
 			player.global_position = checkpoint.global_position + Vector2(0, 70)
+
+			if camera:
+				camera.reset_smoothing()
+				camera.position_smoothing_enabled = true
+
 			return
 
 	print("RESPAWN ERROR: Checkpoint ID not found: ", checkpoint_id)
-
 
 func _fade_out_and_reload_current_scene() -> void:
 	var current_scene := get_tree().current_scene
@@ -384,8 +400,38 @@ var ability_data: Dictionary = {
 	},
 	"dash": {
 		"name": "Holy Lance",
-		"tin_text": "...",
-		"reynauld_text": "...",
+		"tin_text": "Distance is the world's favorite lie. It insists that two things wanting to be close isn't enough — that wanting has to be spent crossing empty space first, like affection is a toll road. I built through this the same year I built through kingdoms. It still charges me anyway. Some laws don't care how old you are.",
+		"reynauld_text": "It throws me forward faster than my legs would ever agree to. I used to close distance with my own two feet, thank you. Now I let something invisible do it for me and pretend that's dignified. It isn't. It is, however, faster, and I am a practical man.",
+	},
+	"ground_slam": {
+	"name": "Martyr's Drop",
+	"tin_text": "Everything that rises has to come back down. I hate that rule more than any other, because I have tested every exception I could think of and the world simply waited me out. I have stopped stars mid-fall. I have not stopped myself. Apparently that's not how the arrangement works.",
+	"reynauld_text": "They named it after martyrs, which I assume is meant to be poetic. I'd rather it be named after the ground, which is the thing doing all the suffering. I've cracked three shields testing this. I am billing someone. I haven't decided who yet.",
+	},
+	"glide": {
+	"name": "Vigil Wind",
+	"tin_text": "You're allowed to stay up. You are not allowed to stop asking. The moment you let go of the wanting, gravity remembers you exist and collects what it's owed. I used to think that was cruelty. Now I think it might be the only honest law this world has. Nothing stays aloft by accident. Not wind. Not devotion.",
+	"reynauld_text": "I hold the wind the way I hold a vigil — badly, and with my arm going numb halfway through. Still, it's the first time this armor hasn't tried to kill me on the way down. I'll take unnatural mercy over natural consequence any day of the week.",
+	},
+	"dash_chain": {
+	"name": "Litany Step",
+	"tin_text": "Say a thing enough times and the world decides you've used it up. Chant it, mean it, repeat it — the meaning is supposed to survive the repetition, and instead the world taxes you for each recitation until there's nothing left to say. I have said the same three words for eight hundred years. I would like an exception. I have never once received one.",
+	"reynauld_text": "Every knight drills the same forms until his arms forget how to do anything else. This isn't so different — same step, over and over, until the body stops asking permission. I only wish my knees had been consulted before agreeing to this many repetitions.",
+	},
+	"wall_cling": {
+	"name": "Wick Ember",
+	"tin_text": "A wick doesn't get to choose how long it burns. It holds on, it gives light, and the whole time it's being consumed for the privilege. I resent that grip is never free. I resent it more that I understand it — I have held on to things for centuries and called it strength, when it was only ever a slower way of running out.",
+	"reynauld_text": "My gauntlets are earning their keep tonight. Stone does not care for knuckles, and I suspect my knuckles have opinions about stone they've been too polite to share until now. I'll manage. I've held worse things longer for less reason.",
+	},
+	"recall": {
+	"name": "Star Anchor",
+	"tin_text": "You don't get to return to what you didn't think to keep. That's the law underneath every star chart, every memory, every fool who assumed the past would wait for them to come back and collect it. I mark my place now. Every time. I learned that lesson the hard way, and I intend to make sure I never learn it again.",
+	"reynauld_text": "It hauls me backward like I'm on a leash I never agreed to wear, and somehow I don't mind it. I know where the mark is because he put it there. I've decided that's reason enough to trust it. I don't extend that courtesy to much else in this world.",
+	},
+	"ledge_grab": {
+	"name": "Censer Swing",
+	"tin_text": "The world does not catch you by default. That's the part nobody tells you. Every ledge, every fall, every threshold — you either seize it yourself or you don't, and the universe watches without opinion either way. I used to think mercy was rare because people were cruel. It's rarer than that. Mercy isn't even the world's job.",
+	"reynauld_text": "I've been pulled from worse drops by worse hands. This one, at least, is mine — I catch the edge myself, every time, and no one has to come looking for what's left of me at the bottom. Small comfort. I'll take it.",
 	},
 }
 
@@ -644,10 +690,10 @@ func rest_at_checkpoint() -> void:
 
 		if player.has_method("restore_full_health"):
 			player.restore_full_health()
-
 		if player.has_method("restore_full_mp"):
 			player.restore_full_mp()
-
+		if player.has_method("restore_full_stamina"):
+			player.restore_full_stamina()
 		if player.has_method("unlock_input"):
 			player.unlock_input()
 

@@ -67,6 +67,30 @@ corner_radius_top_right = 2
 corner_radius_bottom_right = 2
 corner_radius_bottom_left = 2
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jkj6h"]
+bg_color = Color(0.043137256, 0.039215688, 0.03137255, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.043137256, 0.039215688, 0.03137255, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sk4pr"]
+bg_color = Color(0.15294118, 0.38431373, 0.12941177, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.043137256, 0.039215688, 0.03137255, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
 [node name="PlayerUI" type="CanvasLayer" unique_id=2101520700]
 
 [node name="HUD" type="Control" parent="." unique_id=628049812]
@@ -118,5 +142,27 @@ offset_right = 220.0
 offset_bottom = 75.0
 theme_override_styles/background = SubResource("StyleBoxFlat_kh8ty")
 theme_override_styles/fill = SubResource("StyleBoxFlat_ga6yf")
+max_value = 3.0
+show_percentage = false
+
+[node name="STBar" type="ProgressBar" parent="HUD" unique_id=79926837]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 80.0
+offset_right = 220.0
+offset_bottom = 105.00003
+theme_override_styles/background = SubResource("StyleBoxFlat_sww3w")
+theme_override_styles/fill = SubResource("StyleBoxFlat_suyxu")
+max_value = 3.0
+show_percentage = false
+
+[node name="STDamageBar" type="ProgressBar" parent="HUD" unique_id=549153757]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 80.0
+offset_right = 220.0
+offset_bottom = 105.0
+theme_override_styles/background = SubResource("StyleBoxFlat_jkj6h")
+theme_override_styles/fill = SubResource("StyleBoxFlat_sk4pr")
 max_value = 3.0
 show_percentage = false
