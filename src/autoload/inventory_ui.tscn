@@ -1,0 +1,78 @@
+[gd_scene format=3 uid="uid://bencgs18uokku"]
+
+[ext_resource type="Script" uid="uid://bu17ncpumfc72" path="res://src/autoload/inventory_ui.gd" id="1_0bsca"]
+[ext_resource type="PackedScene" uid="uid://qt0e5pxqovba" path="res://src/nav/inventory_icon_button.tscn" id="2_aua8c"]
+
+[node name="InventoryUI" type="CanvasLayer" unique_id=401043]
+script = ExtResource("1_0bsca")
+
+[node name="RootPanel" type="Control" parent="." unique_id=903807833]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="RootPanel" unique_id=1917392649]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Layout" type="HBoxContainer" parent="RootPanel" unique_id=1329702977]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="LeftColumn" type="VBoxContainer" parent="RootPanel/Layout" unique_id=1692896571]
+layout_mode = 2
+
+[node name="SwordButton" parent="RootPanel/Layout/LeftColumn" unique_id=2050556532 instance=ExtResource("2_aua8c")]
+layout_mode = 2
+
+[node name="ArmorButton" parent="RootPanel/Layout/LeftColumn" unique_id=2111647420 instance=ExtResource("2_aua8c")]
+layout_mode = 2
+
+[node name="ShardCurrencyButton" parent="RootPanel/Layout/LeftColumn" unique_id=1858223237 instance=ExtResource("2_aua8c")]
+layout_mode = 2
+
+[node name="MiddleColumn" type="VBoxContainer" parent="RootPanel/Layout" unique_id=1041635513]
+layout_mode = 2
+
+[node name="ScripturesLabel" type="Label" parent="RootPanel/Layout/MiddleColumn" unique_id=1450309591]
+layout_mode = 2
+
+[node name="ScriptureGrid" type="GridContainer" parent="RootPanel/Layout/MiddleColumn" unique_id=973297311]
+layout_mode = 2
+
+[node name="ShardsLabel" type="Label" parent="RootPanel/Layout/MiddleColumn" unique_id=1008707110]
+layout_mode = 2
+
+[node name="ShardGrid" type="GridContainer" parent="RootPanel/Layout/MiddleColumn" unique_id=1358338271]
+layout_mode = 2
+
+[node name="RightColumn" type="VBoxContainer" parent="RootPanel/Layout" unique_id=301002414]
+layout_mode = 2
+
+[node name="VBox" type="PanelContainer" parent="RootPanel/Layout/RightColumn" unique_id=1934877316]
+layout_mode = 2
+
+[node name="DetailIcon" type="TextureRect" parent="RootPanel/Layout/RightColumn/VBox" unique_id=1117567885]
+layout_mode = 2
+
+[node name="DetailName" type="Label" parent="RootPanel/Layout/RightColumn/VBox" unique_id=1139164653]
+layout_mode = 2
+
+[node name="DetailKeybind" type="Label" parent="RootPanel/Layout/RightColumn/VBox" unique_id=963703303]
+layout_mode = 2
+
+[node name="DetailScroll" type="ScrollContainer" parent="RootPanel/Layout/RightColumn/VBox" unique_id=546067671]
+layout_mode = 2
+
+[node name="DetailDescription" type="Label" parent="RootPanel/Layout/RightColumn/VBox/DetailScroll" unique_id=137160765]
+layout_mode = 2
+autowrap_mode = 2

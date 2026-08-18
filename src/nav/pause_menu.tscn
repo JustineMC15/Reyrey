@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://chjitcrkdukgx"]
+
+[ext_resource type="Script" uid="uid://dn21ftclh3375" path="res://src/nav/pause_menu.gd" id="1_rj4ec"]
+
+[node name="PauseMenu" type="CanvasLayer" unique_id=2144104241]
+script = ExtResource("1_rj4ec")
+
+[node name="RootPanel" type="Control" parent="." unique_id=827692744]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="RootPanel" unique_id=105966104]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBox" type="VBoxContainer" parent="RootPanel" unique_id=1478322670]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Resume" type="Button" parent="RootPanel/VBox" unique_id=1849573184]
+layout_mode = 2
+text = "Resume"
+
+[node name="SaveAndExitToMenu" type="Button" parent="RootPanel/VBox" unique_id=1029582544]
+layout_mode = 2
+text = "Save And Exit To Menu "
+
+[node name="SaveAndQuit" type="Button" parent="RootPanel/VBox" unique_id=1414303509]
+layout_mode = 2
+text = "Save and Quit "

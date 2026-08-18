@@ -1,0 +1,102 @@
+[gd_scene format=3 uid="uid://dvesqnrjunxw5"]
+
+[ext_resource type="Script" uid="uid://k51v7no43mqt" path="res://src/nav/main_menu.gd" id="1_j74n5"]
+[ext_resource type="Texture2D" uid="uid://pn6ms78tka3" path="res://assets/ui/titlescreen.jpg" id="2_i52fv"]
+[ext_resource type="PackedScene" uid="uid://c65e1wrlffqdl" path="res://src/nav/save_slot_card.tscn" id="2_j74n5"]
+[ext_resource type="FontFile" uid="uid://bm7sn47lsd7nb" path="res://assets/fonts/UncialAntiqua-Regular.ttf" id="3_p06dg"]
+[ext_resource type="FontFile" uid="uid://dbakhsfowc28k" path="res://assets/fonts/durendalandoliphantregular-lvwl4.ttf" id="4_62cx4"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_0bsca"]
+texture = ExtResource("2_i52fv")
+modulate_color = Color(0.60933006, 0.6093301, 0.60933006, 1)
+
+[node name="MainMenu" type="Control" unique_id=1820942949]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_j74n5")
+save_slot_card_scene = ExtResource("2_j74n5")
+
+[node name="Panel" type="Panel" parent="." unique_id=216618417]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_0bsca")
+
+[node name="Title" type="Label" parent="." unique_id=2039193674]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -164.0
+offset_right = 164.0
+offset_bottom = 310.0
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource("3_p06dg")
+theme_override_font_sizes/font_size = 80
+text = "Reyrey"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MainButtons" type="VBoxContainer" parent="." unique_id=443887178]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -53.0
+offset_top = -50.5
+offset_right = 53.0
+offset_bottom = 50.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Start" type="Button" parent="MainButtons" unique_id=733587262]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_62cx4")
+theme_override_font_sizes/font_size = 32
+text = "START GAME"
+
+[node name="Options" type="Button" parent="MainButtons" unique_id=1712514509]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_62cx4")
+theme_override_font_sizes/font_size = 32
+text = "OPTIONS"
+
+[node name="Exit" type="Button" parent="MainButtons" unique_id=1720912855]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_62cx4")
+theme_override_font_sizes/font_size = 32
+text = "QUIT GAME"
+
+[node name="VBox" type="VBoxContainer" parent="." unique_id=733898845]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SaveSlots" type="VBoxContainer" parent="VBox" unique_id=1349308127]
+visible = false
+layout_mode = 2
+
+[node name="SlotContainer" type="HBoxContainer" parent="VBox/SaveSlots" unique_id=1853483275]
+layout_mode = 2
+
+[node name="SettingsPanel" type="Panel" parent="." unique_id=109113287]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VolumeSlider" type="HSlider" parent="SettingsPanel" unique_id=1647758633]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 16.0

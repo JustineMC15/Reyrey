@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://ix5td6kcb0o2"]
+
+[ext_resource type="Script" uid="uid://wovjrta73gig" path="res://src/autoload/inventory_entry.gd" id="1_f56nu"]
+
+[node name="PanelContainer" type="PanelContainer" unique_id=1193723007]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_f56nu")
+
+[node name="HBox" type="HBoxContainer" parent="." unique_id=2099804158]
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="HBox" unique_id=597423706]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="HBox" unique_id=64245340]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="HBox/VBox" unique_id=501117873]
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="DescriptionLabel" type="Label" parent="HBox/VBox" unique_id=1825854653]
+layout_mode = 2
+autowrap_mode = 3
