@@ -1,5 +1,15 @@
 extends CharacterBody2D
+class RecallAnchorMarker extends Node2D:
+	var _pulse_time := 0.0
 
+	func _process(delta: float) -> void:
+		_pulse_time += delta
+		queue_redraw()
+
+	func _draw() -> void:
+		var pulse := 0.85 + sin(_pulse_time * 4.0) * 0.15
+		draw_circle(Vector2.ZERO, 10.0 * pulse, Color(1.3, 1.5, 2.2, 0.9))
+		draw_arc(Vector2.ZERO, 20.0, 0.0, TAU, 32, Color(1.3, 1.5, 2.2, 0.5), 3.0)
 signal health_changed(current_health, max_health)
 signal mp_changed(current_mp, max_mp)
 signal stamina_changed(current_stamina, max_stamina)
@@ -22,6 +32,11 @@ const STAMINA_REGEN_DELAY := 0.4
 const WALL_CLING_STAMINA_DRAIN_RATE := 30.0
 const MIN_STAMINA_TO_WALL_CLING := 5.0
 const DASH_CHAIN_STAMINA_COST := 25.0
+const LEDGE_GRAB_HANG_TIME := 1.5     # seconds before auto-drop
+const LEDGE_CHECK_DISTANCE := 34.0    # forward raycast reach — tune against tile size (70px)
+const LEDGE_RAY_FRONT_Y := -118.0     # roughly hand height on the capsule
+const LEDGE_RAY_GAP := 46.0           # vertical gap between the two raycasts
+const LEDGE_CLIMB_OFFSET := Vector2(40.0, -20.0)  # where you land relative to the grab point
 
 var is_slowed := false
 var slow_multiplier := 0.5
@@ -88,6 +103,21 @@ var was_gliding: bool = false
 var is_wall_clinging: bool = false
 var wall_jump_lock_timer: float = 0.0
 var wall_normal_x: float = 0.0
+# Ledge Grab
+var is_ledge_grabbing: bool = false
+var ledge_hang_timer: float = 0.0
+var ledge_facing_dir: float = 1.0
+var ledge_ray_front: RayCast2D
+var ledge_ray_above: RayCast2D
+# Recall
+
+const RECALL_MP_COST := 2
+const RECALL_LEASH_RANGE := 900.0  # tune during playtesting
+
+var has_recall_anchor: bool = false
+var recall_anchor_position: Vector2 = Vector2.ZERO
+var recall_anchor_marker: Node2D = null
+
 
 # Stamina
 var max_stamina := 100.0
@@ -116,6 +146,8 @@ var last_footstep_frame: int = -1
 # Wall cling animation
 @onready var wall_animation: AnimatedSprite2D = $WallAnimation
 
+# Ledge Grab
+@onready var ledge_animation: AnimatedSprite2D = get_node_or_null("LedgeAnimation")
 # COMBAT
 
 @onready var dash_hitbox: Area2D = $DashHitbox
@@ -317,7 +349,112 @@ func _on_ground_slam_effect_finished() -> void:
 	if ground_slam_sprite.animation == "impact":
 		ground_slam_effect.visible = false
 
+func _place_recall_anchor() -> void:
+	has_recall_anchor = true
+	recall_anchor_position = global_position
 
+	if recall_anchor_marker == null:
+		recall_anchor_marker = RecallAnchorMarker.new()
+		get_tree().current_scene.add_child(recall_anchor_marker)
+
+	recall_anchor_marker.global_position = recall_anchor_position
+	recall_anchor_marker.visible = true
+
+	_flash_recall(Color(1.3, 1.5, 2.2, 1))
+
+
+func _trigger_recall() -> void:
+	if mp < RECALL_MP_COST:
+		_flash_recall(Color(2.2, 1.3, 1.3, 1))
+		return
+
+	mp -= RECALL_MP_COST
+	mp_changed.emit(mp, max_mp)
+	GameState.current_mp = mp
+
+	global_position = recall_anchor_position
+	velocity = Vector2.ZERO
+
+	_camera_shake(6.0, 0.15)
+	_flash_recall(Color(1.3, 1.5, 2.2, 1))
+
+	_clear_recall_anchor()
+
+
+func _clear_recall_anchor() -> void:
+	has_recall_anchor = false
+
+	if recall_anchor_marker:
+		recall_anchor_marker.queue_free()
+		recall_anchor_marker = null
+
+
+func _flash_recall(color: Color) -> void:
+	animated_sprite_2d.modulate = color
+
+	await get_tree().create_timer(0.12).timeout
+
+	if not is_dead:
+		animated_sprite_2d.modulate = Color.WHITE
+func _start_ledge_grab(dir: float) -> void:
+	is_ledge_grabbing = true
+	ledge_facing_dir = dir
+	ledge_hang_timer = LEDGE_GRAB_HANG_TIME
+
+	velocity = Vector2.ZERO
+
+	var hit_point: Vector2 = ledge_ray_front.get_collision_point()
+	global_position = Vector2(
+		hit_point.x - (dir * 14.0),
+		ledge_ray_above.global_position.y + 40.0
+	)
+
+	is_wall_clinging = false
+	is_gliding = false
+	was_gliding = false
+
+	glide_animation.visible = false
+	wall_animation.visible = false
+
+	animated_sprite_2d.flip_h = dir < 0.0
+
+	if ledge_animation and ledge_animation.sprite_frames \
+	and ledge_animation.sprite_frames.has_animation("ledge_grab"):
+		animated_sprite_2d.visible = false
+		ledge_animation.visible = true
+		ledge_animation.flip_h = dir < 0.0
+		ledge_animation.play("ledge_grab")
+	else:
+		# Placeholder tint until the dedicated animation exists.
+		animated_sprite_2d.visible = true
+		animated_sprite_2d.stop()
+		animated_sprite_2d.modulate = Color(0.8, 0.9, 1.1, 1.0)
+
+
+func _climb_ledge() -> void:
+	global_position += Vector2(
+		LEDGE_CLIMB_OFFSET.x * ledge_facing_dir,
+		LEDGE_CLIMB_OFFSET.y
+	)
+	velocity = Vector2.ZERO
+
+	_end_ledge_grab()
+
+
+func _release_ledge() -> void:
+	velocity = Vector2(0.0, 40.0)
+
+	_end_ledge_grab()
+
+
+func _end_ledge_grab() -> void:
+	is_ledge_grabbing = false
+
+	animated_sprite_2d.visible = true
+	animated_sprite_2d.modulate = Color.WHITE
+
+	if ledge_animation:
+		ledge_animation.visible = false
 # DAMAGE
 
 func flash_damage() -> void:
@@ -377,13 +514,15 @@ func die() -> void:
 
 	# Stop player effects
 	cancel_attack()
-
+	_clear_recall_anchor()
 	double_jump_fire.visible = false
 	dash_effect.visible = false
 	dash_animation.visible = false
 	glide_animation.visible = false
 	wall_animation.visible = false
-
+	is_ledge_grabbing = false
+	if ledge_animation:
+		ledge_animation.visible = false
 	# Hide normal player sprite
 	animated_sprite_2d.visible = false
 
@@ -454,7 +593,20 @@ func _ready() -> void:
 
 	# Hide death animation
 	death_animation.visible = false
+	# LEDGE GRAB
 
+	ledge_ray_front = RayCast2D.new()
+	ledge_ray_front.position = Vector2(0, LEDGE_RAY_FRONT_Y)
+	ledge_ray_front.collision_mask = 1
+	add_child(ledge_ray_front)
+
+	ledge_ray_above = RayCast2D.new()
+	ledge_ray_above.position = Vector2(0, LEDGE_RAY_FRONT_Y - LEDGE_RAY_GAP)
+	ledge_ray_above.collision_mask = 1
+	add_child(ledge_ray_above)
+
+	if ledge_animation:
+		ledge_animation.visible = false
 	# CONNECT ANIMATION SIGNALS
 
 	animated_sprite_2d.animation_finished.connect(
@@ -665,7 +817,27 @@ func _physics_process(delta: float) -> void:
 			ground_slam_impact()
 
 		return
+	# LEDGE GRAB PROCESS
 
+	if is_ledge_grabbing:
+		ledge_hang_timer -= delta
+
+		if Input.is_action_just_pressed("jump"):
+			_climb_ledge()
+			return
+
+		var release_axis := Input.get_axis("move_left", "move_right")
+		var pressing_away := (
+			(ledge_facing_dir > 0.0 and release_axis < 0.0)
+			or (ledge_facing_dir < 0.0 and release_axis > 0.0)
+		)
+
+		if pressing_away \
+		or Input.is_action_just_pressed("ground_slam") \
+		or ledge_hang_timer <= 0.0:
+			_release_ledge()
+
+		return
 	# INPUT LOCK
 
 	if input_locked:
@@ -694,7 +866,23 @@ func _physics_process(delta: float) -> void:
 			)
 
 		return
+	# RECALL LEASH CHECK
 
+	if has_recall_anchor and global_position.distance_to(recall_anchor_position) > RECALL_LEASH_RANGE:
+		_flash_recall(Color(2.2, 1.3, 1.3, 1))
+		_clear_recall_anchor()
+
+	# RECALL INPUT
+
+	if Input.is_action_just_pressed("recall") \
+	and GameState.has_ability("recall") \
+	and not is_dashing \
+	and not is_ground_slamming:
+
+		if not has_recall_anchor:
+			_place_recall_anchor()
+		else:
+			_trigger_recall()
 	# COYOTE TIMER
 
 	if is_on_floor():
@@ -739,6 +927,28 @@ func _physics_process(delta: float) -> void:
 	if is_wall_clinging:
 		if not drain_stamina(WALL_CLING_STAMINA_DRAIN_RATE * delta):
 			is_wall_clinging = false
+	# LEDGE GRAB DETECTION
+
+	if GameState.has_ability("ledge_grab") \
+	and not is_on_floor() \
+	and not is_dashing \
+	and not is_ground_slamming \
+	and not is_ledge_grabbing \
+	and velocity.y >= 0.0:
+
+		var ledge_input := Input.get_axis("move_left", "move_right")
+
+		if ledge_input != 0.0:
+			var ledge_dir := signf(ledge_input)
+
+			ledge_ray_front.target_position = Vector2(LEDGE_CHECK_DISTANCE * ledge_dir, 0)
+			ledge_ray_above.target_position = Vector2(LEDGE_CHECK_DISTANCE * ledge_dir, 0)
+
+			ledge_ray_front.force_raycast_update()
+			ledge_ray_above.force_raycast_update()
+
+			if ledge_ray_front.is_colliding() and not ledge_ray_above.is_colliding():
+				_start_ledge_grab(ledge_dir)
 	# WALL JUMP LOCK TIMER
 
 	if wall_jump_lock_timer > 0.0:

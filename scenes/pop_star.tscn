@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://j70ujplhxad5" path="res://assets/particles/VFX Free Pack/Effect_TheVortex/60fps/Spritesheets/Effect_TheVortex_1_429x429.png" id="4_uqimk"]
 [ext_resource type="AudioStream" uid="uid://bn4ko56e0pfxo" path="res://assets/sound/sfx/sonar_ping.mp3" id="5_5wfwj"]
 [ext_resource type="Texture2D" uid="uid://dkm3tn1wp4r47" path="res://assets/characters/enemies/popbubblerage.png" id="6_uqimk"]
-[ext_resource type="Texture2D" uid="uid://n1fhxgbi8hk1" path="res://assets/particles/PNG (Black background)/circle_01.png" id="7_5wfwj"]
+[ext_resource type="Texture2D" uid="uid://n1fhxgbi8hk1" path="res://assets/particles/PNG (Transparent)/circle_01 (2).png" id="7_5wfwj"]
 [ext_resource type="AudioStream" uid="uid://b8hxd1awwah3q" path="res://assets/sound/sfx/pop.ogg" id="8_wwa6i"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_adae0"]

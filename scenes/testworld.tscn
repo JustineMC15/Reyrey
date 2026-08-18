@@ -595,7 +595,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
-[node name="WallJump2" type="Area2D" parent="." unique_id=666938940 node_paths=PackedStringArray("prompt_panel")]
+[node name="DashChain" type="Area2D" parent="." unique_id=666938940 node_paths=PackedStringArray("prompt_panel")]
 position = Vector2(2478, -12)
 collision_layer = 4
 collision_mask = 5
@@ -603,16 +603,16 @@ script = ExtResource("2_y0jy5")
 ability_id = "dash_chain"
 prompt_panel = NodePath("ScripturePanel")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="WallJump2" unique_id=649035517]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DashChain" unique_id=649035517]
 position = Vector2(417.39893, -154.59998)
 shape = SubResource("RectangleShape2D_y52uh")
 
-[node name="Sprite2D" type="Sprite2D" parent="WallJump2" unique_id=1256515373]
+[node name="Sprite2D" type="Sprite2D" parent="DashChain" unique_id=1256515373]
 position = Vector2(418.4004, -90.60004)
 scale = Vector2(0.2, 0.2)
 texture = SubResource("CompressedTexture2D_0q2lx")
 
-[node name="ScripturePanel" type="Panel" parent="WallJump2" unique_id=1237108340]
+[node name="ScripturePanel" type="Panel" parent="DashChain" unique_id=1237108340]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -621,7 +621,99 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_m15qw")
 metadata/_edit_use_anchors_ = true
 
-[node name="Label" type="Label" parent="WallJump2/ScripturePanel" unique_id=598472561]
+[node name="Label" type="Label" parent="DashChain/ScripturePanel" unique_id=598472561]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 310.0
+offset_top = -300.0
+offset_right = 525.0
+offset_bottom = -200.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_4ccfe")
+theme_override_font_sizes/font_size = 32
+text = "CLAIM
+E"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Recall" type="Area2D" parent="." unique_id=2078594736 node_paths=PackedStringArray("prompt_panel")]
+position = Vector2(2907, -17)
+collision_layer = 4
+collision_mask = 5
+script = ExtResource("2_y0jy5")
+ability_id = "recall"
+prompt_panel = NodePath("ScripturePanel")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Recall" unique_id=1640059249]
+position = Vector2(417.39893, -154.59998)
+shape = SubResource("RectangleShape2D_y52uh")
+
+[node name="Sprite2D" type="Sprite2D" parent="Recall" unique_id=1773284063]
+position = Vector2(418.4004, -90.60004)
+scale = Vector2(0.2, 0.2)
+texture = SubResource("CompressedTexture2D_0q2lx")
+
+[node name="ScripturePanel" type="Panel" parent="Recall" unique_id=1775151965]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_m15qw")
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="Recall/ScripturePanel" unique_id=2061019656]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 310.0
+offset_top = -300.0
+offset_right = 525.0
+offset_bottom = -200.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_4ccfe")
+theme_override_font_sizes/font_size = 32
+text = "CLAIM
+E"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="LedgeGrab" type="Area2D" parent="." unique_id=1948609648 node_paths=PackedStringArray("prompt_panel")]
+position = Vector2(3219, -9)
+collision_layer = 4
+collision_mask = 5
+script = ExtResource("2_y0jy5")
+ability_id = "ledge_grab"
+prompt_panel = NodePath("ScripturePanel")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LedgeGrab" unique_id=1742724928]
+position = Vector2(417.39893, -154.59998)
+shape = SubResource("RectangleShape2D_y52uh")
+
+[node name="Sprite2D" type="Sprite2D" parent="LedgeGrab" unique_id=2013084257]
+position = Vector2(418.4004, -90.60004)
+scale = Vector2(0.2, 0.2)
+texture = SubResource("CompressedTexture2D_0q2lx")
+
+[node name="ScripturePanel" type="Panel" parent="LedgeGrab" unique_id=634529292]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_m15qw")
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="LedgeGrab/ScripturePanel" unique_id=958009799]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

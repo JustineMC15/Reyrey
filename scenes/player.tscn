@@ -11,7 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://cr36hkh6tfafb" path="res://assets/particles/Fire_Circles/fire_circles_50x50px.png" id="7_f1ej7"]
 [ext_resource type="AudioStream" uid="uid://cyu4xbuh48gsv" path="res://assets/sound/sfx/flame.ogg" id="7_smehm"]
 [ext_resource type="Texture2D" uid="uid://bxf3p27x5o3qs" path="res://assets/characters/player/glide_spritesheet.png" id="8_4ni07"]
-[ext_resource type="Texture2D" uid="uid://d15ikiah2ovr6" path="res://assets/particles/Holy VFX 02/Holy VFX 02.png" id="8_jej6c"]
+[ext_resource type="Texture2D" uid="uid://d15ikiah2ovr6" path="res://assets/particles/Holy VFX/Holy VFX 02.png" id="8_jej6c"]
 [ext_resource type="AudioStream" uid="uid://bjmk088kx5b43" path="res://assets/sound/sfx/Magic Smite.wav" id="9_f1ej7"]
 [ext_resource type="Texture2D" uid="uid://hkiyi8g6ym25" path="res://assets/characters/player/wall_cling_spritesheet.png" id="9_l71n6"]
 [ext_resource type="AudioStream" uid="uid://bf0pdsaqe0bbn" path="res://assets/sound/sfx/sword_sfx.wav" id="9_y4r1p"]
@@ -2566,6 +2566,7 @@ sprite_frames = SubResource("SpriteFrames_5xtsk")
 animation = &"glide"
 
 [node name="WallAnimation" type="AnimatedSprite2D" parent="." unique_id=1351006003]
+visible = false
 position = Vector2(0, -57)
 scale = Vector2(0.61, 0.61)
 sprite_frames = SubResource("SpriteFrames_yqmd8")
