@@ -55,12 +55,16 @@ func _on_start_pressed() -> void:
 
 func _on_slot_picked(slot: int) -> void:
 	SaveManager.current_slot = slot
+
 	if SaveManager.has_save(slot):
 		await SaveManager.load_game(slot)
 	else:
 		GameState.reset_to_defaults()
-		get_tree().change_scene_to_file("res://src/Rooms/room_01-tutorial.tscn")
+		GameState.prepare_new_game()
 
+		get_tree().change_scene_to_file(
+			"res://src/game/game.tscn"
+		)
 
 func _on_settings_pressed() -> void:
 	save_slots.hide()

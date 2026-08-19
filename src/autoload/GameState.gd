@@ -13,6 +13,7 @@ var abilities: Dictionary = {
 	"recall": false,
 	"ledge_grab": false,
 }
+
 var max_health: int = 5
 var max_mp: int = 6
 var current_mp: int = 6
@@ -22,21 +23,31 @@ var current_mp: int = 6
 
 var pending_spawn_gate_id: String = ""
 var _transition_lock: bool = false
+
 var checkpoint_scene_path: String = ""
 var checkpoint_id: String = ""
 var checkpoint_room_name: String = ""
-var checkpoint_activated: bool = false
+
 var activated_checkpoints: Dictionary = {}
+
 var pending_entry_type: int = 0
 var pending_entry_direction: Vector2 = Vector2.RIGHT
 var pending_entry_distance: float = 180.0
 var pending_jump_velocity: Vector2 = Vector2(400.0, -800.0)
 
-# --- Fade overlay, built in code so you don't need a separate scene ---
+
+# --- Fade overlay ---
 
 var _fade_layer: CanvasLayer
 var _fade_rect: ColorRect
+
 const FADE_DURATION := 0.25
+
+
+# --- Game startup ---
+
+var startup_room_path: String = ""
+var startup_checkpoint_id: String = ""
 
 
 # --- Star Shrines ---
@@ -50,7 +61,10 @@ const SHRINE_MP_GAINS: Array[int] = [
 	1, 1, 1, 1, 1,
 	1, 1
 ]
+
+
 # --- Armor ---
+
 var armor_tier: int = 0
 
 var armor_data: Dictionary = {
@@ -60,22 +74,26 @@ var armor_data: Dictionary = {
 	},
 }
 
+
 func increase_armor_tier() -> void:
 	armor_tier += 1
+
 
 func get_armor_data() -> Dictionary:
 	return armor_data.get(armor_tier, armor_data[0])
 
+
 # --- Ability system ---
-# Maps an input action name to what's shown in the inventory tooltip.
+
 var keybind_display: Dictionary = {
 	"jump": "Space",
-	"dash": "Shift",        # confirm against your Input Map
+	"dash": "Shift",
 	"ground_slam": "S / ↓",
 	"glide": "Shift",
-	"recall": "R",          # confirm against your Input Map
+	"recall": "R",
 	"interact": "E",
 }
+
 
 func get_keybind_text(ability_id: String) -> String:
 	var data: Dictionary = ability_data.get(ability_id, {})
@@ -87,72 +105,88 @@ func get_keybind_text(ability_id: String) -> String:
 		return "%s — %s" % [key_label, hint]
 	elif key_label != "":
 		return key_label
+
 	return hint
+
+
 var ability_data: Dictionary = {
 	"double_jump": {
 		"name": "Spark Flame",
 		"tin_text": "Combustion. Whoever wrote this world's laws decided that flame needs something to eat before it's allowed to exist. No exceptions, not even for me. I can stop a heart, I can stop a star, and I still have to feed the fire before it will hold you up. Pathetic economy. Eternity doesn't need to be fed. I checked.",
 		"reynauld_text": "It kicks like a mule and smells like my eyebrows. Effective, though. I've decided not to ask what it's burning. Whatever it is, it isn't coin, and that's the only ingredient I ever worry about running out of.",
 		"Input_action": "jump",
-		"keybind_hint" : "Press again mid-air",
+		"keybind_hint": "Press again mid-air",
 	},
+
 	"dash": {
 		"name": "Holy Lance",
 		"tin_text": "Distance is the world's favorite lie. It insists that two things wanting to be close isn't enough — that wanting has to be spent crossing empty space first, like affection is a toll road. I built through this the same year I built through kingdoms. It still charges me anyway. Some laws don't care how old you are.",
 		"reynauld_text": "It throws me forward faster than my legs would ever agree to. I used to close distance with my own two feet, thank you. Now I let something invisible do it for me and pretend that's dignified. It isn't. It is, however, faster, and I am a practical man.",
 		"Input_action": "dash",
-		"keybind_hint" : "Thrust forward while on the ground or while airborne",
-		},
+		"keybind_hint": "Thrust forward while on the ground or while airborne",
+	},
+
 	"ground_slam": {
 		"name": "Martyr's Drop",
 		"tin_text": "Everything that rises has to come back down. I hate that rule more than any other, because I have tested every exception I could think of and the world simply waited me out. I have stopped stars mid-fall. I have not stopped myself. Apparently that's not how the arrangement works.",
 		"reynauld_text": "They named it after martyrs, which I assume is meant to be poetic. I'd rather it be named after the ground, which is the thing doing all the suffering. I've cracked three shields testing this. I am billing someone. I haven't decided who yet.",
 		"Input_action": "ground_slam",
-		"keybind_hint" : "While airborne",
-		},
+		"keybind_hint": "While airborne",
+	},
+
 	"glide": {
 		"name": "Vigil Wind",
 		"tin_text": "You're allowed to stay up. You are not allowed to stop asking. The moment you let go of the wanting, gravity remembers you exist and collects what it's owed. I used to think that was cruelty. Now I think it might be the only honest law this world has. Nothing stays aloft by accident. Not wind. Not devotion.",
 		"reynauld_text": "I hold the wind the way I hold a vigil — badly, and with my arm going numb halfway through. Still, it's the first time this armor hasn't tried to kill me on the way down. I'll take unnatural mercy over natural consequence any day of the week.",
 		"Input_action": "glide",
-		"keybind_hint" : "Hold while falling",
-		},
+		"keybind_hint": "Hold while falling",
+	},
+
 	"dash_chain": {
 		"name": "Litany Step",
 		"tin_text": "Say a thing enough times and the world decides you've used it up. Chant it, mean it, repeat it — the meaning is supposed to survive the repetition, and instead the world taxes you for each recitation until there's nothing left to say. I have said the same three words for eight hundred years. I would like an exception. I have never once received one.",
 		"reynauld_text": "Every knight drills the same forms until his arms forget how to do anything else. This isn't so different — same step, over and over, until the body stops asking permission. I only wish my knees had been consulted before agreeing to this many repetitions.",
 		"Input_action": "dash",
-		"keybind_hint" : "Chain into a second dash",
-		},
+		"keybind_hint": "Chain into a second dash",
+	},
+
 	"wall_cling": {
 		"name": "Wick Ember",
 		"tin_text": "A wick doesn't get to choose how long it burns. It holds on, it gives light, and the whole time it's being consumed for the privilege. I resent that grip is never free. I resent it more that I understand it — I have held on to things for centuries and called it strength, when it was only ever a slower way of running out.",
 		"reynauld_text": "My gauntlets are earning their keep tonight. Stone does not care for knuckles, and I suspect my knuckles have opinions about stone they've been too polite to share until now. I'll manage. I've held worse things longer for less reason.",
 		"Input_action": "",
-		"keybind_hint" : "Hold toward a wall while airborne",
-		},
+		"keybind_hint": "Hold toward a wall while airborne",
+	},
+
 	"recall": {
 		"name": "Star Anchor",
 		"tin_text": "You don't get to return to what you didn't think to keep. That's the law underneath every star chart, every memory, every fool who assumed the past would wait for them to come back and collect it. I mark my place now. Every time. I learned that lesson the hard way, and I intend to make sure I never learn it again.",
 		"reynauld_text": "It hauls me backward like I'm on a leash I never agreed to wear, and somehow I don't mind it. I know where the mark is because he put it there. I've decided that's reason enough to trust it. I don't extend that courtesy to much else in this world.",
 		"Input_action": "recall",
-		"keybind_hint" : "Press once to place, again to return",
-		},
+		"keybind_hint": "Press once to place, again to return",
+	},
+
 	"ledge_grab": {
 		"name": "Censer Swing",
 		"tin_text": "The world does not catch you by default. That's the part nobody tells you. Every ledge, every fall, every threshold — you either seize it yourself or you don't, and the universe watches without opinion either way. I used to think mercy was rare because people were cruel. It's rarer than that. Mercy isn't even the world's job.",
 		"reynauld_text": "I've been pulled from worse drops by worse hands. This one, at least, is mine — I catch the edge myself, every time, and no one has to come looking for what's left of me at the bottom. Small comfort. I'll take it.",
 		"Input_action": "",
-		"keybind_hint" : "Approach a ledge while falling, Jump to climb",
-		},
+		"keybind_hint": "Approach a ledge while falling, Jump to climb",
+	},
 }
 
+
 signal ability_claimed(ability_id)
+
+
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		if has_checkpoint():
 			SaveManager.save_game(SaveManager.current_slot)
+
 		get_tree().quit()
+
+
 # --- Anvils ---
 
 const ANVIL_HP_GAIN := 1
@@ -175,7 +209,10 @@ func claim_anvil(anvil_id: String, player: Node) -> void:
 	if player:
 		player.max_health = max_health
 		player.health = max_health
-		player.health_changed.emit(player.health, player.max_health)
+		player.health_changed.emit(
+			player.health,
+			player.max_health
+		)
 
 	_transition_lock = true
 
@@ -230,12 +267,35 @@ func _run_anvil_claim_sequence(player: Node) -> void:
 
 		player_glow = create_tween().set_loops()
 
-		player_glow.tween_property(sprite, "modulate", Color(2, 2, 1.4, 1), 0.4)
-		player_glow.tween_property(sprite, "modulate", Color.WHITE, 0.4)
+		player_glow.tween_property(
+			sprite,
+			"modulate",
+			Color(2, 2, 1.4, 1),
+			0.4
+		)
+
+		player_glow.tween_property(
+			sprite,
+			"modulate",
+			Color.WHITE,
+			0.4
+		)
 
 	var fade_in := create_tween()
-	fade_in.tween_property(dim, "color:a", 0.85, 0.4)
-	fade_in.parallel().tween_property(vbox, "modulate:a", 1.0, 0.6)
+
+	fade_in.tween_property(
+		dim,
+		"color:a",
+		0.85,
+		0.4
+	)
+
+	fade_in.parallel().tween_property(
+		vbox,
+		"modulate:a",
+		1.0,
+		0.6
+	)
 
 	await fade_in.finished
 	await get_tree().create_timer(0.2).timeout
@@ -245,24 +305,45 @@ func _run_anvil_claim_sequence(player: Node) -> void:
 
 	if player_glow:
 		player_glow.kill()
+
 		if player.has_node("AnimatedSprite2D"):
 			player.get_node("AnimatedSprite2D").modulate = Color.WHITE
 
 	var fade_out := create_tween()
-	fade_out.tween_property(dim, "color:a", 0.0, 0.3)
-	fade_out.parallel().tween_property(vbox, "modulate:a", 0.0, 0.3)
+
+	fade_out.tween_property(
+		dim,
+		"color:a",
+		0.0,
+		0.3
+	)
+
+	fade_out.parallel().tween_property(
+		vbox,
+		"modulate:a",
+		0.0,
+		0.3
+	)
 
 	await fade_out.finished
+
 	layer.queue_free()
+
+
 # --- Star Shrines ---
 
 func is_shrine_claimed(shrine_id: String) -> bool:
 	return claimed_shrines.has(shrine_id)
 
 
-func claim_shrine(shrine_id: String, player: Node, abandonment_text: String) -> void:
+func claim_shrine(
+	shrine_id: String,
+	player: Node,
+	abandonment_text: String
+) -> void:
 	if is_shrine_claimed(shrine_id):
 		return
+
 	if shrine_count >= SHRINE_MP_GAINS.size():
 		return
 
@@ -271,26 +352,19 @@ func claim_shrine(shrine_id: String, player: Node, abandonment_text: String) -> 
 		"order": shrine_count
 	}
 
-
 	var gain := SHRINE_MP_GAINS[shrine_count]
 	shrine_count += 1
 
-	# Permanently increase maximum MP.
 	max_mp += gain
-
-	# Star Shrines fully restore MP.
 	current_mp = max_mp
 
-	print("SHRINE CLAIMED: ", shrine_id)
-	print("MP GAIN: ", gain)
-	print("GAMESTATE MAX MP: ", max_mp)
-	print("GAMESTATE CURRENT MP: ", current_mp)
-
-	# Apply the new maximum AND restore MP to full.
 	if player:
 		player.max_mp = max_mp
 		player.mp = current_mp
-		player.mp_changed.emit(player.mp, player.max_mp)
+		player.mp_changed.emit(
+			player.mp,
+			player.max_mp
+		)
 
 	_transition_lock = true
 
@@ -318,14 +392,12 @@ func _run_shrine_claim_sequence(
 	layer.layer = 90
 	add_child(layer)
 
-	# Dark overlay
 	var dim := ColorRect.new()
 	dim.color = Color(0, 0, 0, 0)
 	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
 	dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	layer.add_child(dim)
 
-	# Center everything
 	var center := CenterContainer.new()
 	center.set_anchors_preset(Control.PRESET_FULL_RECT)
 	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -336,28 +408,24 @@ func _run_shrine_claim_sequence(
 	vbox.add_theme_constant_override("separation", 14)
 	center.add_child(vbox)
 
-	# Main shrine text
 	var title := Label.new()
 	title.text = abandonment_text
 	title.add_theme_font_size_override("font_size", 36)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(title)
 
-	# MP increase text
 	var gain_text := Label.new()
 	gain_text.text = "Maximum MP increased by " + str(gain)
 	gain_text.add_theme_font_size_override("font_size", 24)
 	gain_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(gain_text)
 
-	# Continue prompt
 	var prompt := Label.new()
 	prompt.text = "Press Enter / Space to continue"
 	prompt.modulate.a = 0.6
 	prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(prompt)
 
-	# Player glow
 	var player_glow: Tween
 
 	if player and player.has_node("AnimatedSprite2D"):
@@ -379,7 +447,6 @@ func _run_shrine_claim_sequence(
 			0.4
 		)
 
-	# Fade in
 	var fade_in := create_tween()
 
 	fade_in.tween_property(
@@ -398,23 +465,17 @@ func _run_shrine_claim_sequence(
 
 	await fade_in.finished
 
-	# Prevent the same E/Enter press from instantly closing it
 	await get_tree().create_timer(0.2).timeout
 
-	# Wait for Enter or Space
-	while not (
-		Input.is_action_just_pressed("ui_accept")
-	):
+	while not Input.is_action_just_pressed("ui_accept"):
 		await get_tree().process_frame
 
-	# Stop player glow
 	if player_glow:
 		player_glow.kill()
 
 		if player.has_node("AnimatedSprite2D"):
 			player.get_node("AnimatedSprite2D").modulate = Color.WHITE
 
-	# Fade out
 	var fade_out := create_tween()
 
 	fade_out.tween_property(
@@ -459,7 +520,11 @@ func claim_ability(
 	if player and player.has_method("lock_input"):
 		player.lock_input()
 
-	_run_claim_sequence(ability_id, player, icon)
+	_run_claim_sequence(
+		ability_id,
+		player,
+		icon
+	)
 
 
 func _run_claim_sequence(
@@ -467,7 +532,10 @@ func _run_claim_sequence(
 	player: Node,
 	icon: Texture2D
 ) -> void:
-	var data: Dictionary = ability_data.get(ability_id, {})
+	var data: Dictionary = ability_data.get(
+		ability_id,
+		{}
+	)
 
 	var layer := CanvasLayer.new()
 	layer.layer = 90
@@ -498,6 +566,7 @@ func _run_claim_sequence(
 		vbox.add_child(icon_rect)
 
 		var pulse := create_tween().set_loops()
+
 		pulse.tween_property(
 			icon_rect,
 			"scale",
@@ -513,8 +582,16 @@ func _run_claim_sequence(
 		)
 
 	var title := Label.new()
-	title.text = data.get("name", ability_id.capitalize()) + " Claimed"
-	title.add_theme_font_size_override("font_size", 36)
+	title.text = data.get(
+		"name",
+		ability_id.capitalize()
+	) + " Claimed"
+
+	title.add_theme_font_size_override(
+		"font_size",
+		36
+	)
+
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(title)
 
@@ -533,7 +610,6 @@ func _run_claim_sequence(
 	prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(prompt)
 
-	# Charge pulse on the player sprite while the ceremony plays
 	var player_glow: Tween
 
 	if player and player.has_node("AnimatedSprite2D"):
@@ -633,7 +709,6 @@ func clear_checkpoint() -> void:
 	checkpoint_scene_path = ""
 	checkpoint_id = ""
 	checkpoint_room_name = ""
-	checkpoint_activated = false
 
 
 func respawn_player() -> void:
@@ -643,16 +718,72 @@ func respawn_player() -> void:
 	_transition_lock = true
 
 	if not has_checkpoint():
-		print("NO CHECKPOINT - RELOADING CURRENT ROOM")
-		_fade_out_and_reload_current_scene()
+		await _fade_out_and_reload_current_scene()
+
+		_transition_lock = false
 		return
 
-	print("RESPAWNING")
-	print("Scene: ", checkpoint_scene_path)
-	print("Checkpoint: ", checkpoint_id)
+	var fade_out := create_tween()
 
-	pending_spawn_gate_id = ""
-	_fade_out_and_load(checkpoint_scene_path)
+	fade_out.tween_property(
+		_fade_rect,
+		"color:a",
+		1.0,
+		FADE_DURATION
+	)
+
+	await fade_out.finished
+
+	var games := get_tree().get_nodes_in_group("game")
+
+	if games.is_empty():
+		push_error(
+			"GameState: Game instance not found during respawn."
+		)
+
+		_transition_lock = false
+		return
+
+	var game = games[0]
+
+	if not game.has_method("load_room"):
+		push_error(
+			"GameState: Game cannot load rooms during respawn."
+		)
+
+		_transition_lock = false
+		return
+
+	await game.load_room(checkpoint_scene_path)
+
+	if game.has_method("position_player_at_checkpoint"):
+		await game.position_player_at_checkpoint(checkpoint_id)
+
+	var players := get_tree().get_nodes_in_group("player")
+
+	if not players.is_empty():
+		var player = players[0]
+
+		if player.has_method("reset_after_death"):
+			player.reset_after_death()
+
+		await get_tree().physics_frame
+
+		if player.has_method("enable_world_interaction"):
+			player.enable_world_interaction()
+
+	var fade_in := create_tween()
+
+	fade_in.tween_property(
+		_fade_rect,
+		"color:a",
+		0.0,
+		FADE_DURATION
+	)
+
+	await fade_in.finished
+
+	_transition_lock = false
 
 
 func rest_at_checkpoint() -> void:
@@ -665,32 +796,42 @@ func rest_at_checkpoint() -> void:
 		_transition_lock = false
 		return
 
-	print("RESTING AT CHECKPOINT: ", checkpoint_id)
+	var fade_out := create_tween()
 
-	# Fade out
-	var tween := create_tween()
-
-	tween.tween_property(
+	fade_out.tween_property(
 		_fade_rect,
 		"color:a",
 		0.75,
-		0.25
+		FADE_DURATION
 	)
 
-	await tween.finished
+	await fade_out.finished
 
-	# Reload the checkpoint room.
-	get_tree().change_scene_to_file(checkpoint_scene_path)
+	var games := get_tree().get_nodes_in_group("game")
 
-	# Wait for the new scene and Player to initialize.
-	await get_tree().process_frame
-	await get_tree().process_frame
+	if games.is_empty():
+		push_error(
+			"GameState: Game instance not found during rest."
+		)
 
-	# Put the new player at the checkpoint.
-	pending_spawn_gate_id = ""
-	_position_player_at_checkpoint()
+		_transition_lock = false
+		return
 
-	# Restore HP/MP on the NEW player.
+	var game = games[0]
+
+	if not game.has_method("load_room"):
+		push_error(
+			"GameState: Game cannot load rooms."
+		)
+
+		_transition_lock = false
+		return
+
+	await game.load_room(checkpoint_scene_path)
+
+	if game.has_method("position_player_at_checkpoint"):
+		await game.position_player_at_checkpoint(checkpoint_id)
+
 	var players := get_tree().get_nodes_in_group("player")
 
 	if not players.is_empty():
@@ -698,14 +839,16 @@ func rest_at_checkpoint() -> void:
 
 		if player.has_method("restore_full_health"):
 			player.restore_full_health()
+
 		if player.has_method("restore_full_mp"):
 			player.restore_full_mp()
+
 		if player.has_method("restore_full_stamina"):
 			player.restore_full_stamina()
+
 		if player.has_method("unlock_input"):
 			player.unlock_input()
 
-	# Fade back in.
 	var fade_in := create_tween()
 
 	fade_in.tween_property(
@@ -736,6 +879,20 @@ func is_checkpoint_activated(
 	return activated_checkpoints.has(key)
 
 
+func prepare_new_game() -> void:
+	startup_room_path = "res://src/Rooms/room_01-tutorial.tscn"
+	startup_checkpoint_id = ""
+
+
+func prepare_loaded_game() -> void:
+	startup_room_path = checkpoint_scene_path
+	startup_checkpoint_id = checkpoint_id
+
+	if startup_room_path == "":
+		startup_room_path = "res://src/Rooms/room_01-tutorial.tscn"
+		startup_checkpoint_id = ""
+
+
 # --- Room transition ---
 
 func can_trigger_gate() -> bool:
@@ -761,11 +918,12 @@ func go_to_room(
 	pending_entry_distance = entry_distance
 	pending_jump_velocity = jump_velocity
 
-	_fade_out_and_load(target_scene_path)
+	await _fade_out_and_load(target_scene_path)
 
 
 func _fade_out_and_load(target_scene_path: String) -> void:
 	var tween := create_tween()
+
 	tween.tween_property(
 		_fade_rect,
 		"color:a",
@@ -775,23 +933,34 @@ func _fade_out_and_load(target_scene_path: String) -> void:
 
 	await tween.finished
 
-	get_tree().change_scene_to_file(target_scene_path)
+	var games := get_tree().get_nodes_in_group("game")
 
-	await get_tree().process_frame
-	await get_tree().process_frame
+	if games.is_empty():
+		push_error("GameState: No Game instance found.")
+		_transition_lock = false
+		return
+
+	var game := games[0]
+
+	if not game.has_method("load_room"):
+		push_error(
+			"GameState: Game instance has no load_room() method."
+		)
+
+		_transition_lock = false
+		return
+
+	await game.load_room(target_scene_path)
 
 	_on_new_room_ready()
 
 
 func _on_new_room_ready() -> void:
 	if pending_spawn_gate_id != "":
-		_position_player_at_gate()
+		await _position_player_at_gate()
 		return
 
-	if checkpoint_id != "":
-		_position_player_at_checkpoint()
-
-	_fade_in()
+	await _fade_in()
 
 
 func _position_player_at_gate() -> void:
@@ -802,34 +971,39 @@ func _position_player_at_gate() -> void:
 	var gates := get_tree().get_nodes_in_group("gates")
 
 	if players.is_empty():
-		print("TRANSITION ERROR: No player found")
+		push_error("GameState: No player found during room transition.")
 		return
 
 	var player = players[0]
 
 	for gate in gates:
-		if gate.gate_id == pending_spawn_gate_id:
+		if gate.gate_id != pending_spawn_gate_id:
+			continue
 
-			player.global_position = gate.global_position
+		player.global_position = gate.global_position
+		player.velocity = Vector2.ZERO
 
-			# Stop any movement inherited from the previous room.
-			player.velocity = Vector2.ZERO
+		print(
+			"TRANSITION SPAWN: ",
+			gate.gate_id,
+			" at ",
+			gate.global_position
+		)
 
-			# Disable player control.
-			if player.has_method("lock_input"):
-				player.lock_input()
+		if player.has_method("lock_input"):
+			player.lock_input()
 
-			pending_spawn_gate_id = ""
+		pending_spawn_gate_id = ""
 
-			# Start the entry animation.
-			_start_room_entry(player)
+		await _start_room_entry(player)
+		return
 
-			return
-
-	print("TRANSITION ERROR: Gate ID not found: ", pending_spawn_gate_id)
+	push_error(
+		"GameState: Destination gate not found: "
+		+ pending_spawn_gate_id
+	)
 
 func _start_room_entry(player: Node) -> void:
-	# Fade into the new room first.
 	var fade_tween := create_tween()
 
 	fade_tween.tween_property(
@@ -852,12 +1026,17 @@ func _start_room_entry(player: Node) -> void:
 		1:
 			await _jump_into_room(player)
 
-	# Give control back.
+		2:
+			# Door/interact transition.
+			# Player stays exactly at the target gate.
+			pass
+
 	if is_instance_valid(player):
 		if player.has_method("unlock_input"):
 			player.unlock_input()
 
 	_transition_lock = false
+
 func _walk_into_room(player: Node) -> void:
 	var start_position: Vector2 = player.global_position
 
@@ -868,15 +1047,20 @@ func _walk_into_room(player: Node) -> void:
 
 	direction = direction.normalized()
 
-	var target_position: Vector2 = start_position + direction * pending_entry_distance
+	var target_position: Vector2 = (
+		start_position
+		+ direction * pending_entry_distance
+	)
 
-	var distance: float = start_position.distance_to(target_position)
+	var distance: float = start_position.distance_to(
+		target_position
+	)
 
 	var walk_speed: float = 300.0
 	var duration: float = distance / walk_speed
 
-	if player.has_method("set_facing_direction"):
-		player.set_facing_direction(sign(direction.x))
+	if player.has_method("start_transition_walk"):
+		player.start_transition_walk(sign(direction.x))
 
 	if player.has_method("lock_input"):
 		player.lock_input()
@@ -891,18 +1075,19 @@ func _walk_into_room(player: Node) -> void:
 	).set_trans(Tween.TRANS_LINEAR)
 
 	await tween.finished
+
+	if player.has_method("stop_transition_walk"):
+		player.stop_transition_walk()
+
+
 func _jump_into_room(player: Node) -> void:
 	if not player.has_method("lock_input"):
 		return
 
 	player.lock_input()
 
-	# Give the player the initial jump velocity.
 	player.velocity = pending_jump_velocity
 
-	# Let the player's normal physics take over.
-	#
-	# We wait until the player has landed.
 	var safety_timer := 3.0
 
 	while safety_timer > 0.0:
@@ -911,58 +1096,69 @@ func _jump_into_room(player: Node) -> void:
 		if not is_instance_valid(player):
 			return
 
-		# A CharacterBody2D can tell us when it is on the floor.
 		if player is CharacterBody2D:
 			if player.is_on_floor() and safety_timer < 2.8:
 				break
 
 		await get_tree().process_frame
-func _position_player_at_checkpoint() -> void:
-	var players := get_tree().get_nodes_in_group("player")
-	var checkpoints := get_tree().get_nodes_in_group("checkpoints")
-
-	if players.is_empty():
-		print("RESPAWN ERROR: No player found")
-		return
-
-	if checkpoints.is_empty():
-		print("RESPAWN ERROR: No checkpoints found")
-		return
-
-	var player = players[0]
-
-	for checkpoint in checkpoints:
-		if checkpoint.checkpoint_id == checkpoint_id:
-			print("RESPAWNING AT CHECKPOINT: ", checkpoint_id)
-
-			var camera = player.get_node_or_null("Camera2D")
-
-			if camera:
-				camera.position_smoothing_enabled = false
-
-			player.global_position = checkpoint.global_position + Vector2(0, 70)
-
-			if camera:
-				camera.reset_smoothing()
-				camera.position_smoothing_enabled = true
-
-			return
-
-	print("RESPAWN ERROR: Checkpoint ID not found: ", checkpoint_id)
 
 
 func _fade_out_and_reload_current_scene() -> void:
-	var current_scene := get_tree().current_scene
+	var games := get_tree().get_nodes_in_group("game")
 
-	if current_scene == null:
+	if games.is_empty():
 		_transition_lock = false
 		return
 
-	_fade_out_and_load(current_scene.scene_file_path)
+	var game = games[0]
+
+	if not game.has_method("get_current_room_scene_path"):
+		push_error(
+			"GameState: Game cannot provide current room path."
+		)
+
+		_transition_lock = false
+		return
+
+	var room_path: String = game.get_current_room_scene_path()
+
+	if room_path == "":
+		_transition_lock = false
+		return
+
+	var fade_out := create_tween()
+
+	fade_out.tween_property(
+		_fade_rect,
+		"color:a",
+		1.0,
+		FADE_DURATION
+	)
+
+	await fade_out.finished
+
+	await game.load_room(room_path)
+
+	if game.has_method("position_player_at_start"):
+		await game.position_player_at_start()
+
+	var fade_in := create_tween()
+
+	fade_in.tween_property(
+		_fade_rect,
+		"color:a",
+		0.0,
+		FADE_DURATION
+	)
+
+	await fade_in.finished
+
+	_transition_lock = false
 
 
 func _fade_in() -> void:
 	var tween := create_tween()
+
 	tween.tween_property(
 		_fade_rect,
 		"color:a",
@@ -975,34 +1171,7 @@ func _fade_in() -> void:
 	_transition_lock = false
 
 
-func rest_fade() -> void:
-	var fade_out := create_tween()
-
-	fade_out.tween_property(
-		_fade_rect,
-		"color:a",
-		0.75,
-		0.25
-	)
-
-	await fade_out.finished
-
-	# Small pause while the player "rests"
-	await get_tree().create_timer(0.15).timeout
-
-	var fade_in := create_tween()
-
-	fade_in.tween_property(
-		_fade_rect,
-		"color:a",
-		0.0,
-		0.35
-	)
-
-	await fade_in.finished
-
-
-# --- Fade overlay, built in code so you don't need a separate scene ---
+# --- Fade overlay ---
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -1020,6 +1189,9 @@ func _build_fade_overlay() -> void:
 	_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_fade_layer.add_child(_fade_rect)
 
+
+# --- Save system ---
+
 func get_save_data() -> Dictionary:
 	return {
 		"abilities": abilities.duplicate(),
@@ -1034,6 +1206,7 @@ func get_save_data() -> Dictionary:
 		"checkpoint_room_name": checkpoint_room_name,
 	}
 
+
 func apply_save_data(data: Dictionary) -> void:
 	abilities = data.get("abilities", abilities)
 	max_mp = data.get("max_mp", max_mp)
@@ -1047,27 +1220,48 @@ func apply_save_data(data: Dictionary) -> void:
 	checkpoint_id = data.get("checkpoint_id", "")
 	checkpoint_room_name = data.get("checkpoint_room_name", "")
 
+
 func reset_to_defaults() -> void:
 	for key in abilities.keys():
 		abilities[key] = false
+
 	max_mp = 6
 	current_mp = 6
 	max_health = 5
+
 	shrine_count = 0
+
 	claimed_anvils.clear()
 	claimed_shrines.clear()
 	activated_checkpoints.clear()
+
 	checkpoint_scene_path = ""
 	checkpoint_id = ""
 	checkpoint_room_name = ""
-	checkpoint_activated = false
+
 
 func load_from_save(scene_path: String) -> void:
 	if scene_path == "":
-		get_tree().change_scene_to_file("res://scenes/Rooms/room_01-tutorial.tscn")
+		scene_path = "res://src/Rooms/room_01-tutorial.tscn"
+
+	var games := get_tree().get_nodes_in_group("game")
+
+	if games.is_empty():
+		push_error(
+			"GameState: Game instance not found during save load."
+		)
 		return
 
-	get_tree().change_scene_to_file(scene_path)
-	await get_tree().process_frame
-	await get_tree().process_frame
-	_position_player_at_checkpoint()
+	var game = games[0]
+
+	if not game.has_method("load_room"):
+		push_error(
+			"GameState: Game instance cannot load rooms."
+		)
+		return
+
+	await game.load_room(scene_path)
+
+	if checkpoint_id != "" \
+	and game.has_method("position_player_at_checkpoint"):
+		await game.position_player_at_checkpoint(checkpoint_id)

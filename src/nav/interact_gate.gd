@@ -49,4 +49,8 @@ func _process(_delta: float) -> void:
 	if player_inside and GameState.can_trigger_gate() and Input.is_action_just_pressed("interact"):
 		_hide_prompt()
 		player_inside = false
-		GameState.go_to_room(target_scene_path, target_gate_id)
+		GameState.go_to_room(
+		target_scene_path,
+		target_gate_id,
+		TransitionGate.EntryType.INSTANT
+	)

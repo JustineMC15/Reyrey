@@ -10,7 +10,6 @@
 [ext_resource type="TileSet" uid="uid://cm1ylf07s3t6y" path="res://assets/environment/tiles/terrain.tres" id="11_8eylq"]
 [ext_resource type="Texture2D" uid="uid://diwmqox7qwm8b" path="res://assets/environment/Texture/scripture.png" id="12_6e5d3"]
 [ext_resource type="FontFile" uid="uid://dlinrvj4uxc6w" path="res://assets/fonts/Seshat.otf" id="15_4ht1o"]
-[ext_resource type="PackedScene" uid="uid://c1xyel26uy0by" path="res://src/player/player.tscn" id="21_vshm5"]
 [ext_resource type="Script" uid="uid://de4weqecqrqsr" path="res://src/player/jump_tutorial_trigger.gd" id="22_pf002"]
 [ext_resource type="Script" uid="uid://c6odu6vkdrff5" path="res://src/player/attack_tutorial_trigger.gd" id="23_oc2b2"]
 [ext_resource type="PackedScene" uid="uid://diltgvys34sar" path="res://src/player/tutorial_ui.tscn" id="24_28do2"]
@@ -1455,6 +1454,9 @@ script = ExtResource("28_t0mjk")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="InstaKillzone" unique_id=830686980]
 shape = SubResource("WorldBoundaryShape2D_bekt7")
 
+[node name="PlayerSpawn" type="Marker2D" parent="InstaKillzone/CollisionShape2D" unique_id=742917805 groups=["player_spawn"]]
+position = Vector2(-52, -2)
+
 [node name="CollisionShape2DSpikes" type="CollisionShape2D" parent="InstaKillzone" unique_id=508402056]
 position = Vector2(7037, -86)
 shape = SubResource("RectangleShape2D_8jhjc")
@@ -1511,6 +1513,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Transition" type="Area2D" parent="." unique_id=349824578]
+position = Vector2(11810, -3)
 collision_layer = 4
 collision_mask = 5
 script = ExtResource("26_gsv8k")
@@ -1519,7 +1522,7 @@ target_scene_path = "uid://d0rflcm7v2noo"
 target_gate_id = "room2_entry"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Transition" unique_id=375727849]
-position = Vector2(12109, -101)
+position = Vector2(243, -98)
 shape = SubResource("RectangleShape2D_ncv88")
 
 [node name="ShrineDoor" parent="." unique_id=1013456222 instance=ExtResource("30_hija1")]
@@ -1530,7 +1533,6 @@ target_scene_path = "res://src/Rooms/shrine_01.tscn"
 
 [node name="Checkpoint" parent="." unique_id=1046499597 instance=ExtResource("10_lmwtt")]
 position = Vector2(6335, -49)
-checkpoint_id = null
 room_name = "room_01-tutorial"
 
 [node name="Enemies" type="Node2D" parent="." unique_id=1385211161]
@@ -1559,15 +1561,7 @@ movement_type = 2
 movement_distance = 100.0
 movement_speed = 2.5
 
-[node name="Player" parent="." unique_id=1560496528 instance=ExtResource("21_vshm5")]
-
-[node name="Camera2D" parent="Player" index="13" unique_id=1719968446]
-limit_enabled = true
-limit_left = -910
-limit_top = -1753
-limit_right = 12460
-limit_bottom = 408
+[node name="PlayerSpawn" type="Marker2D" parent="." unique_id=418454439 groups=["player_spawn"]]
+position = Vector2(-52, -2)
 
 [connection signal="body_entered" from="InstaKillzone" to="InstaKillzone" method="_on_body_entered"]
-
-[editable path="Player"]

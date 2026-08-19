@@ -835,10 +835,6 @@ animations = [{
 radius = 19.0
 height = 126.0
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ncv88"]
-radius = 19.0
-height = 105.0
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hdxto"]
 size = Vector2(100, 100)
 
@@ -2712,7 +2708,7 @@ show_percentage = false
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1002438515]
 position = Vector2(0, -65)
 sprite_frames = SubResource("SpriteFrames_vlew8")
-animation = &"idle"
+animation = &"jump"
 autoplay = "idle"
 
 [node name="DashAnimation" type="AnimatedSprite2D" parent="." unique_id=562835615]
@@ -2742,10 +2738,6 @@ frame_progress = 0.73147804
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1671341477]
 position = Vector2(0, -63)
 shape = SubResource("CapsuleShape2D_8jhjc")
-
-[node name="AirCollisionShape2D" type="CollisionShape2D" parent="." unique_id=1578958998]
-position = Vector2(0, -69)
-shape = SubResource("CapsuleShape2D_ncv88")
 
 [node name="DetectionArea" type="Area2D" parent="." unique_id=1512649415 groups=["player_detection"]]
 collision_layer = 4

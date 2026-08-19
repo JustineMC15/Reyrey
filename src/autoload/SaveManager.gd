@@ -32,18 +32,28 @@ func load_game(slot: int) -> void:
 		return
 
 	var file := FileAccess.open(_slot_path(slot), FileAccess.READ)
+
+	if file == null:
+		push_error("SaveManager: failed to open slot %d" % slot)
+		return
+
 	var text := file.get_as_text()
 	file.close()
 
 	var parsed = JSON.parse_string(text)
+
 	if typeof(parsed) != TYPE_DICTIONARY:
 		push_error("SaveManager: slot %d is corrupt" % slot)
 		return
 
 	current_slot = slot
-	GameState.apply_save_data(parsed)
-	await GameState.load_from_save(parsed.get("checkpoint_scene_path", ""))
 
+	GameState.apply_save_data(parsed)
+	GameState.prepare_loaded_game()
+
+	get_tree().change_scene_to_file(
+		"res://src/game/game.tscn"
+	)
 func delete_save(slot: int) -> void:
 	if has_save(slot):
 		DirAccess.remove_absolute(_slot_path(slot))

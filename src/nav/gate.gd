@@ -3,7 +3,8 @@ class_name TransitionGate
 
 enum EntryType {
 	WALK,
-	JUMP
+	JUMP,
+	INSTANT
 }
 
 @export var gate_id: String = ""
@@ -23,15 +24,29 @@ func _ready() -> void:
 
 
 func _on_area_entered(area: Area2D) -> void:
+	if not area.is_in_group("player_detection"):
+		return
+
 	if not GameState.can_trigger_gate():
 		return
 
-	if area.is_in_group("player_detection"):
-		GameState.go_to_room(
-			target_scene_path,
-			target_gate_id,
-			entry_type,
-			entry_direction,
-			entry_distance,
-			jump_velocity
+	if target_scene_path == "":
+		push_error(
+			"TransitionGate '%s' has no target scene." % gate_id
 		)
+		return
+
+	if target_gate_id == "":
+		push_error(
+			"TransitionGate '%s' has no target gate ID." % gate_id
+		)
+		return
+
+	GameState.go_to_room(
+		target_scene_path,
+		target_gate_id,
+		entry_type,
+		entry_direction,
+		entry_distance,
+		jump_velocity
+	)

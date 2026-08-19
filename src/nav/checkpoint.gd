@@ -25,16 +25,20 @@ func _ready() -> void:
 
 	touch_effect.animation_finished.connect(_on_touch_effect_finished)
 
-	var scene_path := get_tree().current_scene.scene_file_path
+	var scene_path := _get_current_room_path()
 
 	# Restore whether this checkpoint has previously been activated.
-	if GameState.is_checkpoint_activated(scene_path, checkpoint_id):
-		activated = true
-		sprite.modulate = Color(1.2, 1.2, 1.0, 1.0)
+	if scene_path != "":
+		if GameState.is_checkpoint_activated(scene_path, checkpoint_id):
+			activated = true
+			sprite.modulate = Color(1.2, 1.2, 1.0, 1.0)
+
 	# Restore activated state after respawning/reloading the room.
-	if GameState.has_checkpoint() and GameState.checkpoint_id == checkpoint_id:
+	if GameState.has_checkpoint() \
+	and GameState.checkpoint_id == checkpoint_id:
 		activated = true
 		sprite.modulate = Color(1.2, 1.2, 1.0, 1.0)
+
 
 func _process(_delta: float) -> void:
 	if player_inside and activated:
@@ -67,22 +71,41 @@ func _on_area_exited(area_exited: Area2D) -> void:
 
 
 func activate(player: Node) -> void:
-	var scene_path := get_tree().current_scene.scene_file_path
+	var scene_path := _get_current_room_path()
 
-	# Already activated before?
-	if GameState.is_checkpoint_activated(scene_path, checkpoint_id):
+	if scene_path == "":
+		return
+
+	var key := scene_path + "/" + checkpoint_id
+
+	print("CHECKPOINT DEBUG")
+	print("Scene path: ", scene_path)
+	print("Checkpoint ID: ", checkpoint_id)
+	print("Key: ", key)
+	print("Activated dictionary: ", GameState.activated_checkpoints)
+	print(
+		"Already activated? ",
+		GameState.is_checkpoint_activated(
+			scene_path,
+			checkpoint_id
+		)
+	)
+
+	if GameState.is_checkpoint_activated(
+		scene_path,
+		checkpoint_id
+	):
 		activated = true
+		print("CHECKPOINT ALREADY ACTIVATED")
 		return
 
 	activated = true
 
-	# Permanently mark this checkpoint as discovered.
 	GameState.activate_checkpoint(
 		scene_path,
 		checkpoint_id
 	)
 
-	# Make this the current spawnpoint.
 	GameState.set_checkpoint(
 		scene_path,
 		checkpoint_id,
@@ -91,16 +114,13 @@ func activate(player: Node) -> void:
 
 	heal_player(player)
 
-	# Touch effects ONLY happen the first time.
 	touch_sound.play()
 	touch_effect.visible = true
 	touch_effect.play("touch")
 
-	# Activated visual
 	sprite.modulate = Color(1.2, 1.2, 1.0, 1.0)
 
 	print("CHECKPOINT ACTIVATED: ", checkpoint_id)
-
 func rest() -> void:
 	if not player_inside:
 		return
@@ -112,14 +132,19 @@ func rest() -> void:
 
 	var player = players[0]
 
-	# Prevent movement/input during the rest transition.
 	player.lock_input()
 
 	_hide_rest_prompt()
 
+	var scene_path := _get_current_room_path()
+
+	if scene_path == "":
+		player.unlock_input()
+		return
+
 	# Make sure this checkpoint remains the spawn point.
 	GameState.set_checkpoint(
-		get_tree().current_scene.scene_file_path,
+		scene_path,
 		checkpoint_id,
 		room_name
 	)
@@ -129,9 +154,24 @@ func rest() -> void:
 	# Reload the room.
 	await GameState.rest_at_checkpoint()
 
-	# Player was recreated, so don't try to unlock the old player.
-	await GameState.rest_at_checkpoint()
 	SaveManager.save_game(SaveManager.current_slot)
+
+
+func _get_current_room_path() -> String:
+	var games := get_tree().get_nodes_in_group("game")
+
+	if games.is_empty():
+		push_error("Checkpoint: Game instance not found.")
+		return ""
+
+	var game := games[0]
+
+	if not game.has_method("get_current_room_scene_path"):
+		push_error("Checkpoint: Game has no get_current_room_scene_path().")
+		return ""
+
+	return game.get_current_room_scene_path()
+
 
 func heal_player(player: Node) -> void:
 	if player.has_method("restore_full_health"):
@@ -167,6 +207,8 @@ func _hide_rest_prompt() -> void:
 		0.0,
 		0.15
 	)
+
+
 func _on_touch_effect_finished() -> void:
 	if touch_effect.animation == "touch":
 		touch_effect.visible = false
