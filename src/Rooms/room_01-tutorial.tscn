@@ -1515,7 +1515,7 @@ collision_layer = 4
 collision_mask = 5
 script = ExtResource("26_gsv8k")
 gate_id = "tutorial_exit"
-target_scene_path = "res://src/Rooms/room_02-level1.tscn"
+target_scene_path = "uid://d0rflcm7v2noo"
 target_gate_id = "room2_entry"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Transition" unique_id=375727849]

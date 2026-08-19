@@ -1,12 +1,13 @@
 [gd_scene format=3 uid="uid://chjitcrkdukgx"]
 
 [ext_resource type="Script" uid="uid://dn21ftclh3375" path="res://src/nav/pause_menu.gd" id="1_rj4ec"]
-[ext_resource type="FontFile" uid="uid://dbakhsfowc28k" path="res://assets/fonts/durendalandoliphantregular-lvwl4.ttf" id="2_2gh3l"]
 
 [node name="PauseMenu" type="CanvasLayer" unique_id=2144104241]
+layer = 99
 script = ExtResource("1_rj4ec")
 
 [node name="RootPanel" type="Control" parent="." unique_id=827692744]
+visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,40 +20,43 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 26.0
-offset_top = 24.0
-offset_right = -26.0
-offset_bottom = -24.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.050708726, 0.050708726, 0.050708726, 0.8)
+mouse_filter = 2
+color = Color(0, 0, 0, 0.6)
 
 [node name="VBox" type="VBoxContainer" parent="RootPanel" unique_id=1478322670]
-propagate_maximum_size = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -277.5
-offset_top = -164.75
-offset_right = 277.5
-offset_bottom = 164.75
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="RootPanel/VBox" unique_id=1234567890]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "PAUSED"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="RootPanel/VBox" unique_id=1234567891]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
 
 [node name="Resume" type="Button" parent="RootPanel/VBox" unique_id=1849573184]
+custom_minimum_size = Vector2(240, 0)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_2gh3l")
 text = "Resume"
 
 [node name="SaveAndExitToMenu" type="Button" parent="RootPanel/VBox" unique_id=1029582544]
+custom_minimum_size = Vector2(240, 0)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_2gh3l")
-text = "Save And Exit To Menu "
+text = "Save And Exit To Menu"
 
 [node name="SaveAndQuit" type="Button" parent="RootPanel/VBox" unique_id=1414303509]
+custom_minimum_size = Vector2(240, 0)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_2gh3l")
-text = "Save and Quit "
+text = "Save And Quit"

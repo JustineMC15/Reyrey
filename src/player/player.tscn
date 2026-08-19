@@ -2888,3 +2888,5 @@ animation = &"impact"
 stream = ExtResource("25_rdcjo")
 volume_db = 8.0
 pitch_scale = 0.3
+
+[node name="Node2D" type="Node2D" parent="." unique_id=1614538885]

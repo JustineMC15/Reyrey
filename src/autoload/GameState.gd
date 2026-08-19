@@ -27,7 +27,10 @@ var checkpoint_id: String = ""
 var checkpoint_room_name: String = ""
 var checkpoint_activated: bool = false
 var activated_checkpoints: Dictionary = {}
-
+var pending_entry_type: int = 0
+var pending_entry_direction: Vector2 = Vector2.RIGHT
+var pending_entry_distance: float = 180.0
+var pending_jump_velocity: Vector2 = Vector2(400.0, -800.0)
 
 # --- Fade overlay, built in code so you don't need a separate scene ---
 
@@ -741,13 +744,23 @@ func can_trigger_gate() -> bool:
 
 func go_to_room(
 	target_scene_path: String,
-	target_gate_id: String
+	target_gate_id: String,
+	entry_type: int = 0,
+	entry_direction: Vector2 = Vector2.RIGHT,
+	entry_distance: float = 180.0,
+	jump_velocity: Vector2 = Vector2(400.0, -800.0)
 ) -> void:
 	if _transition_lock:
 		return
 
 	_transition_lock = true
+
 	pending_spawn_gate_id = target_gate_id
+	pending_entry_type = entry_type
+	pending_entry_direction = entry_direction.normalized()
+	pending_entry_distance = entry_distance
+	pending_jump_velocity = jump_velocity
+
 	_fade_out_and_load(target_scene_path)
 
 
@@ -773,28 +786,137 @@ func _fade_out_and_load(target_scene_path: String) -> void:
 func _on_new_room_ready() -> void:
 	if pending_spawn_gate_id != "":
 		_position_player_at_gate()
-	elif checkpoint_id != "":
+		return
+
+	if checkpoint_id != "":
 		_position_player_at_checkpoint()
 
 	_fade_in()
 
 
 func _position_player_at_gate() -> void:
-	if pending_spawn_gate_id != "":
-		var players := get_tree().get_nodes_in_group("player")
-		var gates := get_tree().get_nodes_in_group("gates")
+	if pending_spawn_gate_id == "":
+		return
 
-		if not players.is_empty():
-			var player = players[0]
+	var players := get_tree().get_nodes_in_group("player")
+	var gates := get_tree().get_nodes_in_group("gates")
 
-			for gate in gates:
-				if gate.gate_id == pending_spawn_gate_id:
-					player.global_position = gate.global_position
-					break
+	if players.is_empty():
+		print("TRANSITION ERROR: No player found")
+		return
 
-		pending_spawn_gate_id = ""
+	var player = players[0]
 
+	for gate in gates:
+		if gate.gate_id == pending_spawn_gate_id:
 
+			player.global_position = gate.global_position
+
+			# Stop any movement inherited from the previous room.
+			player.velocity = Vector2.ZERO
+
+			# Disable player control.
+			if player.has_method("lock_input"):
+				player.lock_input()
+
+			pending_spawn_gate_id = ""
+
+			# Start the entry animation.
+			_start_room_entry(player)
+
+			return
+
+	print("TRANSITION ERROR: Gate ID not found: ", pending_spawn_gate_id)
+
+func _start_room_entry(player: Node) -> void:
+	# Fade into the new room first.
+	var fade_tween := create_tween()
+
+	fade_tween.tween_property(
+		_fade_rect,
+		"color:a",
+		0.0,
+		FADE_DURATION
+	)
+
+	await fade_tween.finished
+
+	if not is_instance_valid(player):
+		_transition_lock = false
+		return
+
+	match pending_entry_type:
+		0:
+			await _walk_into_room(player)
+
+		1:
+			await _jump_into_room(player)
+
+	# Give control back.
+	if is_instance_valid(player):
+		if player.has_method("unlock_input"):
+			player.unlock_input()
+
+	_transition_lock = false
+func _walk_into_room(player: Node) -> void:
+	var start_position: Vector2 = player.global_position
+
+	var direction: Vector2 = pending_entry_direction
+
+	if direction == Vector2.ZERO:
+		direction = Vector2.RIGHT
+
+	direction = direction.normalized()
+
+	var target_position: Vector2 = start_position + direction * pending_entry_distance
+
+	var distance: float = start_position.distance_to(target_position)
+
+	var walk_speed: float = 300.0
+	var duration: float = distance / walk_speed
+
+	if player.has_method("set_facing_direction"):
+		player.set_facing_direction(sign(direction.x))
+
+	if player.has_method("lock_input"):
+		player.lock_input()
+
+	var tween := create_tween()
+
+	tween.tween_property(
+		player,
+		"global_position",
+		target_position,
+		duration
+	).set_trans(Tween.TRANS_LINEAR)
+
+	await tween.finished
+func _jump_into_room(player: Node) -> void:
+	if not player.has_method("lock_input"):
+		return
+
+	player.lock_input()
+
+	# Give the player the initial jump velocity.
+	player.velocity = pending_jump_velocity
+
+	# Let the player's normal physics take over.
+	#
+	# We wait until the player has landed.
+	var safety_timer := 3.0
+
+	while safety_timer > 0.0:
+		safety_timer -= get_process_delta_time()
+
+		if not is_instance_valid(player):
+			return
+
+		# A CharacterBody2D can tell us when it is on the floor.
+		if player is CharacterBody2D:
+			if player.is_on_floor() and safety_timer < 2.8:
+				break
+
+		await get_tree().process_frame
 func _position_player_at_checkpoint() -> void:
 	var players := get_tree().get_nodes_in_group("player")
 	var checkpoints := get_tree().get_nodes_in_group("checkpoints")

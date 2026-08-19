@@ -1,9 +1,20 @@
 extends Area2D
 class_name TransitionGate
 
+enum EntryType {
+	WALK,
+	JUMP
+}
+
 @export var gate_id: String = ""
-@export var target_scene_path: String = ""
+@export_file("*.tscn") var target_scene_path: String = ""
 @export var target_gate_id: String = ""
+
+@export_category("Entry")
+@export var entry_type: EntryType = EntryType.WALK
+@export var entry_direction: Vector2 = Vector2.RIGHT
+@export var entry_distance: float = 180.0
+@export var jump_velocity: Vector2 = Vector2(400.0, -800.0)
 
 
 func _ready() -> void:
@@ -16,4 +27,11 @@ func _on_area_entered(area: Area2D) -> void:
 		return
 
 	if area.is_in_group("player_detection"):
-		GameState.go_to_room(target_scene_path, target_gate_id)
+		GameState.go_to_room(
+			target_scene_path,
+			target_gate_id,
+			entry_type,
+			entry_direction,
+			entry_distance,
+			jump_velocity
+		)
