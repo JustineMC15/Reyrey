@@ -150,7 +150,107 @@ func _notification(what: int) -> void:
 		if has_checkpoint():
 			SaveManager.save_game(SaveManager.current_slot)
 		get_tree().quit()
+# --- Anvils ---
 
+const ANVIL_HP_GAIN := 1
+
+var claimed_anvils: Dictionary = {}
+
+
+func is_anvil_claimed(anvil_id: String) -> bool:
+	return claimed_anvils.has(anvil_id)
+
+
+func claim_anvil(anvil_id: String, player: Node) -> void:
+	if is_anvil_claimed(anvil_id):
+		return
+
+	claimed_anvils[anvil_id] = true
+
+	max_health += ANVIL_HP_GAIN
+
+	if player:
+		player.max_health = max_health
+		player.health = max_health
+		player.health_changed.emit(player.health, player.max_health)
+
+	_transition_lock = true
+
+	if player and player.has_method("lock_input"):
+		player.lock_input()
+
+	await _run_anvil_claim_sequence(player)
+
+	if player and player.has_method("unlock_input"):
+		player.unlock_input()
+
+	_transition_lock = false
+
+
+func _run_anvil_claim_sequence(player: Node) -> void:
+	var layer := CanvasLayer.new()
+	layer.layer = 90
+	add_child(layer)
+
+	var dim := ColorRect.new()
+	dim.color = Color(0, 0, 0, 0)
+	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.add_child(dim)
+
+	var center := CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.add_child(center)
+
+	var vbox := VBoxContainer.new()
+	vbox.modulate.a = 0.0
+	vbox.add_theme_constant_override("separation", 14)
+	center.add_child(vbox)
+
+	var title := Label.new()
+	title.text = "Max HP increased"
+	title.add_theme_font_size_override("font_size", 36)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(title)
+
+	var prompt := Label.new()
+	prompt.text = "Press Enter / Space to continue"
+	prompt.modulate.a = 0.6
+	prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(prompt)
+
+	var player_glow: Tween
+
+	if player and player.has_node("AnimatedSprite2D"):
+		var sprite = player.get_node("AnimatedSprite2D")
+
+		player_glow = create_tween().set_loops()
+
+		player_glow.tween_property(sprite, "modulate", Color(2, 2, 1.4, 1), 0.4)
+		player_glow.tween_property(sprite, "modulate", Color.WHITE, 0.4)
+
+	var fade_in := create_tween()
+	fade_in.tween_property(dim, "color:a", 0.85, 0.4)
+	fade_in.parallel().tween_property(vbox, "modulate:a", 1.0, 0.6)
+
+	await fade_in.finished
+	await get_tree().create_timer(0.2).timeout
+
+	while not Input.is_action_just_pressed("ui_accept"):
+		await get_tree().process_frame
+
+	if player_glow:
+		player_glow.kill()
+		if player.has_node("AnimatedSprite2D"):
+			player.get_node("AnimatedSprite2D").modulate = Color.WHITE
+
+	var fade_out := create_tween()
+	fade_out.tween_property(dim, "color:a", 0.0, 0.3)
+	fade_out.parallel().tween_property(vbox, "modulate:a", 0.0, 0.3)
+
+	await fade_out.finished
+	layer.queue_free()
 # --- Star Shrines ---
 
 func is_shrine_claimed(shrine_id: String) -> bool:
@@ -804,6 +904,7 @@ func get_save_data() -> Dictionary:
 		"max_mp": max_mp,
 		"max_health": max_health,
 		"shrine_count": shrine_count,
+		"claimed_anvils": claimed_anvils.duplicate(),
 		"claimed_shrines": claimed_shrines.duplicate(true),
 		"activated_checkpoints": activated_checkpoints.duplicate(),
 		"checkpoint_scene_path": checkpoint_scene_path,
@@ -817,6 +918,7 @@ func apply_save_data(data: Dictionary) -> void:
 	current_mp = max_mp
 	max_health = data.get("max_health", max_health)
 	shrine_count = data.get("shrine_count", 0)
+	claimed_anvils = data.get("claimed_anvils", {})
 	claimed_shrines = data.get("claimed_shrines", {})
 	activated_checkpoints = data.get("activated_checkpoints", {})
 	checkpoint_scene_path = data.get("checkpoint_scene_path", "")
@@ -830,6 +932,7 @@ func reset_to_defaults() -> void:
 	current_mp = 6
 	max_health = 5
 	shrine_count = 0
+	claimed_anvils.clear()
 	claimed_shrines.clear()
 	activated_checkpoints.clear()
 	checkpoint_scene_path = ""

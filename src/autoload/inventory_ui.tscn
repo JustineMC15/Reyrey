@@ -7,7 +7,6 @@
 script = ExtResource("1_0bsca")
 
 [node name="RootPanel" type="Control" parent="." unique_id=903807833]
-visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -22,11 +21,12 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+color = Color(0.2065543, 0.2065543, 0.20655426, 1)
 
 [node name="Layout" type="HBoxContainer" parent="RootPanel" unique_id=1329702977]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 1152.0
+offset_bottom = 648.0
 
 [node name="LeftColumn" type="VBoxContainer" parent="RootPanel/Layout" unique_id=1692896571]
 layout_mode = 2

@@ -27,7 +27,7 @@
 [ext_resource type="Script" uid="uid://cobwunaxv7751" path="res://src/nav/interact_gate.gd" id="24_bsssq"]
 [ext_resource type="Texture2D" uid="uid://cbmhwby8ebu2" path="res://assets/environment/tiles/sheet (3).svg" id="25_m4i68"]
 [ext_resource type="FontFile" uid="uid://dlinrvj4uxc6w" path="res://assets/fonts/Seshat.otf" id="25_omtxu"]
-[ext_resource type="Script" uid="uid://bcx1vism0qjs8" path="res://src/nav/starlight_shard.gd" id="33_pw3yk"]
+[ext_resource type="PackedScene" uid="uid://bgcaqcki23ysx" path="res://src/nav/starlight_shard.tscn" id="28_wyhvv"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_atptj"]
 texture = ExtResource("5_dsnap")
@@ -2980,9 +2980,6 @@ size = Vector2(280, 282)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_omtxu"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_bekt7"]
-size = Vector2(144, 101.5)
-
 [node name="shrine_01" type="Node2D" unique_id=1912822629]
 
 [node name="Environments" type="Node2D" parent="." unique_id=74809527]
@@ -3063,45 +3060,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
-[node name="StarlightShard" type="Area2D" parent="." unique_id=922369631]
+[node name="StarlightShard" parent="." unique_id=1458006390 instance=ExtResource("28_wyhvv")]
 position = Vector2(0, -2100)
-collision_layer = 4
-collision_mask = 5
-script = ExtResource("33_pw3yk")
-shrine_id = "shrine01"
-abandonment_text = "I abandon here my hunger"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StarlightShard" unique_id=572150757]
-position = Vector2(0, 1.25)
-shape = SubResource("RectangleShape2D_bekt7")
-
-[node name="PromptPanel" type="Panel" parent="StarlightShard/CollisionShape2D" unique_id=1407821515]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 376.0
-offset_top = 500.0
-offset_right = -376.0
-offset_bottom = 2.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_omtxu")
-metadata/_edit_use_anchors_ = true
-
-[node name="Label" type="Label" parent="StarlightShard/CollisionShape2D/PromptPanel" unique_id=1561186089]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("25_omtxu")
-theme_override_font_sizes/font_size = 32
-text = "CLAIM SHARD
-E"
-horizontal_alignment = 1
-vertical_alignment = 1
-metadata/_edit_use_anchors_ = true
 
 [editable path="Player"]

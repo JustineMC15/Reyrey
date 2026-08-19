@@ -569,7 +569,8 @@ func _ready() -> void:
 
 	max_mp = GameState.max_mp
 	mp = GameState.current_mp
-
+	max_health = GameState.max_health
+	health = max_health
 	floor_snap_length = 4.0
 
 	# GROUND SLAM

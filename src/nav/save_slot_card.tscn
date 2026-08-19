@@ -1,16 +1,22 @@
 [gd_scene format=3 uid="uid://c65e1wrlffqdl"]
 
 [ext_resource type="Script" uid="uid://du1ljddp1cr73" path="res://src/nav/save_slot_card.gd" id="1_wxm1k"]
+[ext_resource type="FontFile" uid="uid://dbakhsfowc28k" path="res://assets/fonts/durendalandoliphantregular-lvwl4.ttf" id="2_qhuqk"]
 
 [node name="SlotCard" type="Button" unique_id=1717640535]
-offset_right = 8.0
-offset_bottom = 8.0
+offset_right = 30.0
+offset_bottom = 30.0
 script = ExtResource("1_wxm1k")
 
 [node name="Preview" type="TextureRect" parent="." unique_id=1352050367]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -4.0
+offset_right = 4.0
+offset_bottom = 9.0
+grow_horizontal = 2
 stretch_mode = 6
 
 [node name="Label" type="Label" parent="." unique_id=274973618]
@@ -22,3 +28,8 @@ anchor_bottom = 1.0
 offset_top = -23.0
 grow_horizontal = 2
 grow_vertical = 0
+theme_override_fonts/font = ExtResource("2_qhuqk")
+theme_override_font_sizes/font_size = 12
+text = "SAVE"
+horizontal_alignment = 1
+vertical_alignment = 1

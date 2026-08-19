@@ -1,0 +1,58 @@
+[gd_scene format=3 uid="uid://dl2et3v1vfhlo"]
+
+[ext_resource type="Script" uid="uid://b5dgssjqkipjw" path="res://src/nav/anvil.gd" id="1_gcdmh"]
+[ext_resource type="FontFile" uid="uid://dlinrvj4uxc6w" path="res://assets/fonts/Seshat.otf" id="2_fe045"]
+[ext_resource type="Texture2D" uid="uid://camgnvnkt6vft" path="res://assets/environment/Texture/anvil.png" id="2_wee0i"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vlew8"]
+size = Vector2(157, 94)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wee0i"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[node name="Anvil" type="Area2D" unique_id=1578504986]
+collision_layer = 4
+collision_mask = 5
+script = ExtResource("1_gcdmh")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1770126550]
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("2_wee0i")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=428664257]
+shape = SubResource("RectangleShape2D_vlew8")
+
+[node name="PromptPanel" type="Panel" parent="CollisionShape2D" unique_id=1373649490]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -50.0
+offset_right = 50.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_wee0i")
+
+[node name="Label" type="Label" parent="CollisionShape2D/PromptPanel" unique_id=1421178717]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -28.0
+offset_top = -139.0
+offset_right = 25.0
+offset_bottom = -56.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_fe045")
+theme_override_font_sizes/font_size = 32
+text = "USE
+E"
+horizontal_alignment = 1
+vertical_alignment = 1

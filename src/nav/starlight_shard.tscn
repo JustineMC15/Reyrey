@@ -1,0 +1,55 @@
+[gd_scene format=3 uid="uid://bgcaqcki23ysx"]
+
+[ext_resource type="Script" uid="uid://bcx1vism0qjs8" path="res://src/nav/starlight_shard.gd" id="1_p5lqo"]
+[ext_resource type="FontFile" uid="uid://dlinrvj4uxc6w" path="res://assets/fonts/Seshat.otf" id="2_bd8vb"]
+[ext_resource type="Texture2D" uid="uid://y5f5ufakxn0o" path="res://assets/environment/Texture/starlight_shard.png" id="2_o31nw"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bekt7"]
+size = Vector2(144, 101.5)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_omtxu"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[node name="StarlightShard" type="Area2D" unique_id=1458006390]
+collision_layer = 4
+collision_mask = 5
+script = ExtResource("1_p5lqo")
+shrine_id = "shrine01"
+abandonment_text = "I abandon here my hunger"
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1335760794]
+scale = Vector2(0.05, 0.05)
+texture = ExtResource("2_o31nw")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=918052972]
+position = Vector2(0, 1.25)
+shape = SubResource("RectangleShape2D_bekt7")
+
+[node name="PromptPanel" type="Panel" parent="CollisionShape2D" unique_id=1832633695]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 376.0
+offset_top = 500.0
+offset_right = -376.0
+offset_bottom = 2.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_omtxu")
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="CollisionShape2D/PromptPanel" unique_id=365441396]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_bd8vb")
+theme_override_font_sizes/font_size = 32
+text = "CLAIM SHARD
+E"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
