@@ -2429,7 +2429,7 @@ shape = SubResource("RectangleShape2D_cssau")
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1168413055]
 position = Vector2(56, -47)
 offset = Vector2(0, -100)
-zoom = Vector2(0.8, 0.8)
+zoom = Vector2(0.85, 0.85)
 process_callback = 0
 limit_enabled = false
 position_smoothing_enabled = true

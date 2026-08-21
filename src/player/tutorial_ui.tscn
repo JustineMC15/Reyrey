@@ -15,6 +15,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="MovementPanel" type="Panel" parent="Control" unique_id=226878825]
 layout_mode = 1
@@ -31,6 +32,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_264po")
 script = ExtResource("1_jmhba")
+metadata/_edit_use_anchors_ = true
 
 [node name="Label" type="Label" parent="Control/MovementPanel" unique_id=931060319]
 layout_mode = 1
@@ -50,6 +52,7 @@ A       D
 ◀       ▶"
 horizontal_alignment = 1
 vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
 
 [node name="JumpPanel" type="Panel" parent="Control" unique_id=2079810128]
 visible = false

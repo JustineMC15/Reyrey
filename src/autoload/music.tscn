@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://bw7uh54570frq"]
 
-[ext_resource type="AudioStream" uid="uid://c3mofgadqcegc" path="res://assets/sound/music/Medieval Rondo.ogg" id="1_05ggv"]
+[ext_resource type="Script" uid="uid://c7banwri7txs0" path="res://src/autoload/music.gd" id="1_ymhsx"]
 
-[node name="Music" type="AudioStreamPlayer" unique_id=894955860]
-stream = ExtResource("1_05ggv")
-volume_db = -4.0
-autoplay = true
+[node name="Music" type="Node" unique_id=228690444]
+script = ExtResource("1_ymhsx")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=2079527372]

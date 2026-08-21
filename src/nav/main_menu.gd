@@ -26,9 +26,18 @@ func _ready() -> void:
 	options_button.pressed.connect(_on_settings_pressed)
 	exit_button.pressed.connect(_on_quit_pressed)
 
-	volume_slider.value = db_to_linear(AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Master")))
+	volume_slider.value = db_to_linear(
+		AudioServer.get_bus_volume_db(
+			AudioServer.get_bus_index("Master")
+		)
+	)
 	volume_slider.value_changed.connect(_on_volume_changed)
 
+	# Play menu music.
+	# Replace this path with your actual menu music file.
+	Music.play_music(
+		preload("res://assets/sound/music/Night Vigil.mp3")
+	)
 
 func _build_slot_cards() -> void:
 	for child in slot_container.get_children():
@@ -66,6 +75,7 @@ func _on_slot_picked(slot: int) -> void:
 			"res://src/game/game.tscn"
 		)
 
+
 func _on_settings_pressed() -> void:
 	save_slots.hide()
 	settings_panel.visible = not settings_panel.visible
@@ -73,7 +83,10 @@ func _on_settings_pressed() -> void:
 
 
 func _on_volume_changed(value: float) -> void:
-	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Master"), linear_to_db(clampf(value, 0.0001, 1.0)))
+	AudioServer.set_bus_volume_db(
+		AudioServer.get_bus_index("Master"),
+		linear_to_db(clampf(value, 0.0001, 1.0))
+	)
 	SaveManager.save_settings(value)
 
 

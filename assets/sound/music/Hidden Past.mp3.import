@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://tc7ixxtlnhvo"
+path="res://.godot/imported/Hidden Past.mp3-b40aeaff162a61ccd66fe8a82c1eec3b.mp3str"
+
+[deps]
+
+source_file="res://assets/sound/music/Hidden Past.mp3"
+dest_files=["res://.godot/imported/Hidden Past.mp3-b40aeaff162a61ccd66fe8a82c1eec3b.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

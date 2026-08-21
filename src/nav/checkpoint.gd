@@ -153,7 +153,6 @@ func rest() -> void:
 
 	# Reload the room.
 	await GameState.rest_at_checkpoint()
-
 	SaveManager.save_game(SaveManager.current_slot)
 
 

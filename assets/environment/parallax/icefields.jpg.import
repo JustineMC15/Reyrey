@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c1edfnoatqdtt"
-path="res://.godot/imported/skybox-night.png-ac9b3b9eff70c0d074c04c04ff7b594a.ctex"
+uid="uid://dlv5dbhidmv8a"
+path="res://.godot/imported/icefields.jpg-2ccdd825b1add3e9f324714f5924e1a8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/environment/designs/skybox-night.png"
-dest_files=["res://.godot/imported/skybox-night.png-ac9b3b9eff70c0d074c04c04ff7b594a.ctex"]
+source_file="res://assets/environment/parallax/icefields.jpg"
+dest_files=["res://.godot/imported/icefields.jpg-2ccdd825b1add3e9f324714f5924e1a8.ctex"]
 
 [params]
 

@@ -114,7 +114,7 @@ var ability_data: Dictionary = {
 		"name": "Spark Flame",
 		"tin_text": "Combustion. Whoever wrote this world's laws decided that flame needs something to eat before it's allowed to exist. No exceptions, not even for me. I can stop a heart, I can stop a star, and I still have to feed the fire before it will hold you up. Pathetic economy. Eternity doesn't need to be fed. I checked.",
 		"reynauld_text": "It kicks like a mule and smells like my eyebrows. Effective, though. I've decided not to ask what it's burning. Whatever it is, it isn't coin, and that's the only ingredient I ever worry about running out of.",
-		"Input_action": "jump",
+		"input_action": "jump",
 		"keybind_hint": "Press again mid-air",
 	},
 
@@ -122,7 +122,7 @@ var ability_data: Dictionary = {
 		"name": "Holy Lance",
 		"tin_text": "Distance is the world's favorite lie. It insists that two things wanting to be close isn't enough — that wanting has to be spent crossing empty space first, like affection is a toll road. I built through this the same year I built through kingdoms. It still charges me anyway. Some laws don't care how old you are.",
 		"reynauld_text": "It throws me forward faster than my legs would ever agree to. I used to close distance with my own two feet, thank you. Now I let something invisible do it for me and pretend that's dignified. It isn't. It is, however, faster, and I am a practical man.",
-		"Input_action": "dash",
+		"input_action": "dash",
 		"keybind_hint": "Thrust forward while on the ground or while airborne",
 	},
 
@@ -130,7 +130,7 @@ var ability_data: Dictionary = {
 		"name": "Martyr's Drop",
 		"tin_text": "Everything that rises has to come back down. I hate that rule more than any other, because I have tested every exception I could think of and the world simply waited me out. I have stopped stars mid-fall. I have not stopped myself. Apparently that's not how the arrangement works.",
 		"reynauld_text": "They named it after martyrs, which I assume is meant to be poetic. I'd rather it be named after the ground, which is the thing doing all the suffering. I've cracked three shields testing this. I am billing someone. I haven't decided who yet.",
-		"Input_action": "ground_slam",
+		"input_action": "ground_slam",
 		"keybind_hint": "While airborne",
 	},
 
@@ -138,7 +138,7 @@ var ability_data: Dictionary = {
 		"name": "Vigil Wind",
 		"tin_text": "You're allowed to stay up. You are not allowed to stop asking. The moment you let go of the wanting, gravity remembers you exist and collects what it's owed. I used to think that was cruelty. Now I think it might be the only honest law this world has. Nothing stays aloft by accident. Not wind. Not devotion.",
 		"reynauld_text": "I hold the wind the way I hold a vigil — badly, and with my arm going numb halfway through. Still, it's the first time this armor hasn't tried to kill me on the way down. I'll take unnatural mercy over natural consequence any day of the week.",
-		"Input_action": "glide",
+		"input_action": "glide",
 		"keybind_hint": "Hold while falling",
 	},
 
@@ -146,7 +146,7 @@ var ability_data: Dictionary = {
 		"name": "Litany Step",
 		"tin_text": "Say a thing enough times and the world decides you've used it up. Chant it, mean it, repeat it — the meaning is supposed to survive the repetition, and instead the world taxes you for each recitation until there's nothing left to say. I have said the same three words for eight hundred years. I would like an exception. I have never once received one.",
 		"reynauld_text": "Every knight drills the same forms until his arms forget how to do anything else. This isn't so different — same step, over and over, until the body stops asking permission. I only wish my knees had been consulted before agreeing to this many repetitions.",
-		"Input_action": "dash",
+		"input_action": "dash",
 		"keybind_hint": "Chain into a second dash",
 	},
 
@@ -154,7 +154,7 @@ var ability_data: Dictionary = {
 		"name": "Wick Ember",
 		"tin_text": "A wick doesn't get to choose how long it burns. It holds on, it gives light, and the whole time it's being consumed for the privilege. I resent that grip is never free. I resent it more that I understand it — I have held on to things for centuries and called it strength, when it was only ever a slower way of running out.",
 		"reynauld_text": "My gauntlets are earning their keep tonight. Stone does not care for knuckles, and I suspect my knuckles have opinions about stone they've been too polite to share until now. I'll manage. I've held worse things longer for less reason.",
-		"Input_action": "",
+		"input_action": "",
 		"keybind_hint": "Hold toward a wall while airborne",
 	},
 
@@ -162,7 +162,7 @@ var ability_data: Dictionary = {
 		"name": "Star Anchor",
 		"tin_text": "You don't get to return to what you didn't think to keep. That's the law underneath every star chart, every memory, every fool who assumed the past would wait for them to come back and collect it. I mark my place now. Every time. I learned that lesson the hard way, and I intend to make sure I never learn it again.",
 		"reynauld_text": "It hauls me backward like I'm on a leash I never agreed to wear, and somehow I don't mind it. I know where the mark is because he put it there. I've decided that's reason enough to trust it. I don't extend that courtesy to much else in this world.",
-		"Input_action": "recall",
+		"input_action": "recall",
 		"keybind_hint": "Press once to place, again to return",
 	},
 
@@ -170,7 +170,7 @@ var ability_data: Dictionary = {
 		"name": "Censer Swing",
 		"tin_text": "The world does not catch you by default. That's the part nobody tells you. Every ledge, every fall, every threshold — you either seize it yourself or you don't, and the universe watches without opinion either way. I used to think mercy was rare because people were cruel. It's rarer than that. Mercy isn't even the world's job.",
 		"reynauld_text": "I've been pulled from worse drops by worse hands. This one, at least, is mine — I catch the edge myself, every time, and no one has to come looking for what's left of me at the bottom. Small comfort. I'll take it.",
-		"Input_action": "",
+		"input_action": "",
 		"keybind_hint": "Approach a ledge while falling, Jump to climb",
 	},
 }
@@ -178,7 +178,17 @@ var ability_data: Dictionary = {
 
 signal ability_claimed(ability_id)
 
+var tutorials_seen: Dictionary = {
+	"movement": false,
+	"jump": false,
+	"attack": false,
+}
+func has_seen_tutorial(tutorial_id: String) -> bool:
+	return tutorials_seen.get(tutorial_id, false)
 
+
+func mark_tutorial_seen(tutorial_id: String) -> void:
+	tutorials_seen[tutorial_id] = true
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_build_fade_overlay()
@@ -1219,7 +1229,6 @@ func _build_fade_overlay() -> void:
 	_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_fade_layer.add_child(_fade_rect)
 
-
 # --- Save system ---
 
 func get_save_data() -> Dictionary:
@@ -1230,10 +1239,12 @@ func get_save_data() -> Dictionary:
 		"shrine_count": shrine_count,
 		"claimed_anvils": claimed_anvils.duplicate(),
 		"claimed_shrines": claimed_shrines.duplicate(true),
+		"armor_tier": armor_tier,
 		"activated_checkpoints": activated_checkpoints.duplicate(),
 		"checkpoint_scene_path": checkpoint_scene_path,
 		"checkpoint_id": checkpoint_id,
 		"checkpoint_room_name": checkpoint_room_name,
+		"tutorials_seen": tutorials_seen.duplicate(),
 	}
 
 
@@ -1245,11 +1256,17 @@ func apply_save_data(data: Dictionary) -> void:
 	shrine_count = data.get("shrine_count", 0)
 	claimed_anvils = data.get("claimed_anvils", {})
 	claimed_shrines = data.get("claimed_shrines", {})
+	armor_tier = data.get("armor_tier", armor_tier)
 	activated_checkpoints = data.get("activated_checkpoints", {})
 	checkpoint_scene_path = data.get("checkpoint_scene_path", "")
 	checkpoint_id = data.get("checkpoint_id", "")
 	checkpoint_room_name = data.get("checkpoint_room_name", "")
 
+	tutorials_seen = data.get("tutorials_seen", {
+		"movement": false,
+		"jump": false,
+		"attack": false,
+	}).duplicate()
 
 func reset_to_defaults() -> void:
 	for key in abilities.keys():
@@ -1258,16 +1275,23 @@ func reset_to_defaults() -> void:
 	max_mp = 6
 	current_mp = 6
 	max_health = 5
-
+	armor_tier = 0
 	shrine_count = 0
 
 	claimed_anvils.clear()
 	claimed_shrines.clear()
 	activated_checkpoints.clear()
-
+	
+	tutorials_seen = {
+	"movement": false,
+	"jump": false,
+	"attack": false,
+}
 	checkpoint_scene_path = ""
 	checkpoint_id = ""
 	checkpoint_room_name = ""
+	
+
 
 
 func load_from_save(scene_path: String) -> void:

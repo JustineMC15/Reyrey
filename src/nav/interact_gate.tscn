@@ -10,8 +10,8 @@ size = Vector2(133, 212)
 bg_color = Color(0.6, 0.6, 0.6, 0)
 
 [node name="ShrineDoor" type="Area2D" unique_id=1013456222 node_paths=PackedStringArray("prompt_panel")]
-collision_layer = 3
-collision_mask = 3
+collision_layer = 15
+collision_mask = 15
 script = ExtResource("1_xf7d7")
 gate_id = "shrine_door"
 target_scene_path = "res://scenes/Rooms/shrine_01.tscn"

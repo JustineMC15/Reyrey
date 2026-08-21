@@ -7,6 +7,50 @@ extends Node
 var current_room_scene_path: String = ""
 
 
+# Music assigned to each room.
+# null = no music assigned yet.
+#
+# When you find a song, replace null with:
+# preload("res://audio/music/your_song.ogg")
+#
+# Example:
+# "res://src/Rooms/room_02-valecourt-fields.tscn":
+#     preload("res://audio/music/valecourt.ogg"),
+var room_music: Dictionary = {
+	"res://src/Rooms/room_01-tutorial.tscn":
+		preload("res://assets/sound/music/Medieval Rondo.ogg"),
+
+	"res://src/Rooms/room_02-valecourt-fields.tscn":
+		preload("res://assets/sound/music/Medieval Rondo.ogg"),
+
+	"res://src/Rooms/room_03-cathedral-undercroft.tscn": null,
+	"res://src/Rooms/room_04-coastal-road.tscn": null,
+	"res://src/Rooms/room_05-elven-reach.tscn": null,
+	"res://src/Rooms/room_06-thalassar-canal-city.tscn": null,
+	"res://src/Rooms/room_07-aureth-bastion.tscn": null,
+	"res://src/Rooms/room_08-sahra-kel-canyons.tscn": null,
+	"res://src/Rooms/room_09-icefields.tscn": null,
+	"res://src/Rooms/room_10-the-tower.tscn": null,
+
+	"res://src/Rooms/shrine_01.tscn": null,
+	"res://src/Rooms/shrine_02.tscn": null,
+	"res://src/Rooms/shrine_03.tscn": null,
+	"res://src/Rooms/shrine_04.tscn": null,
+	"res://src/Rooms/shrine_05.tscn": null,
+	"res://src/Rooms/shrine_06.tscn": null,
+	"res://src/Rooms/shrine_07.tscn": null,
+	"res://src/Rooms/shrine_08.tscn": null,
+	"res://src/Rooms/shrine_09.tscn": null,
+	"res://src/Rooms/shrine_10.tscn": null,
+	"res://src/Rooms/shrine_11.tscn": null,
+	"res://src/Rooms/shrine_12.tscn": null,
+	"res://src/Rooms/shrine_13.tscn": null,
+	"res://src/Rooms/shrine_14.tscn": null,
+	"res://src/Rooms/shrine_15.tscn": null,
+	"res://src/Rooms/shrine_16.tscn": null,
+	"res://src/Rooms/shrine_17.tscn": null,
+}
+
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	add_to_group("game")
@@ -68,6 +112,13 @@ func load_room(scene_path: String) -> void:
 
 	# Apply the new room's camera limits before the player is positioned.
 	_apply_camera_bounds(new_room)
+
+	# Get the music assigned to this room.
+	var music_track: AudioStream = room_music.get(scene_path)
+
+	# Only change music when this room has a track assigned.
+	if music_track != null:
+		Music.play_music(music_track)
 
 
 func get_current_room_scene_path() -> String:
