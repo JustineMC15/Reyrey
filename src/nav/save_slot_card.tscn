@@ -2,46 +2,43 @@
 
 [ext_resource type="Script" uid="uid://du1ljddp1cr73" path="res://src/nav/save_slot_card.gd" id="1_wxm1k"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(0.1, 0.1, 0.12, 0.85)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 0.6, 0.6, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
 [node name="SlotCard" type="Button" unique_id=1717640535]
-custom_minimum_size = Vector2(200, 150)
+custom_minimum_size = Vector2(180, 240)
+clip_contents = true
+theme_override_styles/normal = SubResource("StyleBoxFlat_card")
 script = ExtResource("1_wxm1k")
 
 [node name="Preview" type="TextureRect" parent="." unique_id=1352050367]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 180.0
+grow_horizontal = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="." unique_id=274973618]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 3.0
-offset_top = 3.0
-offset_right = -3.0
-offset_bottom = -3.0
+offset_top = 180.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
-stretch_mode = 6
-
-[node name="LabelBg" type="ColorRect" parent="." unique_id=1000000500]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -32.0
-grow_horizontal = 2
-grow_vertical = 0
-mouse_filter = 2
-color = Color(0, 0, 0, 0.65)
-
-[node name="Label" type="Label" parent="." unique_id=274973618]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -32.0
-grow_horizontal = 2
-grow_vertical = 0
-mouse_filter = 2
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2

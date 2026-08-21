@@ -1,6 +1,5 @@
 extends Control
 
-@onready var player = get_tree().get_first_node_in_group("player")
 @onready var hp_bar: ProgressBar = $HPBar
 @onready var hp_damage_bar: ProgressBar = $HPDamageBar
 @onready var mp_bar: ProgressBar = $MPBar
@@ -8,7 +7,16 @@ extends Control
 @onready var stamina_bar: ProgressBar = $STBar
 @onready var stamina_damage_bar: ProgressBar = $STDamageBar
 
+
 func _ready() -> void:
+	await get_tree().process_frame
+
+	var player = get_tree().get_first_node_in_group("player")
+
+	if player == null:
+		push_error("HUD: Could not find Player in the 'player' group.")
+		return
+
 	hp_bar.max_value = player.max_health
 	hp_bar.value = player.health
 
@@ -32,6 +40,7 @@ func _ready() -> void:
 	player.mp_changed.connect(_on_player_mp_changed)
 	player.stamina_changed.connect(_on_player_stamina_changed)
 
+
 func _on_player_health_changed(current_health, max_health) -> void:
 	hp_bar.max_value = max_health
 	hp_bar.value = current_health
@@ -39,6 +48,7 @@ func _on_player_health_changed(current_health, max_health) -> void:
 	hp_damage_bar.max_value = max_health
 
 	var tween := create_tween()
+
 	tween.tween_property(
 		hp_damage_bar,
 		"value",
@@ -54,6 +64,7 @@ func _on_player_mp_changed(current_mp, max_mp) -> void:
 	mp_damage_bar.max_value = max_mp
 
 	var tween := create_tween()
+
 	tween.tween_property(
 		mp_damage_bar,
 		"value",
@@ -72,6 +83,7 @@ func _on_player_stamina_changed(current_stamina, max_stamina) -> void:
 	stamina_damage_bar.max_value = max_stamina
 
 	var tween := create_tween()
+
 	tween.tween_property(
 		stamina_damage_bar,
 		"value",

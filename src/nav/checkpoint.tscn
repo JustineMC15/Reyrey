@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://deakhov6xdl5c"]
 
-[ext_resource type="Texture2D" uid="uid://dv86brk6v4ai7" path="res://assets/characters/checkpoint.png" id="1_ywqth"]
+[ext_resource type="Texture2D" uid="uid://dv86brk6v4ai7" path="res://assets/environment/interactables/checkpoint.png" id="1_ywqth"]
 [ext_resource type="Script" uid="uid://b75tt2bsehsth" path="res://src/nav/checkpoint.gd" id="2_vsimk"]
 [ext_resource type="FontFile" uid="uid://dlinrvj4uxc6w" path="res://assets/fonts/Seshat.otf" id="3_vsimk"]
 [ext_resource type="AudioStream" uid="uid://cbbe0m6x2yvf0" path="res://assets/sound/sfx/ethereal_save_point_3s.wav" id="4_c45tw"]

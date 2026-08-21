@@ -1,10 +1,13 @@
 [gd_scene format=3 uid="uid://bencgs18uokku"]
 
 [ext_resource type="Script" uid="uid://bu17ncpumfc72" path="res://src/autoload/inventory_ui.gd" id="1_0bsca"]
+[ext_resource type="Texture2D" uid="uid://bcxfafddjya8j" path="res://assets/ui/tidesplitter.png" id="2_ar6k6"]
 [ext_resource type="PackedScene" uid="uid://qt0e5pxqovba" path="res://src/nav/inventory_icon_button.tscn" id="2_aua8c"]
 
 [node name="InventoryUI" type="CanvasLayer" unique_id=401043]
 script = ExtResource("1_0bsca")
+sword_icon = ExtResource("2_ar6k6")
+icon_button_scene = ExtResource("2_aua8c")
 
 [node name="RootPanel" type="Control" parent="." unique_id=903807833]
 layout_mode = 3

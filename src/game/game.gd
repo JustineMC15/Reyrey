@@ -1,5 +1,6 @@
 extends Node
 
+
 @onready var current_room: Node = $CurrentRoom
 @onready var player: CharacterBody2D = $Player
 
@@ -28,12 +29,19 @@ func _ready() -> void:
 	else:
 		await position_player_at_start()
 
+	player.enable_world_interaction()
+
 
 func load_room(scene_path: String) -> void:
 	scene_path = ResourceUID.ensure_path(scene_path)
 
+	if scene_path == "":
+		push_error("Game: Invalid room path.")
+		return
+
 	player.disable_world_interaction()
 
+	# Remove the previous room.
 	for child in current_room.get_children():
 		child.queue_free()
 
@@ -43,17 +51,23 @@ func load_room(scene_path: String) -> void:
 
 	if room_scene == null:
 		push_error("Game: Failed to load room: " + scene_path)
-		player.enable_world_interaction()
 		return
 
-	var room := room_scene.instantiate()
-	current_room.add_child(room)
-
+	# IMPORTANT:
+	# Set the current room path BEFORE adding the room to the tree.
+	# The room's _ready() functions can run immediately after add_child().
 	current_room_scene_path = scene_path
 
+	var new_room := room_scene.instantiate()
+
+	current_room.add_child(new_room)
+
+	# Wait until the new room has entered the tree and its children
+	# have initialized before looking for CameraBounds.
 	await get_tree().process_frame
 
-	player.enable_world_interaction()
+	# Apply the new room's camera limits before the player is positioned.
+	_apply_camera_bounds(new_room)
 
 
 func get_current_room_scene_path() -> String:
@@ -65,42 +79,97 @@ func position_player_at_start() -> void:
 
 	if spawn_points.is_empty():
 		push_error("Game: No player_spawn found.")
-		player.enable_world_interaction()
 		return
 
-	var spawn_point: Node2D = spawn_points[0]
+	var spawn_point := spawn_points[0] as Node2D
+
+	if spawn_point == null:
+		push_error("Game: Invalid player_spawn node.")
+		return
+
+	var camera := player.get_node_or_null("Camera2D") as Camera2D
+
+	if camera:
+		camera.position_smoothing_enabled = false
 
 	player.global_position = spawn_point.global_position
 	player.velocity = Vector2.ZERO
+
+	# Force the camera to use the new player position immediately.
+	if camera:
+		camera.reset_smoothing()
+
+	await get_tree().physics_frame
+
+	if camera:
+		camera.position_smoothing_enabled = true
 
 
 func position_player_at_checkpoint(checkpoint_id: String) -> void:
 	var checkpoints := get_tree().get_nodes_in_group("checkpoints")
 
 	for checkpoint in checkpoints:
-		if checkpoint.checkpoint_id == checkpoint_id:
-			var camera := player.get_node_or_null("Camera2D")
+		if not checkpoint.has_method("get") \
+		and not "checkpoint_id" in checkpoint:
+			continue
 
-			if camera:
-				camera.position_smoothing_enabled = false
+		if checkpoint.checkpoint_id != checkpoint_id:
+			continue
 
-			var spawn_point := checkpoint.get_node_or_null("SpawnPoint")
+		var camera := player.get_node_or_null("Camera2D") as Camera2D
 
-			if spawn_point == null:
-				push_error(
-					"Game: Checkpoint has no SpawnPoint: "
-					+ checkpoint.checkpoint_id
-				)
-				return
+		if camera:
+			camera.position_smoothing_enabled = false
 
-			player.global_position = spawn_point.global_position
-			player.velocity = Vector2.ZERO
+		var spawn_point := checkpoint.get_node_or_null("SpawnPoint") as Node2D
 
-			await get_tree().physics_frame
-
-			if camera:
-				camera.reset_smoothing()
-
+		if spawn_point == null:
+			push_error(
+				"Game: Checkpoint has no SpawnPoint: "
+				+ checkpoint.checkpoint_id
+			)
 			return
 
-	push_error("Game: Checkpoint ID not found: " + checkpoint_id)
+		player.global_position = spawn_point.global_position
+		player.velocity = Vector2.ZERO
+
+		# Immediately synchronize the camera to the new player position.
+		if camera:
+			camera.reset_smoothing()
+
+		await get_tree().physics_frame
+
+		if camera:
+			camera.position_smoothing_enabled = true
+
+		return
+
+	push_error(
+		"Game: Checkpoint ID not found: "
+		+ checkpoint_id
+	)
+
+
+func _apply_camera_bounds(room: Node) -> void:
+	var camera := player.get_node_or_null("Camera2D") as Camera2D
+
+	if camera == null:
+		push_error("Game: Player has no Camera2D.")
+		return
+
+	var bounds := room.get_node_or_null("CameraBounds") as CameraBounds
+
+	if bounds == null:
+		camera.limit_enabled = false
+		return
+
+	camera.limit_enabled = true
+
+	camera.limit_left = bounds.limit_left
+	camera.limit_top = bounds.limit_top
+	camera.limit_right = bounds.limit_right
+	camera.limit_bottom = bounds.limit_bottom
+
+	# Make sure this is the camera currently controlling the viewport.
+	camera.enabled = true
+	camera.make_current()

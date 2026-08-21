@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b5dgssjqkipjw" path="res://src/nav/anvil.gd" id="1_gcdmh"]
 [ext_resource type="FontFile" uid="uid://dlinrvj4uxc6w" path="res://assets/fonts/Seshat.otf" id="2_fe045"]
-[ext_resource type="Texture2D" uid="uid://camgnvnkt6vft" path="res://assets/environment/Texture/anvil.png" id="2_wee0i"]
+[ext_resource type="Texture2D" uid="uid://camgnvnkt6vft" path="res://assets/environment/interactables/anvil.png" id="2_wee0i"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vlew8"]
 size = Vector2(157, 94)

@@ -179,6 +179,25 @@ var ability_data: Dictionary = {
 signal ability_claimed(ability_id)
 
 
+func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	_build_fade_overlay()
+
+
+# --- Helpers ---
+
+func _get_game() -> Node:
+	var game := get_tree().current_scene
+
+	if game == null:
+		push_error("GameState: Current scene not found.")
+		return null
+
+	return game
+
+
+# --- Window close ---
+
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		if has_checkpoint():
@@ -734,17 +753,11 @@ func respawn_player() -> void:
 
 	await fade_out.finished
 
-	var games := get_tree().get_nodes_in_group("game")
+	var game := _get_game()
 
-	if games.is_empty():
-		push_error(
-			"GameState: Game instance not found during respawn."
-		)
-
+	if game == null:
 		_transition_lock = false
 		return
-
-	var game = games[0]
 
 	if not game.has_method("load_room"):
 		push_error(
@@ -807,17 +820,11 @@ func rest_at_checkpoint() -> void:
 
 	await fade_out.finished
 
-	var games := get_tree().get_nodes_in_group("game")
+	var game := _get_game()
 
-	if games.is_empty():
-		push_error(
-			"GameState: Game instance not found during rest."
-		)
-
+	if game == null:
 		_transition_lock = false
 		return
-
-	var game = games[0]
 
 	if not game.has_method("load_room"):
 		push_error(
@@ -846,8 +853,12 @@ func rest_at_checkpoint() -> void:
 		if player.has_method("restore_full_stamina"):
 			player.restore_full_stamina()
 
-		if player.has_method("unlock_input"):
-			player.unlock_input()
+		# Let the new room and player position synchronize
+		# before restoring world collision.
+		await get_tree().physics_frame
+
+		if player.has_method("enable_world_interaction"):
+			player.enable_world_interaction()
 
 	var fade_in := create_tween()
 
@@ -933,14 +944,11 @@ func _fade_out_and_load(target_scene_path: String) -> void:
 
 	await tween.finished
 
-	var games := get_tree().get_nodes_in_group("game")
+	var game := _get_game()
 
-	if games.is_empty():
-		push_error("GameState: No Game instance found.")
+	if game == null:
 		_transition_lock = false
 		return
-
-	var game := games[0]
 
 	if not game.has_method("load_room"):
 		push_error(
@@ -952,7 +960,7 @@ func _fade_out_and_load(target_scene_path: String) -> void:
 
 	await game.load_room(target_scene_path)
 
-	_on_new_room_ready()
+	await _on_new_room_ready()
 
 
 func _on_new_room_ready() -> void:
@@ -975,33 +983,50 @@ func _position_player_at_gate() -> void:
 		return
 
 	var player = players[0]
+	var camera := player.get_node_or_null("Camera2D")
 
 	for gate in gates:
 		if gate.gate_id != pending_spawn_gate_id:
 			continue
 
+		if camera:
+			camera.position_smoothing_enabled = false
+
+		# Place player at destination gate.
 		player.global_position = gate.global_position
 		player.velocity = Vector2.ZERO
+
+		# Freeze player movement during arrival.
+		if player.has_method("lock_input"):
+			player.lock_input()
+
+		# Turn collision back on without unlocking movement.
+		if player.has_method("enable_collision_only"):
+			player.enable_collision_only()
+
+		await get_tree().physics_frame
 
 		print(
 			"TRANSITION SPAWN: ",
 			gate.gate_id,
 			" at ",
-			gate.global_position
+			player.global_position
 		)
-
-		if player.has_method("lock_input"):
-			player.lock_input()
 
 		pending_spawn_gate_id = ""
 
 		await _start_room_entry(player)
+
+		if camera:
+			camera.position_smoothing_enabled = true
+
 		return
 
 	push_error(
 		"GameState: Destination gate not found: "
 		+ pending_spawn_gate_id
 	)
+
 
 func _start_room_entry(player: Node) -> void:
 	var fade_tween := create_tween()
@@ -1020,15 +1045,13 @@ func _start_room_entry(player: Node) -> void:
 		return
 
 	match pending_entry_type:
-		0:
+		TransitionGate.EntryType.WALK:
 			await _walk_into_room(player)
 
-		1:
+		TransitionGate.EntryType.JUMP:
 			await _jump_into_room(player)
 
-		2:
-			# Door/interact transition.
-			# Player stays exactly at the target gate.
+		TransitionGate.EntryType.INSTANT:
 			pass
 
 	if is_instance_valid(player):
@@ -1036,6 +1059,7 @@ func _start_room_entry(player: Node) -> void:
 			player.unlock_input()
 
 	_transition_lock = false
+
 
 func _walk_into_room(player: Node) -> void:
 	var start_position: Vector2 = player.global_position
@@ -1104,13 +1128,11 @@ func _jump_into_room(player: Node) -> void:
 
 
 func _fade_out_and_reload_current_scene() -> void:
-	var games := get_tree().get_nodes_in_group("game")
+	var game := _get_game()
 
-	if games.is_empty():
+	if game == null:
 		_transition_lock = false
 		return
-
-	var game = games[0]
 
 	if not game.has_method("get_current_room_scene_path"):
 		push_error(
@@ -1142,6 +1164,19 @@ func _fade_out_and_reload_current_scene() -> void:
 	if game.has_method("position_player_at_start"):
 		await game.position_player_at_start()
 
+	var players := get_tree().get_nodes_in_group("player")
+
+	if not players.is_empty():
+		var player = players[0]
+
+		if player.has_method("reset_after_death"):
+			player.reset_after_death()
+
+		await get_tree().physics_frame
+
+		if player.has_method("enable_world_interaction"):
+			player.enable_world_interaction()
+
 	var fade_in := create_tween()
 
 	fade_in.tween_property(
@@ -1172,11 +1207,6 @@ func _fade_in() -> void:
 
 
 # --- Fade overlay ---
-
-func _ready() -> void:
-	process_mode = Node.PROCESS_MODE_ALWAYS
-	_build_fade_overlay()
-
 
 func _build_fade_overlay() -> void:
 	_fade_layer = CanvasLayer.new()
@@ -1244,15 +1274,10 @@ func load_from_save(scene_path: String) -> void:
 	if scene_path == "":
 		scene_path = "res://src/Rooms/room_01-tutorial.tscn"
 
-	var games := get_tree().get_nodes_in_group("game")
+	var game := _get_game()
 
-	if games.is_empty():
-		push_error(
-			"GameState: Game instance not found during save load."
-		)
+	if game == null:
 		return
-
-	var game = games[0]
 
 	if not game.has_method("load_room"):
 		push_error(

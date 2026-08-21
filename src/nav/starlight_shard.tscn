@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bcx1vism0qjs8" path="res://src/nav/starlight_shard.gd" id="1_p5lqo"]
 [ext_resource type="FontFile" uid="uid://dlinrvj4uxc6w" path="res://assets/fonts/Seshat.otf" id="2_bd8vb"]
-[ext_resource type="Texture2D" uid="uid://y5f5ufakxn0o" path="res://assets/environment/Texture/starlight_shard.png" id="2_o31nw"]
+[ext_resource type="Texture2D" uid="uid://y5f5ufakxn0o" path="res://assets/environment/interactables/starlight_shard.png" id="2_o31nw"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bekt7"]
 size = Vector2(144, 101.5)

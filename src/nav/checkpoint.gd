@@ -158,16 +158,16 @@ func rest() -> void:
 
 
 func _get_current_room_path() -> String:
-	var games := get_tree().get_nodes_in_group("game")
+	var game := get_tree().get_first_node_in_group("game")
 
-	if games.is_empty():
+	if game == null:
 		push_error("Checkpoint: Game instance not found.")
 		return ""
 
-	var game := games[0]
-
 	if not game.has_method("get_current_room_scene_path"):
-		push_error("Checkpoint: Game has no get_current_room_scene_path().")
+		push_error(
+			"Checkpoint: Game has no get_current_room_scene_path()."
+		)
 		return ""
 
 	return game.get_current_room_scene_path()

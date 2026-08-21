@@ -1,5 +1,6 @@
 extends CharacterBody2D
 
+
 class RecallAnchorMarker extends Node2D:
 	var _pulse_time := 0.0
 
@@ -23,7 +24,7 @@ const SPEED := 430.0
 const JUMP_VELOCITY := -1200.0
 const DOUBLE_JUMP_VELOCITY := -1000.0
 const GRAVITY_RISE := 3429.0
-const GRAVITY_FALL := GRAVITY_RISE * 1.5
+const GRAVITY_FALL := GRAVITY_RISE * 1.2
 const SHORT_HOP_CUT := 0.5
 const GRAVITY_GLIDE := GRAVITY_FALL * 0.18
 const GLIDE_MAX_FALL_SPEED := 260.0
@@ -144,60 +145,54 @@ var input_locked := false
 var transition_walking := false
 var transition_walk_direction := 1.0
 
-
 # PLAYER
 
 @onready var detection_area: Area2D = $DetectionArea
-@onready var standing_collision = $CollisionShape2D
+@onready var standing_collision: CollisionShape2D = $CollisionShape2D
 
-# Normal player animation
+# ALL PLAYER ANIMATIONS
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 
-# Dash animation
-@onready var dash_animation: AnimatedSprite2D = $DashAnimation
-
-# Glide animation
-@onready var glide_animation: AnimatedSprite2D = $GlideAnimation
-
-# Wall cling animation
-@onready var wall_animation: AnimatedSprite2D = $WallAnimation
-
-# Ledge Grab
-@onready var ledge_animation: AnimatedSprite2D = get_node_or_null("LedgeAnimation")
-
-# COMBAT
-@onready var dash_hitbox: Area2D = $DashHitbox
-@onready var sword_hitbox: Area2D = $SwordHitbox
-@onready var slash_effect = $SlashEffect
-
-# DEATH
-@onready var death_animation: AnimatedSprite2D = $DeathAnimation
-
-# JUMP / DOUBLE JUMP
-@onready var jump_effect: AnimatedSprite2D = $JumpEffect
-@onready var double_jump_fire: Node2D = $DoubleJumpFire
-@onready var fire_sprite: AnimatedSprite2D = $DoubleJumpFire/AnimatedSprite2D
-@onready var fire_sound: AudioStreamPlayer2D = $DoubleJumpFire/AudioStreamPlayer2D
-@onready var fire_hitbox: Area2D = $DoubleJumpFire/Area2D
-
-# AUDIO
-@onready var sword_sound: AudioStreamPlayer2D = $SwordSound
-@onready var damage_sound: AudioStreamPlayer2D = $DamageSound
-@onready var death_sound: AudioStreamPlayer2D = $DeathSound
-@onready var jump_sound: AudioStreamPlayer2D = $JumpSound
-@onready var footstep_sound: AudioStreamPlayer2D = $FootstepSound
-
-# DASH EFFECTS
-@onready var dash_effect: Node2D = $DashEffect
-@onready var dash_sprite: AnimatedSprite2D = $DashEffect/HolyEffect
-@onready var dash_effect_always: AnimatedSprite2D = $DashEffect/WindEffect
-@onready var dash_sound: AudioStreamPlayer2D = $DashEffect/AudioStreamPlayer2D
-
-# GROUND SLAM
+# CAMERA
 @onready var camera: Camera2D = $Camera2D
-@onready var ground_slam_effect: Node2D = $GroundSlamEffect
-@onready var ground_slam_sprite: AnimatedSprite2D = $GroundSlamEffect/AnimatedSprite2D
-@onready var ground_slam_sound: AudioStreamPlayer2D = $GroundSlamEffect/AudioStreamPlayer2D
+
+# COLLISION
+@onready var dash_hitbox: Area2D = $Collision/DashHitbox
+@onready var sword_hitbox: Area2D = $Collision/SwordHitbox
+@onready var fire_hitbox: Area2D = $Collision/DoubleJumpHitbox
+
+# ANIMATION EFFECTS
+@onready var double_jump_fire_1: AnimatedSprite2D = $AnimationEffects/DoubleJumpFire1
+@onready var double_jump_fire_2: AnimatedSprite2D = $AnimationEffects/DoubleJumpFire2
+@onready var holy_effect: AnimatedSprite2D = $AnimationEffects/HolyEffect
+@onready var wind_effect: AnimatedSprite2D = $AnimationEffects/WindEffect
+@onready var slash_effect: AnimatedSprite2D = $AnimationEffects/SlashEffect
+@onready var death_animation: AnimatedSprite2D = $AnimationEffects/DeathAnimation
+@onready var jump_effect: AnimatedSprite2D = $AnimationEffects/JumpEffect
+@onready var slam_impact_effect: AnimatedSprite2D = $AnimationEffects/SlamImpactEffect
+
+# SOUND
+@onready var sword_sound: AudioStreamPlayer2D = $Sound/SwordSound
+@onready var damage_sound: AudioStreamPlayer2D = $Sound/DamageSound
+@onready var death_sound: AudioStreamPlayer2D = $Sound/DeathSound
+@onready var dash_sound: AudioStreamPlayer2D = $Sound/DashSound
+@onready var jump_sound: AudioStreamPlayer2D = $Sound/JumpSound
+@onready var fire_sound: AudioStreamPlayer2D = $Sound/FireJumpSound
+@onready var footstep_sound: AudioStreamPlayer2D = $Sound/FootstepSound
+@onready var ground_slam_sound: AudioStreamPlayer2D = $Sound/SlamSound
+
+
+# FACING
+# All player animations are authored facing RIGHT.
+# This is the only function that changes player-facing direction.
+
+func _set_facing(direction: float) -> void:
+	if direction > 0.0:
+		animated_sprite_2d.flip_h = false
+		sword_hitbox.scale.x = 1.0
+	elif direction < 0.0:
+		animated_sprite_2d.flip_h = true
+		sword_hitbox.scale.x = -1.0
 
 
 # DEATH RESET
@@ -254,38 +249,35 @@ func reset_after_death() -> void:
 
 	animated_sprite_2d.visible = true
 	animated_sprite_2d.modulate = Color.WHITE
+	animated_sprite_2d.play("idle")
 
-	dash_animation.visible = false
-	glide_animation.visible = false
-	wall_animation.visible = false
-	double_jump_fire.visible = false
-	dash_effect.visible = false
-	ground_slam_effect.visible = false
-
-	if ledge_animation:
-		ledge_animation.visible = false
+	double_jump_fire_1.visible = false
+	double_jump_fire_2.visible = false
+	holy_effect.visible = false
+	wind_effect.visible = false
+	slash_effect.visible = false
+	jump_effect.visible = false
+	slam_impact_effect.visible = false
 
 	cancel_attack()
 
-
-# INPUT / WORLD INTERACTION
-
 func disable_world_interaction() -> void:
+	input_locked = true
+
 	detection_area.monitoring = false
 	sword_hitbox.monitoring = false
 	fire_hitbox.monitoring = false
 	dash_hitbox.monitoring = false
 
 	standing_collision.disabled = true
-
-	velocity = Vector2.ZERO
-
+func enable_collision_only() -> void:
+	standing_collision.disabled = false
 
 func enable_world_interaction() -> void:
+	input_locked = false
+
 	detection_area.monitoring = true
-	standing_collision.set_deferred("disabled", false)
-
-
+	standing_collision.disabled = false
 func lock_input() -> void:
 	input_locked = true
 	velocity = Vector2.ZERO
@@ -295,7 +287,8 @@ func start_transition_walk(direction: float) -> void:
 	transition_walking = true
 	transition_walk_direction = direction
 
-	animated_sprite_2d.flip_h = direction < 0.0
+	_set_facing(direction)
+
 	animated_sprite_2d.visible = true
 	animated_sprite_2d.play("run")
 
@@ -322,6 +315,9 @@ func cancel_attack() -> void:
 	slash_effect.visible = false
 	sword_hitbox.monitoring = false
 
+	if animated_sprite_2d.animation == "attack":
+		animated_sprite_2d.play("idle")
+
 
 func sword_attack() -> void:
 	sword_hitbox.monitoring = true
@@ -344,7 +340,6 @@ func fire_attack(damage: int) -> void:
 
 
 func dash_attack() -> void:
-	# An unpowered dash does not deal damage.
 	if not dash_empowered:
 		return
 
@@ -362,10 +357,10 @@ func ground_slam_impact() -> void:
 
 	deal_ground_slam_damage()
 
-	ground_slam_effect.visible = true
-	ground_slam_sprite.stop()
-	ground_slam_sprite.frame = 0
-	ground_slam_sprite.play("impact")
+	slam_impact_effect.visible = true
+	slam_impact_effect.stop()
+	slam_impact_effect.frame = 0
+	slam_impact_effect.play("impact")
 
 	ground_slam_sound.play()
 
@@ -428,9 +423,9 @@ func _camera_shake(strength: float, duration: float) -> void:
 	)
 
 
-func _on_ground_slam_effect_finished() -> void:
-	if ground_slam_sprite.animation == "impact":
-		ground_slam_effect.visible = false
+func _on_slam_impact_finished() -> void:
+	if slam_impact_effect.animation == "impact":
+		slam_impact_effect.visible = false
 
 
 # RECALL
@@ -494,6 +489,7 @@ func _start_ledge_grab(dir: float) -> void:
 	velocity = Vector2.ZERO
 
 	var hit_point: Vector2 = ledge_ray_front.get_collision_point()
+
 	global_position = Vector2(
 		hit_point.x - (dir * 14.0),
 		ledge_ray_above.global_position.y + 40.0
@@ -503,22 +499,11 @@ func _start_ledge_grab(dir: float) -> void:
 	is_gliding = false
 	was_gliding = false
 
-	glide_animation.visible = false
-	wall_animation.visible = false
+	_set_facing(dir)
 
-	animated_sprite_2d.flip_h = dir < 0.0
-
-	if ledge_animation and ledge_animation.sprite_frames \
-	and ledge_animation.sprite_frames.has_animation("ledge_grab"):
-		animated_sprite_2d.visible = false
-		ledge_animation.visible = true
-		ledge_animation.flip_h = dir < 0.0
-		ledge_animation.play("ledge_grab")
-	else:
-		# Placeholder tint until the dedicated animation exists.
-		animated_sprite_2d.visible = true
-		animated_sprite_2d.stop()
-		animated_sprite_2d.modulate = Color(0.8, 0.9, 1.1, 1.0)
+	animated_sprite_2d.visible = true
+	animated_sprite_2d.modulate = Color.WHITE
+	animated_sprite_2d.play("ledge")
 
 
 func _climb_ledge() -> void:
@@ -526,6 +511,7 @@ func _climb_ledge() -> void:
 		LEDGE_CLIMB_OFFSET.x * ledge_facing_dir,
 		LEDGE_CLIMB_OFFSET.y
 	)
+
 	velocity = Vector2.ZERO
 
 	_end_ledge_grab()
@@ -542,9 +528,6 @@ func _end_ledge_grab() -> void:
 
 	animated_sprite_2d.visible = true
 	animated_sprite_2d.modulate = Color.WHITE
-
-	if ledge_animation:
-		ledge_animation.visible = false
 
 
 # DAMAGE
@@ -583,12 +566,10 @@ func take_damage(amount: int) -> void:
 # DEATH
 
 func die() -> void:
-	print("PLAYER DIE CALLED")
-	print_stack()
-
 	if is_dead:
 		return
-
+	print("PLAYER DIE CALLED")
+	print_stack()
 	is_dead = true
 	invincible = true
 	is_dashing = false
@@ -609,20 +590,21 @@ func die() -> void:
 	# Stop player effects.
 	cancel_attack()
 	_clear_recall_anchor()
-	double_jump_fire.visible = false
-	dash_effect.visible = false
-	dash_animation.visible = false
-	glide_animation.visible = false
-	wall_animation.visible = false
+
+	double_jump_fire_1.visible = false
+	double_jump_fire_2.visible = false
+	holy_effect.visible = false
+	wind_effect.visible = false
+	slash_effect.visible = false
+	jump_effect.visible = false
+	slam_impact_effect.visible = false
+
 	is_ledge_grabbing = false
 
-	if ledge_animation:
-		ledge_animation.visible = false
-
-	# Hide normal player sprite.
+	# Hide normal player animation.
 	animated_sprite_2d.visible = false
 
-	# Show death animation.
+	# Show death animation effect.
 	death_animation.visible = true
 	death_animation.flip_h = animated_sprite_2d.flip_h
 	death_animation.play("death")
@@ -641,7 +623,8 @@ func die() -> void:
 # FIRE ANIMATION
 
 func _on_fire_animation_finished() -> void:
-	double_jump_fire.visible = false
+	double_jump_fire_1.visible = false
+	double_jump_fire_2.visible = false
 	fire_hitbox.monitoring = false
 
 
@@ -650,11 +633,6 @@ func _on_fire_animation_finished() -> void:
 func _on_animation_finished() -> void:
 	if animated_sprite_2d.animation == "attack":
 		cancel_attack()
-
-
-func _on_jump_effect_finished() -> void:
-	if jump_effect.animation == "jumpwind":
-		jump_effect.visible = false
 
 
 # FOOTSTEPS
@@ -679,40 +657,27 @@ func _ready() -> void:
 	health = max_health
 	floor_snap_length = 4.0
 
-	# GROUND SLAM
-
+	# CAMERA
 	camera_base_offset = camera.offset
-
-	ground_slam_effect.visible = false
-
-	ground_slam_sprite.animation_finished.connect(
-		_on_ground_slam_effect_finished
-	)
 
 	# HIDE EFFECTS
 
 	slash_effect.visible = false
 	sword_hitbox.monitoring = false
 
-	double_jump_fire.visible = false
+	double_jump_fire_1.visible = false
+	double_jump_fire_2.visible = false
 	fire_hitbox.monitoring = false
 
-	dash_effect.visible = false
+	holy_effect.visible = false
+	wind_effect.visible = false
 	dash_hitbox.monitoring = false
 
-	# Hide dash animation until actually dashing.
-	dash_animation.visible = false
-
-	# Hide glide animation until actually gliding.
-	glide_animation.visible = false
-
-	# Hide wall animation until actually wall clinging.
-	wall_animation.visible = false
-
-	# Hide death animation.
 	death_animation.visible = false
+	jump_effect.visible = false
+	slam_impact_effect.visible = false
 
-	# LEDGE GRAB
+	# LEDGE GRAB RAYS
 
 	ledge_ray_front = RayCast2D.new()
 	ledge_ray_front.position = Vector2(0, LEDGE_RAY_FRONT_Y)
@@ -724,21 +689,26 @@ func _ready() -> void:
 	ledge_ray_above.collision_mask = 1
 	add_child(ledge_ray_above)
 
-	if ledge_animation:
-		ledge_animation.visible = false
-
 	# CONNECT ANIMATION SIGNALS
 
 	animated_sprite_2d.animation_finished.connect(
 		_on_animation_finished
 	)
 
-	fire_sprite.animation_finished.connect(
+	double_jump_fire_1.animation_finished.connect(
+		_on_fire_animation_finished
+	)
+
+	double_jump_fire_2.animation_finished.connect(
 		_on_fire_animation_finished
 	)
 
 	jump_effect.animation_finished.connect(
 		_on_jump_effect_finished
+	)
+
+	slam_impact_effect.animation_finished.connect(
+		_on_slam_impact_finished
 	)
 
 	mp_changed.emit(mp, max_mp)
@@ -748,8 +718,6 @@ func _ready() -> void:
 # PHYSICS PROCESS
 
 func _physics_process(delta: float) -> void:
-
-	# STOP ALL PLAYER PROCESSING WHILE DEAD
 
 	if is_dead:
 		return
@@ -781,76 +749,44 @@ func _physics_process(delta: float) -> void:
 		dash_timer = DASH_DURATION
 		dash_cooldown_timer = DASH_CHAIN_COOLDOWN if dash_chained else DASH_COOLDOWN
 
-		# Cancel ongoing attack.
 		cancel_attack()
 
-		# Hide glide animation.
-		glide_animation.visible = false
-
-		# Hide wall animation.
-		wall_animation.visible = false
-
-		# Show normal sprite temporarily.
-		animated_sprite_2d.visible = true
-
-		# Determine dash direction from current facing direction.
+		# Determine dash direction from facing.
 		dash_direction = -1.0 if animated_sprite_2d.flip_h else 1.0
 
 		# Check if player has enough MP for empowered dash.
 		dash_empowered = mp >= DASH_MP_COST
 
 		if dash_empowered:
-			# Spend 2 MP.
 			mp -= DASH_MP_COST
 
 			mp_changed.emit(mp, max_mp)
 			GameState.current_mp = mp
 
-			# Empowered dash gets i-frames and damage.
 			invincible = true
 			dash_hitbox.monitoring = true
-
-			# Allow every enemy to be hit once during this dash.
 			dash_hit_enemies.clear()
 
 		else:
-			# Normal dash:
-			# no damage
-			# no i-frames
 			invincible = false
 			dash_hitbox.monitoring = false
 
 		# DASH ANIMATION
-
-		# Hide normal player sprite.
-		animated_sprite_2d.visible = false
-
-		# Show dedicated dash animation.
-		dash_animation.visible = true
-
-		# Match player's facing direction.
-		dash_animation.flip_h = animated_sprite_2d.flip_h
-
-		dash_animation.play("dash")
+		animated_sprite_2d.visible = true
+		animated_sprite_2d.play("dash")
 
 		# DASH EFFECTS
 
-		dash_effect.visible = true
-
-		dash_effect.scale.x = (
-			-1.0 if animated_sprite_2d.flip_h else 1.0
-		)
-
 		# Wind effect always plays.
-		dash_effect_always.visible = true
-		dash_effect_always.play("wind")
+		wind_effect.visible = true
+		wind_effect.play("wind")
 
 		# Holy effect only plays on empowered dash.
 		if dash_empowered:
-			dash_sprite.visible = true
-			dash_sprite.play("dash")
+			holy_effect.visible = true
+			holy_effect.play("dash")
 		else:
-			dash_sprite.visible = false
+			holy_effect.visible = false
 
 		dash_sound.play()
 
@@ -869,17 +805,10 @@ func _physics_process(delta: float) -> void:
 
 		cancel_attack()
 
-		# Hide glide animation.
-		glide_animation.visible = false
-
-		# Hide wall animation.
-		wall_animation.visible = false
-
 		animated_sprite_2d.visible = true
+		animated_sprite_2d.play("slam")
 
 		velocity.y = 0.0
-
-		animated_sprite_2d.play("fall_loop")
 
 	# DASH PROCESS
 
@@ -898,25 +827,19 @@ func _physics_process(delta: float) -> void:
 		if dash_timer <= 0.0:
 			is_dashing = false
 
-			# Always remove dash i-frames.
 			invincible = false
 			dash_hitbox.monitoring = false
 			dash_empowered = false
 
-			# Stop dash animation.
-			dash_animation.stop()
-			dash_animation.visible = false
+			animated_sprite_2d.play(
+				"falling" if not is_on_floor() else "idle"
+			)
 
-			# Show normal player sprite again.
-			animated_sprite_2d.visible = true
+			holy_effect.stop()
+			wind_effect.stop()
 
-			# Stop dash effects.
-			dash_sprite.stop()
-			dash_effect_always.stop()
-
-			dash_sprite.visible = false
-			dash_effect_always.visible = false
-			dash_effect.visible = false
+			holy_effect.visible = false
+			wind_effect.visible = false
 
 		return
 
@@ -951,10 +874,15 @@ func _physics_process(delta: float) -> void:
 			_climb_ledge()
 			return
 
-		var release_axis := Input.get_axis("move_left", "move_right")
+		var release_axis := Input.get_axis(
+			"move_left",
+			"move_right"
+		)
+
 		var pressing_away := (
 			(ledge_facing_dir > 0.0 and release_axis < 0.0)
-			or (ledge_facing_dir < 0.0 and release_axis > 0.0)
+			or
+			(ledge_facing_dir < 0.0 and release_axis > 0.0)
 		)
 
 		if pressing_away \
@@ -967,20 +895,7 @@ func _physics_process(delta: float) -> void:
 	# INPUT LOCK
 
 	if input_locked:
-		velocity.x = move_toward(
-			velocity.x,
-			0,
-			SPEED
-		)
-
-		if not is_on_floor():
-			velocity.y += (
-				GRAVITY_FALL
-				if velocity.y > 0
-				else GRAVITY_RISE
-			) * delta
-
-		move_and_slide()
+		velocity = Vector2.ZERO
 
 		if transition_walking:
 			animated_sprite_2d.visible = true
@@ -988,18 +903,15 @@ func _physics_process(delta: float) -> void:
 		else:
 			if not is_attacking:
 				animated_sprite_2d.visible = true
-				glide_animation.visible = false
-				wall_animation.visible = false
-
-				animated_sprite_2d.play(
-					"idle" if is_on_floor() else "fall"
-				)
+				animated_sprite_2d.play("idle")
 
 		return
 
 	# RECALL LEASH CHECK
 
-	if has_recall_anchor and global_position.distance_to(recall_anchor_position) > RECALL_LEASH_RANGE:
+	if has_recall_anchor \
+	and global_position.distance_to(recall_anchor_position) > RECALL_LEASH_RANGE:
+
 		_flash_recall(Color(2.2, 1.3, 1.3, 1))
 		_clear_recall_anchor()
 
@@ -1067,7 +979,10 @@ func _physics_process(delta: float) -> void:
 	and not is_ledge_grabbing \
 	and velocity.y >= 0.0:
 
-		var ledge_input := Input.get_axis("move_left", "move_right")
+		var ledge_input := Input.get_axis(
+			"move_left",
+			"move_right"
+		)
 
 		if ledge_input != 0.0:
 			var ledge_dir := signf(ledge_input)
@@ -1087,6 +1002,7 @@ func _physics_process(delta: float) -> void:
 
 			if ledge_ray_front.is_colliding() \
 			and not ledge_ray_above.is_colliding():
+
 				_start_ledge_grab(ledge_dir)
 
 	# WALL JUMP LOCK TIMER
@@ -1118,9 +1034,6 @@ func _physics_process(delta: float) -> void:
 
 		is_wall_clinging = false
 
-		# Hide wall animation.
-		wall_animation.visible = false
-
 		wall_jump_lock_timer = WALL_JUMP_LOCK_TIME
 
 		jump_sound.play()
@@ -1132,15 +1045,9 @@ func _physics_process(delta: float) -> void:
 
 	if jump_buffer_timer > 0.0 and coyote_timer > 0.0:
 
-		# Stop gliding.
 		is_gliding = false
 		was_gliding = false
-
-		# Stop wall cling.
 		is_wall_clinging = false
-
-		glide_animation.visible = false
-		wall_animation.visible = false
 
 		animated_sprite_2d.visible = true
 
@@ -1162,15 +1069,9 @@ func _physics_process(delta: float) -> void:
 	and not is_on_floor() \
 	and GameState.has_ability("double_jump"):
 
-		# Stop gliding.
 		is_gliding = false
 		was_gliding = false
-
-		# Stop wall cling.
 		is_wall_clinging = false
-
-		glide_animation.visible = false
-		wall_animation.visible = false
 
 		animated_sprite_2d.visible = true
 
@@ -1183,20 +1084,28 @@ func _physics_process(delta: float) -> void:
 		jump_effect.play("jumpwind")
 
 		if mp >= DOUBLE_JUMP_MP_COST:
-			# 2+ MP:
-			# ENHANCED DOUBLE JUMP WITH FIRE
+
+			# ENHANCED DOUBLE JUMP
 
 			mp -= DOUBLE_JUMP_MP_COST
 
 			mp_changed.emit(mp, max_mp)
 			GameState.current_mp = mp
 
-			double_jump_fire.visible = true
-			double_jump_fire.modulate = Color.WHITE
+			double_jump_fire_1.visible = true
+			double_jump_fire_2.visible = true
 
-			fire_sprite.stop()
-			fire_sprite.frame = 0
-			fire_sprite.play("fire")
+			double_jump_fire_1.modulate = Color.WHITE
+			double_jump_fire_2.modulate = Color.WHITE
+
+			double_jump_fire_1.stop()
+			double_jump_fire_2.stop()
+
+			double_jump_fire_1.frame = 0
+			double_jump_fire_2.frame = 0
+
+			double_jump_fire_1.play("fire")
+			double_jump_fire_2.play("fire")
 
 			fire_sound.play()
 
@@ -1204,21 +1113,30 @@ func _physics_process(delta: float) -> void:
 			fire_attack(fire_damage)
 
 		else:
-			# 0 OR 1 MP:
-			# WEAKER SMOKE FALLBACK
 
-			double_jump_fire.visible = true
+			# SMOKE FALLBACK
 
-			double_jump_fire.modulate = Color(
+			var smoke_color := Color(
 				0.405,
 				0.405,
 				0.405,
 				0.3
 			)
 
-			fire_sprite.stop()
-			fire_sprite.frame = 0
-			fire_sprite.play("fire")
+			double_jump_fire_1.visible = true
+			double_jump_fire_2.visible = true
+
+			double_jump_fire_1.modulate = smoke_color
+			double_jump_fire_2.modulate = smoke_color
+
+			double_jump_fire_1.stop()
+			double_jump_fire_2.stop()
+
+			double_jump_fire_1.frame = 0
+			double_jump_fire_2.frame = 0
+
+			double_jump_fire_1.play("fire")
+			double_jump_fire_2.play("fire")
 
 			fire_sound.play()
 
@@ -1277,17 +1195,10 @@ func _physics_process(delta: float) -> void:
 		"move_right"
 	)
 
-	# FLIP SPRITES
+	# FACING
 
-	if direction > 0:
-
-		animated_sprite_2d.flip_h = false
-		sword_hitbox.scale.x = 1
-
-	elif direction < 0:
-
-		animated_sprite_2d.flip_h = true
-		sword_hitbox.scale.x = -1
+	if direction != 0.0:
+		_set_facing(direction)
 
 	# MOVEMENT
 
@@ -1297,18 +1208,13 @@ func _physics_process(delta: float) -> void:
 		current_speed *= slow_multiplier
 
 	if direction:
-
 		velocity.x = direction * current_speed
-
 	else:
-
 		velocity.x = move_toward(
 			velocity.x,
 			0,
 			current_speed
 		)
-
-	# MOVEMENT
 
 	move_and_slide()
 
@@ -1319,19 +1225,11 @@ func _physics_process(delta: float) -> void:
 		is_attacking = true
 		sword_has_hit = false
 
-		# Stop glide.
 		is_gliding = false
 		was_gliding = false
-
-		# Stop wall cling.
 		is_wall_clinging = false
 
-		# Hide special animations.
-		glide_animation.visible = false
-		wall_animation.visible = false
-
 		animated_sprite_2d.visible = true
-
 		animated_sprite_2d.play("attack")
 
 		slash_effect.visible = true
@@ -1360,13 +1258,7 @@ func _physics_process(delta: float) -> void:
 
 		if is_on_floor():
 
-			# Hide special animations.
-			glide_animation.visible = false
-			wall_animation.visible = false
-
 			was_gliding = false
-
-			# Normal player sprite is active.
 			animated_sprite_2d.visible = true
 
 			if direction == 0:
@@ -1378,7 +1270,6 @@ func _physics_process(delta: float) -> void:
 
 				animated_sprite_2d.play("run")
 
-				# Footstep frames.
 				if animated_sprite_2d.frame in [5, 13, 22]:
 
 					if last_footstep_frame != animated_sprite_2d.frame:
@@ -1390,22 +1281,13 @@ func _physics_process(delta: float) -> void:
 
 		elif coyote_timer > 0.0:
 
-			# Hide special animations.
-			glide_animation.visible = false
-			wall_animation.visible = false
-
 			was_gliding = false
-
-			# Normal player sprite is active.
 			animated_sprite_2d.visible = true
 
 			if direction == 0:
-
 				animated_sprite_2d.play("idle")
 				last_footstep_frame = -1
-
 			else:
-
 				animated_sprite_2d.play("run")
 
 		# AIR
@@ -1416,82 +1298,67 @@ func _physics_process(delta: float) -> void:
 
 			if is_wall_clinging:
 
-				# Hide normal player sprite.
-				animated_sprite_2d.visible = false
-
-				# Hide glide animation.
-				glide_animation.visible = false
-				was_gliding = false
-
-				# Show wall animation.
-				wall_animation.visible = true
-
-				# Match facing direction.
-				wall_animation.flip_h = not animated_sprite_2d.flip_h
-
-				# Play wall cling animation.
-				if wall_animation.animation != "wall_cling":
-					wall_animation.play("wall_cling")
+				animated_sprite_2d.visible = true
+				animated_sprite_2d.play("wall")
 
 			# GLIDING
 
 			elif is_gliding:
 
-				# Hide normal player sprite.
-				animated_sprite_2d.visible = false
-
-				# Hide wall animation.
-				wall_animation.visible = false
-
-				# Show glide animation.
-				glide_animation.visible = true
-
-				# Match facing direction.
-				glide_animation.flip_h = not animated_sprite_2d.flip_h
+				animated_sprite_2d.visible = true
 
 				if not was_gliding:
 
-					glide_animation.stop()
-					glide_animation.frame = 0
-					glide_animation.play("glide")
+					animated_sprite_2d.stop()
+					animated_sprite_2d.frame = 0
+					animated_sprite_2d.play("glide")
 
 					was_gliding = true
 
+				elif animated_sprite_2d.animation != "glide":
+					animated_sprite_2d.play("glide")
+
 			# RISING / JUMPING
 
-			elif velocity.y < 0:
-
-				# Hide special animations.
-				glide_animation.visible = false
-				wall_animation.visible = false
+			elif velocity.y >= 0:
 
 				was_gliding = false
-
-				# Show normal player sprite.
 				animated_sprite_2d.visible = true
 
-				animated_sprite_2d.play("jump")
+				if animated_sprite_2d.animation != "fall" \
+				and animated_sprite_2d.animation != "falling":
+
+					animated_sprite_2d.play("fall")
+
+				if animated_sprite_2d.animation == "fall":
+					var fall_frame_count := animated_sprite_2d.sprite_frames.get_frame_count("fall")
+
+					if animated_sprite_2d.frame >= fall_frame_count - 1:
+						animated_sprite_2d.play("falling")
 
 			# FALLING
 
 			else:
 
-				# Hide special animations.
-				glide_animation.visible = false
-				wall_animation.visible = false
-
 				was_gliding = false
-
-				# Show normal player sprite.
 				animated_sprite_2d.visible = true
 
-				if animated_sprite_2d.animation != "fall_loop":
+				if animated_sprite_2d.animation != "fall" \
+				and animated_sprite_2d.animation != "falling":
+
 					animated_sprite_2d.play("fall")
 
 				if animated_sprite_2d.animation == "fall" \
 				and animated_sprite_2d.frame >= 4:
 
-					animated_sprite_2d.play("fall_loop")
+					animated_sprite_2d.play("falling")
+
+
+# JUMP EFFECT
+
+func _on_jump_effect_finished() -> void:
+	if jump_effect.animation == "jumpwind":
+		jump_effect.visible = false
 
 
 # HP / MP
@@ -1527,18 +1394,18 @@ func spend_stamina(amount: float) -> bool:
 	stamina -= amount
 	stamina_regen_timer = STAMINA_REGEN_DELAY
 	stamina_changed.emit(stamina, max_stamina)
+
 	return true
 
 
 func drain_stamina(amount: float) -> bool:
-	# Per-frame continuous drain (wall cling), vs. spend_stamina's
-	# flat one-time cost (dash chain). Returns false once empty.
 	if stamina <= 0.0:
 		return false
 
 	stamina = max(stamina - amount, 0.0)
 	stamina_regen_timer = STAMINA_REGEN_DELAY
 	stamina_changed.emit(stamina, max_stamina)
+
 	return stamina > 0.0
 
 

@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://c48fe3keyhhpd"]
+
+[ext_resource type="Script" uid="uid://8vr0pfeydo4w" path="res://src/nav/camera_bounds.gd" id="1_lanju"]
+[ext_resource type="TileSet" uid="uid://wdxl8wi6477l" path="res://assets/environment/64x64/greybox.tres" id="2_qa08k"]
+[ext_resource type="PackedScene" uid="uid://c20o6wohk6hul" path="res://src/enemies/guiding_star.tscn" id="3_algpv"]
+[ext_resource type="Script" uid="uid://d6mwrb2d16q5" path="res://src/nav/gate.gd" id="4_qjftj"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4pxbc"]
+size = Vector2(208.5, 206)
+
+[node name="Room_03" type="Node2D" unique_id=1602108746]
+
+[node name="CameraBounds" type="Node2D" parent="." unique_id=1140724593]
+script = ExtResource("1_lanju")
+
+[node name="Environments" type="Node2D" parent="." unique_id=1833260432]
+
+[node name="Greybox" type="TileMapLayer" parent="Environments" unique_id=1995920700]
+tile_set = ExtResource("2_qa08k")
+
+[node name="GuidingStar" parent="." unique_id=1933994159 instance=ExtResource("3_algpv")]
+position = Vector2(345, -71)
+movement_type = 1
+
+[node name="Transition" type="Area2D" parent="." unique_id=1198934175]
+collision_layer = 4
+collision_mask = 5
+script = ExtResource("4_qjftj")
+gate_id = "room2_entry"
+target_scene_path = "uid://ch536ojbr1ee4"
+target_gate_id = "tutorial_exit"
+entry_direction = Vector2(-1, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Transition" unique_id=1128700579]
+position = Vector2(-387, -105)
+shape = SubResource("RectangleShape2D_4pxbc")
+
+[node name="PlayerSpawn" type="Marker2D" parent="." unique_id=805233656 groups=["player_spawn"]]
+position = Vector2(-221, -1)
