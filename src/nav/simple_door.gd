@@ -10,13 +10,20 @@ class_name SimpleDoor
 ##
 ## Scene children expected:
 ##   CollisionShape2D — collision_layer = 1
-##   Sprite2D         — optional, faded when open
+##   TileMapLayer    — optional visual
+##   Sprite2D        — optional alternative visual
+##
+## If using TileMapLayer, it should contain only this door's tiles.
 
 @export var start_open: bool = false
 @export var fade_duration: float = 0.3
 
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
-@onready var sprite: CanvasItem = $Sprite2D if has_node("Sprite2D") else null
+@onready var visual: CanvasItem = (
+	$TileMapLayer if has_node("TileMapLayer")
+	else $Sprite2D if has_node("Sprite2D")
+	else null
+)
 
 var is_open := false
 
@@ -45,14 +52,19 @@ func close() -> void:
 func _apply_open(open_state: bool, instant: bool) -> void:
 	collision_shape.set_deferred("disabled", open_state)
 
-	if not sprite:
+	if not visual:
 		return
 
 	var target_alpha := 0.15 if open_state else 1.0
 
 	if instant:
-		sprite.modulate.a = target_alpha
+		visual.modulate.a = target_alpha
 		return
 
 	var tween := create_tween()
-	tween.tween_property(sprite, "modulate:a", target_alpha, fade_duration)
+	tween.tween_property(
+		visual,
+		"modulate:a",
+		target_alpha,
+		fade_duration
+	)

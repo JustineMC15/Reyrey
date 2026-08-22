@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://besywffkmej8q"]
 
 [ext_resource type="Script" uid="uid://8vr0pfeydo4w" path="res://src/nav/camera_bounds.gd" id="1_181ws"]
-[ext_resource type="TileSet" uid="uid://wdxl8wi6477l" path="res://assets/environment/64x64/greybox.tres" id="2_8aml6"]
+[ext_resource type="TileSet" uid="uid://wdxl8wi6477l" path="res://assets/environment/tres/greybox.tres" id="2_8aml6"]
 [ext_resource type="PackedScene" uid="uid://c20o6wohk6hul" path="res://src/enemies/guiding_star.tscn" id="3_e5ugw"]
 [ext_resource type="Script" uid="uid://d6mwrb2d16q5" path="res://src/nav/gate.gd" id="4_445ph"]
 

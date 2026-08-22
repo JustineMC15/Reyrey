@@ -20,7 +20,7 @@ signal stamina_changed(current_stamina, max_stamina)
 
 
 const SPEED := 430.0
-
+const HAZARD_INVINCIBILITY_TIME := 1.0
 const JUMP_VELOCITY := -1200.0
 const DOUBLE_JUMP_VELOCITY := -1000.0
 const GRAVITY_RISE := 3429.0
@@ -576,7 +576,41 @@ func take_damage(amount: int) -> void:
 	if not is_dead:
 		invincible = false
 
+func take_hazard_damage(
+	amount: int,
+	respawn_position: Vector2,
+	fade_duration: float = 0.25,
+	invincibility_after: float = HAZARD_INVINCIBILITY_TIME
+) -> void:
+	if is_dead:
+		return
 
+	damage_sound.play()
+
+	health -= amount
+	health_changed.emit(health, max_health)
+
+	flash_damage()
+
+	if health <= 0:
+		die()
+		return
+
+	await GameState.respawn_at_position(
+		self,
+		respawn_position,
+		fade_duration,
+		invincibility_after
+	)
+
+
+func grant_temporary_invincibility(duration: float) -> void:
+	invincible = true
+
+	await get_tree().create_timer(duration).timeout
+
+	if not is_dead:
+		invincible = false
 # DEATH
 
 func die() -> void:

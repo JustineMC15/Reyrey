@@ -10,24 +10,35 @@ class_name FallingPlatform
 ##   CollisionShape2D — collision_layer = 1
 ##   DetectionArea    — Area2D flush with the platform's top surface,
 ##                      collision_layer = 4, mask = 5
-##   Sprite2D         — optional
+##   TileMapLayer     — optional visual
+##   Sprite2D         — optional alternative visual
+##
+## If using TileMapLayer, it should contain only this platform's tiles.
 
 @export var stand_time_before_fall: float = 0.5
 @export var fall_speed: float = 900.0
 @export var shake_strength: float = 3.0
 @export var respawn_delay: float = 3.0
 
-@onready var sprite: CanvasItem = $Sprite2D if has_node("Sprite2D") else null
+@onready var visual: CanvasItem = (
+	$TileMapLayer if has_node("TileMapLayer")
+	else $Sprite2D if has_node("Sprite2D")
+	else null
+)
 @onready var detection_area: Area2D = $DetectionArea
 
 var _stand_timer := 0.0
 var _player_on_top := false
 var _falling := false
 var _start_position: Vector2
+var _base_visual_position: Vector2
 
 
 func _ready() -> void:
 	_start_position = global_position
+
+	if visual:
+		_base_visual_position = visual.position
 
 	detection_area.area_entered.connect(_on_area_entered)
 	detection_area.area_exited.connect(_on_area_exited)
@@ -43,8 +54,8 @@ func _physics_process(delta: float) -> void:
 
 	_stand_timer += delta
 
-	if sprite:
-		sprite.position = Vector2(
+	if visual:
+		visual.position = _base_visual_position + Vector2(
 			randf_range(-shake_strength, shake_strength),
 			randf_range(-shake_strength, shake_strength)
 		)
@@ -67,8 +78,8 @@ func _on_area_exited(area: Area2D) -> void:
 	_player_on_top = false
 	_stand_timer = 0.0
 
-	if sprite:
-		sprite.position = Vector2.ZERO
+	if visual:
+		visual.position = _base_visual_position
 
 
 func _start_falling() -> void:
@@ -85,5 +96,5 @@ func _respawn() -> void:
 	_stand_timer = 0.0
 	global_position = _start_position
 
-	if sprite:
-		sprite.position = Vector2.ZERO
+	if visual:
+		visual.position = _base_visual_position

@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://15jrydonscmv"]
 
 [ext_resource type="Script" uid="uid://8vr0pfeydo4w" path="res://src/nav/camera_bounds.gd" id="1_58qcc"]
-[ext_resource type="TileSet" uid="uid://wdxl8wi6477l" path="res://assets/environment/64x64/greybox.tres" id="3_6ckp0"]
+[ext_resource type="TileSet" uid="uid://wdxl8wi6477l" path="res://assets/environment/tres/greybox.tres" id="3_6ckp0"]
 [ext_resource type="Texture2D" uid="uid://cth5u6xte7fwo" path="res://assets/environment/shrines/shrine_01.jpg" id="5_dsnap"]
 [ext_resource type="Texture2D" uid="uid://c7a77mknk6a3" path="res://assets/environment/16x16/Dungeon Tile Set.png" id="18_yb11u"]
 [ext_resource type="Script" uid="uid://cobwunaxv7751" path="res://src/nav/interact_gate.gd" id="24_bsssq"]

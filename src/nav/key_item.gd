@@ -8,11 +8,17 @@ class_name KeyItem
 ## Scene: this node IS the Area2D (collision_layer = 4,
 ## collision_mask = 5, matching every other player-detecting trigger
 ## in the project). Drag your own prompt Panel into `prompt_panel`.
+##
+## Visual can be either TileMapLayer or Sprite2D.
 
 @export var key_id: String = ""
 @export var prompt_panel: Panel
 
-@onready var sprite: CanvasItem = $Sprite2D if has_node("Sprite2D") else null
+@onready var visual: CanvasItem = (
+	$TileMapLayer if has_node("TileMapLayer")
+	else $Sprite2D if has_node("Sprite2D")
+	else null
+)
 
 var activated := false
 var player_inside := false

@@ -16,7 +16,7 @@ class_name HiddenWall
 @export var reveal_duration: float = 0.6
 
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
-@onready var sprite: CanvasItem = $Sprite2D if has_node("Sprite2D") else null
+@onready var visual: CanvasItem = $TileMapLayer if has_node("TileMapLayer") else null
 @onready var detection_area: Area2D = $DetectionArea
 
 var _revealed := false
@@ -41,12 +41,12 @@ func _reveal(instant: bool) -> void:
 	_revealed = true
 	collision_shape.set_deferred("disabled", true)
 
-	if not sprite:
+	if not visual:
 		return
 
 	if instant:
-		sprite.modulate.a = reveal_alpha
+		visual.modulate.a = reveal_alpha
 		return
 
 	var tween := create_tween()
-	tween.tween_property(sprite, "modulate:a", reveal_alpha, reveal_duration)
+	tween.tween_property(visual, "modulate:a", reveal_alpha, reveal_duration)

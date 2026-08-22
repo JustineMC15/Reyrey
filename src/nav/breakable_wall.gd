@@ -5,16 +5,24 @@ class_name BreakableWall
 ## its hit points reach zero. Covers "attack wall until it breaks"
 ## and plain "breakable wall" — max_hits = 1 gives you the latter.
 ##
-## Scene: CollisionShape2D on collision_layer = 3 (bit for "blocks
-## the player" + bit for "hittable by weapons" — matches the value
-## every weapon hitbox in the project scans). Optional Sprite2D.
+## Scene:
+##   CollisionShape2D — collision_layer = 3
+##   TileMapLayer    — optional visual
+##   Sprite2D        — optional alternative visual
+##
+## TileMapLayer should contain only the tiles belonging to this wall.
 
 @export var wall_id: String = ""
 @export var max_hits: int = 3
-@export var respawn_on_reload: bool = false  ## true = ignore saved broken state (re-blocks on room reload)
+@export var respawn_on_reload: bool = false
+## true = ignore saved broken state (re-blocks on room reload)
 
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
-@onready var sprite: CanvasItem = $Sprite2D if has_node("Sprite2D") else null
+@onready var visual: CanvasItem = (
+	$TileMapLayer if has_node("TileMapLayer")
+	else $Sprite2D if has_node("Sprite2D")
+	else null
+)
 
 var hits_remaining: int
 
@@ -38,12 +46,22 @@ func take_damage(_amount: int) -> void:
 
 
 func _flash() -> void:
-	if not sprite:
+	if not visual:
 		return
 
 	var tween := create_tween()
-	tween.tween_property(sprite, "modulate", Color(2, 2, 2, 1), 0.05)
-	tween.tween_property(sprite, "modulate", Color.WHITE, 0.1)
+	tween.tween_property(
+		visual,
+		"modulate",
+		Color(2, 2, 2, 1),
+		0.05
+	)
+	tween.tween_property(
+		visual,
+		"modulate",
+		Color.WHITE,
+		0.1
+	)
 
 
 func _break() -> void:
@@ -52,9 +70,9 @@ func _break() -> void:
 
 	collision_shape.set_deferred("disabled", true)
 
-	if sprite:
+	if visual:
 		var tween := create_tween()
-		tween.tween_property(sprite, "modulate:a", 0.0, 0.25)
+		tween.tween_property(visual, "modulate:a", 0.0, 0.25)
 		tween.tween_callback(queue_free)
 	else:
 		queue_free()

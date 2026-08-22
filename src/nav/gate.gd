@@ -27,6 +27,9 @@ func _on_area_entered(area: Area2D) -> void:
 	if not area.is_in_group("player_detection"):
 		return
 
+	if GameState.is_loading_save:
+		return
+
 	if not GameState.can_trigger_gate():
 		return
 

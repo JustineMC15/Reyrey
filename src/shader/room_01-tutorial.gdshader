@@ -20,7 +20,7 @@ void fragment() {
     vec3 grim_color = mix(tex_color.rgb, vec3(gray), desaturation);
     
     // Contrast and Darkening
-    grim_color = (grim_color - 0.5) * contrast + 0.5;
+    grim_color = (grim_color - 0.6) * contrast + 0.5;
     grim_color -= vec3(darken);
     
     // Vignette calculation

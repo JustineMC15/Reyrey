@@ -73,8 +73,11 @@ func _ready() -> void:
 	else:
 		await position_player_at_start()
 
-	player.enable_world_interaction()
+	# The player is now safely positioned.
+	# Allow transition gates to react again.
+	GameState.is_loading_save = false
 
+	player.enable_world_interaction()
 
 func load_room(scene_path: String) -> void:
 	scene_path = ResourceUID.ensure_path(scene_path)

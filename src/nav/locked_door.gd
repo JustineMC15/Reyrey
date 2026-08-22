@@ -8,8 +8,11 @@ class_name LockedDoor
 ## Scene children expected:
 ##   CollisionShape2D  — the physical block, collision_layer = 1
 ##   DetectionArea     — Area2D, collision_layer = 4, collision_mask = 5
-##   Sprite2D          — optional, faded out on unlock
+##   TileMapLayer      — optional visual
+##   Sprite2D          — optional alternative visual
 ## Drag your prompt Panel into `prompt_panel`.
+##
+## If using TileMapLayer, it should contain only this door's tiles.
 
 @export var door_id: String = ""
 @export var required_key_id: String = ""
@@ -18,7 +21,11 @@ class_name LockedDoor
 
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var detection_area: Area2D = $DetectionArea
-@onready var sprite: CanvasItem = $Sprite2D if has_node("Sprite2D") else null
+@onready var visual: CanvasItem = (
+	$TileMapLayer if has_node("TileMapLayer")
+	else $Sprite2D if has_node("Sprite2D")
+	else null
+)
 
 var player_inside := false
 
@@ -60,15 +67,15 @@ func _open(instant: bool) -> void:
 	if prompt_panel:
 		prompt_panel.hide()
 
-	if not sprite:
+	if not visual:
 		return
 
 	if instant:
-		sprite.modulate.a = 0.0
+		visual.modulate.a = 0.0
 		return
 
 	var tween := create_tween()
-	tween.tween_property(sprite, "modulate:a", 0.0, 0.3)
+	tween.tween_property(visual, "modulate:a", 0.0, 0.3)
 
 
 func _on_area_entered(area: Area2D) -> void:

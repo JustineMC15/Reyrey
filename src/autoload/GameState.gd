@@ -45,7 +45,7 @@ const FADE_DURATION := 0.25
 
 
 # --- Game startup ---
-
+var is_loading_save: bool = false
 var startup_room_path: String = ""
 var startup_checkpoint_id: String = ""
 
@@ -898,6 +898,70 @@ func respawn_player() -> void:
 
 	_transition_lock = false
 
+func respawn_at_position(
+	player: Node,
+	target_position: Vector2,
+	fade_duration: float = 0.25,
+	invincibility_after: float = 1.0
+) -> void:
+	if _transition_lock:
+		return
+
+	_transition_lock = true
+
+	if player.has_method("lock_input"):
+		player.lock_input()
+
+	var fade_out := create_tween()
+
+	fade_out.tween_property(
+		_fade_rect,
+		"color:a",
+		1.0,
+		fade_duration
+	)
+
+	await fade_out.finished
+
+	if not is_instance_valid(player):
+		_transition_lock = false
+		return
+
+	var camera := player.get_node_or_null("Camera2D")
+
+	if camera:
+		camera.position_smoothing_enabled = false
+
+	player.global_position = target_position
+	player.velocity = Vector2.ZERO
+
+	if camera:
+		camera.reset_smoothing()
+
+	await get_tree().physics_frame
+
+	if camera:
+		camera.position_smoothing_enabled = true
+
+	var fade_in := create_tween()
+
+	fade_in.tween_property(
+		_fade_rect,
+		"color:a",
+		0.0,
+		fade_duration
+	)
+
+	await fade_in.finished
+
+	if is_instance_valid(player):
+		if player.has_method("unlock_input"):
+			player.unlock_input()
+
+		if player.has_method("grant_temporary_invincibility"):
+			player.grant_temporary_invincibility(invincibility_after)
+
+	_transition_lock = false
 
 func rest_at_checkpoint() -> void:
 	if _transition_lock:
@@ -999,11 +1063,18 @@ func prepare_loaded_game() -> void:
 	startup_room_path = checkpoint_scene_path
 	startup_checkpoint_id = checkpoint_id
 
+	pending_spawn_gate_id = ""
+	pending_entry_type = TransitionGate.EntryType.INSTANT
+	pending_entry_direction = Vector2.ZERO
+	pending_entry_distance = 0.0
+	pending_jump_velocity = Vector2.ZERO
+
+	is_loading_save = true
+	_transition_lock = false
+
 	if startup_room_path == "":
 		startup_room_path = "res://src/Rooms/room_01-tutorial.tscn"
 		startup_checkpoint_id = ""
-
-
 # --- Room transition ---
 
 func can_trigger_gate() -> bool:

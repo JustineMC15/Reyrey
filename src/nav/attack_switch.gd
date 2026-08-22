@@ -8,19 +8,24 @@ class_name AttackSwitch
 ## permanent_unlock = false  → "Attack switch, door opens temporarily"
 ##   Hitting it again refreshes the open timer, so the player can
 ##   keep it propped open by re-striking it.
+##
 ## permanent_unlock = true   → "Attack object, door opens forever"
 ##   First hit unlocks it for good; further hits do nothing.
 ##
 ## Scene: needs a CollisionShape2D on collision_layer = 2 (the layer
-## every weapon hitbox scans) and, optionally, a Sprite2D that
-## brightens on trigger.
+## every weapon hitbox scans) and an optional TileMapLayer or Sprite2D
+## that brightens on trigger.
 
 @export var switch_id: String = ""
 @export var target_door: Node
 @export var permanent_unlock: bool = false
 @export var open_duration: float = 4.0
 
-@onready var sprite: CanvasItem = $Sprite2D if has_node("Sprite2D") else null
+@onready var visual: CanvasItem = (
+	$TileMapLayer if has_node("TileMapLayer")
+	else $Sprite2D if has_node("Sprite2D")
+	else null
+)
 
 var _triggered := false
 var _close_timer: SceneTreeTimer
@@ -69,5 +74,5 @@ func _on_close_timeout() -> void:
 
 
 func _set_triggered_look() -> void:
-	if sprite:
-		sprite.modulate = Color(1.4, 1.4, 0.8, 1.0)
+	if visual:
+		visual.modulate = Color(1.4, 1.4, 0.8, 1.0)
