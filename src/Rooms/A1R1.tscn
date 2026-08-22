@@ -1,0 +1,82 @@
+[gd_scene format=4 uid="uid://cyb1dbd4tb7vt"]
+
+[ext_resource type="Script" uid="uid://8vr0pfeydo4w" path="res://src/nav/camera_bounds.gd" id="1_hie06"]
+[ext_resource type="Texture2D" uid="uid://dw56c5wv2b3xw" path="res://assets/environment/parallax/tutorialbgLAYER1.png" id="2_4x4sb"]
+[ext_resource type="TileSet" uid="uid://wdxl8wi6477l" path="res://assets/environment/tres/greybox.tres" id="2_rgrlh"]
+[ext_resource type="PackedScene" uid="uid://c20o6wohk6hul" path="res://src/enemies/guiding_star.tscn" id="3_4x4sb"]
+[ext_resource type="Texture2D" uid="uid://dt8m3k5huc27j" path="res://assets/ui/save_previews/valecourtfields.png" id="3_5jn5y"]
+[ext_resource type="Script" uid="uid://d6mwrb2d16q5" path="res://src/nav/gate.gd" id="4_5jn5y"]
+[ext_resource type="PackedScene" uid="uid://deakhov6xdl5c" path="res://src/nav/checkpoint.tscn" id="7_5jn5y"]
+[ext_resource type="PackedScene" uid="uid://dwcjdt1vt6xl6" path="res://src/nav/area_title.tscn" id="8_ux0nc"]
+[ext_resource type="PackedScene" uid="uid://co8tuwgaj20is" path="res://src/enemies/star_shower.tscn" id="9_aik4s"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4pxbc"]
+size = Vector2(208.5, 206)
+
+[node name="Room_03" type="Node2D" unique_id=1602108746]
+
+[node name="CameraBounds" type="Node2D" parent="." unique_id=1140724593]
+script = ExtResource("1_hie06")
+
+[node name="Environments" type="Node2D" parent="." unique_id=1833260432]
+
+[node name="Parallax2D2" type="Parallax2D" parent="Environments" unique_id=279744974]
+scale = Vector2(1.5, 1.2)
+scroll_scale = Vector2(0.3, 0.5)
+scroll_offset = Vector2(438, 20)
+metadata/_edit_lock_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="Environments/Parallax2D2" unique_id=724853340]
+modulate = Color(0.9098039, 0.9098039, 0.8784314, 1)
+position = Vector2(1490.6667, -604.16675)
+scale = Vector2(2.6, 2.364)
+texture = ExtResource("2_4x4sb")
+metadata/_edit_lock_ = true
+
+[node name="Parallax2D" type="Parallax2D" parent="Environments" unique_id=139827178]
+scale = Vector2(1.5, 1.2)
+scroll_scale = Vector2(0.15, 0.8)
+scroll_offset = Vector2(438, 20)
+metadata/_edit_lock_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="Environments/Parallax2D" unique_id=149186415]
+position = Vector2(855.99994, -372.49997)
+scale = Vector2(2, 2)
+texture = ExtResource("3_5jn5y")
+metadata/_edit_lock_ = true
+
+[node name="Greybox" type="TileMapLayer" parent="." unique_id=1995920700]
+tile_map_data = PackedByteArray("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")
+tile_set = ExtResource("2_rgrlh")
+
+[node name="GuidingStar" parent="." unique_id=1933994159 instance=ExtResource("3_4x4sb")]
+position = Vector2(345, -71)
+movement_type = 1
+
+[node name="PreviousRoom" type="Area2D" parent="." unique_id=1198934175]
+position = Vector2(21, 0)
+collision_layer = 4
+collision_mask = 5
+script = ExtResource("4_5jn5y")
+gate_id = "A1R1"
+target_scene_path = "uid://d0rflcm7v2noo"
+target_gate_id = "A1R1_entry"
+entry_direction = Vector2(-1, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PreviousRoom" unique_id=1128700579]
+position = Vector2(-125, -105)
+shape = SubResource("RectangleShape2D_4pxbc")
+
+[node name="PlayerSpawn" type="Marker2D" parent="." unique_id=805233656 groups=["player_spawn"]]
+position = Vector2(-221, -1)
+
+[node name="Checkpoint" parent="." unique_id=1046499597 instance=ExtResource("7_5jn5y")]
+position = Vector2(1377, -114)
+checkpoint_id = "checkpoint_02"
+room_name = "A1R1"
+
+[node name="AreaTitle" parent="." unique_id=1421239322 instance=ExtResource("8_ux0nc")]
+position = Vector2(2655, -269)
+
+[node name="StarShower" parent="." unique_id=1450154183 instance=ExtResource("9_aik4s")]
+position = Vector2(4213, -367)

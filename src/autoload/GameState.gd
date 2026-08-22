@@ -183,6 +183,7 @@ var tutorials_seen: Dictionary = {
 	"jump": false,
 	"attack": false,
 }
+var area_names_seen: Dictionary = {}
 func has_seen_tutorial(tutorial_id: String) -> bool:
 	return tutorials_seen.get(tutorial_id, false)
 
@@ -1055,7 +1056,7 @@ func is_checkpoint_activated(
 
 
 func prepare_new_game() -> void:
-	startup_room_path = "res://src/Rooms/room_01-tutorial.tscn"
+	startup_room_path = "res://src/rooms/A0R1.tscn"
 	startup_checkpoint_id = ""
 
 
@@ -1073,7 +1074,7 @@ func prepare_loaded_game() -> void:
 	_transition_lock = false
 
 	if startup_room_path == "":
-		startup_room_path = "res://src/Rooms/room_01-tutorial.tscn"
+		startup_room_path = "res://src/rooms/A0R1.tscn"
 		startup_checkpoint_id = ""
 # --- Room transition ---
 
@@ -1412,8 +1413,8 @@ func get_save_data() -> Dictionary:
 		"revealed_secrets": revealed_secrets.duplicate(),
 		"activated_shortcuts": activated_shortcuts.duplicate(),
 		"cleared_gauntlets": cleared_gauntlets.duplicate(),
+		"area_names_seen": area_names_seen.duplicate(),
 	}
-
 
 func apply_save_data(data: Dictionary) -> void:
 	abilities = data.get("abilities", abilities)
@@ -1434,6 +1435,7 @@ func apply_save_data(data: Dictionary) -> void:
 	revealed_secrets = data.get("revealed_secrets", {})
 	activated_shortcuts = data.get("activated_shortcuts", {})
 	cleared_gauntlets = data.get("cleared_gauntlets", {})
+	area_names_seen = data.get("area_names_seen", {})
 
 	tutorials_seen = data.get("tutorials_seen", {
 		"movement": false,
@@ -1469,13 +1471,13 @@ func reset_to_defaults() -> void:
 	revealed_secrets.clear()
 	activated_shortcuts.clear()
 	cleared_gauntlets.clear()
-
+	area_names_seen.clear()
 
 
 
 func load_from_save(scene_path: String) -> void:
 	if scene_path == "":
-		scene_path = "res://src/Rooms/room_01-tutorial.tscn"
+		scene_path = "res://src/rooms/A0R1.tscn"
 
 	var game := _get_game()
 

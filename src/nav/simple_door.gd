@@ -16,6 +16,7 @@ class_name SimpleDoor
 ## If using TileMapLayer, it should contain only this door's tiles.
 
 @export var start_open: bool = false
+@export_range(0.0, 1.0, 0.01) var open_alpha: float = 0.15
 @export var fade_duration: float = 0.3
 
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
@@ -55,7 +56,7 @@ func _apply_open(open_state: bool, instant: bool) -> void:
 	if not visual:
 		return
 
-	var target_alpha := 0.15 if open_state else 1.0
+	var target_alpha := open_alpha if open_state else 1.0
 
 	if instant:
 		visual.modulate.a = target_alpha

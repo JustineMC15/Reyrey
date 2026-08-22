@@ -3,7 +3,7 @@ class_name AreaPreviews
 
 
 const PREVIEWS := {
-	"res://src/Rooms/room_01-tutorial.tscn": "res://assets/ui/save_previews/tutorial.png",
+	"res://src/rooms/A0R1.tscn": "res://assets/ui/save_previews/tutorial.png",
 	"res://src/Rooms/room_02-valecourt-fields": "res://assets/ui/save_previews/valecourt.png",
 }
 

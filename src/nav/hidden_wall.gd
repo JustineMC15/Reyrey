@@ -12,7 +12,7 @@ class_name HiddenWall
 ##   Sprite2D         — optional, matches the surrounding wall art
 
 @export var secret_id: String = ""
-@export var reveal_alpha: float = 0.15
+@export var reveal_alpha: float = 0.0
 @export var reveal_duration: float = 0.6
 
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D

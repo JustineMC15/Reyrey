@@ -17,39 +17,61 @@ var current_room_scene_path: String = ""
 # "res://src/Rooms/room_02-valecourt-fields.tscn":
 #     preload("res://audio/music/valecourt.ogg"),
 var room_music: Dictionary = {
-	"res://src/Rooms/room_01-tutorial.tscn":
+	"res://src/rooms/A0R1.tscn":
 		preload("res://assets/sound/music/Medieval Rondo.ogg"),
 
-	"res://src/Rooms/room_02-valecourt-fields.tscn":
+	"res://src/rooms/A0R2.tscn":
 		preload("res://assets/sound/music/Medieval Rondo.ogg"),
 
-	"res://src/Rooms/room_03-cathedral-undercroft.tscn": null,
-	"res://src/Rooms/room_04-coastal-road.tscn": null,
-	"res://src/Rooms/room_05-elven-reach.tscn": null,
-	"res://src/Rooms/room_06-thalassar-canal-city.tscn": null,
-	"res://src/Rooms/room_07-aureth-bastion.tscn": null,
-	"res://src/Rooms/room_08-sahra-kel-canyons.tscn": null,
-	"res://src/Rooms/room_09-icefields.tscn": null,
-	"res://src/Rooms/room_10-the-tower.tscn": null,
+	"res://src/Rooms/A1R1.tscn": null,
+	"res://src/Rooms/A2R1.tscn": null,
+	"res://src/Rooms/A3R1.tscn": null,
+	"res://src/Rooms/A4R1.tscn": null,
+	"res://src/Rooms/A5R1.tscn": null,
+	"res://src/Rooms/A6R1.tscn": null,
+	"res://src/Rooms/A7R1.tscn": null,
+	"res://src/Rooms/A8R1.tscn": null,
+	"res://src/Rooms/A9R1.tscn": null,
 
-	"res://src/Rooms/shrine_01.tscn": null,
-	"res://src/Rooms/shrine_02.tscn": null,
-	"res://src/Rooms/shrine_03.tscn": null,
-	"res://src/Rooms/shrine_04.tscn": null,
-	"res://src/Rooms/shrine_05.tscn": null,
-	"res://src/Rooms/shrine_06.tscn": null,
-	"res://src/Rooms/shrine_07.tscn": null,
-	"res://src/Rooms/shrine_08.tscn": null,
-	"res://src/Rooms/shrine_09.tscn": null,
-	"res://src/Rooms/shrine_10.tscn": null,
-	"res://src/Rooms/shrine_11.tscn": null,
-	"res://src/Rooms/shrine_12.tscn": null,
-	"res://src/Rooms/shrine_13.tscn": null,
-	"res://src/Rooms/shrine_14.tscn": null,
-	"res://src/Rooms/shrine_15.tscn": null,
-	"res://src/Rooms/shrine_16.tscn": null,
-	"res://src/Rooms/shrine_17.tscn": null,
+	"res://src/Rooms/S1.tscn": null,
+	"res://src/Rooms/S2.tscn": null,
+	"res://src/Rooms/S3.tscn": null,
+	"res://src/Rooms/S4.tscn": null,
+	"res://src/Rooms/S5.tscn": null,
+	"res://src/Rooms/S6.tscn": null,
+	"res://src/Rooms/S7.tscn": null,
+	"res://src/Rooms/S8.tscn": null,
+	"res://src/Rooms/S9.tscn": null,
+	"res://src/Rooms/S10.tscn": null,
+	"res://src/Rooms/S11.tscn": null,
+	"res://src/Rooms/S12.tscn": null,
+	"res://src/Rooms/S13.tscn": null,
+	"res://src/Rooms/S14.tscn": null,
+	"res://src/Rooms/S15.tscn": null,
+	"res://src/Rooms/S16.tscn": null,
+	"res://src/Rooms/S17.tscn": null,
 }
+
+
+# Area name assigned to each room.
+#
+# Multiple rooms can use the same area name.
+# The area is only shown once per save file.
+var room_area_names: Dictionary = {
+	"res://src/rooms/A0R1.tscn": "Valecourt Capital",
+	"res://src/rooms/A0R2.tscn": "Valecourt Capital",
+
+	"res://src/Rooms/A1R1.tscn": "Valecourt Fields",
+	"res://src/Rooms/A2R1.tscn": "Cathedral Undercroft",
+	"res://src/Rooms/A3R1.tscn": "Coastal Road",
+	"res://src/Rooms/A4R1.tscn": "Elven Reach",
+	"res://src/Rooms/A5R1.tscn": "Thalassar Canal City",
+	"res://src/Rooms/A6R1.tscn": "Aureth Bastion",
+	"res://src/Rooms/A7R1.tscn": "Sahra-Kel Canyons",
+	"res://src/Rooms/A8R1.tscn": "Icefields",
+	"res://src/Rooms/A9R1.tscn": "The Tower",
+}
+
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -62,7 +84,7 @@ func _ready() -> void:
 	GameState.startup_checkpoint_id = ""
 
 	if room_path == "":
-		room_path = "res://src/Rooms/room_01-tutorial.tscn"
+		room_path = "res://src/rooms/A0R1.tscn"
 
 	await load_room(room_path)
 
@@ -78,6 +100,7 @@ func _ready() -> void:
 	GameState.is_loading_save = false
 
 	player.enable_world_interaction()
+
 
 func load_room(scene_path: String) -> void:
 	scene_path = ResourceUID.ensure_path(scene_path)
@@ -122,6 +145,20 @@ func load_room(scene_path: String) -> void:
 	# Only change music when this room has a track assigned.
 	if music_track != null:
 		Music.play_music(music_track)
+
+	# Show the area name the first time this area is entered
+	# in the current save file.
+	var area_name: String = room_area_names.get(scene_path, "")
+
+	if area_name != "" \
+	and not GameState.area_names_seen.get(area_name, false):
+
+		GameState.area_names_seen[area_name] = true
+
+		var area_title := get_node_or_null("AreaTitle")
+
+		if area_title != null:
+			area_title.show_area(area_name)
 
 
 func get_current_room_scene_path() -> String:

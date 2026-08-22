@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://dwcjdt1vt6xl6"]
+
+[ext_resource type="Script" uid="uid://dnm43fm300ltj" path="res://src/nav/area_title.gd" id="1_itxvp"]
+[ext_resource type="FontFile" uid="uid://dbakhsfowc28k" path="res://assets/fonts/durendalandoliphantregular-lvwl4.ttf" id="2_47722"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_itxvp"]
+size = Vector2(522, 737)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_itxvp"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_top = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 1)
+
+[node name="AreaTitle" type="Area2D" unique_id=1421239322]
+script = ExtResource("1_itxvp")
+area_id = "valecourt_fields"
+area_name = "VALECOURT FIELDS"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1938763796]
+shape = SubResource("RectangleShape2D_itxvp")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=167127981]
+
+[node name="Label" type="Label" parent="CanvasLayer" unique_id=158738574]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -332.5
+offset_top = 60.0
+offset_right = 332.5
+offset_bottom = 212.0
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource("2_47722")
+theme_override_font_sizes/font_size = 128
+theme_override_styles/normal = SubResource("StyleBoxFlat_itxvp")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
