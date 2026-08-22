@@ -325,7 +325,7 @@ func sword_attack() -> void:
 	await get_tree().physics_frame
 
 	for body in sword_hitbox.get_overlapping_bodies():
-		if body.is_in_group("enemies"):
+		if body.is_in_group("enemies") or body.is_in_group("attackable"):
 			body.take_damage(sword_damage)
 
 	sword_hitbox.monitoring = false
@@ -335,7 +335,7 @@ func fire_attack(damage: int) -> void:
 	await get_tree().physics_frame
 
 	for body in fire_hitbox.get_overlapping_bodies():
-		if body.is_in_group("enemies"):
+		if body.is_in_group("enemies") or body.is_in_group("attackable"):
 			body.take_damage(damage)
 
 
@@ -344,7 +344,8 @@ func dash_attack() -> void:
 		return
 
 	for body in dash_hitbox.get_overlapping_bodies():
-		if body.is_in_group("enemies") and not body in dash_hit_enemies:
+		if (body.is_in_group("enemies") or body.is_in_group("attackable")) \
+		and not body in dash_hit_enemies:
 			body.take_damage(dash_damage)
 			dash_hit_enemies.append(body)
 
@@ -376,10 +377,23 @@ func deal_ground_slam_damage() -> void:
 	for body in get_tree().get_nodes_in_group("enemies"):
 		if not is_instance_valid(body):
 			continue
-
 		if global_position.distance_to(body.global_position) <= GROUND_SLAM_IMPACT_RADIUS:
 			if body.has_method("take_damage"):
 				body.take_damage(GROUND_SLAM_DAMAGE)
+
+	for body in get_tree().get_nodes_in_group("attackable"):
+		if not is_instance_valid(body):
+			continue
+		if global_position.distance_to(body.global_position) <= GROUND_SLAM_IMPACT_RADIUS:
+			if body.has_method("take_damage"):
+				body.take_damage(GROUND_SLAM_DAMAGE)
+
+	for body in get_tree().get_nodes_in_group("slam_breakable"):
+		if not is_instance_valid(body):
+			continue
+		if global_position.distance_to(body.global_position) <= GROUND_SLAM_IMPACT_RADIUS:
+			if body.has_method("slam_break"):
+				body.slam_break()
 
 
 func _ground_slam_hitstop() -> void:

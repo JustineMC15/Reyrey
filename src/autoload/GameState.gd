@@ -216,6 +216,96 @@ func _notification(what: int) -> void:
 		get_tree().quit()
 
 
+# --- Keys ---
+ 
+var collected_keys: Dictionary = {}
+ 
+ 
+func has_key(key_id: String) -> bool:
+	if key_id == "":
+		return true
+	return collected_keys.has(key_id)
+ 
+ 
+func collect_key(key_id: String) -> void:
+	collected_keys[key_id] = true
+ 
+ 
+func consume_key(key_id: String) -> void:
+	collected_keys.erase(key_id)
+ 
+ 
+# --- Doors (locked doors, attack-switch doors, gauntlet doors) ---
+ 
+var opened_doors: Dictionary = {}
+ 
+ 
+func is_door_open(door_id: String) -> bool:
+	return opened_doors.has(door_id)
+ 
+ 
+func open_door_permanently(door_id: String) -> void:
+	opened_doors[door_id] = true
+ 
+ 
+# --- Broken obstacles (breakable walls / breakable floors) ---
+ 
+var broken_obstacles: Dictionary = {}
+ 
+ 
+func is_obstacle_broken(obstacle_id: String) -> bool:
+	return broken_obstacles.has(obstacle_id)
+ 
+ 
+func break_obstacle(obstacle_id: String) -> void:
+	broken_obstacles[obstacle_id] = true
+ 
+ 
+# --- Revealed secrets (hidden walls) ---
+ 
+var revealed_secrets: Dictionary = {}
+ 
+ 
+func is_secret_revealed(secret_id: String) -> bool:
+	return revealed_secrets.has(secret_id)
+ 
+ 
+func reveal_secret(secret_id: String) -> void:
+	revealed_secrets[secret_id] = true
+ 
+ 
+# --- One-way shortcuts (levers unlocking doors/bridges/ladders/walls) ---
+ 
+signal shortcut_activated(shortcut_id)
+ 
+var activated_shortcuts: Dictionary = {}
+ 
+ 
+func is_shortcut_activated(shortcut_id: String) -> bool:
+	return activated_shortcuts.has(shortcut_id)
+ 
+ 
+func activate_shortcut(shortcut_id: String) -> void:
+	if is_shortcut_activated(shortcut_id):
+		return
+ 
+	activated_shortcuts[shortcut_id] = true
+	shortcut_activated.emit(shortcut_id)
+ 
+ 
+# --- Enemy gauntlets ---
+ 
+var cleared_gauntlets: Dictionary = {}
+ 
+ 
+func is_gauntlet_cleared(gauntlet_id: String) -> bool:
+	return cleared_gauntlets.has(gauntlet_id)
+ 
+ 
+func clear_gauntlet(gauntlet_id: String) -> void:
+	cleared_gauntlets[gauntlet_id] = true
+ 
+
 # --- Anvils ---
 
 const ANVIL_HP_GAIN := 1
@@ -1245,6 +1335,12 @@ func get_save_data() -> Dictionary:
 		"checkpoint_id": checkpoint_id,
 		"checkpoint_room_name": checkpoint_room_name,
 		"tutorials_seen": tutorials_seen.duplicate(),
+		"collected_keys": collected_keys.duplicate(),
+		"opened_doors": opened_doors.duplicate(),
+		"broken_obstacles": broken_obstacles.duplicate(),
+		"revealed_secrets": revealed_secrets.duplicate(),
+		"activated_shortcuts": activated_shortcuts.duplicate(),
+		"cleared_gauntlets": cleared_gauntlets.duplicate(),
 	}
 
 
@@ -1261,6 +1357,12 @@ func apply_save_data(data: Dictionary) -> void:
 	checkpoint_scene_path = data.get("checkpoint_scene_path", "")
 	checkpoint_id = data.get("checkpoint_id", "")
 	checkpoint_room_name = data.get("checkpoint_room_name", "")
+	collected_keys = data.get("collected_keys", {})
+	opened_doors = data.get("opened_doors", {})
+	broken_obstacles = data.get("broken_obstacles", {})
+	revealed_secrets = data.get("revealed_secrets", {})
+	activated_shortcuts = data.get("activated_shortcuts", {})
+	cleared_gauntlets = data.get("cleared_gauntlets", {})
 
 	tutorials_seen = data.get("tutorials_seen", {
 		"movement": false,
@@ -1290,7 +1392,13 @@ func reset_to_defaults() -> void:
 	checkpoint_scene_path = ""
 	checkpoint_id = ""
 	checkpoint_room_name = ""
-	
+	collected_keys.clear()
+	opened_doors.clear()
+	broken_obstacles.clear()
+	revealed_secrets.clear()
+	activated_shortcuts.clear()
+	cleared_gauntlets.clear()
+
 
 
 
