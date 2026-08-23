@@ -64,34 +64,39 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 24
 
-[node name="LeftColumn" type="HBoxContainer" parent="RootPanel/MainFrame/Layout" unique_id=1692896571]
+[node name="LeftColumn" type="Control" parent="RootPanel/MainFrame/Layout" unique_id=1763893148]
 custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 2.0
-theme_override_constants/separation = 12
 
-[node name="SwordButton" parent="RootPanel/MainFrame/Layout/LeftColumn" unique_id=2050556532 instance=ExtResource("2_aua8c")]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
+[node name="SwordButton" parent="RootPanel/MainFrame/Layout/LeftColumn" unique_id=1616166085 instance=ExtResource("2_aua8c")]
+layout_mode = 1
+offset_left = 10.599998
+offset_top = 10.399994
+offset_right = 117.6
+offset_bottom = 532.4
 
-[node name="RightHalf" type="VBoxContainer" parent="RootPanel/MainFrame/Layout/LeftColumn" unique_id=1000000200]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 12
+[node name="ArmorButton" parent="RootPanel/MainFrame/Layout/LeftColumn" unique_id=36631859 instance=ExtResource("2_aua8c")]
+layout_mode = 1
+offset_left = 124.600006
+offset_top = 8.399998
+offset_right = 235.6
+offset_bottom = 164.4
 
-[node name="ArmorButton" parent="RootPanel/MainFrame/Layout/LeftColumn/RightHalf" unique_id=2111647420 instance=ExtResource("2_aua8c")]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
+[node name="ShardCurrencyButton" parent="RootPanel/MainFrame/Layout/LeftColumn" unique_id=1942445813 instance=ExtResource("2_aua8c")]
+layout_mode = 1
+offset_left = 127.600006
+offset_top = 175.4
+offset_right = 231.6
+offset_bottom = 279.4
 
-[node name="ShardCurrencyButton" parent="RootPanel/MainFrame/Layout/LeftColumn/RightHalf" unique_id=1858223237 instance=ExtResource("2_aua8c")]
+[node name="Divider" type="ColorRect" parent="RootPanel/MainFrame/Layout" unique_id=802647266]
+custom_minimum_size = Vector2(2, 0)
 layout_mode = 2
-size_flags_horizontal = 3
 size_flags_vertical = 3
+color = Color(0.78431374, 0.45882353, 0.14117648, 0.6)
 
 [node name="MiddleColumn" type="VBoxContainer" parent="RootPanel/MainFrame/Layout" unique_id=1041635513]
 layout_mode = 2

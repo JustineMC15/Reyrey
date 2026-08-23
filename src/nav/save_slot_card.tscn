@@ -15,30 +15,33 @@ corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
 [node name="SlotCard" type="Button" unique_id=1717640535]
-custom_minimum_size = Vector2(180, 240)
 clip_contents = true
+offset_right = 180.0
+offset_bottom = 300.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_card")
 script = ExtResource("1_wxm1k")
 
-[node name="Preview" type="TextureRect" parent="." unique_id=1352050367]
-clip_contents = true
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 180.0
-grow_horizontal = 2
-mouse_filter = 2
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Label" type="Label" parent="." unique_id=274973618]
+[node name="Layout" type="VBoxContainer" parent="." unique_id=1352258684]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 180.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="Preview" type="TextureRect" parent="Layout" unique_id=1204902696]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
+mouse_filter = 2
+expand_mode = 2
+stretch_mode = 6
+
+[node name="Label" type="Label" parent="Layout" unique_id=1597993507]
+layout_mode = 2
+size_flags_vertical = 3
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2

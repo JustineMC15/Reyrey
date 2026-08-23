@@ -5,7 +5,7 @@ extends CharacterBody2D
 var max_health := 3
 var health := max_health
 var base_damage := 1
-
+@export var star_fragment_reward: int = 4
 @export var spin_speed: float = 2.0
 @export var chase_speed: float = 300.0
 
@@ -102,7 +102,7 @@ func die() -> void:
 		return
 
 	is_dying = true
-
+	GameState.add_star_fragments(star_fragment_reward)
 	# Stop chasing
 	player = null
 	is_chasing = false

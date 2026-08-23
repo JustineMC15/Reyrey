@@ -74,7 +74,6 @@ var room_area_names: Dictionary = {
 
 
 func _ready() -> void:
-	process_mode = Node.PROCESS_MODE_ALWAYS
 	add_to_group("game")
 
 	var room_path: String = GameState.startup_room_path
@@ -164,7 +163,6 @@ func load_room(scene_path: String) -> void:
 
 		if area_title != null:
 			area_title.show_area(area_name)
-
 func get_current_room_scene_path() -> String:
 	return current_room_scene_path
 

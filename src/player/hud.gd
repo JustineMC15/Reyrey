@@ -6,6 +6,7 @@ extends Control
 @onready var mp_damage_bar: ProgressBar = $MPDamageBar
 @onready var stamina_bar: ProgressBar = $STBar
 @onready var stamina_damage_bar: ProgressBar = $STDamageBar
+@onready var star_fragment_reward: StarFragmentReward = $StarFragmentReward
 
 
 func _ready() -> void:
@@ -36,12 +37,32 @@ func _ready() -> void:
 		stamina_damage_bar.max_value = player.max_stamina
 		stamina_damage_bar.value = player.stamina
 
+	# Initialize the Star Fragment display without showing it.
+	star_fragment_reward.initialize_amount(
+		GameState.star_fragments
+	)
+
+	# Listen for new Star Fragment rewards.
+	if not GameState.star_fragments_changed.is_connected(
+		_on_star_fragments_changed
+	):
+		GameState.star_fragments_changed.connect(
+			_on_star_fragments_changed
+		)
+
 	player.health_changed.connect(_on_player_health_changed)
 	player.mp_changed.connect(_on_player_mp_changed)
 	player.stamina_changed.connect(_on_player_stamina_changed)
 
 
-func _on_player_health_changed(current_health, max_health) -> void:
+func _on_star_fragments_changed(amount: int) -> void:
+	star_fragment_reward.show_new_total(amount)
+
+
+func _on_player_health_changed(
+	current_health,
+	max_health
+) -> void:
 	hp_bar.max_value = max_health
 	hp_bar.value = current_health
 
@@ -57,7 +78,10 @@ func _on_player_health_changed(current_health, max_health) -> void:
 	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 
-func _on_player_mp_changed(current_mp, max_mp) -> void:
+func _on_player_mp_changed(
+	current_mp,
+	max_mp
+) -> void:
 	mp_bar.max_value = max_mp
 	mp_bar.value = current_mp
 
@@ -73,7 +97,10 @@ func _on_player_mp_changed(current_mp, max_mp) -> void:
 	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 
-func _on_player_stamina_changed(current_stamina, max_stamina) -> void:
+func _on_player_stamina_changed(
+	current_stamina,
+	max_stamina
+) -> void:
 	if not stamina_bar:
 		return
 

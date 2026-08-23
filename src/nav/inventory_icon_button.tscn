@@ -2,10 +2,34 @@
 
 [ext_resource type="Script" uid="uid://p1d61k84465d" path="res://src/nav/inventory_icon_button.gd" id="1_nlupq"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slot_normal"]
+bg_color = Color(0.08, 0.07, 0.05, 0.55)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slot_hover"]
+bg_color = Color(0.14, 0.12, 0.08, 0.7)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slot_pressed"]
+bg_color = Color(0.04, 0.035, 0.02, 0.8)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
 [node name="IconButton" type="Button" unique_id=2050556532]
 custom_minimum_size = Vector2(72, 72)
-offset_right = 8.0
-offset_bottom = 8.0
+clip_contents = true
+theme_override_styles/normal = SubResource("StyleBoxFlat_slot_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_slot_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_slot_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_slot_hover")
 script = ExtResource("1_nlupq")
 
 [node name="Icon" type="TextureRect" parent="." unique_id=911299082]
@@ -16,4 +40,5 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+expand_mode = 1
 stretch_mode = 5

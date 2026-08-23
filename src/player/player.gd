@@ -142,6 +142,7 @@ var stamina_regen_timer := 0.0
 var last_footstep_frame := -1
 
 var input_locked := false
+var transition_movement: bool = false
 var transition_walking := false
 var transition_walk_direction := 1.0
 
@@ -282,6 +283,43 @@ func lock_input() -> void:
 	input_locked = true
 	velocity = Vector2.ZERO
 
+func _process_transition_jump(delta: float) -> void:
+	# Input remains locked during the room-entry jump.
+	# We only handle the physical launch and gravity here.
+
+	if is_on_floor():
+		transition_movement = false
+		velocity = Vector2.ZERO
+
+		animated_sprite_2d.visible = true
+
+		if not is_attacking:
+			animated_sprite_2d.play("idle")
+
+		return
+
+	# Apply normal player gravity.
+
+	if velocity.y > 0.0:
+		velocity.y += GRAVITY_FALL * delta
+	else:
+		velocity.y += GRAVITY_RISE * delta
+
+	# Face the direction of travel.
+
+	if velocity.x != 0.0:
+		_set_facing(signf(velocity.x))
+
+	move_and_slide()
+
+	# Transition animation.
+
+	animated_sprite_2d.visible = true
+
+	if velocity.y < 0.0:
+		animated_sprite_2d.play("fall")
+	else:
+		animated_sprite_2d.play("falling")
 
 func start_transition_walk(direction: float) -> void:
 	transition_walking = true
@@ -765,9 +803,19 @@ func _ready() -> void:
 
 # PHYSICS PROCESS
 
+# PHYSICS PROCESS
+
 func _physics_process(delta: float) -> void:
 
 	if is_dead:
+		return
+
+	# TRANSITION JUMP
+	#
+	# Input is locked, but the player must still be allowed
+	# to move physically using the velocity assigned by GameState.
+	if transition_movement:
+		_process_transition_jump(delta)
 		return
 
 	# STAMINA REGEN

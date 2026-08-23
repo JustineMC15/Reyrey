@@ -4,7 +4,7 @@ extends CharacterBody2D
 
 var max_health := 7
 var health := max_health
-
+@export var star_fragment_reward: int = 4
 @export var spin_speed: float = 2.0
 
 enum MovementPattern {
@@ -143,7 +143,7 @@ func die() -> void:
 		return
 
 	is_dying = true
-
+	GameState.add_star_fragments(star_fragment_reward)
 	# Hide normal enemy sprite
 	animated_sprite_2d.visible = false
 

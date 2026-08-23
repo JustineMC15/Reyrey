@@ -5,7 +5,7 @@ var health := max_health
 
 @export var spin_speed: float = 2.0
 @export var bullet_scene: PackedScene
-
+@export var star_fragment_reward: int = 4
 var player: Node2D = null
 var is_dying := false
 
@@ -90,7 +90,7 @@ func die() -> void:
 		return
 
 	is_dying = true
-
+	GameState.add_star_fragments(star_fragment_reward)
 	# Stop shooting
 	player = null
 	$ShootTimer.stop()

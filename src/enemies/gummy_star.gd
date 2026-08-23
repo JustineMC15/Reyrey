@@ -5,7 +5,7 @@ extends CharacterBody2D
 var max_health := 8
 var health := max_health
 var base_damage := 1
-
+@export var star_fragment_reward: int = 3
 @export var spin_speed: float = 2.0
 
 enum MovementType {
@@ -246,7 +246,7 @@ func die() -> void:
 		return
 
 	is_dying = true
-
+	GameState.add_star_fragments(star_fragment_reward)
 	# Disable slow field
 	slow_field.set_deferred("monitoring", false)
 

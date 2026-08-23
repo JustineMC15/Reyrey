@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://ckvqutrop7ryr" path="res://src/player/player.gd" id="1_jtmj1"]
 [ext_resource type="Script" uid="uid://cp4ne7ggpfte0" path="res://src/player/hud.gd" id="2_7wf8o"]
 [ext_resource type="Texture2D" uid="uid://bkai2euw4fg6o" path="res://assets/characters/player/attack.png" id="3_7wf8o"]
+[ext_resource type="PackedScene" uid="uid://bqf7ng8cql6a5" path="res://src/nav/star_fragment_reward.tscn" id="3_a4vah"]
 [ext_resource type="Texture2D" uid="uid://bcd8xg1grriwu" path="res://assets/characters/player/dash.png" id="4_afsxn"]
 [ext_resource type="Texture2D" uid="uid://4infjg1tx008" path="res://assets/characters/player/jump-fall-loop-slam.png" id="5_b1ckw"]
 [ext_resource type="Texture2D" uid="uid://bykthynehi0pd" path="res://assets/characters/player/glide.png" id="6_3vieb"]
@@ -2407,6 +2408,19 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_2njrj")
 max_value = 3.0
 show_percentage = false
 
+[node name="StarFragmentReward" parent="PlayerUI/HUD" unique_id=2135562757 instance=ExtResource("3_a4vah")]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+offset_left = -140.0
+offset_top = -90.0
+offset_right = -40.0
+offset_bottom = -40.0
+grow_horizontal = 0
+grow_vertical = 0
+count_duration = 0.45
+
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=202585379]
 position = Vector2(0, -101)
 scale = Vector2(0.47, 0.47)
@@ -2429,7 +2443,7 @@ shape = SubResource("RectangleShape2D_cssau")
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1168413055]
 position = Vector2(56, -47)
 offset = Vector2(0, -100)
-zoom = Vector2(0.85, 0.85)
+zoom = Vector2(0.7, 0.7)
 process_callback = 0
 limit_enabled = false
 position_smoothing_enabled = true

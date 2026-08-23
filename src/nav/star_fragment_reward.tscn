@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://bqf7ng8cql6a5"]
+
+[ext_resource type="Script" uid="uid://ji3exgub6mj3" path="res://src/nav/star_fragment_reward.gd" id="1_lydgp"]
+[ext_resource type="Texture2D" uid="uid://ch2o33xaxi617" path="res://assets/ui/star_fragment.png" id="2_aocca"]
+[ext_resource type="FontFile" uid="uid://dlinrvj4uxc6w" path="res://assets/fonts/Seshat.otf" id="3_kyd2v"]
+
+[node name="StarFragmentReward" type="Control" unique_id=2135562757]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_lydgp")
+
+[node name="Icon" type="TextureRect" parent="." unique_id=654376521]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("2_aocca")
+
+[node name="AmountLabel" type="Label" parent="." unique_id=963854487]
+layout_mode = 0
+offset_left = 37.0
+offset_right = 176.0
+offset_bottom = 40.0
+theme_override_fonts/font = ExtResource("3_kyd2v")
+theme_override_font_sizes/font_size = 32
+vertical_alignment = 1

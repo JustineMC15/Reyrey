@@ -15,6 +15,8 @@ var current_music: AudioStream = null
 # temporarily contain the battle music during an enemy gauntlet.
 var room_music: AudioStream = null
 
+func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 
 func play_music(track: AudioStream, fade_time: float = 1.0) -> void:
 	# Remember this as the current room's music.

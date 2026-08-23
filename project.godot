@@ -21,8 +21,8 @@ GameState="*uid://cxacl2cfcn52x"
 Music="*uid://bw7uh54570frq"
 SaveManager="*uid://bya6audoc51nc"
 InventoryEntry="*uid://ix5td6kcb0o2"
-InventoryUI="*uid://bencgs18uokku"
 PauseMenu="*uid://chjitcrkdukgx"
+InventoryUI="*uid://bxifq5pgq8it"
 
 [display]
 

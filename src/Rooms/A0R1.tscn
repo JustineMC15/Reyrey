@@ -20,6 +20,7 @@
 [ext_resource type="PackedScene" uid="uid://65o0wpmgpsyw" path="res://src/nav/interact_gate.tscn" id="18_xg3fd"]
 [ext_resource type="PackedScene" uid="uid://deakhov6xdl5c" path="res://src/nav/checkpoint.tscn" id="19_1eudn"]
 [ext_resource type="PackedScene" uid="uid://c20o6wohk6hul" path="res://src/enemies/guiding_star.tscn" id="20_e8c74"]
+[ext_resource type="PackedScene" uid="uid://bn0hig7ndpdco" path="res://src/nav/chest.tscn" id="21_1l587"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_r7kcj"]
 shader = ExtResource("7_j63s7")
@@ -254,8 +255,10 @@ offset_bottom = -192.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
 theme_override_fonts/font = ExtResource("16_70ida")
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 40
 text = "CLAIM
 E"
 horizontal_alignment = 1
@@ -313,3 +316,8 @@ movement_speed = 2.5
 
 [node name="PlayerSpawn" type="Marker2D" parent="." unique_id=418454439 groups=["player_spawn"]]
 position = Vector2(-52, -2)
+
+[node name="Chest" parent="." unique_id=120361229 instance=ExtResource("21_1l587")]
+position = Vector2(7510, -574)
+chest_id = "A0R1-C1"
+star_fragment_reward = 20

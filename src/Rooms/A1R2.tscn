@@ -1,0 +1,35 @@
+[gd_scene format=4 uid="uid://cckwh4qx4gprc"]
+
+[ext_resource type="Script" uid="uid://8vr0pfeydo4w" path="res://src/nav/camera_bounds.gd" id="1_3j5fb"]
+[ext_resource type="TileSet" uid="uid://wdxl8wi6477l" path="res://assets/environment/tres/greybox.tres" id="2_absuf"]
+[ext_resource type="Script" uid="uid://d6mwrb2d16q5" path="res://src/nav/gate.gd" id="4_wqck0"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4pxbc"]
+size = Vector2(208.5, 206)
+
+[node name="Room_03" type="Node2D" unique_id=1602108746]
+
+[node name="CameraBounds" type="Node2D" parent="." unique_id=1140724593]
+script = ExtResource("1_3j5fb")
+
+[node name="Environments" type="Node2D" parent="." unique_id=1833260432]
+
+[node name="Greybox" type="TileMapLayer" parent="Environments" unique_id=1995920700]
+tile_map_data = PackedByteArray("AAD9/wAAAAAAAAAAAAD+/wAAAAAAAAAAAAD//wAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAACAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAFAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAHAAAAAAAAAAAAAAA=")
+tile_set = ExtResource("2_absuf")
+
+[node name="Transition" type="Area2D" parent="." unique_id=1198934175]
+position = Vector2(103, -151)
+collision_layer = 4
+collision_mask = 5
+script = ExtResource("4_wqck0")
+gate_id = "A1R2"
+target_scene_path = "uid://cyb1dbd4tb7vt"
+target_gate_id = "A1R2-next"
+entry_type = 1
+entry_direction = Vector2(-1, 0)
+jump_velocity = Vector2(-400, -1400)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Transition" unique_id=1128700579]
+position = Vector2(-1, -218)
+shape = SubResource("RectangleShape2D_4pxbc")

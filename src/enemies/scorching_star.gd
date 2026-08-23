@@ -6,7 +6,7 @@ var max_health := 8
 var health := max_health
 
 @export var spin_speed: float = 2.0
-
+@export var star_fragment_reward: int = 6
 enum MovementType {
 	VERTICAL,
 	HORIZONTAL,
@@ -184,7 +184,7 @@ func die() -> void:
 		return
 
 	is_dying = true
-
+	GameState.add_star_fragments(star_fragment_reward)
 	# Hide normal enemy sprite
 	animated_sprite_2d.visible = false
 

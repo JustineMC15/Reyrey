@@ -4,7 +4,7 @@ extends CharacterBody2D
 var base_damage := 1
 var max_health := 5
 var health := max_health
-
+@export var star_fragment_reward: int = 5
 @export var spin_speed: float = 2.0
 
 enum MovementType {
@@ -260,7 +260,7 @@ func die() -> void:
 		return
 
 	is_dying = true
-
+	GameState.add_star_fragments(star_fragment_reward)
 	shoot_timer.stop()
 
 	pop_attack.visible = false

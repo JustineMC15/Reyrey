@@ -13,8 +13,8 @@ extends CanvasLayer
 @onready var shard_grid: GridContainer = $RootPanel/MainFrame/Layout/MiddleColumn/ShardsSection/ShardScroll/ShardGrid
 
 @onready var sword_button: InventoryIconButton = $RootPanel/MainFrame/Layout/LeftColumn/SwordButton
-@onready var armor_button: InventoryIconButton = $RootPanel/MainFrame/Layout/LeftColumn/RightHalf/ArmorButton
-@onready var shard_currency_button: InventoryIconButton = $RootPanel/MainFrame/Layout/LeftColumn/RightHalf/ShardCurrencyButton
+@onready var armor_button: InventoryIconButton = $RootPanel/MainFrame/Layout/LeftColumn/ArmorButton
+@onready var shard_currency_button: InventoryIconButton = $RootPanel/MainFrame/Layout/LeftColumn/ShardCurrencyButton
 
 @onready var detail_icon: TextureRect = $RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailIcon
 @onready var detail_name: Label = $RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailName

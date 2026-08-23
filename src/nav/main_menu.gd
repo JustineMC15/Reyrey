@@ -1,16 +1,17 @@
 extends Control
 
-const SAVE_SLOT_COUNT := 4
-
-@export var save_slot_card_scene: PackedScene
-
 @onready var main_buttons: VBoxContainer = $MainButtons
 @onready var start_button: Button = $MainButtons/Start
 @onready var options_button: Button = $MainButtons/Options
 @onready var exit_button: Button = $MainButtons/Exit
 
-@onready var save_slots: VBoxContainer = $VBox/SaveSlots
-@onready var slot_container: HBoxContainer = $VBox/SaveSlots/SlotContainer
+@onready var save_slots_panel: Control = $SaveSlotsPanel
+@onready var save_slot_cards: Array[SaveSlotCard] = [
+	$SaveSlotsPanel/Layout/CardRow/SaveSlotCard1,
+	$SaveSlotsPanel/Layout/CardRow/SaveSlotCard2,
+	$SaveSlotsPanel/Layout/CardRow/SaveSlotCard3,
+	$SaveSlotsPanel/Layout/CardRow/SaveSlotCard4,
+]
 
 @onready var settings_panel: Control = $SettingsPanel
 @onready var volume_slider: HSlider = $SettingsPanel/VolumeSlider
@@ -18,9 +19,9 @@ const SAVE_SLOT_COUNT := 4
 
 func _ready() -> void:
 	settings_panel.hide()
-	save_slots.hide()
+	save_slots_panel.hide()
 
-	_build_slot_cards()
+	_setup_slot_cards()
 
 	start_button.pressed.connect(_on_start_pressed)
 	options_button.pressed.connect(_on_settings_pressed)
@@ -33,19 +34,15 @@ func _ready() -> void:
 	)
 	volume_slider.value_changed.connect(_on_volume_changed)
 
-	# Play menu music.
-	# Replace this path with your actual menu music file.
 	Music.play_music(
 		preload("res://assets/sound/music/Night Vigil.mp3")
 	)
 
-func _build_slot_cards() -> void:
-	for child in slot_container.get_children():
-		child.queue_free()
 
-	for slot in range(1, SAVE_SLOT_COUNT + 1):
-		var card: SaveSlotCard = save_slot_card_scene.instantiate()
-		slot_container.add_child(card)
+func _setup_slot_cards() -> void:
+	for i in save_slot_cards.size():
+		var slot := i + 1
+		var card := save_slot_cards[i]
 
 		if SaveManager.has_save(slot):
 			card.setup_from_save(slot, SaveManager.get_slot_summary(slot))
@@ -56,10 +53,9 @@ func _build_slot_cards() -> void:
 
 
 func _on_start_pressed() -> void:
-	# Reveal the save slot picker, hide the main buttons so it reads clean.
 	settings_panel.hide()
 	main_buttons.hide()
-	save_slots.show()
+	save_slots_panel.show()
 
 
 func _on_slot_picked(slot: int) -> void:
@@ -77,7 +73,7 @@ func _on_slot_picked(slot: int) -> void:
 
 
 func _on_settings_pressed() -> void:
-	save_slots.hide()
+	save_slots_panel.hide()
 	settings_panel.visible = not settings_panel.visible
 	main_buttons.visible = not settings_panel.visible
 

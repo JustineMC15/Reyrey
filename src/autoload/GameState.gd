@@ -14,6 +14,7 @@ var abilities: Dictionary = {
 	"ledge_grab": false,
 }
 
+var star_fragments: int = 0
 var max_health: int = 5
 var max_mp: int = 6
 var current_mp: int = 6
@@ -206,7 +207,30 @@ func _get_game() -> Node:
 
 	return game
 
+signal star_fragments_changed(amount: int)
 
+
+func add_star_fragments(amount: int) -> void:
+	if amount <= 0:
+		return
+
+	star_fragments += amount
+	star_fragments_changed.emit(star_fragments)
+var opened_chests: Dictionary = {}
+
+
+func is_chest_opened(chest_id: String) -> bool:
+	return opened_chests.has(chest_id)
+
+
+func open_chest(chest_id: String) -> void:
+	if chest_id == "":
+		return
+
+	if is_chest_opened(chest_id):
+		return
+
+	opened_chests[chest_id] = true
 # --- Window close ---
 
 func _notification(what: int) -> void:
@@ -1276,11 +1300,17 @@ func _walk_into_room(player: Node) -> void:
 
 
 func _jump_into_room(player: Node) -> void:
-	if not player.has_method("lock_input"):
+	if not is_instance_valid(player):
+		_transition_lock = false
 		return
 
-	player.lock_input()
+	if player.has_method("lock_input"):
+		player.lock_input()
 
+	# Allow physical movement while keeping player input locked.
+	player.transition_movement = true
+
+	# Launch the player using the destination gate's configured velocity.
 	player.velocity = pending_jump_velocity
 
 	var safety_timer := 3.0
@@ -1289,14 +1319,16 @@ func _jump_into_room(player: Node) -> void:
 		safety_timer -= get_process_delta_time()
 
 		if not is_instance_valid(player):
+			_transition_lock = false
 			return
 
-		if player is CharacterBody2D:
-			if player.is_on_floor() and safety_timer < 2.8:
-				break
+		if not player.transition_movement:
+			break
 
 		await get_tree().process_frame
 
+	if is_instance_valid(player):
+		player.transition_movement = false
 
 func _fade_out_and_reload_current_scene() -> void:
 	var game := _get_game()
@@ -1400,6 +1432,7 @@ func get_save_data() -> Dictionary:
 		"shrine_count": shrine_count,
 		"claimed_anvils": claimed_anvils.duplicate(),
 		"claimed_shrines": claimed_shrines.duplicate(true),
+		"star_fragments": star_fragments,
 		"armor_tier": armor_tier,
 		"activated_checkpoints": activated_checkpoints.duplicate(),
 		"checkpoint_scene_path": checkpoint_scene_path,
@@ -1408,6 +1441,7 @@ func get_save_data() -> Dictionary:
 		"tutorials_seen": tutorials_seen.duplicate(),
 		"collected_keys": collected_keys.duplicate(),
 		"opened_doors": opened_doors.duplicate(),
+		"opened_chests": opened_chests.duplicate(),
 		"broken_obstacles": broken_obstacles.duplicate(),
 		"revealed_secrets": revealed_secrets.duplicate(),
 		"activated_shortcuts": activated_shortcuts.duplicate(),
@@ -1415,12 +1449,14 @@ func get_save_data() -> Dictionary:
 		"area_names_seen": area_names_seen.duplicate(),
 	}
 
+
 func apply_save_data(data: Dictionary) -> void:
 	abilities = data.get("abilities", abilities)
 	max_mp = data.get("max_mp", max_mp)
 	current_mp = max_mp
 	max_health = data.get("max_health", max_health)
 	shrine_count = data.get("shrine_count", 0)
+	star_fragments = data.get("star_fragments", 0)
 	claimed_anvils = data.get("claimed_anvils", {})
 	claimed_shrines = data.get("claimed_shrines", {})
 	armor_tier = data.get("armor_tier", armor_tier)
@@ -1430,6 +1466,7 @@ func apply_save_data(data: Dictionary) -> void:
 	checkpoint_room_name = data.get("checkpoint_room_name", "")
 	collected_keys = data.get("collected_keys", {})
 	opened_doors = data.get("opened_doors", {})
+	opened_chests = data.get("opened_chests", {})
 	broken_obstacles = data.get("broken_obstacles", {})
 	revealed_secrets = data.get("revealed_secrets", {})
 	activated_shortcuts = data.get("activated_shortcuts", {})
@@ -1442,6 +1479,7 @@ func apply_save_data(data: Dictionary) -> void:
 		"attack": false,
 	}).duplicate()
 
+
 func reset_to_defaults() -> void:
 	for key in abilities.keys():
 		abilities[key] = false
@@ -1451,19 +1489,23 @@ func reset_to_defaults() -> void:
 	max_health = 5
 	armor_tier = 0
 	shrine_count = 0
+	star_fragments = 0
 
 	claimed_anvils.clear()
 	claimed_shrines.clear()
 	activated_checkpoints.clear()
-	
+	opened_chests.clear()
+
 	tutorials_seen = {
-	"movement": false,
-	"jump": false,
-	"attack": false,
-}
+		"movement": false,
+		"jump": false,
+		"attack": false,
+	}
+
 	checkpoint_scene_path = ""
 	checkpoint_id = ""
 	checkpoint_room_name = ""
+
 	collected_keys.clear()
 	opened_doors.clear()
 	broken_obstacles.clear()
@@ -1471,7 +1513,6 @@ func reset_to_defaults() -> void:
 	activated_shortcuts.clear()
 	cleared_gauntlets.clear()
 	area_names_seen.clear()
-
 
 
 func load_from_save(scene_path: String) -> void:
