@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://dw56c5wv2b3xw" path="res://assets/environment/parallax/tutorialbgLAYER1.png" id="2_4x4sb"]
 [ext_resource type="TileSet" uid="uid://wdxl8wi6477l" path="res://assets/environment/tres/greybox.tres" id="2_rgrlh"]
 [ext_resource type="PackedScene" uid="uid://c20o6wohk6hul" path="res://src/enemies/guiding_star.tscn" id="3_4x4sb"]
-[ext_resource type="Texture2D" uid="uid://dt8m3k5huc27j" path="res://assets/ui/save_previews/valecourtfields.png" id="3_5jn5y"]
+[ext_resource type="Texture2D" uid="uid://dt8m3k5huc27j" path="res://assets/ui/save_previews/valecourt.png" id="3_5jn5y"]
 [ext_resource type="Script" uid="uid://d6mwrb2d16q5" path="res://src/nav/gate.gd" id="4_5jn5y"]
 [ext_resource type="PackedScene" uid="uid://deakhov6xdl5c" path="res://src/nav/checkpoint.tscn" id="7_5jn5y"]
 [ext_resource type="PackedScene" uid="uid://dwcjdt1vt6xl6" path="res://src/nav/area_title.tscn" id="8_ux0nc"]
@@ -29,7 +29,7 @@ limit_bottom = 950
 [node name="Parallax2D2" type="Parallax2D" parent="Environments" unique_id=279744974]
 scale = Vector2(1.5, 1.2)
 scroll_scale = Vector2(0.2, 0.5)
-scroll_offset = Vector2(438, 20)
+scroll_offset = Vector2(662, 228)
 metadata/_edit_lock_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="Environments/Parallax2D2" unique_id=724853340]
@@ -42,7 +42,7 @@ metadata/_edit_lock_ = true
 [node name="Parallax2D" type="Parallax2D" parent="Environments" unique_id=139827178]
 scale = Vector2(1.5, 1.2)
 scroll_scale = Vector2(0.15, 0.8)
-scroll_offset = Vector2(438, 20)
+scroll_offset = Vector2(662, 228)
 metadata/_edit_lock_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="Environments/Parallax2D" unique_id=149186415]
@@ -90,7 +90,7 @@ position = Vector2(4213, -367)
 [node name="StarShower2" parent="Enemies" unique_id=292662857 instance=ExtResource("9_aik4s")]
 position = Vector2(11277, -325)
 movement_type = 1
-movement_distance = 120.0
+movement_distance = 160.0
 movement_speed = 3.0
 
 [node name="ToRoom2" type="Area2D" parent="." unique_id=1026889895]

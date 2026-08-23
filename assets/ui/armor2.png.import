@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dt8m3k5huc27j"
-path="res://.godot/imported/valecourtfields.png-c2fce4e926cc6384414ac72d8257b20f.ctex"
+uid="uid://c4lobrq473346"
+path="res://.godot/imported/armor2.png-90f4c5e6afc286565ed5c514ced52c39.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/save_previews/valecourtfields.png"
-dest_files=["res://.godot/imported/valecourtfields.png-c2fce4e926cc6384414ac72d8257b20f.ctex"]
+source_file="res://assets/ui/armor2.png"
+dest_files=["res://.godot/imported/armor2.png-90f4c5e6afc286565ed5c514ced52c39.ctex"]
 
 [params]
 

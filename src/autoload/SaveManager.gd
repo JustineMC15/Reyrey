@@ -6,6 +6,22 @@ const SETTINGS_PATH := "user://settings.json"
 var current_slot: int = 1
 
 
+# Area presets
+
+const AREA_PRESETS := {
+	0: "Tutorial",
+	1: "Valecourt Fields",
+	2: "Cathedral Undercroft",
+	3: "Coastal Road",
+	4: "Elven Reach",
+	5: "Thalassar Canal City",
+	6: "Aureth Bastion",
+	7: "Sahra-Kel Canyons",
+	8: "Icefields",
+	9: "The Tower",
+}
+
+
 func _ready() -> void:
 	DirAccess.make_dir_recursive_absolute(SAVE_DIR)
 	_load_settings_and_apply()
@@ -67,6 +83,8 @@ func delete_save(slot: int) -> void:
 		DirAccess.remove_absolute(_slot_path(slot))
 
 
+# Save slot summary
+
 func get_slot_summary(slot: int) -> Dictionary:
 	if not has_save(slot):
 		return {}
@@ -84,15 +102,67 @@ func get_slot_summary(slot: int) -> Dictionary:
 	if typeof(parsed) != TYPE_DICTIONARY:
 		return {}
 
+	var checkpoint_room_name: String = parsed.get(
+		"checkpoint_room_name",
+		""
+	)
+
+	var area_id := get_area_id_from_room_code(
+		checkpoint_room_name
+	)
+
+	var area_name := get_area_name(area_id)
+
 	return {
-		"room_name": parsed.get("checkpoint_room_name", "Unknown"),
-		"shrine_count": parsed.get("shrine_count", 0),
+		"area": area_name,
+		"area_id": area_id,
 		"timestamp": parsed.get("timestamp", ""),
-		"checkpoint_scene_path": parsed.get("checkpoint_scene_path", ""),
+		"checkpoint_scene_path": parsed.get(
+			"checkpoint_scene_path",
+			""
+		),
 	}
 
 
-# --- Settings (global, not per-slot) ---
+# Area lookup
+
+func get_area_id_from_room_code(room_code: String) -> int:
+	if room_code == "":
+		return -1
+
+	if not room_code.begins_with("A"):
+		return -1
+
+	var r_position := room_code.find("R")
+
+	if r_position == -1:
+		return -1
+
+	var area_string := room_code.substr(
+		1,
+		r_position - 1
+	)
+
+	if not area_string.is_valid_int():
+		return -1
+
+	return int(area_string)
+
+
+func get_area_name(area_id: int) -> String:
+	return AREA_PRESETS.get(
+		area_id,
+		"Unknown Area"
+	)
+
+
+func get_area_name_from_room_code(room_code: String) -> String:
+	var area_id := get_area_id_from_room_code(room_code)
+
+	return get_area_name(area_id)
+
+
+# Settings
 
 func save_settings(master_volume_linear: float) -> void:
 	var data := {

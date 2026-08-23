@@ -23,16 +23,29 @@ corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
-[node name="IconButton" type="Button" unique_id=2050556532]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slot_focus"]
+bg_color = Color(1, 1, 1, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 0.95)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="IconButton" type="Button"]
 custom_minimum_size = Vector2(72, 72)
 clip_contents = true
+focus_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_slot_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_slot_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_slot_pressed")
-theme_override_styles/focus = SubResource("StyleBoxFlat_slot_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_slot_focus")
 script = ExtResource("1_nlupq")
 
-[node name="Icon" type="TextureRect" parent="." unique_id=911299082]
+[node name="Icon" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -42,3 +55,21 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
+
+[node name="CountLabel" type="Label" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+offset_left = -36.0
+offset_top = -24.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+horizontal_alignment = 2
+text = "0"

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dt8m3k5huc27j"
-path="res://.godot/imported/valecourt.png-0a8b6f0ead0f0825b7cc02e4a1dd6a7e.ctex"
+uid="uid://bg3tufqmrput3"
+path="res://.godot/imported/armor3.png-a13f1c94ef6a6877977f46a67304eb87.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/save_previews/valecourt.png"
-dest_files=["res://.godot/imported/valecourt.png-0a8b6f0ead0f0825b7cc02e4a1dd6a7e.ctex"]
+source_file="res://assets/ui/armor3.png"
+dest_files=["res://.godot/imported/armor3.png-a13f1c94ef6a6877977f46a67304eb87.ctex"]
 
 [params]
 

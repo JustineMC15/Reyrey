@@ -5,21 +5,23 @@
 [ext_resource type="Script" uid="uid://d6mwrb2d16q5" path="res://src/nav/gate.gd" id="4_wqck0"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4pxbc"]
-size = Vector2(208.5, 206)
+size = Vector2(208.5, 285)
 
 [node name="Room_03" type="Node2D" unique_id=1602108746]
 
 [node name="CameraBounds" type="Node2D" parent="." unique_id=1140724593]
 script = ExtResource("1_3j5fb")
+limit_top = 0
 
 [node name="Environments" type="Node2D" parent="." unique_id=1833260432]
 
 [node name="Greybox" type="TileMapLayer" parent="Environments" unique_id=1995920700]
-tile_map_data = PackedByteArray("AAD9/wAAAAAAAAAAAAD+/wAAAAAAAAAAAAD//wAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAACAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAFAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAHAAAAAAAAAAAAAAA=")
+position = Vector2(0, 1)
+tile_map_data = PackedByteArray("AAD///7/AAAAAAAAAAD/////AAAAAAAAAAADAP7/AAAAAAAAAAADAP//AAAAAAAAAAD9/wYAAAAAAAAAAAD+/wYAAAAAAAAAAAD///z/AAAAAAAAAAD///3/AAAAAAAAAAD//wYAAAAAAAAAAAAAAAMAAAAAAAYAAAAAAAYAAAAAAAAAAAABAAMAAAABAAYAAAABAAYAAAAAAAAAAAACAAMAAAACAAYAAAACAAYAAAAAAAAAAAADAPz/AAAAAAAAAAADAP3/AAAAAAAAAAADAAYAAAAAAAAAAAAEAAYAAAAAAAAAAAAFAAYAAAAAAAAAAAAGAAYAAAAAAAAAAAAHAAYAAAAAAAAAAAD///v/AAAAAAAAAAADAPv/AAAAAAAAAAA=")
 tile_set = ExtResource("2_absuf")
 
 [node name="Transition" type="Area2D" parent="." unique_id=1198934175]
-position = Vector2(103, -151)
+position = Vector2(101, -157)
 collision_layer = 4
 collision_mask = 5
 script = ExtResource("4_wqck0")
@@ -31,5 +33,5 @@ entry_direction = Vector2(-1, 0)
 jump_velocity = Vector2(-400, -1400)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Transition" unique_id=1128700579]
-position = Vector2(-1, -218)
+position = Vector2(0, -32.5)
 shape = SubResource("RectangleShape2D_4pxbc")
