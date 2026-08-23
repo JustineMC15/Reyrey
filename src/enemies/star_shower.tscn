@@ -451,7 +451,7 @@ shape = SubResource("CircleShape2D_b5pxj")
 [node name="ShootPoint" type="Marker2D" parent="." unique_id=675582561]
 
 [node name="ShootTimer" type="Timer" parent="." unique_id=1564897020]
-wait_time = 3.0
+wait_time = 2.5
 
 [node name="ShootSound" type="AudioStreamPlayer2D" parent="." unique_id=909507398]
 stream = ExtResource("5_dtla0")

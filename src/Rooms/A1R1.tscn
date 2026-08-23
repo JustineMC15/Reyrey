@@ -90,8 +90,8 @@ position = Vector2(4213, -367)
 [node name="StarShower2" parent="Enemies" unique_id=292662857 instance=ExtResource("9_aik4s")]
 position = Vector2(11277, -325)
 movement_type = 1
-movement_distance = 160.0
-movement_speed = 3.0
+movement_distance = 200.0
+movement_speed = 4.0
 
 [node name="ToRoom2" type="Area2D" parent="." unique_id=1026889895]
 position = Vector2(13279, 958)

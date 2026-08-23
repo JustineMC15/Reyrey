@@ -22,8 +22,10 @@ extends CanvasLayer
 @export var star_fragment_icon: Texture2D
 @export var icon_button_scene: PackedScene
 
+
 const SWORD_DESCRIPTION := "Reyrey's blade, carried since before the road began.\n\nThe ancestral sword of House Valecourt, stolen by Reyrey and replaced with a normal-looking longsword.\n\n\"No one uses it anyways, why must it collect dust? I'm just borrowing it, until I get back home.\""
 const SWORD_KEYBIND := "Mouse1 / F — Swing"
+const SHARD_FLAVOR_HEADER := "Upon this shrine, the remnants of a star remain"
 
 @onready var root_panel: Control = $RootPanel
 
@@ -37,6 +39,7 @@ const SWORD_KEYBIND := "Mouse1 / F — Swing"
 @onready var detail_name_top: Label = $RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailNameTop
 @onready var detail_icon: TextureRect = $RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailIcon
 @onready var detail_name_bottom: Label = $RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailNameBottom
+@onready var detail_shard_header: Label = $RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailScroll/DetailBody/DetailShardHeader
 @onready var detail_description: Label = $RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailScroll/DetailBody/DetailDescription
 @onready var detail_keybind: Label = $RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailScroll/DetailBody/DetailKeybind
 @onready var detail_tin_header: Label = $RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailScroll/DetailBody/DetailTinHeader
@@ -53,7 +56,7 @@ func _ready() -> void:
 	root_panel.hide()
 	root_panel.modulate.a = 0.0
 
-	sword_button.setup("Tidesplitter", sword_icon)
+	sword_button.setup("sword", sword_icon)
 	sword_button.hovered.connect(func(_id): _show_sword())
 
 	armor_button.setup("armor", armor_icons.get(GameState.armor_tier))
@@ -91,7 +94,6 @@ func open() -> void:
 	var tween := create_tween()
 	tween.tween_property(root_panel, "modulate:a", 1.0, 0.15)
 
-	# Default to the sword hovered so keyboard nav has a starting point.
 	sword_button.grab_focus()
 
 
@@ -140,6 +142,8 @@ func _populate() -> void:
 	armor_button.icon_rect.texture = armor_icons.get(GameState.armor_tier)
 	shard_currency_button.set_count(GameState.star_fragments)
 
+	_wire_focus_neighbors()
+
 	_show_sword()
 
 
@@ -161,9 +165,48 @@ func _clear_grid(grid: GridContainer) -> void:
 		child.queue_free()
 
 
+# Godot's automatic geometric focus-neighbor detection breaks down
+# across very different container types (freeform LeftColumn vs.
+# scrolled grids) — this wires the important cross-boundary links by
+# hand so arrow-key navigation is deterministic. Navigation *within*
+# a single grid still relies on Godot's automatic system, since that
+# works fine on a uniform grid.
+func _wire_focus_neighbors() -> void:
+	sword_button.focus_neighbor_bottom = sword_button.get_path_to(armor_button)
+	armor_button.focus_neighbor_top = armor_button.get_path_to(sword_button)
+	armor_button.focus_neighbor_bottom = armor_button.get_path_to(shard_currency_button)
+	shard_currency_button.focus_neighbor_top = shard_currency_button.get_path_to(armor_button)
+
+	var scripture_buttons := scripture_grid.get_children()
+	var shard_buttons := shard_grid.get_children()
+
+	var first_middle_button: Control = null
+
+	if not scripture_buttons.is_empty():
+		first_middle_button = scripture_buttons[0]
+	elif not shard_buttons.is_empty():
+		first_middle_button = shard_buttons[0]
+
+	if first_middle_button:
+		sword_button.focus_neighbor_right = sword_button.get_path_to(first_middle_button)
+		armor_button.focus_neighbor_right = armor_button.get_path_to(first_middle_button)
+		shard_currency_button.focus_neighbor_right = shard_currency_button.get_path_to(first_middle_button)
+		first_middle_button.focus_neighbor_left = first_middle_button.get_path_to(armor_button)
+
+	if not scripture_buttons.is_empty() and not shard_buttons.is_empty():
+		var last_scripture: Control = scripture_buttons[scripture_buttons.size() - 1]
+		var first_shard: Control = shard_buttons[0]
+
+		last_scripture.focus_neighbor_bottom = last_scripture.get_path_to(first_shard)
+		first_shard.focus_neighbor_top = first_shard.get_path_to(last_scripture)
+		first_shard.focus_neighbor_left = first_shard.get_path_to(shard_currency_button)
+
+
 func _clear_detail() -> void:
 	detail_name_top.hide()
+	detail_icon.hide()
 	detail_name_bottom.hide()
+	detail_shard_header.hide()
 	detail_description.hide()
 	detail_keybind.hide()
 	detail_tin_header.hide()
@@ -178,9 +221,7 @@ func _show_sword() -> void:
 	detail_name_top.text = "Sword"
 	detail_name_top.show()
 
-	detail_icon.texture = sword_icon
-
-	detail_name_bottom.text = "Sword"
+	detail_name_bottom.text = "Tidesplitter"
 	detail_name_bottom.show()
 
 	detail_description.text = SWORD_DESCRIPTION
@@ -196,10 +237,8 @@ func _show_armor() -> void:
 	var data := GameState.get_armor_data()
 	var armor_name: String = data.get("name", "Armor")
 
-	detail_name_top.text = armor_name
+	detail_name_top.text = "Armor"
 	detail_name_top.show()
-
-	detail_icon.texture = armor_button.icon_rect.texture
 
 	detail_name_bottom.text = armor_name
 	detail_name_bottom.show()
@@ -211,10 +250,8 @@ func _show_armor() -> void:
 func _show_star_fragments() -> void:
 	_clear_detail()
 
-	detail_name_top.text = "Star Fragments"
+	detail_name_top.text = "Currency"
 	detail_name_top.show()
-
-	detail_icon.texture = star_fragment_icon
 
 	detail_name_bottom.text = "Star Fragments"
 	detail_name_bottom.show()
@@ -235,6 +272,7 @@ func _show_scripture(ability_id: String) -> void:
 	# illustration. Falls back to the sprite until you assign one in
 	# the Inspector, so nothing renders blank in the meantime.
 	detail_icon.texture = ability_images.get(ability_id, scripture_icons.get(ability_id))
+	detail_icon.show()
 
 	detail_description.text = data.get("description", "")
 	detail_description.show()
@@ -259,10 +297,13 @@ func _show_scripture(ability_id: String) -> void:
 func _show_shard(shrine_id: String) -> void:
 	_clear_detail()
 
-	# No title above the image for shards, per spec — symbol + text only.
 	var shard_data: Dictionary = GameState.claimed_shrines.get(shrine_id, {})
 
 	detail_icon.texture = shard_icons.get(shrine_id, shard_icon)
+	detail_icon.show()
+
+	detail_shard_header.text = SHARD_FLAVOR_HEADER
+	detail_shard_header.show()
 
 	detail_description.text = shard_data.get("text", "")
 	detail_description.show()

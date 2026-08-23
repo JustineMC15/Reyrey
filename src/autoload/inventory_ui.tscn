@@ -9,14 +9,15 @@
 [ext_resource type="FontFile" uid="uid://dlinrvj4uxc6w" path="res://assets/fonts/Seshat.otf" id="4_vfflu"]
 [ext_resource type="Script" uid="uid://c0003dfq74caq" path="res://src/nav/tapered_line.gd" id="5_taper"]
 
-[node name="InventoryUI" type="CanvasLayer" unique_id=1537732442]
+[node name="InventoryUI" type="CanvasLayer" unique_id=1149974573]
+layer = 300
 script = ExtResource("1_0bsca")
 shard_icon = ExtResource("2_0fbo4")
 sword_icon = ExtResource("2_ar6k6")
 star_fragment_icon = ExtResource("4_0fbo4")
 icon_button_scene = ExtResource("2_aua8c")
 
-[node name="RootPanel" type="Control" parent="." unique_id=923120272]
+[node name="RootPanel" type="Control" parent="." unique_id=1831873347]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -24,7 +25,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Dim" type="ColorRect" parent="RootPanel" unique_id=1800989716]
+[node name="Dim" type="ColorRect" parent="RootPanel" unique_id=2006281330]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -34,7 +35,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 0.7)
 
-[node name="MainFrame" type="Control" parent="RootPanel" unique_id=597228002]
+[node name="MainFrame" type="Control" parent="RootPanel" unique_id=515717198]
 layout_mode = 1
 anchor_left = 0.075
 anchor_top = 0.075
@@ -43,7 +44,7 @@ anchor_bottom = 0.925
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="BorderFrame" type="NinePatchRect" parent="RootPanel/MainFrame" unique_id=1217966964]
+[node name="BorderFrame" type="NinePatchRect" parent="RootPanel/MainFrame" unique_id=1634940498]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -51,7 +52,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Background" type="Panel" parent="RootPanel/MainFrame" unique_id=297195595]
+[node name="Background" type="Panel" parent="RootPanel/MainFrame" unique_id=756553064]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -60,7 +61,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Layout" type="HBoxContainer" parent="RootPanel/MainFrame" unique_id=1039652130]
+[node name="Layout" type="HBoxContainer" parent="RootPanel/MainFrame" unique_id=2121484393]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -69,76 +70,78 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 24
 
-[node name="LeftColumn" type="Control" parent="RootPanel/MainFrame/Layout" unique_id=2093577489]
+[node name="LeftColumn" type="Control" parent="RootPanel/MainFrame/Layout" unique_id=1049544305]
+custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 2.0
 
-[node name="SwordButton" parent="RootPanel/MainFrame/Layout/LeftColumn" unique_id=1266475895 instance=ExtResource("2_aua8c")]
+[node name="SwordButton" parent="RootPanel/MainFrame/Layout/LeftColumn" unique_id=1917603643 instance=ExtResource("2_aua8c")]
 layout_mode = 1
 offset_left = 16.0
 offset_top = 16.0
 offset_right = 128.0
-offset_bottom = 498.4
+offset_bottom = 521.4
 
-[node name="ArmorButton" parent="RootPanel/MainFrame/Layout/LeftColumn" unique_id=946537511 instance=ExtResource("2_aua8c")]
+[node name="ArmorButton" parent="RootPanel/MainFrame/Layout/LeftColumn" unique_id=1586327270 instance=ExtResource("2_aua8c")]
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 1
-offset_left = 133.6
-offset_top = 17.399998
-offset_right = 233.6
-offset_bottom = 117.399994
+offset_left = 140.0
+offset_top = 20.0
+offset_right = 240.0
+offset_bottom = 120.0
 
-[node name="ShardCurrencyButton" parent="RootPanel/MainFrame/Layout/LeftColumn" unique_id=286956492 instance=ExtResource("2_aua8c")]
+[node name="ShardCurrencyButton" parent="RootPanel/MainFrame/Layout/LeftColumn" unique_id=1152378381 instance=ExtResource("2_aua8c")]
+custom_minimum_size = Vector2(100, 100)
 layout_mode = 1
-offset_left = 132.6
-offset_top = 402.4
-offset_right = 232.6
-offset_bottom = 502.4
+offset_left = 140.0
+offset_top = 140.0
+offset_right = 240.0
+offset_bottom = 240.0
 
-[node name="Divider1" type="Control" parent="RootPanel/MainFrame/Layout" unique_id=1501384175]
+[node name="Divider1" type="Control" parent="RootPanel/MainFrame/Layout" unique_id=880376409]
 custom_minimum_size = Vector2(10, 0)
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("5_taper")
 line_color = Color(1, 1, 1, 0.85)
-max_thickness = 4.0
 taper_power = 1.6
 
-[node name="MiddleColumn" type="VBoxContainer" parent="RootPanel/MainFrame/Layout" unique_id=1759994497]
+[node name="MiddleColumn" type="VBoxContainer" parent="RootPanel/MainFrame/Layout" unique_id=1268987996]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 3.0
-offset_transform_enabled = true
-offset_transform_position = Vector2(10, 10)
 theme_override_constants/separation = 10
 
-[node name="ScripturesSection" type="VBoxContainer" parent="RootPanel/MainFrame/Layout/MiddleColumn" unique_id=1246019912]
+[node name="ScripturesSection" type="VBoxContainer" parent="RootPanel/MainFrame/Layout/MiddleColumn" unique_id=1028268515]
 layout_mode = 2
 size_flags_vertical = 3
+offset_transform_enabled = true
+offset_transform_position = Vector2(0, 10)
 theme_override_constants/separation = 6
 
-[node name="ScripturesLabel" type="Label" parent="RootPanel/MainFrame/Layout/MiddleColumn/ScripturesSection" unique_id=1190142812]
+[node name="ScripturesLabel" type="Label" parent="RootPanel/MainFrame/Layout/MiddleColumn/ScripturesSection" unique_id=2106003946]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_egeyv")
 theme_override_font_sizes/font_size = 22
 text = "SCRIPTURES"
+vertical_alignment = 1
 
-[node name="ScriptureScroll" type="ScrollContainer" parent="RootPanel/MainFrame/Layout/MiddleColumn/ScripturesSection" unique_id=969894725]
+[node name="ScriptureScroll" type="ScrollContainer" parent="RootPanel/MainFrame/Layout/MiddleColumn/ScripturesSection" unique_id=1329078435]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="ScriptureGrid" type="GridContainer" parent="RootPanel/MainFrame/Layout/MiddleColumn/ScripturesSection/ScriptureScroll" unique_id=591713218]
+[node name="ScriptureGrid" type="GridContainer" parent="RootPanel/MainFrame/Layout/MiddleColumn/ScripturesSection/ScriptureScroll" unique_id=2010729445]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 columns = 4
 
-[node name="MiddleSeparator" type="Control" parent="RootPanel/MainFrame/Layout/MiddleColumn" unique_id=250448761]
+[node name="MiddleSeparator" type="Control" parent="RootPanel/MainFrame/Layout/MiddleColumn" unique_id=226280262]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -147,93 +150,108 @@ orientation = 1
 line_color = Color(1, 1, 1, 0.85)
 taper_power = 1.6
 
-[node name="ShardsSection" type="VBoxContainer" parent="RootPanel/MainFrame/Layout/MiddleColumn" unique_id=936302508]
+[node name="ShardsSection" type="VBoxContainer" parent="RootPanel/MainFrame/Layout/MiddleColumn" unique_id=1791975788]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 6
 
-[node name="ShardsLabel" type="Label" parent="RootPanel/MainFrame/Layout/MiddleColumn/ShardsSection" unique_id=614979237]
+[node name="ShardsLabel" type="Label" parent="RootPanel/MainFrame/Layout/MiddleColumn/ShardsSection" unique_id=1995764338]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_egeyv")
 theme_override_font_sizes/font_size = 22
 text = "STARLIGHT SHARDS"
 
-[node name="ShardScroll" type="ScrollContainer" parent="RootPanel/MainFrame/Layout/MiddleColumn/ShardsSection" unique_id=1894037503]
+[node name="ShardScroll" type="ScrollContainer" parent="RootPanel/MainFrame/Layout/MiddleColumn/ShardsSection" unique_id=1073109708]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="ShardGrid" type="GridContainer" parent="RootPanel/MainFrame/Layout/MiddleColumn/ShardsSection/ShardScroll" unique_id=569357879]
+[node name="ShardGrid" type="GridContainer" parent="RootPanel/MainFrame/Layout/MiddleColumn/ShardsSection/ShardScroll" unique_id=729910847]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 columns = 4
 
-[node name="Divider2" type="Control" parent="RootPanel/MainFrame/Layout" unique_id=69740475]
+[node name="Divider2" type="Control" parent="RootPanel/MainFrame/Layout" unique_id=974437703]
 custom_minimum_size = Vector2(10, 0)
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("5_taper")
 line_color = Color(1, 1, 1, 0.85)
-max_thickness = 4.0
 taper_power = 1.6
 
-[node name="RightColumn" type="VBoxContainer" parent="RootPanel/MainFrame/Layout" unique_id=212937979]
+[node name="RightColumn" type="VBoxContainer" parent="RootPanel/MainFrame/Layout" unique_id=1664908934]
+custom_minimum_size = Vector2(320, 500)
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
+size_flags_horizontal = 6
+size_flags_vertical = 6
 size_flags_stretch_ratio = 3.0
+offset_transform_enabled = true
+offset_transform_position = Vector2(-20, 10)
 
-[node name="VBox" type="PanelContainer" parent="RootPanel/MainFrame/Layout/RightColumn" unique_id=604899459]
+[node name="VBox" type="PanelContainer" parent="RootPanel/MainFrame/Layout/RightColumn" unique_id=1491875266]
 layout_mode = 2
+size_flags_horizontal = 8
 size_flags_vertical = 3
 
-[node name="DetailVBox" type="VBoxContainer" parent="RootPanel/MainFrame/Layout/RightColumn/VBox" unique_id=1453921649]
+[node name="DetailVBox" type="VBoxContainer" parent="RootPanel/MainFrame/Layout/RightColumn/VBox" unique_id=916639193]
 layout_mode = 2
-offset_transform_enabled = true
-offset_transform_position = Vector2(0, 10)
 theme_override_constants/separation = 8
 
-[node name="DetailNameTop" type="Label" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox" unique_id=611454314]
+[node name="DetailNameTop" type="Label" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox" unique_id=1360281541]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_egeyv")
 theme_override_font_sizes/font_size = 26
 text = "Name"
 horizontal_alignment = 1
 
-[node name="DetailIcon" type="TextureRect" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox" unique_id=1614092434]
-custom_minimum_size = Vector2(0, 140)
+[node name="DetailIcon" type="TextureRect" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox" unique_id=604918143]
+custom_minimum_size = Vector2(250, 140)
 layout_mode = 2
 size_flags_horizontal = 4
 expand_mode = 1
 stretch_mode = 5
 
-[node name="DetailNameBottom" type="Label" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox" unique_id=1332316927]
+[node name="DetailNameBottom" type="Label" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox" unique_id=404103258]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_egeyv")
 theme_override_font_sizes/font_size = 22
 text = "Name"
 horizontal_alignment = 1
 
-[node name="DetailScroll" type="ScrollContainer" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox" unique_id=907260238]
+[node name="DetailScroll" type="ScrollContainer" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox" unique_id=2114099076]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="DetailBody" type="VBoxContainer" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailScroll" unique_id=529810781]
+[node name="DetailBody" type="VBoxContainer" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailScroll" unique_id=790974796]
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 6
+mouse_filter = 2
 theme_override_constants/separation = 14
 
-[node name="DetailDescription" type="Label" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailScroll/DetailBody" unique_id=71554641]
+[node name="DetailShardHeader" type="Label" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailScroll/DetailBody" unique_id=250893626]
+custom_maximum_size = Vector2(300, 10000)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78431374, 0.45882353, 0.14117648, 1)
+theme_override_fonts/font = ExtResource("3_egeyv")
+theme_override_font_sizes/font_size = 18
+text = "Upon this shrine, the remnants of a star remain"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="DetailDescription" type="Label" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailScroll/DetailBody" unique_id=414549425]
+custom_maximum_size = Vector2(300, 10000)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_vfflu")
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="DetailKeybind" type="Label" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailScroll/DetailBody" unique_id=1588143993]
+[node name="DetailKeybind" type="Label" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailScroll/DetailBody" unique_id=1340442954]
+custom_maximum_size = Vector2(300, 10000)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.78431374, 0.45882353, 0.14117648, 1)
 theme_override_fonts/font = ExtResource("3_egeyv")
@@ -241,7 +259,8 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="DetailTinHeader" type="Label" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailScroll/DetailBody" unique_id=36295938]
+[node name="DetailTinHeader" type="Label" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailScroll/DetailBody" unique_id=190640119]
+custom_maximum_size = Vector2(300, 10000)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.78431374, 0.45882353, 0.14117648, 1)
 theme_override_fonts/font = ExtResource("3_egeyv")
@@ -251,25 +270,28 @@ compartment of the altar"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="DetailTinText" type="Label" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailScroll/DetailBody" unique_id=839845578]
+[node name="DetailTinText" type="Label" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailScroll/DetailBody" unique_id=1079869672]
+custom_maximum_size = Vector2(300, 10000)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_vfflu")
-horizontal_alignment = 1
+horizontal_alignment = 3
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="DetailReynauldHeader" type="Label" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailScroll/DetailBody" unique_id=1524888389]
+[node name="DetailReynauldHeader" type="Label" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailScroll/DetailBody" unique_id=1536499751]
+custom_maximum_size = Vector2(300, 10000)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.78431374, 0.45882353, 0.14117648, 1)
 theme_override_fonts/font = ExtResource("3_egeyv")
 theme_override_font_sizes/font_size = 18
-text = "Helpful,"
+text = "A herald's thoughts on the matter"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="DetailReynauldText" type="Label" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailScroll/DetailBody" unique_id=826347832]
+[node name="DetailReynauldText" type="Label" parent="RootPanel/MainFrame/Layout/RightColumn/VBox/DetailVBox/DetailScroll/DetailBody" unique_id=1567730011]
+custom_maximum_size = Vector2(300, 10000)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_vfflu")
-horizontal_alignment = 1
+horizontal_alignment = 3
 vertical_alignment = 1
 autowrap_mode = 3
