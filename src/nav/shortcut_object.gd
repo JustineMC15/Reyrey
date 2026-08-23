@@ -9,8 +9,11 @@ class_name ShortcutObject
 ##
 ## Scene:
 ##   CollisionShape2D — collision_layer = 1
-##   TileMapLayer    — optional visual
-##   Sprite2D        — optional alternative visual
+##   TileMapLayer     — optional visual
+##   Sprite2D         — optional alternative visual
+##   OpenSound        — optional AudioStreamPlayer2D, plays the
+##                      moment it opens (never on the silent
+##                      reload-from-save path)
 ##
 ## If using TileMapLayer, it should contain only this shortcut object's
 ## tiles.
@@ -24,6 +27,7 @@ class_name ShortcutObject
 	else $Sprite2D if has_node("Sprite2D")
 	else null
 )
+@onready var open_sound: AudioStreamPlayer2D = $OpenSound if has_node("OpenSound") else null
 
 
 func _ready() -> void:
@@ -42,6 +46,9 @@ func _on_shortcut_activated(activated_id: String) -> void:
 
 func _open(instant: bool) -> void:
 	collision_shape.set_deferred("disabled", true)
+
+	if not instant and open_sound:
+		open_sound.play()
 
 	if not visual:
 		return

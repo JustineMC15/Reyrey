@@ -10,6 +10,9 @@ class_name LockedDoor
 ##   DetectionArea     — Area2D, collision_layer = 4, collision_mask = 5
 ##   TileMapLayer      — optional visual
 ##   Sprite2D          — optional alternative visual
+##   UnlockSound       — optional AudioStreamPlayer2D, plays on unlock
+##   DeniedSound       — optional AudioStreamPlayer2D, plays when the
+##                       player interacts without the right key
 ## Drag your prompt Panel into `prompt_panel`.
 ##
 ## If using TileMapLayer, it should contain only this door's tiles.
@@ -26,6 +29,8 @@ class_name LockedDoor
 	else $Sprite2D if has_node("Sprite2D")
 	else null
 )
+@onready var unlock_sound: AudioStreamPlayer2D = $UnlockSound if has_node("UnlockSound") else null
+@onready var denied_sound: AudioStreamPlayer2D = $DeniedSound if has_node("DeniedSound") else null
 
 var player_inside := false
 
@@ -52,12 +57,18 @@ func _process(_delta: float) -> void:
 
 func _try_unlock() -> void:
 	if not GameState.has_key(required_key_id):
+		if denied_sound:
+			denied_sound.play()
 		return
 
 	if consume_key:
 		GameState.consume_key(required_key_id)
 
 	GameState.open_door_permanently(door_id)
+
+	if unlock_sound:
+		unlock_sound.play()
+
 	_open(false)
 
 

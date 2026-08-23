@@ -12,6 +12,8 @@ class_name CrumblingFloor
 ##                      surface, collision_layer = 4, mask = 5
 ##   TileMapLayer     — optional, shakes and fades with the tile
 ##   Sprite2D         — optional alternative to TileMapLayer
+##   CrumbleSound     — optional AudioStreamPlayer2D, plays the
+##                      instant it gives way
 
 @export var stand_time_to_crumble: float = 0.6
 @export var shake_strength: float = 3.0
@@ -24,6 +26,7 @@ class_name CrumblingFloor
 	else null
 )
 @onready var detection_area: Area2D = $DetectionArea
+@onready var crumble_sound: AudioStreamPlayer2D = $CrumbleSound if has_node("CrumbleSound") else null
 
 var _stand_timer := 0.0
 var _player_on_top := false
@@ -76,6 +79,9 @@ func _on_area_exited(area: Area2D) -> void:
 func _crumble() -> void:
 	_crumbled = true
 	collision_shape.set_deferred("disabled", true)
+
+	if crumble_sound:
+		crumble_sound.play()
 
 	if visual:
 		var tween := create_tween()

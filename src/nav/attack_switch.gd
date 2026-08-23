@@ -13,8 +13,9 @@ class_name AttackSwitch
 ##   First hit unlocks it for good; further hits do nothing.
 ##
 ## Scene: needs a CollisionShape2D on collision_layer = 2 (the layer
-## every weapon hitbox scans) and an optional TileMapLayer or Sprite2D
-## that brightens on trigger.
+## every weapon hitbox scans), an optional TileMapLayer or Sprite2D
+## that brightens on trigger, and an optional TriggerSound
+## (AudioStreamPlayer2D) that plays each time the switch fires.
 
 @export var switch_id: String = ""
 @export var target_door: Node
@@ -26,6 +27,7 @@ class_name AttackSwitch
 	else $Sprite2D if has_node("Sprite2D")
 	else null
 )
+@onready var trigger_sound: AudioStreamPlayer2D = $TriggerSound if has_node("TriggerSound") else null
 
 var _triggered := false
 var _close_timer: SceneTreeTimer
@@ -48,6 +50,9 @@ func take_damage(_amount: int) -> void:
 
 	_triggered = true
 	_set_triggered_look()
+
+	if trigger_sound:
+		trigger_sound.play()
 
 	if target_door == null:
 		return

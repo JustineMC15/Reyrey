@@ -353,6 +353,7 @@ tile_set = ExtResource("14_88xlm")
 [node name="GauntletDoor" type="StaticBody2D" parent="." unique_id=1707237868]
 position = Vector2(4096, -1792)
 script = ExtResource("8_osguf")
+open_alpha = 0.0
 metadata/_custom_type_script = "uid://5vbw01sd268j"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GauntletDoor" unique_id=1183476173]

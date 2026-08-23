@@ -61,7 +61,7 @@ var room_area_names: Dictionary = {
 	"res://src/rooms/A0R1.tscn": "Valecourt Capital",
 	"res://src/rooms/A0R2.tscn": "Valecourt Capital",
 
-	"res://src/Rooms/A1R1.tscn": "Valecourt Fields",
+	"res://src/rooms/A1R1.tscn": "Valecourt Fields",
 	"res://src/Rooms/A2R1.tscn": "Cathedral Undercroft",
 	"res://src/Rooms/A3R1.tscn": "Coastal Road",
 	"res://src/Rooms/A4R1.tscn": "Elven Reach",
@@ -111,6 +111,8 @@ func load_room(scene_path: String) -> void:
 
 	player.disable_world_interaction()
 
+	GameState.is_room_unloading = true
+
 	# Remove the previous room.
 	for child in current_room.get_children():
 		child.queue_free()
@@ -121,6 +123,7 @@ func load_room(scene_path: String) -> void:
 
 	if room_scene == null:
 		push_error("Game: Failed to load room: " + scene_path)
+		GameState.is_room_unloading = false
 		return
 
 	# IMPORTANT:
@@ -135,6 +138,8 @@ func load_room(scene_path: String) -> void:
 	# Wait until the new room has entered the tree and its children
 	# have initialized before looking for CameraBounds.
 	await get_tree().process_frame
+
+	GameState.is_room_unloading = false
 
 	# Apply the new room's camera limits before the player is positioned.
 	_apply_camera_bounds(new_room)
@@ -159,7 +164,6 @@ func load_room(scene_path: String) -> void:
 
 		if area_title != null:
 			area_title.show_area(area_name)
-
 
 func get_current_room_scene_path() -> String:
 	return current_room_scene_path

@@ -9,15 +9,19 @@ class_name HiddenWall
 ##   CollisionShape2D — the blocking shape, collision_layer = 1
 ##   DetectionArea    — Area2D covering the approach zone,
 ##                      collision_layer = 4, collision_mask = 5
-##   Sprite2D         — optional, matches the surrounding wall art
+##   TileMapLayer     — optional visual
+##   RevealSound      — optional AudioStreamPlayer2D, the "ping" that
+##                      plays the moment the wall is discovered
+##                      (never plays on the silent reload-from-save path)
 
 @export var secret_id: String = ""
-@export var reveal_alpha: float = 0.0
+@export var reveal_alpha: float = 0.15
 @export var reveal_duration: float = 0.6
 
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var visual: CanvasItem = $TileMapLayer if has_node("TileMapLayer") else null
 @onready var detection_area: Area2D = $DetectionArea
+@onready var reveal_sound: AudioStreamPlayer2D = $RevealSound if has_node("RevealSound") else null
 
 var _revealed := false
 
@@ -40,6 +44,9 @@ func _on_area_entered(area: Area2D) -> void:
 func _reveal(instant: bool) -> void:
 	_revealed = true
 	collision_shape.set_deferred("disabled", true)
+
+	if not instant and reveal_sound:
+		reveal_sound.play()
 
 	if not visual:
 		return

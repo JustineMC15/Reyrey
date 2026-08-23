@@ -10,13 +10,16 @@ class_name SimpleDoor
 ##
 ## Scene children expected:
 ##   CollisionShape2D — collision_layer = 1
-##   TileMapLayer    — optional visual
-##   Sprite2D        — optional alternative visual
+##   TileMapLayer     — optional visual
+##   Sprite2D         — optional alternative visual
+##   OpenSound        — optional AudioStreamPlayer2D
+##   CloseSound       — optional AudioStreamPlayer2D
 ##
 ## If using TileMapLayer, it should contain only this door's tiles.
+## Sounds only play on real open()/close() calls, never on the silent
+## state restore that happens at _ready() from start_open.
 
 @export var start_open: bool = false
-@export_range(0.0, 1.0, 0.01) var open_alpha: float = 0.15
 @export var fade_duration: float = 0.3
 
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
@@ -25,6 +28,8 @@ class_name SimpleDoor
 	else $Sprite2D if has_node("Sprite2D")
 	else null
 )
+@onready var open_sound: AudioStreamPlayer2D = $OpenSound if has_node("OpenSound") else null
+@onready var close_sound: AudioStreamPlayer2D = $CloseSound if has_node("CloseSound") else null
 
 var is_open := false
 
@@ -41,6 +46,9 @@ func open() -> void:
 	is_open = true
 	_apply_open(true, false)
 
+	if open_sound:
+		open_sound.play()
+
 
 func close() -> void:
 	if not is_open:
@@ -49,6 +57,9 @@ func close() -> void:
 	is_open = false
 	_apply_open(false, false)
 
+	if close_sound:
+		close_sound.play()
+
 
 func _apply_open(open_state: bool, instant: bool) -> void:
 	collision_shape.set_deferred("disabled", open_state)
@@ -56,7 +67,7 @@ func _apply_open(open_state: bool, instant: bool) -> void:
 	if not visual:
 		return
 
-	var target_alpha := open_alpha if open_state else 1.0
+	var target_alpha := 0.15 if open_state else 1.0
 
 	if instant:
 		visual.modulate.a = target_alpha

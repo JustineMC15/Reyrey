@@ -7,8 +7,10 @@ class_name BreakableWall
 ##
 ## Scene:
 ##   CollisionShape2D — collision_layer = 3
-##   TileMapLayer    — optional visual
-##   Sprite2D        — optional alternative visual
+##   TileMapLayer     — optional visual
+##   Sprite2D         — optional alternative visual
+##   HitSound         — optional AudioStreamPlayer2D, plays per hit
+##   BreakSound       — optional AudioStreamPlayer2D, plays once, on break
 ##
 ## TileMapLayer should contain only the tiles belonging to this wall.
 
@@ -23,6 +25,8 @@ class_name BreakableWall
 	else $Sprite2D if has_node("Sprite2D")
 	else null
 )
+@onready var hit_sound: AudioStreamPlayer2D = $HitSound if has_node("HitSound") else null
+@onready var break_sound: AudioStreamPlayer2D = $BreakSound if has_node("BreakSound") else null
 
 var hits_remaining: int
 
@@ -39,6 +43,10 @@ func _ready() -> void:
 
 func take_damage(_amount: int) -> void:
 	hits_remaining -= 1
+
+	if hit_sound:
+		hit_sound.play()
+
 	_flash()
 
 	if hits_remaining <= 0:
@@ -70,9 +78,15 @@ func _break() -> void:
 
 	collision_shape.set_deferred("disabled", true)
 
+	if break_sound:
+		break_sound.play()
+
 	if visual:
 		var tween := create_tween()
 		tween.tween_property(visual, "modulate:a", 0.0, 0.25)
-		tween.tween_callback(queue_free)
-	else:
-		queue_free()
+		await tween.finished
+
+	if break_sound and break_sound.playing:
+		await break_sound.finished
+
+	queue_free()

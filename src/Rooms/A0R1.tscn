@@ -291,7 +291,7 @@ room_name = "A0R1"
 position = Vector2(3824, -254)
 movement_type = 1
 
-[node name="GuidingStar2" parent="Enemies" unique_id=222027155 instance=ExtResource("20_e8c74")]
+[node name="GuidingStar2" parent="Enemies" unique_id=250246711 instance=ExtResource("20_e8c74")]
 position = Vector2(4692, -231)
 spin_speed = 3.0
 movement_distance = 70.0

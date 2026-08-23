@@ -16,7 +16,7 @@
 [ext_resource type="TileSet" uid="uid://bh5re3fvbw1fu" path="res://assets/environment/tres/64x64.tres" id="14_88xlm"]
 [ext_resource type="Script" uid="uid://32v1p1ot6a5m" path="res://src/nav/hidden_wall.gd" id="14_bqr63"]
 [ext_resource type="Script" uid="uid://twmqytbf8u0p" path="res://src/enemies/killzoneinstant.gd" id="16_8nbx2"]
-[ext_resource type="Script" uid="uid://b8hftrdaurelt" path="res://src/nav/enemy_gauntlet.gd" id="16_qqdsg"]
+[ext_resource type="Script" uid="uid://b8hftrdaurelt" path="res://src/enemies/enemy_gauntlet.gd" id="16_qqdsg"]
 [ext_resource type="AudioStream" uid="uid://b3n4d1ad587db" path="res://assets/sound/music/The_Old_Tower_Inn.mp3" id="17_qqdsg"]
 [ext_resource type="Script" uid="uid://ubj82f4sgt82" path="res://src/nav/breakable_wall.gd" id="19_gklib"]
 

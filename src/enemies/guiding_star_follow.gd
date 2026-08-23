@@ -1,13 +1,13 @@
 extends CharacterBody2D
+
 @export var enemy_id: String = ""
-var max_health := 4
+
+var max_health := 3
 var health := max_health
+var base_damage := 1
 
 @export var spin_speed: float = 2.0
-@export var bullet_scene: PackedScene
-
-var player: Node2D = null
-var is_dying := false
+@export var chase_speed: float = 300.0
 
 enum MovementType {
 	VERTICAL,
@@ -21,11 +21,14 @@ enum MovementType {
 
 var start_position: Vector2
 var movement_time: float = 0.0
+var player: Node2D = null
+var is_chasing := false
+var is_dying := false
 
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 @onready var death_effect: AnimatedSprite2D = $DeathEffect
-@onready var hit_sound: AudioStreamPlayer2D = $HitSound
 @onready var death_sound: AudioStreamPlayer2D = $DeathSound
+@onready var hit_sound: AudioStreamPlayer2D = $HitSound
 
 
 func _ready() -> void:
@@ -44,6 +47,16 @@ func _physics_process(delta: float) -> void:
 
 	# Spin
 	rotation += spin_speed * delta
+
+	# Chase player when detected
+	if is_chasing and player != null:
+		var target_position := player.global_position + Vector2(0, -48)
+		var direction := global_position.direction_to(target_position)
+
+		velocity = direction * chase_speed
+		move_and_slide()
+
+		return
 
 	# Floating movement
 	movement_time += delta * movement_speed
@@ -69,7 +82,7 @@ func take_damage(amount: int) -> void:
 	# Play hit sound
 	hit_sound.play()
 
-	# Flash enemy
+	# Flash white
 	flash_damage()
 
 	if health <= 0:
@@ -78,7 +91,6 @@ func take_damage(amount: int) -> void:
 
 func flash_damage() -> void:
 	animated_sprite_2d.modulate = Color(5, 5, 5, 1)
-
 	await get_tree().create_timer(0.1).timeout
 
 	if not is_dying:
@@ -91,9 +103,9 @@ func die() -> void:
 
 	is_dying = true
 
-	# Stop shooting
+	# Stop chasing
 	player = null
-	$ShootTimer.stop()
+	is_chasing = false
 
 	# Hide normal enemy sprite
 	animated_sprite_2d.visible = false
@@ -111,52 +123,10 @@ func die() -> void:
 	# Play death sound
 	death_sound.play()
 
-	# Wait for death animation to finish
+	# Wait for death animation
 	await death_effect.animation_finished
 
 	queue_free()
-
-
-func spin_once() -> void:
-	var tween = create_tween()
-
-	tween.tween_property(
-		self,
-		"rotation",
-		rotation + TAU,
-		0.2
-	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-
-
-func fire_flash() -> void:
-	var tween = create_tween()
-
-	animated_sprite_2d.modulate = Color(2.5, 1.8, 0.3, 1.0)
-
-	tween.tween_property(
-		animated_sprite_2d,
-		"modulate",
-		Color.WHITE,
-		0.35
-	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-
-
-func _on_shoot_timer_timeout() -> void:
-	if player == null or is_dying:
-		return
-
-	$ShootSound.play()
-	fire_flash()
-
-	var bullet = bullet_scene.instantiate()
-
-	bullet.global_position = $ShootPoint.global_position
-	bullet.direction = (
-		(player.global_position + Vector2(0, -48))
-		- $ShootPoint.global_position
-	).normalized()
-
-	get_tree().current_scene.add_child(bullet)
 
 
 func _on_detection_area_area_entered(area: Area2D) -> void:
@@ -167,12 +137,20 @@ func _on_detection_area_area_entered(area: Area2D) -> void:
 		return
 
 	player = area.get_parent()
-	$ShootTimer.start()
+	is_chasing = true
 
 
 func _on_detection_area_area_exited(area: Area2D) -> void:
 	if not area.is_in_group("player_detection"):
 		return
 
+	if player != area.get_parent():
+		return
+
+	# Stop chasing
 	player = null
-	$ShootTimer.stop()
+	is_chasing = false
+
+	# Resume floating from the enemy's current position
+	start_position = position
+	movement_time = 0.0

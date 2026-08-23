@@ -295,7 +295,7 @@ func activate_shortcut(shortcut_id: String) -> void:
  
  
 # --- Enemy gauntlets ---
- 
+var is_room_unloading: bool = false
 var cleared_gauntlets: Dictionary = {}
  
  
@@ -305,7 +305,6 @@ func is_gauntlet_cleared(gauntlet_id: String) -> bool:
  
 func clear_gauntlet(gauntlet_id: String) -> void:
 	cleared_gauntlets[gauntlet_id] = true
- 
 
 # --- Anvils ---
 

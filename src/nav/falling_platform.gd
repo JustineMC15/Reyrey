@@ -12,6 +12,8 @@ class_name FallingPlatform
 ##                      collision_layer = 4, mask = 5
 ##   TileMapLayer     — optional visual
 ##   Sprite2D         — optional alternative visual
+##   FallSound        — optional AudioStreamPlayer2D, plays the
+##                      instant the platform starts to drop
 ##
 ## If using TileMapLayer, it should contain only this platform's tiles.
 
@@ -26,6 +28,7 @@ class_name FallingPlatform
 	else null
 )
 @onready var detection_area: Area2D = $DetectionArea
+@onready var fall_sound: AudioStreamPlayer2D = $FallSound if has_node("FallSound") else null
 
 var _stand_timer := 0.0
 var _player_on_top := false
@@ -84,6 +87,9 @@ func _on_area_exited(area: Area2D) -> void:
 
 func _start_falling() -> void:
 	_falling = true
+
+	if fall_sound:
+		fall_sound.play()
 
 	if respawn_delay > 0.0:
 		await get_tree().create_timer(respawn_delay).timeout

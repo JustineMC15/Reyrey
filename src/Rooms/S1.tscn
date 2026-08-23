@@ -195,7 +195,7 @@ collision_layer = 4
 collision_mask = 5
 script = ExtResource("24_bsssq")
 gate_id = "shrine_entry"
-target_scene_path = "res://src/Rooms/room_01-tutorial.tscn"
+target_scene_path = "res://src/rooms/A0R1.tscn"
 target_gate_id = "shrine_door"
 prompt_panel = NodePath("CollisionShape2D/CanvasLayer/PromptPanel")
 

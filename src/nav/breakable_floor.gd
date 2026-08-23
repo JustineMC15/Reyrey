@@ -12,6 +12,7 @@ class_name BreakableFloor
 ##   CollisionShape2D — collision_layer = 1
 ##   TileMapLayer     — optional visual
 ##   Sprite2D         — optional alternative visual
+##   BreakSound       — optional AudioStreamPlayer2D
 ##
 ## If using TileMapLayer, it should contain only this floor's tiles.
 
@@ -24,6 +25,7 @@ class_name BreakableFloor
 	else $Sprite2D if has_node("Sprite2D")
 	else null
 )
+@onready var break_sound: AudioStreamPlayer2D = $BreakSound if has_node("BreakSound") else null
 
 
 func _ready() -> void:
@@ -39,20 +41,16 @@ func slam_break() -> void:
 
 	collision_shape.set_deferred("disabled", true)
 
+	if break_sound:
+		break_sound.play()
+
 	if visual:
 		var tween := create_tween()
-		tween.tween_property(
-			visual,
-			"position:y",
-			visual.position.y + 40.0,
-			0.3
-		)
-		tween.parallel().tween_property(
-			visual,
-			"modulate:a",
-			0.0,
-			0.3
-		)
-		tween.tween_callback(queue_free)
-	else:
-		queue_free()
+		tween.tween_property(visual, "position:y", visual.position.y + 40.0, 0.3)
+		tween.parallel().tween_property(visual, "modulate:a", 0.0, 0.3)
+		await tween.finished
+
+	if break_sound and break_sound.playing:
+		await break_sound.finished
+
+	queue_free()

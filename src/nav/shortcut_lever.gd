@@ -10,7 +10,8 @@ class_name ShortcutLever
 ## Scene: this node IS the Area2D (collision_layer = 4,
 ## collision_mask = 5). Drag your prompt Panel into `prompt_panel`.
 ##
-## Visual can be either TileMapLayer or Sprite2D.
+## Visual can be either TileMapLayer or Sprite2D. Optional PullSound
+## (AudioStreamPlayer2D) plays the moment it's pulled.
 
 @export var shortcut_id: String = ""
 @export var prompt_panel: Panel
@@ -20,6 +21,7 @@ class_name ShortcutLever
 	else $Sprite2D if has_node("Sprite2D")
 	else null
 )
+@onready var pull_sound: AudioStreamPlayer2D = $PullSound if has_node("PullSound") else null
 
 var player_inside := false
 var _pulled := false
@@ -47,6 +49,9 @@ func _process(_delta: float) -> void:
 
 		if prompt_panel:
 			prompt_panel.hide()
+
+		if pull_sound:
+			pull_sound.play()
 
 		GameState.activate_shortcut(shortcut_id)
 		_set_pulled_look()

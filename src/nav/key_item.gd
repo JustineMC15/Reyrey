@@ -9,7 +9,8 @@ class_name KeyItem
 ## collision_mask = 5, matching every other player-detecting trigger
 ## in the project). Drag your own prompt Panel into `prompt_panel`.
 ##
-## Visual can be either TileMapLayer or Sprite2D.
+## Visual can be either TileMapLayer or Sprite2D. Optional
+## PickupSound (AudioStreamPlayer2D) plays on collect.
 
 @export var key_id: String = ""
 @export var prompt_panel: Panel
@@ -19,6 +20,7 @@ class_name KeyItem
 	else $Sprite2D if has_node("Sprite2D")
 	else null
 )
+@onready var pickup_sound: AudioStreamPlayer2D = $PickupSound if has_node("PickupSound") else null
 
 var activated := false
 var player_inside := false
@@ -48,6 +50,11 @@ func _process(_delta: float) -> void:
 			prompt_panel.hide()
 
 		GameState.collect_key(key_id)
+
+		if pickup_sound:
+			pickup_sound.play()
+			await pickup_sound.finished
+
 		queue_free()
 
 
