@@ -17,6 +17,7 @@ enum MovementType {
 @export var movement_speed: float = 2.0
 
 var start_position: Vector2
+
 var movement_time: float = 0.0
 var is_dying := false
 
@@ -78,17 +79,26 @@ func flash_damage() -> void:
 	if not is_dying:
 		animated_sprite_2d.modulate = Color.WHITE
 
-
 func die() -> void:
 	if is_dying:
 		return
 
 	is_dying = true
 	GameState.add_star_fragments(star_fragment_reward)
+
 	# Hide normal enemy sprite
 	animated_sprite_2d.visible = false
+
 	# Disable collision
 	$CollisionShape2D.set_deferred("disabled", true)
+
+	# Disable contact damage
+	var killzone := get_node_or_null("Killzone")
+	if killzone:
+		killzone.set_deferred("monitoring", false)
+		var kz_collision = killzone.get_node_or_null("CollisionShape2D")
+		if kz_collision:
+			kz_collision.set_deferred("disabled", true)
 
 	# Stop movement
 	velocity = Vector2.ZERO
@@ -103,4 +113,35 @@ func die() -> void:
 	# Wait for death animation
 	await death_effect.animation_finished
 
-	queue_free()
+	death_effect.visible = false
+	set_physics_process(false)
+
+
+func respawn() -> void:
+	if not is_dying:
+		return
+
+	is_dying = false
+	health = max_health
+
+	position = start_position
+	movement_time = 0.0
+	velocity = Vector2.ZERO
+	rotation = 0.0
+
+	animated_sprite_2d.visible = true
+	animated_sprite_2d.modulate = Color.WHITE
+
+	death_effect.visible = false
+	death_effect.stop()
+
+	$CollisionShape2D.set_deferred("disabled", false)
+
+	var killzone := get_node_or_null("Killzone")
+	if killzone:
+		killzone.set_deferred("monitoring", true)
+		var kz_collision = killzone.get_node_or_null("CollisionShape2D")
+		if kz_collision:
+			kz_collision.set_deferred("disabled", false)
+
+	set_physics_process(true)

@@ -61,6 +61,8 @@ func _on_start_pressed() -> void:
 func _on_slot_picked(slot: int) -> void:
 	SaveManager.current_slot = slot
 
+	await LoadingScreen.show_loading()
+
 	if SaveManager.has_save(slot):
 		await SaveManager.load_game(slot)
 	else:
@@ -70,7 +72,6 @@ func _on_slot_picked(slot: int) -> void:
 		get_tree().change_scene_to_file(
 			"res://src/game/game.tscn"
 		)
-
 
 func _on_settings_pressed() -> void:
 	save_slots_panel.hide()

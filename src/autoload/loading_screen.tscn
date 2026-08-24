@@ -1,0 +1,226 @@
+[gd_scene format=3 uid="uid://dk4twsqg4yg8a"]
+
+[ext_resource type="Script" uid="uid://cm8ndf3ae3hl4" path="res://src/autoload/loading_screen.gd" id="1_xf5o3"]
+[ext_resource type="Texture2D" uid="uid://dgfsm6e6yptnn" path="res://assets/ui/rhombus-sheet.png" id="2_yolar"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x21js"]
+atlas = ExtResource("2_yolar")
+region = Rect2(0, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dq5yp"]
+atlas = ExtResource("2_yolar")
+region = Rect2(512, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ydq0p"]
+atlas = ExtResource("2_yolar")
+region = Rect2(1024, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cajyb"]
+atlas = ExtResource("2_yolar")
+region = Rect2(1536, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nd8yn"]
+atlas = ExtResource("2_yolar")
+region = Rect2(2048, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0jrmf"]
+atlas = ExtResource("2_yolar")
+region = Rect2(2560, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n1n2i"]
+atlas = ExtResource("2_yolar")
+region = Rect2(3072, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xuxbk"]
+atlas = ExtResource("2_yolar")
+region = Rect2(3584, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fjpdr"]
+atlas = ExtResource("2_yolar")
+region = Rect2(4096, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1yyxc"]
+atlas = ExtResource("2_yolar")
+region = Rect2(4608, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8da1s"]
+atlas = ExtResource("2_yolar")
+region = Rect2(5120, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ylvos"]
+atlas = ExtResource("2_yolar")
+region = Rect2(5632, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rjmvm"]
+atlas = ExtResource("2_yolar")
+region = Rect2(6144, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3taxd"]
+atlas = ExtResource("2_yolar")
+region = Rect2(6656, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lgcj8"]
+atlas = ExtResource("2_yolar")
+region = Rect2(7168, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sao5m"]
+atlas = ExtResource("2_yolar")
+region = Rect2(7680, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bdls7"]
+atlas = ExtResource("2_yolar")
+region = Rect2(8192, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dr1tj"]
+atlas = ExtResource("2_yolar")
+region = Rect2(8704, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ldhxf"]
+atlas = ExtResource("2_yolar")
+region = Rect2(9216, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_egx27"]
+atlas = ExtResource("2_yolar")
+region = Rect2(9728, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p6wwi"]
+atlas = ExtResource("2_yolar")
+region = Rect2(10240, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_14riv"]
+atlas = ExtResource("2_yolar")
+region = Rect2(10752, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5obwa"]
+atlas = ExtResource("2_yolar")
+region = Rect2(11264, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rqknp"]
+atlas = ExtResource("2_yolar")
+region = Rect2(11776, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gnuy2"]
+atlas = ExtResource("2_yolar")
+region = Rect2(12288, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5pvrq"]
+atlas = ExtResource("2_yolar")
+region = Rect2(12800, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8wn7f"]
+atlas = ExtResource("2_yolar")
+region = Rect2(13312, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0dvdv"]
+atlas = ExtResource("2_yolar")
+region = Rect2(13824, 0, 512, 512)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xf5o3"]
+animations = [{
+"frames": [{
+"duration": 15.0,
+"texture": SubResource("AtlasTexture_x21js")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dq5yp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ydq0p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cajyb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nd8yn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0jrmf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n1n2i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xuxbk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fjpdr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1yyxc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8da1s")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ylvos")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rjmvm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3taxd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lgcj8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sao5m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bdls7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dr1tj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ldhxf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_egx27")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p6wwi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_14riv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5obwa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rqknp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gnuy2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5pvrq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8wn7f")
+}, {
+"duration": 15.0,
+"texture": SubResource("AtlasTexture_0dvdv")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 60.0
+}]
+
+[node name="LoadingScreen" type="CanvasLayer" unique_id=1879208745]
+layer = 500
+script = ExtResource("1_xf5o3")
+
+[node name="Background" type="ColorRect" parent="." unique_id=472934279]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Rhombus" type="AnimatedSprite2D" parent="." unique_id=1688471163]
+position = Vector2(572, 341)
+scale = Vector2(0.3, 0.3)
+sprite_frames = SubResource("SpriteFrames_xf5o3")
+frame_progress = 0.51689196

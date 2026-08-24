@@ -151,10 +151,11 @@ func rest() -> void:
 
 	print("PLAYER RESTED AT: ", checkpoint_id)
 
-	# Reload the room.
 	await GameState.rest_at_checkpoint()
-	SaveManager.save_game(SaveManager.current_slot)
 
+	player.unlock_input()
+
+	SaveManager.save_game(SaveManager.current_slot)
 
 func _get_current_room_path() -> String:
 	var game := get_tree().get_first_node_in_group("game")

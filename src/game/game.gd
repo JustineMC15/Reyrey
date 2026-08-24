@@ -94,12 +94,15 @@ func _ready() -> void:
 	else:
 		await position_player_at_start()
 
-	# The player is now safely positioned.
-	# Allow transition gates to react again.
 	GameState.is_loading_save = false
+
+	if not GameState.has_seen_story_beat("opening_cutscene"):
+		await Cutscene.play(StoryContent.OPENING_LINES)
+		GameState.mark_story_beat_seen("opening_cutscene")
 
 	player.enable_world_interaction()
 
+	LoadingScreen.hide_loading()
 
 func load_room(scene_path: String) -> void:
 	scene_path = ResourceUID.ensure_path(scene_path)

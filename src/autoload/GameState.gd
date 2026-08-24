@@ -221,6 +221,17 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_build_fade_overlay()
 
+# --- Story beats (one-time cutscenes) ---
+
+var story_beats_seen: Dictionary = {}
+
+
+func has_seen_story_beat(beat_id: String) -> bool:
+	return story_beats_seen.get(beat_id, false)
+
+
+func mark_story_beat_seen(beat_id: String) -> void:
+	story_beats_seen[beat_id] = true
 
 # --- Helpers ---
 
@@ -886,7 +897,6 @@ func clear_checkpoint() -> void:
 	checkpoint_id = ""
 	checkpoint_room_name = ""
 
-
 func respawn_player() -> void:
 	if _transition_lock:
 		return
@@ -910,23 +920,11 @@ func respawn_player() -> void:
 
 	await fade_out.finished
 
+	soft_respawn_enemies()
+
 	var game := _get_game()
 
-	if game == null:
-		_transition_lock = false
-		return
-
-	if not game.has_method("load_room"):
-		push_error(
-			"GameState: Game cannot load rooms during respawn."
-		)
-
-		_transition_lock = false
-		return
-
-	await game.load_room(checkpoint_scene_path)
-
-	if game.has_method("position_player_at_checkpoint"):
+	if game and game.has_method("position_player_at_checkpoint"):
 		await game.position_player_at_checkpoint(checkpoint_id)
 
 	var players := get_tree().get_nodes_in_group("player")
@@ -1123,7 +1121,6 @@ func go_to_room(
 
 	await _fade_out_and_load(target_scene_path)
 
-
 func _fade_out_and_load(target_scene_path: String) -> void:
 	var tween := create_tween()
 
@@ -1136,9 +1133,12 @@ func _fade_out_and_load(target_scene_path: String) -> void:
 
 	await tween.finished
 
+	LoadingScreen.show_loading()
+
 	var game := _get_game()
 
 	if game == null:
+		LoadingScreen.hide_loading()
 		_transition_lock = false
 		return
 
@@ -1147,13 +1147,15 @@ func _fade_out_and_load(target_scene_path: String) -> void:
 			"GameState: Game instance has no load_room() method."
 		)
 
+		LoadingScreen.hide_loading()
 		_transition_lock = false
 		return
 
 	await game.load_room(target_scene_path)
 
-	await _on_new_room_ready()
+	LoadingScreen.hide_loading()
 
+	await _on_new_room_ready()
 
 func _on_new_room_ready() -> void:
 	if pending_spawn_gate_id != "":
@@ -1326,7 +1328,6 @@ func _jump_into_room(player: Node) -> void:
 
 	if is_instance_valid(player):
 		player.transition_movement = false
-
 func _fade_out_and_reload_current_scene() -> void:
 	var game := _get_game()
 
@@ -1359,6 +1360,8 @@ func _fade_out_and_reload_current_scene() -> void:
 
 	await fade_out.finished
 
+	LoadingScreen.show_loading()
+
 	await game.load_room(room_path)
 
 	if game.has_method("position_player_at_start"):
@@ -1377,6 +1380,8 @@ func _fade_out_and_reload_current_scene() -> void:
 		if player.has_method("enable_world_interaction"):
 			player.enable_world_interaction()
 
+	LoadingScreen.hide_loading()
+
 	var fade_in := create_tween()
 
 	fade_in.tween_property(
@@ -1389,7 +1394,6 @@ func _fade_out_and_reload_current_scene() -> void:
 	await fade_in.finished
 
 	_transition_lock = false
-
 
 func _fade_in() -> void:
 	var tween := create_tween()
@@ -1444,6 +1448,7 @@ func get_save_data() -> Dictionary:
 		"activated_shortcuts": activated_shortcuts.duplicate(),
 		"cleared_gauntlets": cleared_gauntlets.duplicate(),
 		"area_names_seen": area_names_seen.duplicate(),
+		"story_beats_seen": story_beats_seen.duplicate(),
 	}
 
 
@@ -1469,7 +1474,7 @@ func apply_save_data(data: Dictionary) -> void:
 	activated_shortcuts = data.get("activated_shortcuts", {})
 	cleared_gauntlets = data.get("cleared_gauntlets", {})
 	area_names_seen = data.get("area_names_seen", {})
-
+	story_beats_seen = data.get("story_beats_seen", {})
 	tutorials_seen = data.get("tutorials_seen", {
 		"movement": false,
 		"jump": false,
@@ -1510,7 +1515,7 @@ func reset_to_defaults() -> void:
 	activated_shortcuts.clear()
 	cleared_gauntlets.clear()
 	area_names_seen.clear()
-
+	story_beats_seen.clear()
 
 func load_from_save(scene_path: String) -> void:
 	if scene_path == "":

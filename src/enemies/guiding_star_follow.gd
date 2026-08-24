@@ -18,7 +18,7 @@ enum MovementType {
 @export var movement_type: MovementType = MovementType.VERTICAL
 @export var movement_distance: float = 50.0
 @export var movement_speed: float = 2.0
-
+var spawn_position: Vector2
 var start_position: Vector2
 var movement_time: float = 0.0
 var player: Node2D = null
@@ -34,12 +34,12 @@ var is_dying := false
 func _ready() -> void:
 	add_to_group("enemies")
 	start_position = position
+	spawn_position = position   # <-- add this
 
 	death_effect.visible = false
 
 	$DetectionArea.area_entered.connect(_on_detection_area_area_entered)
 	$DetectionArea.area_exited.connect(_on_detection_area_area_exited)
-
 
 func _physics_process(delta: float) -> void:
 	if is_dying:
@@ -103,6 +103,7 @@ func die() -> void:
 
 	is_dying = true
 	GameState.add_star_fragments(star_fragment_reward)
+
 	# Stop chasing
 	player = null
 	is_chasing = false
@@ -112,6 +113,17 @@ func die() -> void:
 
 	# Disable collision
 	$CollisionShape2D.set_deferred("disabled", true)
+
+	# Disable contact damage
+	var killzone := get_node_or_null("Killzone")
+	if killzone:
+		killzone.set_deferred("monitoring", false)
+		var kz_collision = killzone.get_node_or_null("CollisionShape2D")
+		if kz_collision:
+			kz_collision.set_deferred("disabled", true)
+
+	# Stop detecting the player
+	$DetectionArea.set_deferred("monitoring", false)
 
 	# Stop movement
 	velocity = Vector2.ZERO
@@ -126,8 +138,43 @@ func die() -> void:
 	# Wait for death animation
 	await death_effect.animation_finished
 
-	queue_free()
+	death_effect.visible = false
+	set_physics_process(false)
 
+
+func respawn() -> void:
+	if not is_dying:
+		return
+
+	is_dying = false
+	health = max_health
+	player = null
+	is_chasing = false
+
+	position = spawn_position
+	start_position = spawn_position
+	movement_time = 0.0
+	velocity = Vector2.ZERO
+	rotation = 0.0
+
+	animated_sprite_2d.visible = true
+	animated_sprite_2d.modulate = Color.WHITE
+
+	death_effect.visible = false
+	death_effect.stop()
+
+	$CollisionShape2D.set_deferred("disabled", false)
+
+	var killzone := get_node_or_null("Killzone")
+	if killzone:
+		killzone.set_deferred("monitoring", true)
+		var kz_collision = killzone.get_node_or_null("CollisionShape2D")
+		if kz_collision:
+			kz_collision.set_deferred("disabled", false)
+
+	$DetectionArea.set_deferred("monitoring", true)
+
+	set_physics_process(true)
 
 func _on_detection_area_area_entered(area: Area2D) -> void:
 	if is_dying:
