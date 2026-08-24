@@ -26,6 +26,7 @@ InventoryUI="*uid://bxifq5pgq8it"
 
 [display]
 
+window/size/mode=2
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 

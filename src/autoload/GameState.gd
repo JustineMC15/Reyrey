@@ -859,7 +859,14 @@ func _run_claim_sequence(
 
 
 # --- Checkpoints ---
+func soft_respawn_enemies() -> void:
+	for enemy in get_tree().get_nodes_in_group("enemies"):
+		if is_instance_valid(enemy) and enemy.has_method("respawn"):
+			enemy.respawn()
 
+	for gauntlet in get_tree().get_nodes_in_group("gauntlets"):
+		if is_instance_valid(gauntlet) and gauntlet.has_method("reset_gauntlet"):
+			gauntlet.reset_gauntlet()
 func set_checkpoint(
 	scene_path: String,
 	checkpoint_id_value: String,
@@ -1024,33 +1031,14 @@ func rest_at_checkpoint() -> void:
 		return
 
 	var fade_out := create_tween()
-
-	fade_out.tween_property(
-		_fade_rect,
-		"color:a",
-		0.75,
-		FADE_DURATION
-	)
-
+	fade_out.tween_property(_fade_rect, "color:a", 0.75, FADE_DURATION)
 	await fade_out.finished
+
+	soft_respawn_enemies()
 
 	var game := _get_game()
 
-	if game == null:
-		_transition_lock = false
-		return
-
-	if not game.has_method("load_room"):
-		push_error(
-			"GameState: Game cannot load rooms."
-		)
-
-		_transition_lock = false
-		return
-
-	await game.load_room(checkpoint_scene_path)
-
-	if game.has_method("position_player_at_checkpoint"):
+	if game and game.has_method("position_player_at_checkpoint"):
 		await game.position_player_at_checkpoint(checkpoint_id)
 
 	var players := get_tree().get_nodes_in_group("player")
@@ -1060,33 +1048,16 @@ func rest_at_checkpoint() -> void:
 
 		if player.has_method("restore_full_health"):
 			player.restore_full_health()
-
 		if player.has_method("restore_full_mp"):
 			player.restore_full_mp()
-
 		if player.has_method("restore_full_stamina"):
 			player.restore_full_stamina()
 
-		# Let the new room and player position synchronize
-		# before restoring world collision.
-		await get_tree().physics_frame
-
-		if player.has_method("enable_world_interaction"):
-			player.enable_world_interaction()
-
 	var fade_in := create_tween()
-
-	fade_in.tween_property(
-		_fade_rect,
-		"color:a",
-		0.0,
-		0.35
-	)
-
+	fade_in.tween_property(_fade_rect, "color:a", 0.0, 0.35)
 	await fade_in.finished
 
 	_transition_lock = false
-
 
 func activate_checkpoint(
 	scene_path: String,

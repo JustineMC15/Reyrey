@@ -282,5 +282,35 @@ func die() -> void:
 	death_sound.play()
 
 	await death_effect.animation_finished
+	death_effect.visible = false
+	set_physics_process(false)
 
-	queue_free()
+
+func respawn() -> void:
+	if not is_dying:
+		return
+
+	is_dying = false
+	health = max_health
+	is_attacking = false
+	player = null
+
+	position = start_position
+	movement_time = 0.0
+	velocity = Vector2.ZERO
+
+	animated_sprite_2d.visible = true
+	animated_sprite_2d.modulate = Color.WHITE
+
+	death_effect.visible = false
+	death_effect.stop()
+
+	$CollisionShape2D.set_deferred("disabled", false)
+
+	pop_attack.visible = false
+	pop_hurtbox.set_deferred("monitoring", false)
+	pop_hurtbox.set_deferred("monitorable", false)
+	pop_glow.enabled = false
+	pop_glow.energy = 0.0
+
+	set_physics_process(true)

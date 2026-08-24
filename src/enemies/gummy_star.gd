@@ -275,7 +275,37 @@ func die() -> void:
 	# Wait for death animation
 	await death_effect.animation_finished
 
-	queue_free()
+	death_effect.visible = false
+	set_physics_process(false)
+
+
+func respawn() -> void:
+	if not is_dying:
+		return
+
+	is_dying = false
+	health = max_health
+	is_attacking = false
+	can_attack = true
+
+	position = start_position
+	movement_time = 0.0
+	velocity = Vector2.ZERO
+	rotation = 0.0
+
+	animated_sprite_2d.visible = true
+	animated_sprite_2d.modulate = Color.WHITE
+
+	death_effect.visible = false
+	death_effect.stop()
+
+	$CollisionShape2D.set_deferred("disabled", false)
+	$AttackArea/CollisionShape2D.set_deferred("disabled", false)
+
+	attack_effect.visible = false
+	slow_field.set_deferred("monitoring", false)
+
+	set_physics_process(true)
 func _on_slow_field_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
 		if body.has_method("set_slowed"):

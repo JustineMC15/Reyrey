@@ -85,37 +85,56 @@ func flash_damage() -> void:
 		animated_sprite_2d.modulate = Color.WHITE
 
 
+# Replace die() with:
 func die() -> void:
 	if is_dying:
 		return
 
 	is_dying = true
 	GameState.add_star_fragments(star_fragment_reward)
-	# Stop shooting
+
 	player = null
 	$ShootTimer.stop()
+	$DetectionArea.set_deferred("monitoring", false)
 
-	# Hide normal enemy sprite
 	animated_sprite_2d.visible = false
-
-	# Disable collision
 	$CollisionShape2D.set_deferred("disabled", true)
 
-	# Stop movement
 	velocity = Vector2.ZERO
 
-	# Play death effect
 	death_effect.visible = true
 	death_effect.play("death")
-
-	# Play death sound
 	death_sound.play()
 
-	# Wait for death animation to finish
 	await death_effect.animation_finished
 
-	queue_free()
+	death_effect.visible = false
+	set_physics_process(false)
 
+
+func respawn() -> void:
+	if not is_dying:
+		return
+
+	is_dying = false
+	health = max_health
+	player = null
+
+	position = start_position
+	movement_time = 0.0
+	velocity = Vector2.ZERO
+	rotation = 0.0
+
+	animated_sprite_2d.visible = true
+	animated_sprite_2d.modulate = Color.WHITE
+
+	death_effect.visible = false
+	death_effect.stop()
+
+	$CollisionShape2D.set_deferred("disabled", false)
+	$DetectionArea.set_deferred("monitoring", true)
+
+	set_physics_process(true)
 
 func spin_once() -> void:
 	var tween = create_tween()
@@ -157,7 +176,7 @@ func _on_shoot_timer_timeout() -> void:
 	).normalized()
 
 	get_tree().current_scene.add_child(bullet)
-
+	
 
 func _on_detection_area_area_entered(area: Area2D) -> void:
 	if is_dying:

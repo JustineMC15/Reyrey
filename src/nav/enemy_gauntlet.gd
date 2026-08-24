@@ -40,6 +40,7 @@ const SPAWN_STAGGER := 0.06
 
 func _ready() -> void:
 	# Every wave starts hidden and inactive.
+	add_to_group("gauntlets")
 	for wave in waves:
 		if is_instance_valid(wave):
 			_set_wave_active(wave, false)
@@ -327,3 +328,20 @@ func _set_node_active(node: Node, active: bool) -> void:
 	# Continue through nested children.
 	for child in node.get_children():
 		_set_node_active(child, active)
+
+func reset_gauntlet() -> void:
+	if GameState.is_gauntlet_cleared(gauntlet_id):
+		return
+
+	_started = false
+	_current_wave = -1
+
+	if target_door and target_door.has_method("close"):
+		target_door.close()
+
+	for wave in waves:
+		if is_instance_valid(wave):
+			_set_wave_active(wave, false)
+			wave.visible = false
+
+	_restore_room_music()
