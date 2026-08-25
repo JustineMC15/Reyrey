@@ -121,7 +121,28 @@ func load_room(scene_path: String) -> void:
 
 	await get_tree().process_frame
 
-	var room_scene := load(scene_path) as PackedScene
+	var err := ResourceLoader.load_threaded_request(scene_path)
+
+	if err != OK:
+		push_error("Game: Failed to start threaded load: " + scene_path)
+		GameState.is_room_unloading = false
+		return
+
+	while true:
+		var status := ResourceLoader.load_threaded_get_status(scene_path)
+
+		if status == ResourceLoader.THREAD_LOAD_LOADED:
+			break
+
+		if status == ResourceLoader.THREAD_LOAD_FAILED \
+		or status == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
+			push_error("Game: Failed to load room: " + scene_path)
+			GameState.is_room_unloading = false
+			return
+
+		await get_tree().process_frame
+
+	var room_scene := ResourceLoader.load_threaded_get(scene_path) as PackedScene
 
 	if room_scene == null:
 		push_error("Game: Failed to load room: " + scene_path)
@@ -130,31 +151,23 @@ func load_room(scene_path: String) -> void:
 
 	# IMPORTANT:
 	# Set the current room path BEFORE adding the room to the tree.
-	# The room's _ready() functions can run immediately after add_child().
 	current_room_scene_path = scene_path
 
 	var new_room := room_scene.instantiate()
 
 	current_room.add_child(new_room)
 
-	# Wait until the new room has entered the tree and its children
-	# have initialized before looking for CameraBounds.
 	await get_tree().process_frame
 
 	GameState.is_room_unloading = false
 
-	# Apply the new room's camera limits before the player is positioned.
 	_apply_camera_bounds(new_room)
 
-	# Get the music assigned to this room.
 	var music_track: AudioStream = room_music.get(scene_path)
 
-	# Only change music when this room has a track assigned.
 	if music_track != null:
 		Music.play_music(music_track)
 
-	# Show the area name the first time this area is entered
-	# in the current save file.
 	var area_name: String = room_area_names.get(scene_path, "")
 
 	if area_name != "" \
@@ -166,6 +179,7 @@ func load_room(scene_path: String) -> void:
 
 		if area_title != null:
 			area_title.show_area(area_name)
+
 func get_current_room_scene_path() -> String:
 	return current_room_scene_path
 

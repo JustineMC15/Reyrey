@@ -220,7 +220,7 @@ grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
 [node name="Rhombus" type="AnimatedSprite2D" parent="." unique_id=1688471163]
-position = Vector2(572, 341)
-scale = Vector2(0.3, 0.3)
+position = Vector2(576, 324)
+scale = Vector2(0.2, 0.2)
 sprite_frames = SubResource("SpriteFrames_xf5o3")
 frame_progress = 0.51689196

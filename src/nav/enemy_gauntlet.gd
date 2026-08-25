@@ -33,9 +33,9 @@ var _current_wave := -1
 var _started := false
 var _battle_music_active := false
 
-const SPAWN_DURATION := 0.45
-const SPAWN_START_SCALE := 0.2
-const SPAWN_STAGGER := 0.06
+@export var SPAWN_DURATION : float = 0.8
+@export var SPAWN_START_SCALE : float = 0.2
+@export var SPAWN_STAGGER : float = 0.06
 
 
 func _ready() -> void:
@@ -64,19 +64,69 @@ func _ready() -> void:
 			trigger_area.body_entered.connect(_on_trigger_body_entered)
 
 
+var _current_wave_alive: Array[Node] = []
+
+
 func _process(_delta: float) -> void:
 	# Restore room music when the player dies.
-	if not _battle_music_active:
+	if _battle_music_active:
+		var player := get_tree().get_first_node_in_group("player")
+
+		if player and player.get("is_dead") == true:
+			_restore_room_music()
+
+	_check_current_wave()
+
+
+func _check_current_wave() -> void:
+	if _current_wave_alive.is_empty():
 		return
 
-	var player := get_tree().get_first_node_in_group("player")
+	for i in range(_current_wave_alive.size() - 1, -1, -1):
+		var enemy: Node = _current_wave_alive[i]
 
-	if player == null:
+		# Enemies go inert rather than leaving the tree (soft-respawn),
+		# so "defeated" means is_dying — is_instance_valid stays here
+		# too in case some enemy type still queue_frees itself.
+		if not is_instance_valid(enemy) or enemy.get("is_dying") == true:
+			_current_wave_alive.remove_at(i)
+
+	if _current_wave_alive.is_empty():
+		_start_next_wave()
+
+
+func _start_next_wave() -> void:
+	_current_wave += 1
+
+	if _current_wave >= waves.size():
+		_finish()
 		return
 
-	if player.get("is_dead") == true:
-		_restore_room_music()
+	var wave: Node = waves[_current_wave]
 
+	if not is_instance_valid(wave):
+		_start_next_wave()
+		return
+
+	var alive: Array[Node] = []
+
+	for enemy in wave.get_children():
+		if not is_instance_valid(enemy):
+			continue
+
+		if not enemy.is_in_group("enemies"):
+			enemy.add_to_group("enemies")
+
+		alive.append(enemy)
+
+	await _animate_wave_in(wave)
+
+	_set_wave_active(wave, true)
+
+	_current_wave_alive = alive
+
+	if _current_wave_alive.is_empty():
+		_start_next_wave()
 
 func _on_trigger_area_entered(area: Area2D) -> void:
 	if area.is_in_group("player_detection"):
@@ -109,53 +159,6 @@ func _start_gauntlet() -> void:
 		)
 
 	_start_next_wave()
-
-
-func _start_next_wave() -> void:
-	_current_wave += 1
-
-	if _current_wave >= waves.size():
-		_finish()
-		return
-
-	var wave: Node = waves[_current_wave]
-
-	if not is_instance_valid(wave):
-		_start_next_wave()
-		return
-
-	var alive: Array[Node] = []
-
-	for enemy in wave.get_children():
-		if not is_instance_valid(enemy):
-			continue
-
-		if not enemy.is_in_group("enemies"):
-			enemy.add_to_group("enemies")
-
-		alive.append(enemy)
-
-		enemy.tree_exited.connect(
-			_on_wave_enemy_defeated.bind(alive, enemy),
-			CONNECT_ONE_SHOT
-		)
-
-	# Animate the wave before activating its combat.
-	await _animate_wave_in(wave)
-
-	# Only after the entire animation is finished do the enemies
-	# become active.
-	_set_wave_active(wave, true)
-
-	if alive.is_empty():
-		_start_next_wave()
-
-
-func _on_wave_enemy_defeated(alive: Array[Node], enemy: Node) -> void:
-	alive.erase(enemy)
-
-	if alive.is_empty():
-		_start_next_wave()
 
 
 func _finish() -> void:
@@ -335,6 +338,7 @@ func reset_gauntlet() -> void:
 
 	_started = false
 	_current_wave = -1
+	_current_wave_alive.clear()
 
 	if target_door and target_door.has_method("close"):
 		target_door.close()

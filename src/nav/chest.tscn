@@ -6,7 +6,7 @@
 [ext_resource type="AudioStream" uid="uid://b3kadw5jyac6a" path="res://assets/sound/sfx/bing1.wav" id="4_w48m4"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bekt7"]
-size = Vector2(296, 441.75)
+size = Vector2(296, 261.4375)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_u35kk"]
 atlas = ExtResource("2_cepi4")
@@ -282,7 +282,7 @@ script = ExtResource("1_7cujf")
 prompt_panel = NodePath("Panel")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=262223436]
-position = Vector2(0, -170)
+position = Vector2(0, -136.28125)
 shape = SubResource("RectangleShape2D_bekt7")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1299394733]

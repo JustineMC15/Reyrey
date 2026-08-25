@@ -21,7 +21,7 @@ class_name SimpleDoor
 
 @export var start_open: bool = false
 @export var fade_duration: float = 0.3
-
+@export var reveal_alpha: float = 0.15
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var visual: CanvasItem = (
 	$TileMapLayer if has_node("TileMapLayer")
@@ -66,8 +66,7 @@ func _apply_open(open_state: bool, instant: bool) -> void:
 
 	if not visual:
 		return
-
-	var target_alpha := 0.15 if open_state else 1.0
+	var target_alpha := reveal_alpha if open_state else 1.0
 
 	if instant:
 		visual.modulate.a = target_alpha
