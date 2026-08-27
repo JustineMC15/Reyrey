@@ -321,3 +321,7 @@ position = Vector2(-52, -2)
 position = Vector2(7510, -574)
 chest_id = "A0R1-C1"
 star_fragment_reward = 20
+
+[node name="GuidingStar" parent="." unique_id=222027155 instance=ExtResource("20_e8c74")]
+position = Vector2(1249, -191)
+movement_distance = 100.0

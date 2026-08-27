@@ -54,8 +54,27 @@ func _physics_process(delta: float) -> void:
 
 		MovementType.DIAGONAL:
 			position = start_position + Vector2(-offset, offset)
-
-
+# This version respects walls
+#func _physics_process(delta: float) -> void:
+	#if is_dying:
+		#return
+#
+	#rotation += spin_speed * delta
+#
+	#movement_time += delta * movement_speed
+	#var wave_velocity := cos(movement_time) * movement_distance * movement_speed
+#
+	#match movement_type:
+		#MovementType.VERTICAL:
+			#velocity = Vector2(0, wave_velocity)
+#
+		#MovementType.HORIZONTAL:
+			#velocity = Vector2(wave_velocity, 0)
+#
+		#MovementType.DIAGONAL:
+			#velocity = Vector2(-wave_velocity, wave_velocity)
+#
+	#move_and_slide()
 func take_damage(amount: int) -> void:
 	if is_dying:
 		return

@@ -457,6 +457,8 @@ func _ground_slam_hitstop() -> void:
 
 	Engine.time_scale = 1.0
 
+func camera_shake(strength: float, duration: float) -> void:
+	_camera_shake(strength, duration)
 
 func _camera_shake(strength: float, duration: float) -> void:
 	if not camera:
@@ -1305,7 +1307,7 @@ func _physics_process(delta: float) -> void:
 		"move_right"
 	)
 
-	# FACING
+	# FACINGF
 
 	if direction != 0.0:
 		_set_facing(direction)

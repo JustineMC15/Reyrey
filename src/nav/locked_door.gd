@@ -33,6 +33,7 @@ class_name LockedDoor
 @onready var denied_sound: AudioStreamPlayer2D = $DeniedSound if has_node("DeniedSound") else null
 
 var player_inside := false
+var glow_tween: Tween
 
 
 func _ready() -> void:
@@ -45,6 +46,8 @@ func _ready() -> void:
 
 	if GameState.is_door_open(door_id):
 		_open(true)
+	else:
+		_start_glow()
 
 
 func _process(_delta: float) -> void:
@@ -72,11 +75,52 @@ func _try_unlock() -> void:
 	_open(false)
 
 
+func _start_glow() -> void:
+	if not visual:
+		return
+
+	if glow_tween and glow_tween.is_valid():
+		glow_tween.kill()
+
+	# Start from the normal appearance.
+	visual.self_modulate = Color.WHITE
+
+	# Slightly brighten the sprite and gently pulse it.
+	# Values above 1.0 can create a brighter appearance when
+	# HDR/glow is enabled in the project.
+	glow_tween = create_tween()
+	glow_tween.set_loops()
+
+	glow_tween.tween_property(
+		visual,
+		"self_modulate",
+		Color(1.25, 1.25, 1.25, 1.0),
+		0.8
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+	glow_tween.tween_property(
+		visual,
+		"self_modulate",
+		Color(1.0, 1.0, 1.0, 1.0),
+		0.8
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+
 func _open(instant: bool) -> void:
 	collision_shape.set_deferred("disabled", true)
 
+	if glow_tween and glow_tween.is_valid():
+		glow_tween.kill()
+
 	if prompt_panel:
-		prompt_panel.hide()
+		var prompt_tween := create_tween()
+		prompt_tween.tween_property(
+			prompt_panel,
+			"modulate:a",
+			0.0,
+			0.15
+		)
+		prompt_tween.tween_callback(prompt_panel.hide)
 
 	if not visual:
 		return
@@ -85,8 +129,26 @@ func _open(instant: bool) -> void:
 		visual.modulate.a = 0.0
 		return
 
+	# Reset the brightness so the opening animation starts cleanly.
+	visual.self_modulate = Color.WHITE
+
+	# Tween the door away while fading it out.
 	var tween := create_tween()
-	tween.tween_property(visual, "modulate:a", 0.0, 0.3)
+	tween.set_parallel(true)
+
+	tween.tween_property(
+		visual,
+		"modulate:a",
+		0.0,
+		0.3
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+
+	tween.tween_property(
+		visual,
+		"position:y",
+		visual.position.y - 35.0,
+		0.3
+	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
 
 
 func _on_area_entered(area: Area2D) -> void:
@@ -99,8 +161,14 @@ func _on_area_entered(area: Area2D) -> void:
 		return
 
 	prompt_panel.show()
+
 	var tween := create_tween()
-	tween.tween_property(prompt_panel, "modulate:a", 1.0, 0.25)
+	tween.tween_property(
+		prompt_panel,
+		"modulate:a",
+		1.0,
+		0.25
+	)
 
 
 func _on_area_exited(area: Area2D) -> void:
@@ -113,5 +181,10 @@ func _on_area_exited(area: Area2D) -> void:
 		return
 
 	var tween := create_tween()
-	tween.tween_property(prompt_panel, "modulate:a", 0.0, 0.25)
+	tween.tween_property(
+		prompt_panel,
+		"modulate:a",
+		0.0,
+		0.25
+	)
 	tween.tween_callback(prompt_panel.hide)

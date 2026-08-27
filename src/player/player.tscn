@@ -2330,6 +2330,7 @@ animations = [{
 }]
 
 [node name="Player" type="CharacterBody2D" unique_id=647682657]
+collision_mask = 5
 script = ExtResource("1_jtmj1")
 
 [node name="PlayerUI" type="CanvasLayer" parent="." unique_id=965729947]
@@ -2433,7 +2434,7 @@ position = Vector2(0, -48)
 shape = SubResource("CapsuleShape2D_vlew8")
 
 [node name="DetectionArea" type="Area2D" parent="." unique_id=1961571215 groups=["player_detection"]]
-collision_layer = 4
+collision_layer = 255
 collision_mask = 255
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=905059994]
@@ -2443,7 +2444,7 @@ shape = SubResource("RectangleShape2D_cssau")
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1168413055]
 position = Vector2(56, -47)
 offset = Vector2(0, -100)
-zoom = Vector2(0.7, 0.7)
+zoom = Vector2(0.65, 0.65)
 process_callback = 0
 limit_enabled = false
 position_smoothing_enabled = true

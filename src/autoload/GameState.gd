@@ -903,11 +903,8 @@ func respawn_player() -> void:
 
 	_transition_lock = true
 
-	if not has_checkpoint():
-		await _fade_out_and_reload_current_scene()
-
-		_transition_lock = false
-		return
+	var target_scene_path := checkpoint_scene_path if has_checkpoint() else "res://src/rooms/A0R1.tscn"
+	var target_checkpoint_id := checkpoint_id if has_checkpoint() else ""
 
 	var fade_out := create_tween()
 
@@ -920,12 +917,32 @@ func respawn_player() -> void:
 
 	await fade_out.finished
 
-	soft_respawn_enemies()
-
 	var game := _get_game()
 
-	if game and game.has_method("position_player_at_checkpoint"):
-		await game.position_player_at_checkpoint(checkpoint_id)
+	if game == null:
+		_transition_lock = false
+		return
+
+	var current_room_path := ""
+
+	if game.has_method("get_current_room_scene_path"):
+		current_room_path = game.get_current_room_scene_path()
+
+	# The respawn target can live in a different room than the one the
+	# player died in (checkpoint set in A1R1, death in A1R2) — only skip
+	# the genuine room load when we're already standing in the target room.
+	if target_scene_path != current_room_path:
+		LoadingScreen.show_loading()
+		await game.load_room(target_scene_path)
+		LoadingScreen.hide_loading()
+	else:
+		soft_respawn_enemies()
+
+	if target_checkpoint_id != "" \
+	and game.has_method("position_player_at_checkpoint"):
+		await game.position_player_at_checkpoint(target_checkpoint_id)
+	elif game.has_method("position_player_at_start"):
+		await game.position_player_at_start()
 
 	var players := get_tree().get_nodes_in_group("player")
 
@@ -1329,72 +1346,6 @@ func _jump_into_room(player: Node) -> void:
 
 	if is_instance_valid(player):
 		player.transition_movement = false
-func _fade_out_and_reload_current_scene() -> void:
-	var game := _get_game()
-
-	if game == null:
-		_transition_lock = false
-		return
-
-	if not game.has_method("get_current_room_scene_path"):
-		push_error(
-			"GameState: Game cannot provide current room path."
-		)
-
-		_transition_lock = false
-		return
-
-	var room_path: String = game.get_current_room_scene_path()
-
-	if room_path == "":
-		_transition_lock = false
-		return
-
-	var fade_out := create_tween()
-
-	fade_out.tween_property(
-		_fade_rect,
-		"color:a",
-		1.0,
-		FADE_DURATION
-	)
-
-	await fade_out.finished
-
-	LoadingScreen.show_loading()
-
-	await game.load_room(room_path)
-
-	if game.has_method("position_player_at_start"):
-		await game.position_player_at_start()
-
-	var players := get_tree().get_nodes_in_group("player")
-
-	if not players.is_empty():
-		var player = players[0]
-
-		if player.has_method("reset_after_death"):
-			player.reset_after_death()
-
-		await get_tree().physics_frame
-
-		if player.has_method("enable_world_interaction"):
-			player.enable_world_interaction()
-
-	LoadingScreen.hide_loading()
-
-	var fade_in := create_tween()
-
-	fade_in.tween_property(
-		_fade_rect,
-		"color:a",
-		0.0,
-		FADE_DURATION
-	)
-
-	await fade_in.finished
-
-	_transition_lock = false
 
 func _fade_in() -> void:
 	var tween := create_tween()
