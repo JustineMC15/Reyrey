@@ -7,7 +7,7 @@ extends Control
 @onready var stamina_bar: ProgressBar = $STBar
 @onready var stamina_damage_bar: ProgressBar = $STDamageBar
 @onready var star_fragment_reward: StarFragmentReward = $StarFragmentReward
-
+var potion_indicator: Label
 
 func _ready() -> void:
 	await get_tree().process_frame
@@ -53,7 +53,21 @@ func _ready() -> void:
 	player.health_changed.connect(_on_player_health_changed)
 	player.mp_changed.connect(_on_player_mp_changed)
 	player.stamina_changed.connect(_on_player_stamina_changed)
+	potion_indicator = Label.new()
+	potion_indicator.text = "POTION READY"
+	potion_indicator.add_theme_font_size_override("font_size", 16)
+	potion_indicator.add_theme_color_override("font_color", Color(0.7, 0.9, 1.0, 1.0))
+	potion_indicator.position = Vector2(20, 112)
+	potion_indicator.visible = GameState.potion_charged
+	add_child(potion_indicator)
 
+	GameState.potion_mix_changed.connect(_on_potion_state_changed)
+	GameState.potion_used.connect(_on_potion_state_changed)
+
+
+func _on_potion_state_changed() -> void:
+	if potion_indicator:
+		potion_indicator.visible = GameState.potion_charged
 
 func _on_star_fragments_changed(amount: int) -> void:
 	star_fragment_reward.show_new_total(amount)

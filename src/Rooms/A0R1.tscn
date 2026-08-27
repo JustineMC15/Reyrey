@@ -63,7 +63,7 @@ bg_color = Color(0.6, 0.6, 0.6, 0)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ncv88"]
 size = Vector2(209, 206)
 
-[node name="Room_01Tutorial" type="Node2D" unique_id=1068671764]
+[node name="Area0-Room1" type="Node2D" unique_id=1068671764]
 
 [node name="CameraBounds" type="Node2D" parent="." unique_id=1311548178]
 script = ExtResource("1_m0qf0")
@@ -76,8 +76,8 @@ limit_bottom = 500
 
 [node name="Parallax2D2" type="Parallax2D" parent="Environments" unique_id=253607352]
 scale = Vector2(1.5, 1.2)
-scroll_scale = Vector2(0.3, 0.8)
-scroll_offset = Vector2(438, 20)
+scroll_scale = Vector2(0.25, 0.8)
+scroll_offset = Vector2(527, 20)
 metadata/_edit_lock_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="Environments/Parallax2D2" unique_id=1977927100]
@@ -88,8 +88,8 @@ metadata/_edit_lock_ = true
 
 [node name="Parallax2D" type="Parallax2D" parent="Environments" unique_id=424140727]
 scale = Vector2(1.5, 1.2)
-scroll_scale = Vector2(0.18, 0.8)
-scroll_offset = Vector2(438, 20)
+scroll_scale = Vector2(0.15, 0.8)
+scroll_offset = Vector2(527, 20)
 metadata/_edit_lock_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="Environments/Parallax2D" unique_id=303637019]

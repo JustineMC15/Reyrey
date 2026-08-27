@@ -66,7 +66,7 @@ size = Vector2(444, 326.5)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qqdsg"]
 size = Vector2(63, 202)
 
-[node name="Room_02" type="Node2D" unique_id=1602108746]
+[node name="Area0-Room2" type="Node2D" unique_id=1602108746]
 
 [node name="CameraBounds" type="Node2D" parent="." unique_id=1140724593]
 script = ExtResource("1_85ldk")
@@ -80,7 +80,7 @@ limit_bottom = 500
 [node name="Parallax2D2" type="Parallax2D" parent="Environments" unique_id=1290918011]
 scale = Vector2(1.5, 1.2)
 scroll_scale = Vector2(0.3, 0.5)
-scroll_offset = Vector2(438, -346)
+scroll_offset = Vector2(438, -252)
 
 [node name="Sprite2D" type="Sprite2D" parent="Environments/Parallax2D2" unique_id=718426896]
 modulate = Color(0.9098039, 0.9098039, 0.8784314, 1)
@@ -91,7 +91,7 @@ texture = ExtResource("2_85ldk")
 [node name="Parallax2D" type="Parallax2D" parent="Environments" unique_id=841716138]
 scale = Vector2(1.5, 1.2)
 scroll_scale = Vector2(0.18, 0.65)
-scroll_offset = Vector2(438, -346)
+scroll_offset = Vector2(438, -252)
 
 [node name="Sprite2D" type="Sprite2D" parent="Environments/Parallax2D" unique_id=1314468841]
 modulate = Color(0.9098039, 0.9098039, 0.8784314, 1)
@@ -295,6 +295,7 @@ trigger_area = NodePath("Area2D")
 target_door = NodePath("../GauntletDoor")
 waves = [NodePath("Wave1"), NodePath("Wave2"), NodePath("Wave3")]
 battle_music = ExtResource("17_qqdsg")
+SPAWN_DURATION = 0.5
 metadata/_custom_type_script = "uid://b8hftrdaurelt"
 
 [node name="Wave1" type="Node2D" parent="EnemyGauntlet" unique_id=524114146]

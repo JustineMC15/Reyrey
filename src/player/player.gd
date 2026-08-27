@@ -93,7 +93,15 @@ var invincible := false
 
 var sword_damage := 1
 var sword_has_hit := false
+var _sword_damage_base := 1
 
+var damage_reduction_active := false
+var damage_reduction_multiplier := 0.5
+
+var speed_boost_active := false
+var speed_boost_multiplier := 1.5
+
+var infinite_stamina_active := false
 var fire_damage := 3
 var smoke_damage := 1
 var jumps_used := 0
@@ -234,7 +242,10 @@ func reset_after_death() -> void:
 	sword_has_hit = false
 	dash_empowered = false
 	dash_hit_enemies.clear()
-
+	sword_damage = _sword_damage_base
+	damage_reduction_active = false
+	speed_boost_active = false
+	infinite_stamina_active = false
 	# Restore player interaction.
 	detection_area.monitoring = true
 	sword_hitbox.monitoring = false
@@ -259,7 +270,7 @@ func reset_after_death() -> void:
 	slash_effect.visible = false
 	jump_effect.visible = false
 	slam_impact_effect.visible = false
-
+	
 	cancel_attack()
 
 func disable_world_interaction() -> void:
@@ -597,6 +608,9 @@ func take_damage(amount: int) -> void:
 	if invincible or is_dead:
 		return
 
+	if damage_reduction_active:
+		amount = max(0, int(round(amount * damage_reduction_multiplier)))
+
 	invincible = true
 	damage_sound.play()
 
@@ -799,10 +813,7 @@ func _ready() -> void:
 
 	mp_changed.emit(mp, max_mp)
 	stamina_changed.emit(stamina, max_stamina)
-
-
-# PHYSICS PROCESS
-
+	_sword_damage_base = sword_damage
 # PHYSICS PROCESS
 
 func _physics_process(delta: float) -> void:
@@ -1022,7 +1033,10 @@ func _physics_process(delta: float) -> void:
 			_place_recall_anchor()
 		else:
 			_trigger_recall()
+# POTION INPUT
 
+	if Input.is_action_just_pressed("use_potion") and GameState.potion_charged:
+		GameState.use_potion(self)
 	# COYOTE TIMER
 
 	if is_on_floor():
@@ -1303,6 +1317,8 @@ func _physics_process(delta: float) -> void:
 	if is_slowed:
 		current_speed *= slow_multiplier
 
+	if speed_boost_active:
+		current_speed *= speed_boost_multiplier
 	if direction:
 		velocity.x = direction * current_speed
 	else:
@@ -1468,7 +1484,42 @@ func restore_full_mp() -> void:
 	mp = max_mp
 	mp_changed.emit(mp, max_mp)
 	GameState.current_mp = mp
+# New functions — near restore_full_health() / restore_full_mp()
 
+func apply_double_sword_damage(duration: float) -> void:
+	sword_damage = _sword_damage_base * 2
+
+	await get_tree().create_timer(duration).timeout
+
+	if is_instance_valid(self):
+		sword_damage = _sword_damage_base
+
+
+func apply_damage_reduction(duration: float) -> void:
+	damage_reduction_active = true
+
+	await get_tree().create_timer(duration).timeout
+
+	if is_instance_valid(self):
+		damage_reduction_active = false
+
+
+func apply_speed_boost(duration: float) -> void:
+	speed_boost_active = true
+
+	await get_tree().create_timer(duration).timeout
+
+	if is_instance_valid(self):
+		speed_boost_active = false
+
+
+func apply_infinite_stamina(duration: float) -> void:
+	infinite_stamina_active = true
+
+	await get_tree().create_timer(duration).timeout
+
+	if is_instance_valid(self):
+		infinite_stamina_active = false
 
 func increase_max_mp(amount: int) -> void:
 	print("MP BEFORE: ", max_mp)
@@ -1484,6 +1535,10 @@ func increase_max_mp(amount: int) -> void:
 # STAMINA
 
 func spend_stamina(amount: float) -> bool:
+	if infinite_stamina_active:
+		stamina_regen_timer = STAMINA_REGEN_DELAY
+		return true
+
 	if stamina < amount:
 		return false
 
@@ -1494,7 +1549,11 @@ func spend_stamina(amount: float) -> bool:
 	return true
 
 
+
 func drain_stamina(amount: float) -> bool:
+	if infinite_stamina_active:
+		return true
+
 	if stamina <= 0.0:
 		return false
 

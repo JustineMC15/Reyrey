@@ -220,7 +220,7 @@ func mark_tutorial_seen(tutorial_id: String) -> void:
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_build_fade_overlay()
-
+	star_fragments_changed.connect(_on_star_fragments_changed)
 # --- Story beats (one-time cutscenes) ---
 
 var story_beats_seen: Dictionary = {}
@@ -1051,6 +1051,7 @@ func rest_at_checkpoint() -> void:
 		if player.has_method("restore_full_stamina"):
 			player.restore_full_stamina()
 
+	refill_potion_at_checkpoint()
 	var fade_in := create_tween()
 	fade_in.tween_property(_fade_rect, "color:a", 0.0, 0.35)
 	await fade_in.finished
@@ -1274,7 +1275,7 @@ func _walk_into_room(player: Node) -> void:
 		target_position
 	)
 
-	var walk_speed: float = 300.0
+	var walk_speed: float = 430.0
 	var duration: float = distance / walk_speed
 
 	if player.has_method("start_transition_walk"):
@@ -1422,7 +1423,238 @@ func _build_fade_overlay() -> void:
 	_fade_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_fade_layer.add_child(_fade_rect)
+# --- Wondrous Star Potion ---
 
+const POTION_CATEGORIES := ["survival", "combat", "utility"]
+
+# fragment_cost is a placeholder — lifetime star_fragments total,
+# never spent/decremented. Tune once the real curve exists (see
+# backlog: star fragment unlock map).
+var potion_effect_data: Dictionary = {
+	"survival_full_heal": {
+		"name": "Vital Draught",
+		"category": "survival",
+		"description": "Restores your HP to full the moment it's drunk.",
+		"fragment_cost": 300,
+	},
+	"survival_full_mana": {
+		"name": "Mnemonic Draught",
+		"category": "survival",
+		"description": "Restores your MP to full the moment it's drunk.",
+		"fragment_cost": 300,
+	},
+	"combat_double_sword": {
+		"name": "Ember Edge",
+		"category": "combat",
+		"description": "Doubles your sword damage for a short time.",
+		"fragment_cost": 600,
+		"duration": 15.0,
+	},
+	"combat_damage_reduction": {
+		"name": "Aegis Draught",
+		"category": "combat",
+		"description": "Halves incoming combat damage for a short time.",
+		"fragment_cost": 600,
+		"duration": 15.0,
+	},
+	"utility_speed": {
+		"name": "Fleetfoot Draught",
+		"category": "utility",
+		"description": "Increases movement speed for a short time.",
+		"fragment_cost": 450,
+		"duration": 15.0,
+	},
+	"utility_infinite_stamina": {
+		"name": "Tireless Draught",
+		"category": "utility",
+		"description": "Grants unlimited stamina for a short time.",
+		"fragment_cost": 450,
+		"duration": 15.0,
+	},
+}
+
+var unlocked_potion_slots: Dictionary = {}     # category -> true
+var unlocked_potion_effects: Dictionary = {}   # effect_id -> true
+
+var selected_potion_effects: Dictionary = {
+	"survival": "",
+	"combat": "",
+	"utility": "",
+}
+
+var potion_charged: bool = false   # true once mixed, false after drinking
+
+var _checkpoint_range_count: int = 0
+
+signal potion_slot_unlocked(category: String)
+signal potion_effect_unlocked(effect_id: String)
+signal potion_mix_changed()
+signal potion_used()
+
+
+# --- Slots (world pickups) ---
+
+func is_potion_slot_unlocked(category: String) -> bool:
+	return unlocked_potion_slots.has(category)
+
+
+func unlock_potion_slot(category: String) -> void:
+	if is_potion_slot_unlocked(category):
+		return
+
+	unlocked_potion_slots[category] = true
+	potion_slot_unlocked.emit(category)
+
+
+# --- Effects (fragment-gated, never picked up in the world) ---
+
+func is_potion_effect_unlocked(effect_id: String) -> bool:
+	return unlocked_potion_effects.has(effect_id)
+
+
+func get_effects_for_category(category: String) -> Array:
+	var result: Array = []
+
+	for effect_id in potion_effect_data.keys():
+		if potion_effect_data[effect_id].get("category") == category:
+			result.append(effect_id)
+
+	return result
+
+
+func _on_star_fragments_changed(_amount: int) -> void:
+	_check_potion_effect_unlocks()
+
+
+# Fragments are lifetime total, never spent. Every locked effect
+# whose threshold is now met unlocks automatically. Once the star
+# fragment unlock map exists, this becomes "player picks which
+# locked effect to spend toward" instead of auto-unlocking in order.
+func _check_potion_effect_unlocks() -> void:
+	for effect_id in potion_effect_data.keys():
+		if is_potion_effect_unlocked(effect_id):
+			continue
+
+		var cost: int = potion_effect_data[effect_id].get("fragment_cost", 0)
+
+		if star_fragments >= cost:
+			unlocked_potion_effects[effect_id] = true
+			potion_effect_unlocked.emit(effect_id)
+
+
+# --- Mixing ---
+
+func set_selected_potion_effect(category: String, effect_id: String) -> void:
+	if not POTION_CATEGORIES.has(category):
+		return
+
+	if not is_potion_slot_unlocked(category):
+		return
+
+	if effect_id != "" and not is_potion_effect_unlocked(effect_id):
+		return
+
+	selected_potion_effects[category] = effect_id
+
+	if _has_any_potion_selection():
+		potion_charged = true
+
+	potion_mix_changed.emit()
+
+
+func _has_any_potion_selection() -> bool:
+	for category in POTION_CATEGORIES:
+		if selected_potion_effects[category] != "":
+			return true
+
+	return false
+
+
+func _clear_potion_selection() -> void:
+	for category in POTION_CATEGORIES:
+		selected_potion_effects[category] = ""
+
+func clear_potion_mix() -> void:
+	if not can_mix_potion():
+		return
+
+	_clear_potion_selection()
+	potion_charged = false
+	potion_mix_changed.emit()
+# Resting only recharges the existing mix — never touches the
+# selection, so the player is never forced to remix.
+func refill_potion_at_checkpoint() -> void:
+	if _has_any_potion_selection():
+		potion_charged = true
+		potion_mix_changed.emit()
+
+
+func use_potion(player: Node) -> void:
+	if not potion_charged:
+		return
+
+	if player == null or not is_instance_valid(player):
+		return
+
+	if player.get("is_dead") == true:
+		return
+
+	for category in POTION_CATEGORIES:
+		var effect_id: String = selected_potion_effects[category]
+
+		if effect_id != "":
+			_apply_potion_effect(effect_id, player)
+
+	potion_charged = false
+	potion_used.emit()
+
+
+func _apply_potion_effect(effect_id: String, player: Node) -> void:
+	var data: Dictionary = potion_effect_data.get(effect_id, {})
+	var duration: float = data.get("duration", 0.0)
+
+	match effect_id:
+		"survival_full_heal":
+			if player.has_method("restore_full_health"):
+				player.restore_full_health()
+
+		"survival_full_mana":
+			if player.has_method("restore_full_mp"):
+				player.restore_full_mp()
+
+		"combat_double_sword":
+			if player.has_method("apply_double_sword_damage"):
+				player.apply_double_sword_damage(duration)
+
+		"combat_damage_reduction":
+			if player.has_method("apply_damage_reduction"):
+				player.apply_damage_reduction(duration)
+
+		"utility_speed":
+			if player.has_method("apply_speed_boost"):
+				player.apply_speed_boost(duration)
+
+		"utility_infinite_stamina":
+			if player.has_method("apply_infinite_stamina"):
+				player.apply_infinite_stamina(duration)
+
+
+# --- Checkpoint proximity (gates mixing only, not drinking) ---
+
+func enter_checkpoint_range() -> void:
+	_checkpoint_range_count += 1
+
+
+func exit_checkpoint_range() -> void:
+	_checkpoint_range_count = max(0, _checkpoint_range_count - 1)
+
+
+func is_near_checkpoint() -> bool:
+	return _checkpoint_range_count > 0
+
+
+func can_mix_potion() -> bool:
+	return is_near_checkpoint()
 # --- Save system ---
 
 func get_save_data() -> Dictionary:
@@ -1449,6 +1681,10 @@ func get_save_data() -> Dictionary:
 		"cleared_gauntlets": cleared_gauntlets.duplicate(),
 		"area_names_seen": area_names_seen.duplicate(),
 		"story_beats_seen": story_beats_seen.duplicate(),
+		"unlocked_potion_slots": unlocked_potion_slots.duplicate(),
+		"unlocked_potion_effects": unlocked_potion_effects.duplicate(),
+		"selected_potion_effects": selected_potion_effects.duplicate(),
+		"potion_charged": potion_charged,
 	}
 
 
@@ -1480,6 +1716,13 @@ func apply_save_data(data: Dictionary) -> void:
 		"jump": false,
 		"attack": false,
 	}).duplicate()
+	unlocked_potion_slots = data.get("unlocked_potion_slots", {})
+	unlocked_potion_effects = data.get("unlocked_potion_effects", {})
+	selected_potion_effects = data.get("selected_potion_effects", {
+		"survival": "", "combat": "", "utility": "",
+	})
+	potion_charged = data.get("potion_charged", false)
+	_check_potion_effect_unlocks()
 
 
 func reset_to_defaults() -> void:
@@ -1516,6 +1759,10 @@ func reset_to_defaults() -> void:
 	cleared_gauntlets.clear()
 	area_names_seen.clear()
 	story_beats_seen.clear()
+	unlocked_potion_slots.clear()
+	unlocked_potion_effects.clear()
+	_clear_potion_selection()
+	potion_charged = false
 
 func load_from_save(scene_path: String) -> void:
 	if scene_path == "":

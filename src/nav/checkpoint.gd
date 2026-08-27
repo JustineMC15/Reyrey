@@ -55,6 +55,8 @@ func _on_area_entered(area_entered: Area2D) -> void:
 	if not player.is_in_group("player"):
 		return
 
+	GameState.enter_checkpoint_range()
+
 	player_inside = true
 
 	activate(player)
@@ -65,10 +67,11 @@ func _on_area_exited(area_exited: Area2D) -> void:
 	if not area_exited.is_in_group("player_detection"):
 		return
 
+	GameState.exit_checkpoint_range()
+
 	player_inside = false
 
 	_hide_rest_prompt()
-
 
 func activate(player: Node) -> void:
 	var scene_path := _get_current_room_path()
