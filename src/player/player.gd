@@ -17,7 +17,7 @@ class RecallAnchorMarker extends Node2D:
 signal health_changed(current_health, max_health)
 signal mp_changed(current_mp, max_mp)
 signal stamina_changed(current_stamina, max_stamina)
-
+signal ability_used(ability_id: String)
 
 const SPEED := 430.0
 const HAZARD_INVINCIBILITY_TIME := 1.0
@@ -112,6 +112,7 @@ var dash_cooldown_timer := 0.0
 var is_dashing := false
 var dash_direction := 1.0
 var dash_damage := 3
+var dash_damage_weak := 1
 var dash_hit_enemies: Array[Node] = []
 var dash_empowered := false
 
@@ -180,6 +181,16 @@ var transition_walk_direction := 1.0
 @onready var jump_effect: AnimatedSprite2D = $AnimationEffects/JumpEffect
 @onready var slam_impact_effect: AnimatedSprite2D = $AnimationEffects/SlamImpactEffect
 
+var _double_jump_fire_1_base_scale: Vector2
+var _double_jump_fire_1_base_position: Vector2
+var _double_jump_fire_2_base_scale: Vector2
+var _double_jump_fire_2_base_position: Vector2
+var _holy_effect_base_scale: Vector2
+var _holy_effect_base_position: Vector2
+var _wind_effect_base_scale: Vector2
+var _wind_effect_base_position: Vector2
+
+var facing_direction := 1.0
 # SOUND
 @onready var sword_sound: AudioStreamPlayer2D = $Sound/SwordSound
 @onready var damage_sound: AudioStreamPlayer2D = $Sound/DamageSound
@@ -194,16 +205,34 @@ var transition_walk_direction := 1.0
 # FACING
 # All player animations are authored facing RIGHT.
 # This is the only function that changes player-facing direction.
+func _apply_direction_to_effects(direction: float) -> void:
+	var sign_x := -1.0 if direction < 0.0 else 1.0
 
+	double_jump_fire_1.scale.x = abs(_double_jump_fire_1_base_scale.x) * sign_x
+	double_jump_fire_1.position.x = _double_jump_fire_1_base_position.x * sign_x
+
+	double_jump_fire_2.scale.x = abs(_double_jump_fire_2_base_scale.x) * sign_x
+	double_jump_fire_2.position.x = _double_jump_fire_2_base_position.x * sign_x
+
+	holy_effect.scale.x = abs(_holy_effect_base_scale.x) * sign_x
+	holy_effect.position.x = _holy_effect_base_position.x * sign_x
+
+	wind_effect.scale.x = abs(_wind_effect_base_scale.x) * sign_x
+	wind_effect.position.x = _wind_effect_base_position.x * sign_x
 func _set_facing(direction: float) -> void:
 	if direction > 0.0:
+		facing_direction = 1.0
 		animated_sprite_2d.flip_h = false
 		sword_hitbox.scale.x = 1.0
+		dash_hitbox.scale.x = 1.0
+
 	elif direction < 0.0:
+		facing_direction = -1.0
 		animated_sprite_2d.flip_h = true
 		sword_hitbox.scale.x = -1.0
+		dash_hitbox.scale.x = -1.0
 
-
+	_apply_direction_to_effects(facing_direction)
 # DEATH RESET
 
 func reset_after_death() -> void:
@@ -389,15 +418,13 @@ func fire_attack(damage: int) -> void:
 
 
 func dash_attack() -> void:
-	if not dash_empowered:
-		return
+	var damage := dash_damage if dash_empowered else dash_damage_weak
 
 	for body in dash_hitbox.get_overlapping_bodies():
 		if (body.is_in_group("enemies") or body.is_in_group("attackable")) \
 		and not body in dash_hit_enemies:
-			body.take_damage(dash_damage)
+			body.take_damage(damage)
 			dash_hit_enemies.append(body)
-
 
 # GROUND SLAM
 
@@ -778,7 +805,14 @@ func _ready() -> void:
 	death_animation.visible = false
 	jump_effect.visible = false
 	slam_impact_effect.visible = false
-
+	_double_jump_fire_1_base_scale = double_jump_fire_1.scale
+	_double_jump_fire_1_base_position = double_jump_fire_1.position
+	_double_jump_fire_2_base_scale = double_jump_fire_2.scale
+	_double_jump_fire_2_base_position = double_jump_fire_2.position
+	_holy_effect_base_scale = holy_effect.scale
+	_holy_effect_base_position = holy_effect.position
+	_wind_effect_base_scale = wind_effect.scale
+	_wind_effect_base_position = wind_effect.position
 	# LEDGE GRAB RAYS
 
 	ledge_ray_front = RayCast2D.new()
@@ -866,6 +900,11 @@ func _physics_process(delta: float) -> void:
 		# Check if player has enough MP for empowered dash.
 		dash_empowered = mp >= DASH_MP_COST
 
+		ability_used.emit("dash")
+
+		if dash_chained:
+			ability_used.emit("dash_chain")
+
 		if dash_empowered:
 			mp -= DASH_MP_COST
 
@@ -873,13 +912,14 @@ func _physics_process(delta: float) -> void:
 			GameState.current_mp = mp
 
 			invincible = true
-			dash_hitbox.monitoring = true
-			dash_hit_enemies.clear()
-
 		else:
 			invincible = false
-			dash_hitbox.monitoring = false
 
+		# Hitbox stays active either way now — an unempowered dash
+		# still lands a weak hit, it just skips i-frames and the
+		# MP spend. See dash_attack().
+		dash_hitbox.monitoring = true
+		dash_hit_enemies.clear()
 		# DASH ANIMATION
 		animated_sprite_2d.visible = true
 		animated_sprite_2d.play("dash")
@@ -908,6 +948,7 @@ func _physics_process(delta: float) -> void:
 	and not is_ground_slamming:
 
 		is_ground_slamming = true
+		ability_used.emit("ground_slam")
 		is_gliding = false
 		was_gliding = false
 		is_wall_clinging = false
@@ -1030,7 +1071,7 @@ func _physics_process(delta: float) -> void:
 	and GameState.has_ability("recall") \
 	and not is_dashing \
 	and not is_ground_slamming:
-
+		ability_used.emit("recall")
 		if not has_recall_anchor:
 			_place_recall_anchor()
 		else:
@@ -1067,6 +1108,8 @@ func _physics_process(delta: float) -> void:
 		)
 
 		if pressing_into_wall:
+			if not is_wall_clinging:
+				ability_used.emit("wall_cling")
 			is_wall_clinging = true
 			wall_normal_x = wall_normal.x
 			jumps_used = 0
@@ -1114,7 +1157,7 @@ func _physics_process(delta: float) -> void:
 
 			if ledge_ray_front.is_colliding() \
 			and not ledge_ray_above.is_colliding():
-
+				ability_used.emit("ledge_grab")
 				_start_ledge_grab(ledge_dir)
 
 	# WALL JUMP LOCK TIMER
@@ -1191,7 +1234,7 @@ func _physics_process(delta: float) -> void:
 
 		jump_buffer_timer = 0.0
 		jumps_used = 2
-
+		ability_used.emit("double_jump")
 		jump_effect.visible = true
 		jump_effect.play("jumpwind")
 
@@ -1276,7 +1319,8 @@ func _physics_process(delta: float) -> void:
 		and Input.is_action_pressed("glide") \
 		and velocity.y > 0.0 \
 		and not is_ground_slamming:
-
+			if not is_gliding:
+				ability_used.emit("glide")
 			is_gliding = true
 
 			velocity.y += GRAVITY_GLIDE * delta
@@ -1284,19 +1328,14 @@ func _physics_process(delta: float) -> void:
 				velocity.y,
 				GLIDE_MAX_FALL_SPEED
 			)
-
 		else:
-
 			is_gliding = false
-
 			velocity.y += (
 				GRAVITY_FALL
 				if velocity.y > 0
 				else GRAVITY_RISE
 			) * delta
-
 	else:
-
 		is_gliding = false
 		is_wall_clinging = false
 

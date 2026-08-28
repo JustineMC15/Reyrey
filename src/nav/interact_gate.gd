@@ -6,6 +6,12 @@ class_name InteractGate
 @export var target_gate_id: String = ""     # which gate_id to spawn at over there
 @export var prompt_panel: Panel             # drag this instance's own prompt panel in
 
+@export_category("Entry")
+@export var entry_type: TransitionGate.EntryType = TransitionGate.EntryType.WALK
+@export var entry_direction: Vector2 = Vector2.RIGHT
+@export var entry_distance: float = 180.0
+@export var jump_velocity: Vector2 = Vector2(400.0, -800.0)
+
 var player_inside := false
 
 func _ready() -> void:
@@ -16,7 +22,7 @@ func _ready() -> void:
 	if prompt_panel:
 		prompt_panel.modulate.a = 0.0
 		prompt_panel.hide()
-		
+
 func _on_area_entered(area: Area2D) -> void:
 	if not area.is_in_group("player_detection"):
 		return
@@ -50,7 +56,10 @@ func _process(_delta: float) -> void:
 		_hide_prompt()
 		player_inside = false
 		GameState.go_to_room(
-		target_scene_path,
-		target_gate_id,
-		TransitionGate.EntryType.INSTANT
-	)
+			target_scene_path,
+			target_gate_id,
+			entry_type,
+			entry_direction,
+			entry_distance,
+			jump_velocity
+		)

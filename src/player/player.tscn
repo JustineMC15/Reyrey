@@ -332,7 +332,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_onve7")
 }, {
-"duration": 1.0,
+"duration": 20.0,
 "texture": SubResource("AtlasTexture_8eo4n")
 }, {
 "duration": 1.0,
@@ -2426,7 +2426,7 @@ count_duration = 0.45
 position = Vector2(0, -101)
 scale = Vector2(0.47, 0.47)
 sprite_frames = SubResource("SpriteFrames_vlew8")
-animation = &"attack"
+animation = &"slam"
 autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=443081615]
@@ -2453,13 +2453,12 @@ position_smoothing_speed = 3.0
 [node name="Collision" type="Node2D" parent="." unique_id=485835211]
 
 [node name="DashHitbox" type="Area2D" parent="Collision" unique_id=1143569417]
-position = Vector2(-188, -34)
 collision_layer = 3
 collision_mask = 3
 monitoring = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/DashHitbox" unique_id=1992806282]
-position = Vector2(248, -31.5)
+position = Vector2(55, -65)
 shape = SubResource("RectangleShape2D_3yow4")
 
 [node name="SwordHitbox" type="Area2D" parent="Collision" unique_id=961514375]
