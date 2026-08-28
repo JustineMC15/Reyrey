@@ -14,7 +14,7 @@ var current_room_scene_path: String = ""
 # preload("res://audio/music/your_song.ogg")
 #
 # Example:
-# "res://src/Rooms/room_02-valecourt-fields.tscn":
+# "res://src/rooms/room_02-valecourt-fields.tscn":
 #     preload("res://audio/music/valecourt.ogg"),
 var room_music: Dictionary = {
 	"res://src/rooms/A0R1.tscn":
@@ -25,31 +25,31 @@ var room_music: Dictionary = {
 
 	"res://src/rooms/A1R1.tscn": null,
 	"res://src/rooms/A2R1.tscn": null,
-	"res://src/Rooms/A3R1.tscn": null,
-	"res://src/Rooms/A4R1.tscn": null,
-	"res://src/Rooms/A5R1.tscn": null,
-	"res://src/Rooms/A6R1.tscn": null,
-	"res://src/Rooms/A7R1.tscn": null,
-	"res://src/Rooms/A8R1.tscn": null,
-	"res://src/Rooms/A9R1.tscn": null,
+	"res://src/rooms/A3R1.tscn": null,
+	"res://src/rooms/A4R1.tscn": null,
+	"res://src/rooms/A5R1.tscn": null,
+	"res://src/rooms/A6R1.tscn": null,
+	"res://src/rooms/A7R1.tscn": null,
+	"res://src/rooms/A8R1.tscn": null,
+	"res://src/rooms/A9R1.tscn": null,
 
-	"res://src/Rooms/S1.tscn": null,
-	"res://src/Rooms/S2.tscn": null,
-	"res://src/Rooms/S3.tscn": null,
-	"res://src/Rooms/S4.tscn": null,
-	"res://src/Rooms/S5.tscn": null,
-	"res://src/Rooms/S6.tscn": null,
-	"res://src/Rooms/S7.tscn": null,
-	"res://src/Rooms/S8.tscn": null,
-	"res://src/Rooms/S9.tscn": null,
-	"res://src/Rooms/S10.tscn": null,
-	"res://src/Rooms/S11.tscn": null,
-	"res://src/Rooms/S12.tscn": null,
-	"res://src/Rooms/S13.tscn": null,
-	"res://src/Rooms/S14.tscn": null,
-	"res://src/Rooms/S15.tscn": null,
-	"res://src/Rooms/S16.tscn": null,
-	"res://src/Rooms/S17.tscn": null,
+	"res://src/rooms/S1.tscn": null,
+	"res://src/rooms/S2.tscn": null,
+	"res://src/rooms/S3.tscn": null,
+	"res://src/rooms/S4.tscn": null,
+	"res://src/rooms/S5.tscn": null,
+	"res://src/rooms/S6.tscn": null,
+	"res://src/rooms/S7.tscn": null,
+	"res://src/rooms/S8.tscn": null,
+	"res://src/rooms/S9.tscn": null,
+	"res://src/rooms/S10.tscn": null,
+	"res://src/rooms/S11.tscn": null,
+	"res://src/rooms/S12.tscn": null,
+	"res://src/rooms/S13.tscn": null,
+	"res://src/rooms/S14.tscn": null,
+	"res://src/rooms/S15.tscn": null,
+	"res://src/rooms/S16.tscn": null,
+	"res://src/rooms/S17.tscn": null,
 }
 
 
@@ -62,14 +62,14 @@ var room_area_names: Dictionary = {
 	"res://src/rooms/A0R2.tscn": "Valecourt Capital",
 
 	"res://src/rooms/A1R1.tscn": "Valecourt Fields",
-	"res://src/Rooms/A2R1.tscn": "Cathedral Undercroft",
-	"res://src/Rooms/A3R1.tscn": "Coastal Road",
-	"res://src/Rooms/A4R1.tscn": "Elven Reach",
-	"res://src/Rooms/A5R1.tscn": "Thalassar Canal City",
-	"res://src/Rooms/A6R1.tscn": "Aureth Bastion",
-	"res://src/Rooms/A7R1.tscn": "Sahra-Kel Canyons",
-	"res://src/Rooms/A8R1.tscn": "Icefields",
-	"res://src/Rooms/A9R1.tscn": "The Tower",
+	"res://src/rooms/A2R1.tscn": "Cathedral Undercroft",
+	"res://src/rooms/A3R1.tscn": "Coastal Road",
+	"res://src/rooms/A4R1.tscn": "Elven Reach",
+	"res://src/rooms/A5R1.tscn": "Thalassar Canal City",
+	"res://src/rooms/A6R1.tscn": "Aureth Bastion",
+	"res://src/rooms/A7R1.tscn": "Sahra-Kel Canyons",
+	"res://src/rooms/A8R1.tscn": "Icefields",
+	"res://src/rooms/A9R1.tscn": "The Tower",
 }
 
 

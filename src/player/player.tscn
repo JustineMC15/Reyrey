@@ -2330,7 +2330,6 @@ animations = [{
 }]
 
 [node name="Player" type="CharacterBody2D" unique_id=647682657]
-collision_mask = 5
 script = ExtResource("1_jtmj1")
 
 [node name="PlayerUI" type="CanvasLayer" parent="." unique_id=965729947]

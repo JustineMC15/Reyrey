@@ -1,5 +1,6 @@
 extends Area2D
 
+const TUTORIAL_ID := "attack"
 @onready var attack_panel: Panel = $"../TutorialUI/Control/AttackPanel"
 
 var has_finished := false

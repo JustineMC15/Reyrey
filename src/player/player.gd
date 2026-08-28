@@ -697,8 +697,6 @@ func grant_temporary_invincibility(duration: float) -> void:
 func die() -> void:
 	if is_dead:
 		return
-	print("PLAYER DIE CALLED")
-	print_stack()
 	is_dead = true
 	invincible = true
 	is_dashing = false
@@ -888,7 +886,7 @@ func _physics_process(delta: float) -> void:
 		is_gliding = false
 		was_gliding = false
 		is_wall_clinging = false
-
+		_end_ledge_grab()
 		dash_timer = DASH_DURATION
 		dash_cooldown_timer = DASH_CHAIN_COOLDOWN if dash_chained else DASH_COOLDOWN
 
@@ -952,7 +950,7 @@ func _physics_process(delta: float) -> void:
 		is_gliding = false
 		was_gliding = false
 		is_wall_clinging = false
-
+		_end_ledge_grab()
 		cancel_attack()
 
 		animated_sprite_2d.visible = true
@@ -1563,13 +1561,7 @@ func apply_infinite_stamina(duration: float) -> void:
 		infinite_stamina_active = false
 
 func increase_max_mp(amount: int) -> void:
-	print("MP BEFORE: ", max_mp)
-	print("GAIN: ", amount)
-
 	max_mp += amount
-
-	print("MP AFTER: ", max_mp)
-
 	mp_changed.emit(mp, max_mp)
 
 

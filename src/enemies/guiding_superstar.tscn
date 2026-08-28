@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://cvic7gvemw3bq"]
 
+[ext_resource type="Script" uid="uid://bamk8nag3ke34" path="res://src/enemies/guiding_superstar.gd" id="1_6yovt"]
 [ext_resource type="Texture2D" uid="uid://d3bo1x8ug5tof" path="res://assets/characters/enemies/guiding_superstar.png" id="2_7s3ro"]
 [ext_resource type="PackedScene" uid="uid://dju6fqkukuw3u" path="res://src/enemies/killzone.tscn" id="3_wmgy2"]
 
@@ -22,12 +23,13 @@ animations = [{
 radius = 120.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_3c02t"]
-radius = 80.0
+radius = 100.0
 
 [node name="GuidingSuperstar" type="CharacterBody2D" unique_id=222027155 groups=["enemies"]]
-collision_layer = 2
-collision_mask = 2
+collision_layer = 14
+collision_mask = 128
 motion_mode = 1
+script = ExtResource("1_6yovt")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=293379373]
 scale = Vector2(0.21, 0.21)

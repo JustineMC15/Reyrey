@@ -79,7 +79,7 @@ func _process(_delta: float) -> void:
 
 
 func _check_current_wave() -> void:
-	if _current_wave_alive.is_empty():
+	if GameState.is_room_unloading or _current_wave_alive.is_empty():
 		return
 
 	for i in range(_current_wave_alive.size() - 1, -1, -1):

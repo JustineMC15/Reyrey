@@ -79,27 +79,12 @@ func activate(player: Node) -> void:
 	if scene_path == "":
 		return
 
-	var key := scene_path + "/" + checkpoint_id
-
-	print("CHECKPOINT DEBUG")
-	print("Scene path: ", scene_path)
-	print("Checkpoint ID: ", checkpoint_id)
-	print("Key: ", key)
-	print("Activated dictionary: ", GameState.activated_checkpoints)
-	print(
-		"Already activated? ",
-		GameState.is_checkpoint_activated(
-			scene_path,
-			checkpoint_id
-		)
-	)
 
 	if GameState.is_checkpoint_activated(
 		scene_path,
 		checkpoint_id
 	):
 		activated = true
-		print("CHECKPOINT ALREADY ACTIVATED")
 		return
 
 	activated = true
@@ -123,7 +108,6 @@ func activate(player: Node) -> void:
 
 	sprite.modulate = Color(1.2, 1.2, 1.0, 1.0)
 
-	print("CHECKPOINT ACTIVATED: ", checkpoint_id)
 func rest() -> void:
 	if not player_inside:
 		return
@@ -151,9 +135,6 @@ func rest() -> void:
 		checkpoint_id,
 		room_name
 	)
-
-	print("PLAYER RESTED AT: ", checkpoint_id)
-
 	await GameState.rest_at_checkpoint()
 
 	player.unlock_input()

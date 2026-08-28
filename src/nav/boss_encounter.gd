@@ -6,7 +6,6 @@ class_name BossEncounter
 ## The encounter is separate from EnemyGauntlet because bosses can have
 ## different entrances:
 ##
-##   NONE        - Boss simply activates.
 ##   AWAKEN      - Boss starts inactive and performs an awakening sequence.
 ##   CEILING     - Boss enters from above.
 ##   CHARGE_IN   - Boss enters from outside the arena.
@@ -21,9 +20,7 @@ class_name BossEncounter
 ## └── Boss
 ##
 ## TriggerArea:
-##   Area2D
-##   collision_layer = 4
-##   collision_mask = 5
+##   Area2D, collision_layer = 4, collision_mask = 5
 ##
 ## Boss:
 ##   CharacterBody2D or another Node
@@ -33,7 +30,6 @@ class_name BossEncounter
 ## begins and reopen after the boss is defeated.
 
 enum EntranceType {
-	NONE,
 	AWAKEN,
 	CEILING,
 	CHARGE_IN
@@ -46,7 +42,7 @@ enum EntranceType {
 @export var shortcut_id_on_clear: String = ""
 
 @export_category("Entrance")
-@export var entrance_type: EntranceType = EntranceType.NONE
+@export var entrance_type: EntranceType = EntranceType.AWAKEN
 
 @export_category("Screen Shake")
 @export var shake_on_start: bool = false
@@ -63,8 +59,8 @@ var _finished := false
 func _ready() -> void:
 	add_to_group("boss_encounters")
 
-	# Already cleared in the save file.
-	if boss_id != "" and GameState.is_gauntlet_cleared(boss_id):
+	# Already defeated in the save file.
+	if boss_id != "" and GameState.is_boss_defeated(boss_id):
 		_finished = true
 
 		if target_door and target_door.has_method("open"):
@@ -118,7 +114,7 @@ func _start_encounter() -> void:
 	if _started or _finished:
 		return
 
-	if boss_id != "" and GameState.is_gauntlet_cleared(boss_id):
+	if boss_id != "" and GameState.is_boss_defeated(boss_id):
 		return
 
 	if not is_instance_valid(boss):
@@ -167,9 +163,6 @@ func _play_boss_entrance() -> void:
 		return
 
 	match entrance_type:
-		EntranceType.NONE:
-			return
-
 		EntranceType.AWAKEN:
 			if boss.has_method("boss_entrance_awaken"):
 				await boss.boss_entrance_awaken()
@@ -203,12 +196,9 @@ func _finish_encounter() -> void:
 
 	_finished = true
 
-	# Remember that the boss has been defeated.
-	#
-	# We reuse GameState's existing gauntlet-cleared persistence because
-	# it already provides exactly the persistent encounter flag we need.
+	# Remember that this boss has been defeated.
 	if boss_id != "":
-		GameState.clear_gauntlet(boss_id)
+		GameState.defeat_boss(boss_id)
 
 	# Open the arena after the boss dies.
 	if target_door and target_door.has_method("open"):
@@ -220,7 +210,7 @@ func _finish_encounter() -> void:
 
 
 func reset_boss_encounter() -> void:
-	if boss_id != "" and GameState.is_gauntlet_cleared(boss_id):
+	if boss_id != "" and GameState.is_boss_defeated(boss_id):
 		return
 
 	_started = false

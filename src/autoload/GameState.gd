@@ -96,7 +96,7 @@ var armor_data: Dictionary = {
 }
 
 func increase_armor_tier() -> void:
-	armor_tier += 1
+	armor_tier = clamp(armor_tier + 1, 0, 5)
 
 
 func get_armor_data() -> Dictionary:
@@ -366,6 +366,20 @@ func is_gauntlet_cleared(gauntlet_id: String) -> bool:
  
 func clear_gauntlet(gauntlet_id: String) -> void:
 	cleared_gauntlets[gauntlet_id] = true
+
+var defeated_bosses: Dictionary = {}
+
+# Boss
+
+func is_boss_defeated(boss_id: String) -> bool:
+	return defeated_bosses.has(boss_id)
+
+
+func defeat_boss(boss_id: String) -> void:
+	if boss_id == "":
+		return
+
+	defeated_bosses[boss_id] = true
 
 # --- Anvils ---
 
@@ -1218,13 +1232,6 @@ func _position_player_at_gate() -> void:
 
 		await get_tree().physics_frame
 
-		print(
-			"TRANSITION SPAWN: ",
-			gate.gate_id,
-			" at ",
-			player.global_position
-		)
-
 		pending_spawn_gate_id = ""
 
 		await _start_room_entry(player)
@@ -1630,6 +1637,7 @@ func get_save_data() -> Dictionary:
 		"revealed_secrets": revealed_secrets.duplicate(),
 		"activated_shortcuts": activated_shortcuts.duplicate(),
 		"cleared_gauntlets": cleared_gauntlets.duplicate(),
+		"defeated_bosses": defeated_bosses.duplicate(),
 		"area_names_seen": area_names_seen.duplicate(),
 		"story_beats_seen": story_beats_seen.duplicate(),
 		"unlocked_potion_slots": unlocked_potion_slots.duplicate(),
@@ -1660,6 +1668,7 @@ func apply_save_data(data: Dictionary) -> void:
 	revealed_secrets = data.get("revealed_secrets", {})
 	activated_shortcuts = data.get("activated_shortcuts", {})
 	cleared_gauntlets = data.get("cleared_gauntlets", {})
+	defeated_bosses = data.get("defeated_bosses", {})
 	area_names_seen = data.get("area_names_seen", {})
 	story_beats_seen = data.get("story_beats_seen", {})
 	tutorials_seen = data.get("tutorials_seen", {
@@ -1670,7 +1679,9 @@ func apply_save_data(data: Dictionary) -> void:
 	unlocked_potion_slots = data.get("unlocked_potion_slots", {})
 	unlocked_potion_effects = data.get("unlocked_potion_effects", {})
 	selected_potion_effects = data.get("selected_potion_effects", {
-		"survival": "", "combat": "", "utility": "",
+		"survival": "",
+		"combat": "",
+		"utility": "",
 	})
 	potion_charged = data.get("potion_charged", false)
 	_check_potion_effect_unlocks()
@@ -1708,12 +1719,14 @@ func reset_to_defaults() -> void:
 	revealed_secrets.clear()
 	activated_shortcuts.clear()
 	cleared_gauntlets.clear()
+	defeated_bosses.clear()
 	area_names_seen.clear()
 	story_beats_seen.clear()
 	unlocked_potion_slots.clear()
 	unlocked_potion_effects.clear()
 	_clear_potion_selection()
 	potion_charged = false
+
 
 func load_from_save(scene_path: String) -> void:
 	if scene_path == "":
