@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://bvr5juun0bdl8"]
 
 [ext_resource type="Script" uid="uid://dm8givk0m05uh" path="res://src/enemies/falling_rock.gd" id="1_j2eu7"]
+[ext_resource type="SpriteFrames" uid="uid://cd282wj8g3f3i" path="res://src/enemies/impact.tres" id="2_5crww"]
+[ext_resource type="AudioStream" uid="uid://f30bc8ce3w1q" path="res://assets/sound/sfx/thud3.wav" id="3_jmvp2"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_j2eu7"]
 radius = 20.0
@@ -9,7 +11,7 @@ radius = 20.0
 radius = 15.0
 
 [node name="FallingRock" type="CharacterBody2D" unique_id=1215817499]
-collision_layer = 128
+collision_layer = 0
 collision_mask = 128
 script = ExtResource("1_j2eu7")
 
@@ -20,3 +22,12 @@ shape = SubResource("CircleShape2D_j2eu7")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DamageArea" unique_id=2009590780]
 shape = SubResource("CircleShape2D_ojwfl")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1964070032]
+sprite_frames = ExtResource("2_5crww")
+animation = &"impact"
+
+[node name="HitSound" type="AudioStreamPlayer2D" parent="." unique_id=1994520217]
+stream = ExtResource("3_jmvp2")
+volume_db = 4.0
+pitch_scale = 0.3

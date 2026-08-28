@@ -24,7 +24,13 @@ class ShockwaveEffect extends Node2D:
 
 	func _draw() -> void:
 		var progress: float = lifetime / duration
-		var radius: float = lerp(start_radius, end_radius, progress)
+
+		var radius: float = lerp(
+			start_radius,
+			end_radius,
+			progress
+		)
+
 		var alpha: float = 1.0 - progress
 
 		draw_arc(
@@ -33,7 +39,12 @@ class ShockwaveEffect extends Node2D:
 			PI,
 			TAU,
 			32,
-			Color(1.0, 0.95, 0.8, alpha),
+			Color(
+				1.0,
+				0.95,
+				0.8,
+				alpha
+			),
 			line_width,
 			true
 		)
@@ -44,7 +55,12 @@ class ShockwaveEffect extends Node2D:
 			PI,
 			TAU,
 			32,
-			Color(1.0, 0.95, 0.8, alpha * 0.45),
+			Color(
+				1.0,
+				0.95,
+				0.8,
+				alpha * 0.45
+			),
 			3.0,
 			true
 		)
@@ -72,7 +88,8 @@ const CONTACT_DAMAGE: int = 1
 
 const FOLLOW_SPEED: float = 400.0
 const REPOSITION_SPEED: float = 500.0
-const LUNGE_SPEED: float = 1500.0
+const LUNGE_SPEED: float = 1550.0
+
 
 # -------------------------------------------------------------------
 # Wind-ups
@@ -84,22 +101,36 @@ const CEILING_SLAM_WINDUP: float = 0.8
 const FOLLOW_SPIN_WINDUP: float = 0.55
 const REPOSITION_WINDUP: float = 0.3
 
+const LUNGE_RECOIL_START: float = 0.45
+const LUNGE_RECOIL_SPEED: float = 420.0
+
+
 # -------------------------------------------------------------------
 # Attack durations
 # -------------------------------------------------------------------
 
-const LUNGE_DURATION: float = 0.24
-const GROUND_SLAM_DURATION: float = 0.28
-const CEILING_SLAM_DURATION: float = 0.42
+const LUNGE_DURATION: float = 0.35
 const REPOSITION_DURATION: float = 0.55
-const FOLLOW_SPIN_DURATION: float = 2.5
+const FOLLOW_SPIN_DURATION: float = 2.6
+
+
+# -------------------------------------------------------------------
+# Slam movement
+# -------------------------------------------------------------------
+
+const GROUND_SLAM_RISE_SPEED: float = 220.0
+const GROUND_SLAM_FALL_SPEED: float = 1700.0
+
+const CEILING_SLAM_DESCEND_SPEED: float = 220.0
+const CEILING_SLAM_RISE_SPEED: float = 1700.0
+
 
 # -------------------------------------------------------------------
 # Recovery / behavior
 # -------------------------------------------------------------------
 
-const REST_MIN_DURATION: float = 0.75
-const REST_MAX_DURATION: float = 0.95
+const REST_MIN_DURATION: float = 1.0
+const REST_MAX_DURATION: float = 1.55
 
 const GROUND_BEHAVIOR_THRESHOLD: float = 0.65
 const AIR_BEHAVIOR_THRESHOLD: float = 0.45
@@ -107,6 +138,7 @@ const AIR_BEHAVIOR_THRESHOLD: float = 0.45
 const HIGH_PLAYER_DISTANCE: float = 120.0
 const CLOSE_RANGE: float = 500.0
 const FAR_RANGE: float = 800.0
+
 
 # -------------------------------------------------------------------
 # Ground slam
@@ -116,15 +148,21 @@ const GROUND_SLAM_RADIUS: float = 240.0
 const GROUND_SLAM_VERTICAL_RANGE: float = 135.0
 const GROUND_SLAM_DAMAGE: int = 1
 
+
 # -------------------------------------------------------------------
 # Ceiling slam
 # -------------------------------------------------------------------
 
 const CEILING_SLAM_DAMAGE: int = 1
-const ROCK_COUNT: int = 7
-const ROCK_SPAWN_SPREAD: float = 520.0
-const ROCK_SPAWN_DELAY_STEP: float = 0.08
+
+const MIN_ROCK_COUNT: int = 3
+const MAX_ROCK_COUNT: int = 5
+
 const ROCK_INITIAL_SPEED: float = 80.0
+
+const ROCK_MIN_DELAY: float = 2.2
+const ROCK_MAX_DELAY: float = 3.0
+
 
 # -------------------------------------------------------------------
 # Screen shake
@@ -139,12 +177,28 @@ const CEILING_SLAM_SHAKE_DURATION: float = 0.2
 const DEATH_SHAKE_STRENGTH: float = 14.0
 const DEATH_SHAKE_DURATION: float = 0.3
 
+
 # -------------------------------------------------------------------
 # Procedural animation
 # -------------------------------------------------------------------
 
-const BASE_SPIN_SPEED: float = 1.8
-const FAST_SPIN_MULTIPLIER: float = 6.0
+const BASE_SPIN_SPEED: float = 1.2
+
+const LUNGE_SPIN_SPEED: float = 12.0
+const SLAM_SPIN_SPEED: float = 10.0
+const FOLLOW_SPIN_SPEED: float = 20.0
+
+const SLAM_IMPACT_SCALE_X: float = 0.80
+const SLAM_IMPACT_SCALE_Y: float = 1.20
+const SLAM_IMPACT_DURATION: float = 0.12
+
+const LUNGE_SCALE_X: float = 1.05
+const LUNGE_SCALE_Y: float = 0.95
+
+const FOLLOW_SCALE_X: float = 1.02
+const FOLLOW_SCALE_Y: float = 0.98
+
+const MOVEMENT_SCALE_SMOOTHING: float = 14.0
 
 
 # -------------------------------------------------------------------
@@ -175,22 +229,37 @@ var reposition_target: Vector2 = Vector2.ZERO
 var attack_impact_done: bool = false
 var flash_timer: float = 0.0
 
-# Stores the AnimatedSprite2D scale set in the editor.
-# Your current Superstar scale is 0.21, 0.21.
+var slam_impact_timer: float = 0.0
+
 var base_sprite_scale: Vector2 = Vector2.ONE
+
+# Assigned by BossEncounter.
+var rock_spawn_area: Area2D = null
+
+# Every FallingRock spawned by this boss is tracked here.
+var spawned_rocks: Array[Node] = []
 
 
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
+@onready var effect_sprite_2d: AnimatedSprite2D = $EffectSprite2D
+
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var killzone: Area2D = $Killzone
 @onready var killzone_collision: CollisionShape2D = $Killzone/CollisionShape2D
 @onready var damage_timer: Timer = $Killzone/DamageTimer
 
+@onready var ground_slam_hitbox: Area2D = $GroundSlamHitbox
+@onready var ground_slam_collision: CollisionShape2D = (
+	$GroundSlamHitbox/CollisionShape2D
+)
+
+@onready var slam_sound: AudioStreamPlayer2D = $Sound/SlamSound
+@onready var charge_sound: AudioStreamPlayer2D = $Sound/ChargeSound
+
 
 func _ready() -> void:
 	add_to_group("enemies")
 
-	# Preserve the scale configured in the editor.
 	base_sprite_scale = animated_sprite_2d.scale
 
 	active = false
@@ -202,6 +271,15 @@ func _ready() -> void:
 	animated_sprite_2d.scale = base_sprite_scale
 	animated_sprite_2d.rotation = 0.0
 
+	effect_sprite_2d.visible = false
+
+	if not effect_sprite_2d.animation_finished.is_connected(
+		_on_effect_animation_finished
+	):
+		effect_sprite_2d.animation_finished.connect(
+			_on_effect_animation_finished
+	)
+
 	_set_combat_active(false)
 
 	state = State.INACTIVE
@@ -210,8 +288,66 @@ func _ready() -> void:
 
 
 # -------------------------------------------------------------------
+# Effect animation
+# -------------------------------------------------------------------
+
+func _play_effect(animation_name: String) -> void:
+	if effect_sprite_2d == null:
+		return
+
+	if effect_sprite_2d.sprite_frames == null:
+		return
+
+	if not effect_sprite_2d.sprite_frames.has_animation(
+		animation_name
+	):
+		push_warning(
+			"GuidingSuperstar: EffectSprite2D has no animation named '"
+			+ animation_name
+			+ "'."
+		)
+		return
+
+	effect_sprite_2d.visible = true
+	effect_sprite_2d.play(animation_name)
+
+
+func _stop_effect() -> void:
+	if effect_sprite_2d == null:
+		return
+
+	effect_sprite_2d.stop()
+	effect_sprite_2d.visible = false
+
+
+func _on_effect_animation_finished() -> void:
+	if effect_sprite_2d == null:
+		return
+
+	effect_sprite_2d.visible = false
+
+
+func _play_slam_sound() -> void:
+	if slam_sound == null:
+		return
+
+	slam_sound.play()
+
+
+func _play_charge_sound() -> void:
+	if charge_sound == null:
+		return
+
+	charge_sound.play()
+
+
+# -------------------------------------------------------------------
 # BossEncounter interface
 # -------------------------------------------------------------------
+
+func set_rock_spawn_area(area: Area2D) -> void:
+	rock_spawn_area = area
+
 
 func boss_entrance_awaken() -> void:
 	if death_started:
@@ -221,11 +357,16 @@ func boss_entrance_awaken() -> void:
 	is_dying = false
 
 	_set_combat_active(false)
+	_stop_effect()
 
 	animated_sprite_2d.visible = true
-	animated_sprite_2d.modulate = Color(0.55, 0.55, 0.55, 1.0)
+	animated_sprite_2d.modulate = Color(
+		0.55,
+		0.55,
+		0.55,
+		1.0
+	)
 
-	# Start slightly smaller than the normal editor-configured size.
 	animated_sprite_2d.scale = base_sprite_scale * 0.9
 	animated_sprite_2d.rotation = 0.0
 
@@ -245,7 +386,7 @@ func boss_entrance_awaken() -> void:
 	tween.parallel().tween_property(
 		animated_sprite_2d,
 		"scale",
-		base_sprite_scale * 1.12,
+		base_sprite_scale * 1.04,
 		0.28
 	).set_trans(
 		Tween.TRANS_BACK
@@ -282,7 +423,8 @@ func activate_boss() -> void:
 
 	velocity = Vector2.ZERO
 
-	# Always return to the editor-configured scale.
+	_stop_effect()
+
 	animated_sprite_2d.scale = base_sprite_scale
 
 	_set_combat_active(true)
@@ -292,8 +434,11 @@ func activate_boss() -> void:
 
 func deactivate_boss() -> void:
 	active = false
+
 	velocity = Vector2.ZERO
 	state = State.INACTIVE
+
+	_stop_effect()
 
 	_set_combat_active(false)
 
@@ -317,6 +462,12 @@ func reset_boss() -> void:
 
 	velocity = Vector2.ZERO
 	rotation = 0.0
+
+	slam_impact_timer = 0.0
+
+	_cleanup_spawned_rocks()
+
+	_stop_effect()
 
 	animated_sprite_2d.visible = true
 	animated_sprite_2d.modulate = Color.WHITE
@@ -375,7 +526,9 @@ func _physics_process(delta: float) -> void:
 # -------------------------------------------------------------------
 
 func _update_player() -> void:
-	var player_node: Node = get_tree().get_first_node_in_group("player")
+	var player_node: Node = get_tree().get_first_node_in_group(
+		"player"
+	)
 
 	if player_node == null:
 		player = null
@@ -438,10 +591,17 @@ func _change_state(new_state: State) -> void:
 
 			if player:
 				attack_direction = global_position.direction_to(
-					player.global_position + Vector2(0.0, -48.0)
+					player.global_position
+					+ Vector2(
+						0.0,
+						-48.0
+					)
 				)
 			else:
 				attack_direction = Vector2.RIGHT
+
+			_play_effect("charge")
+			_play_charge_sound()
 
 		State.GROUND_SLAM:
 			last_attack = State.GROUND_SLAM
@@ -454,7 +614,8 @@ func _change_state(new_state: State) -> void:
 
 			if player:
 				var side: float = sign(
-					global_position.x - player.global_position.x
+					global_position.x
+					- player.global_position.x
 				)
 
 				if side == 0.0:
@@ -465,13 +626,19 @@ func _change_state(new_state: State) -> void:
 				if _player_vertical_difference() < -100.0:
 					vertical_offset = 120.0
 
-				reposition_target = player.global_position + Vector2(
-					side * 320.0,
-					vertical_offset
+				reposition_target = (
+					player.global_position
+					+ Vector2(
+						side * 320.0,
+						vertical_offset
+					)
 				)
 
 		State.FOLLOW_SPIN:
 			last_attack = State.FOLLOW_SPIN
+
+			_play_effect("charge")
+			_play_charge_sound()
 
 		State.DECIDE:
 			pass
@@ -512,38 +679,82 @@ func _choose_next_attack() -> void:
 
 	var weights: Array = []
 
-	# Base choices.
-	_add_attack_choice(weights, State.LUNGE, 25.0)
-	_add_attack_choice(weights, State.GROUND_SLAM, 15.0)
-	_add_attack_choice(weights, State.CEILING_SLAM, 15.0)
-	_add_attack_choice(weights, State.REPOSITION, 20.0)
-	_add_attack_choice(weights, State.FOLLOW_SPIN, 25.0)
+	_add_attack_choice(
+		weights,
+		State.LUNGE,
+		25.0
+	)
 
-	# Player is close.
+	_add_attack_choice(
+		weights,
+		State.GROUND_SLAM,
+		15.0
+	)
+
+	_add_attack_choice(
+		weights,
+		State.CEILING_SLAM,
+		15.0
+	)
+
+	_add_attack_choice(
+		weights,
+		State.REPOSITION,
+		20.0
+	)
+
+	_add_attack_choice(
+		weights,
+		State.FOLLOW_SPIN,
+		25.0
+	)
+
 	if distance <= CLOSE_RANGE:
-		_add_attack_choice(weights, State.LUNGE, 30.0)
-		_add_attack_choice(weights, State.FOLLOW_SPIN, 10.0)
+		_add_attack_choice(
+			weights,
+			State.LUNGE,
+			30.0
+		)
 
-	# Player is far away.
+		_add_attack_choice(
+			weights,
+			State.FOLLOW_SPIN,
+			10.0
+		)
+
 	if distance >= FAR_RANGE:
-		_add_attack_choice(weights, State.REPOSITION, 30.0)
-		_add_attack_choice(weights, State.FOLLOW_SPIN, 20.0)
+		_add_attack_choice(
+			weights,
+			State.REPOSITION,
+			30.0
+		)
 
-	# Player has been staying on the ground.
+		_add_attack_choice(
+			weights,
+			State.FOLLOW_SPIN,
+			20.0
+		)
+
 	if (
 		player_ground_time >= GROUND_BEHAVIOR_THRESHOLD
 		and abs(vertical_difference) <= 240.0
 	):
-		_add_attack_choice(weights, State.GROUND_SLAM, 55.0)
+		_add_attack_choice(
+			weights,
+			State.GROUND_SLAM,
+			55.0
+		)
 
-	# Player has been staying above the boss.
 	if (
 		player_air_time >= AIR_BEHAVIOR_THRESHOLD
 		and vertical_difference <= -HIGH_PLAYER_DISTANCE
 	):
-		_add_attack_choice(weights, State.CEILING_SLAM, 65.0)
+		_add_attack_choice(
+			weights,
+			State.CEILING_SLAM,
+			65.0
+		)
 
-	# Don't immediately repeat the same action.
 	var filtered: Array = []
 
 	for choice: Array in weights:
@@ -555,7 +766,9 @@ func _choose_next_attack() -> void:
 	if filtered.is_empty():
 		filtered = weights
 
-	var selected_state: State = _weighted_random_choice(filtered)
+	var selected_state: State = _weighted_random_choice(
+		filtered
+	)
 
 	_change_state(selected_state)
 
@@ -598,27 +811,63 @@ func _weighted_random_choice(choices: Array) -> State:
 # -------------------------------------------------------------------
 
 func _state_lunge(delta: float) -> void:
-	if state_time < LUNGE_WINDUP:
+	if state_time < LUNGE_RECOIL_START:
 		velocity = Vector2.ZERO
 
-		_move_sprite_toward(
-			base_sprite_scale * Vector2(1.25, 0.8),
-			attack_direction.angle(),
+		_set_visual_scale(
+			Vector2(
+				LUNGE_SCALE_X,
+				LUNGE_SCALE_Y
+			),
 			delta
+		)
+
+		animated_sprite_2d.rotation += (
+			LUNGE_SPIN_SPEED * delta
 		)
 
 		return
 
-	var lunge_time: float = state_time - LUNGE_WINDUP
+	if state_time < LUNGE_WINDUP:
+		var recoil_direction: Vector2 = -attack_direction
+
+		velocity = recoil_direction * LUNGE_RECOIL_SPEED
+
+		move_and_slide()
+
+		_set_visual_scale(
+			Vector2(
+				LUNGE_SCALE_X,
+				LUNGE_SCALE_Y
+			),
+			delta
+		)
+
+		animated_sprite_2d.rotation += (
+			LUNGE_SPIN_SPEED * delta
+		)
+
+		return
+
+	var lunge_time: float = (
+		state_time - LUNGE_WINDUP
+	)
 
 	if lunge_time < LUNGE_DURATION:
 		velocity = attack_direction * LUNGE_SPEED
+
 		move_and_slide()
 
-		_move_sprite_toward(
-			base_sprite_scale * Vector2(1.4, 0.72),
-			attack_direction.angle(),
+		_set_visual_scale(
+			Vector2(
+				LUNGE_SCALE_X,
+				LUNGE_SCALE_Y
+			),
 			delta
+		)
+
+		animated_sprite_2d.rotation += (
+			LUNGE_SPIN_SPEED * 1.25 * delta
 		)
 
 		return
@@ -633,39 +882,40 @@ func _state_lunge(delta: float) -> void:
 
 func _state_ground_slam(delta: float) -> void:
 	if state_time < GROUND_SLAM_WINDUP:
-		velocity = Vector2.ZERO
-
-		_move_sprite_toward(
-			base_sprite_scale * Vector2(1.3, 0.72),
+		velocity = Vector2(
 			0.0,
-			delta
+			-GROUND_SLAM_RISE_SPEED
+		)
+
+		move_and_slide()
+
+		animated_sprite_2d.rotation += (
+			SLAM_SPIN_SPEED * delta
 		)
 
 		return
 
-	var slam_time: float = state_time - GROUND_SLAM_WINDUP
+	velocity = Vector2(
+		0.0,
+		GROUND_SLAM_FALL_SPEED
+	)
 
-	if slam_time < GROUND_SLAM_DURATION:
-		velocity = Vector2(0.0, 1400.0)
+	var collision: KinematicCollision2D = move_and_collide(
+		velocity * delta
+	)
 
-		var collision: KinematicCollision2D = move_and_collide(
-			velocity * delta
+	animated_sprite_2d.rotation += (
+		SLAM_SPIN_SPEED * 1.15 * delta
+	)
+
+	if collision != null:
+		var collision_normal: Vector2 = (
+			collision.get_normal()
 		)
 
-		_move_sprite_toward(
-			base_sprite_scale * Vector2(0.82, 1.28),
-			0.0,
-			delta
-		)
-
-		if collision != null:
+		if collision_normal.y < -0.5:
 			_ground_slam_impact()
 			_change_state(State.REST)
-
-		return
-
-	_ground_slam_impact()
-	_change_state(State.REST)
 
 
 func _ground_slam_impact() -> void:
@@ -675,8 +925,69 @@ func _ground_slam_impact() -> void:
 	attack_impact_done = true
 	velocity = Vector2.ZERO
 
+	_play_effect("slam")
+	_play_slam_sound()
+
+	slam_impact_timer = SLAM_IMPACT_DURATION
+
+	ground_slam_hitbox.set_deferred(
+		"monitoring",
+		true
+	)
+
+	ground_slam_hitbox.set_deferred(
+		"monitorable",
+		true
+	)
+
+	ground_slam_collision.set_deferred(
+		"disabled",
+		false
+	)
+
+	await get_tree().physics_frame
+
+	if not is_instance_valid(self):
+		return
+
+	for body in ground_slam_hitbox.get_overlapping_bodies():
+		if not is_instance_valid(body):
+			continue
+
+		if body.is_in_group("enemies"):
+			if body.has_method("take_damage"):
+				body.call(
+					"take_damage",
+					GROUND_SLAM_DAMAGE
+				)
+
+		elif body is CollisionObject2D:
+			var collision_object: CollisionObject2D = (
+				body as CollisionObject2D
+			)
+
+			if (
+				collision_object.collision_layer
+				& (1 << 6)
+			) != 0:
+				if body.has_method("slam"):
+					body.call("slam")
+
+	ground_slam_hitbox.set_deferred(
+		"monitoring",
+		false
+	)
+
+	ground_slam_collision.set_deferred(
+		"disabled",
+		true
+	)
+
 	var shockwave: ShockwaveEffect = ShockwaveEffect.new()
-	shockwave.setup(GROUND_SLAM_RADIUS)
+
+	shockwave.setup(
+		GROUND_SLAM_RADIUS
+	)
 
 	var scene: Node = get_tree().current_scene
 
@@ -684,34 +995,12 @@ func _ground_slam_impact() -> void:
 		scene.add_child(shockwave)
 
 		shockwave.global_position = (
-			global_position + Vector2(0.0, 35.0)
+			global_position
+			+ Vector2(
+				0.0,
+				35.0
+			)
 		)
-
-	var target: Node = get_tree().get_first_node_in_group("player")
-
-	if target != null:
-		var target_2d: Node2D = target as Node2D
-
-		if target_2d != null:
-			var horizontal_distance: float = abs(
-				target_2d.global_position.x
-				- global_position.x
-			)
-
-			var vertical_distance: float = abs(
-				target_2d.global_position.y
-				- global_position.y
-			)
-
-			if (
-				horizontal_distance <= GROUND_SLAM_RADIUS
-				and vertical_distance <= GROUND_SLAM_VERTICAL_RANGE
-			):
-				if target.has_method("take_damage"):
-					target.call(
-						"take_damage",
-						GROUND_SLAM_DAMAGE
-					)
 
 	_camera_shake(
 		GROUND_SLAM_SHAKE_STRENGTH,
@@ -725,39 +1014,40 @@ func _ground_slam_impact() -> void:
 
 func _state_ceiling_slam(delta: float) -> void:
 	if state_time < CEILING_SLAM_WINDUP:
-		velocity = Vector2.ZERO
-
-		_move_sprite_toward(
-			base_sprite_scale * Vector2(0.78, 1.25),
+		velocity = Vector2(
 			0.0,
-			delta
+			CEILING_SLAM_DESCEND_SPEED
+		)
+
+		move_and_slide()
+
+		animated_sprite_2d.rotation += (
+			SLAM_SPIN_SPEED * delta
 		)
 
 		return
 
-	var slam_time: float = state_time - CEILING_SLAM_WINDUP
+	velocity = Vector2(
+		0.0,
+		-CEILING_SLAM_RISE_SPEED
+	)
 
-	if slam_time < CEILING_SLAM_DURATION:
-		velocity = Vector2(0.0, -1500.0)
+	var collision: KinematicCollision2D = move_and_collide(
+		velocity * delta
+	)
 
-		var collision: KinematicCollision2D = move_and_collide(
-			velocity * delta
+	animated_sprite_2d.rotation += (
+		SLAM_SPIN_SPEED * 1.15 * delta
+	)
+
+	if collision != null:
+		var collision_normal: Vector2 = (
+			collision.get_normal()
 		)
 
-		_move_sprite_toward(
-			base_sprite_scale * Vector2(0.72, 1.4),
-			0.0,
-			delta
-		)
-
-		if collision != null:
+		if collision_normal.y > 0.5:
 			_ceiling_slam_impact()
 			_change_state(State.REST)
-
-		return
-
-	_ceiling_slam_impact()
-	_change_state(State.REST)
 
 
 func _ceiling_slam_impact() -> void:
@@ -766,6 +1056,11 @@ func _ceiling_slam_impact() -> void:
 
 	attack_impact_done = true
 	velocity = Vector2.ZERO
+
+	_play_effect("slam")
+	_play_slam_sound()
+
+	slam_impact_timer = SLAM_IMPACT_DURATION
 
 	_spawn_falling_rocks()
 
@@ -776,55 +1071,132 @@ func _ceiling_slam_impact() -> void:
 
 
 func _spawn_falling_rocks() -> void:
+	if rock_spawn_area == null:
+		push_warning(
+			"GuidingSuperstar: No RockSpawnArea was assigned."
+		)
+		return
+
 	var scene: Node = get_tree().current_scene
 
 	if scene == null:
 		return
 
-	# This will be assigned to the FallingRock.tscn scene.
+	var shape_node: CollisionShape2D = (
+		rock_spawn_area.get_node_or_null(
+			"CollisionShape2D"
+		) as CollisionShape2D
+	)
+
+	if shape_node == null:
+		push_warning(
+			"GuidingSuperstar: RockSpawnArea needs a "
+			+ "CollisionShape2D."
+		)
+		return
+
+	var rectangle: RectangleShape2D = (
+		shape_node.shape as RectangleShape2D
+	)
+
+	if rectangle == null:
+		push_warning(
+			"GuidingSuperstar: RockSpawnArea CollisionShape2D "
+			+ "must use a RectangleShape2D."
+		)
+		return
+
 	var rock_scene: PackedScene = preload(
 		"res://src/enemies/falling_rock.tscn"
 	)
 
-	var center_x: float = global_position.x
+	var rock_count: int = randi_range(
+		MIN_ROCK_COUNT,
+		MAX_ROCK_COUNT
+	)
 
-	if player != null:
-		center_x = player.global_position.x
+	var center: Vector2 = shape_node.global_position
+	var half_width: float = rectangle.size.x * 0.5
 
-	for i: int in range(ROCK_COUNT):
-		var normalized: float = 0.0
+	const EDGE_MARGIN: float = 40.0
 
-		if ROCK_COUNT > 1:
-			normalized = float(i) / float(ROCK_COUNT - 1)
+	var left_x: float = (
+		center.x
+		- half_width
+		+ EDGE_MARGIN
+	)
 
-		var x_offset: float = lerp(
-			-ROCK_SPAWN_SPREAD * 0.5,
-			ROCK_SPAWN_SPREAD * 0.5,
-			normalized
+	var right_x: float = (
+		center.x
+		+ half_width
+		- EDGE_MARGIN
+	)
+
+	if right_x <= left_x:
+		push_warning(
+			"GuidingSuperstar: RockSpawnArea is too narrow."
+		)
+		return
+
+	var spawn_positions: Array[Vector2] = []
+
+	for i: int in range(rock_count):
+		var t: float = 0.5
+
+		if rock_count > 1:
+			t = float(i) / float(rock_count - 1)
+
+		var x: float = lerp(
+			left_x,
+			right_x,
+			t
 		)
 
-		x_offset += randf_range(-45.0, 45.0)
+		x += randf_range(
+			-60.0,
+			60.0
+		)
 
-		var rock: FallingRock = rock_scene.instantiate() as FallingRock
+		x = clamp(
+			x,
+			left_x,
+			right_x
+		)
+
+		spawn_positions.append(
+			Vector2(
+				x,
+				center.y
+			)
+		)
+
+	spawn_positions.shuffle()
+
+	for spawn_position: Vector2 in spawn_positions:
+		var rock: FallingRock = (
+			rock_scene.instantiate()
+			as FallingRock
+		)
 
 		if rock == null:
 			continue
 
-		var spawn_position: Vector2 = Vector2(
-			center_x + x_offset,
-			global_position.y + 75.0
-		)
-
-		var delay: float = 2.5 + (
-			float(i) * ROCK_SPAWN_DELAY_STEP
+		var delay: float = randf_range(
+			ROCK_MIN_DELAY,
+			ROCK_MAX_DELAY
 		)
 
 		scene.add_child(rock)
 
+		spawned_rocks.append(rock)
+
 		rock.setup(
 			spawn_position,
 			delay,
-			ROCK_INITIAL_SPEED + randf_range(-20.0, 30.0),
+			ROCK_INITIAL_SPEED + randf_range(
+				-20.0,
+				40.0
+			),
 			CEILING_SLAM_DAMAGE
 		)
 
@@ -836,16 +1208,12 @@ func _spawn_falling_rocks() -> void:
 func _state_reposition(delta: float) -> void:
 	if state_time < REPOSITION_WINDUP:
 		velocity = Vector2.ZERO
-
-		_move_sprite_toward(
-			base_sprite_scale * Vector2(1.08, 0.92),
-			0.0,
-			delta
-		)
-
+		animated_sprite_2d.scale = base_sprite_scale
 		return
 
-	var move_time: float = state_time - REPOSITION_WINDUP
+	var move_time: float = (
+		state_time - REPOSITION_WINDUP
+	)
 
 	if move_time < REPOSITION_DURATION:
 		var direction: Vector2 = global_position.direction_to(
@@ -853,12 +1221,13 @@ func _state_reposition(delta: float) -> void:
 		)
 
 		velocity = direction * REPOSITION_SPEED
+
 		move_and_slide()
 
-		_move_sprite_toward(
-			base_sprite_scale * Vector2(1.12, 0.9),
-			direction.angle(),
-			delta
+		animated_sprite_2d.scale = base_sprite_scale
+
+		animated_sprite_2d.rotation += (
+			BASE_SPIN_SPEED * delta
 		)
 
 		return
@@ -875,15 +1244,23 @@ func _state_follow_spin(delta: float) -> void:
 	if state_time < FOLLOW_SPIN_WINDUP:
 		velocity = Vector2.ZERO
 
-		_move_sprite_toward(
-			base_sprite_scale * Vector2(1.1, 0.9),
-			0.0,
+		_set_visual_scale(
+			Vector2(
+				FOLLOW_SCALE_X,
+				FOLLOW_SCALE_Y
+			),
 			delta
+		)
+
+		animated_sprite_2d.rotation += (
+			FOLLOW_SPIN_SPEED * delta
 		)
 
 		return
 
-	var chase_time: float = state_time - FOLLOW_SPIN_WINDUP
+	var chase_time: float = (
+		state_time - FOLLOW_SPIN_WINDUP
+	)
 
 	if chase_time < FOLLOW_SPIN_DURATION:
 		if player == null:
@@ -896,18 +1273,19 @@ func _state_follow_spin(delta: float) -> void:
 		)
 
 		velocity = direction * FOLLOW_SPEED
+
 		move_and_slide()
 
-		rotation += (
-			BASE_SPIN_SPEED
-			* FAST_SPIN_MULTIPLIER
-			* delta
+		_set_visual_scale(
+			Vector2(
+				FOLLOW_SCALE_X,
+				FOLLOW_SCALE_Y
+			),
+			delta
 		)
 
-		_move_sprite_toward(
-			base_sprite_scale * Vector2(1.12, 0.88),
-			direction.angle(),
-			delta
+		animated_sprite_2d.rotation += (
+			FOLLOW_SPIN_SPEED * delta
 		)
 
 		return
@@ -917,37 +1295,50 @@ func _state_follow_spin(delta: float) -> void:
 
 
 # -------------------------------------------------------------------
-# Procedural animation
+# Visual animation
 # -------------------------------------------------------------------
 
 func _update_visual_animation(delta: float) -> void:
-	match state:
-		State.REST:
-			rotation += BASE_SPIN_SPEED * delta
+	if slam_impact_timer > 0.0:
+		slam_impact_timer -= delta
 
-		State.DECIDE:
-			rotation += BASE_SPIN_SPEED * 0.5 * delta
+		var impact_progress: float = clamp(
+			slam_impact_timer
+			/ SLAM_IMPACT_DURATION,
+			0.0,
+			1.0
+		)
 
-		State.LUNGE:
-			pass
+		var impact_scale: Vector2 = Vector2(
+			lerp(
+				1.0,
+				SLAM_IMPACT_SCALE_X,
+				impact_progress
+			),
+			lerp(
+				1.0,
+				SLAM_IMPACT_SCALE_Y,
+				impact_progress
+			)
+		)
 
-		State.GROUND_SLAM:
-			pass
+		animated_sprite_2d.scale = (
+			base_sprite_scale * impact_scale
+		)
 
-		State.CEILING_SLAM:
-			pass
+	else:
+		match state:
+			State.LUNGE:
+				pass
 
-		State.REPOSITION:
-			pass
+			State.FOLLOW_SPIN:
+				pass
 
-		State.FOLLOW_SPIN:
-			pass
+			State.REPOSITION:
+				animated_sprite_2d.scale = base_sprite_scale
 
-		State.INACTIVE:
-			pass
-
-		State.DEAD:
-			pass
+			_:
+				animated_sprite_2d.scale = base_sprite_scale
 
 	if flash_timer > 0.0:
 		flash_timer -= delta
@@ -956,21 +1347,20 @@ func _update_visual_animation(delta: float) -> void:
 			animated_sprite_2d.modulate = Color.WHITE
 
 
-func _move_sprite_toward(
-	target_scale: Vector2,
-	target_rotation: float,
+func _set_visual_scale(
+	scale_multiplier: Vector2,
 	delta: float
 ) -> void:
-	var smoothing: float = 1.0 - exp(-14.0 * delta)
+	var smoothing: float = 1.0 - exp(
+		-MOVEMENT_SCALE_SMOOTHING * delta
+	)
+
+	var target_scale: Vector2 = (
+		base_sprite_scale * scale_multiplier
+	)
 
 	animated_sprite_2d.scale = animated_sprite_2d.scale.lerp(
 		target_scale,
-		smoothing
-	)
-
-	animated_sprite_2d.rotation = lerp_angle(
-		animated_sprite_2d.rotation,
-		target_rotation,
 		smoothing
 	)
 
@@ -1001,6 +1391,22 @@ func take_damage(amount: int) -> void:
 		die()
 
 
+# -------------------------------------------------------------------
+# FallingRock cleanup
+# -------------------------------------------------------------------
+
+func _cleanup_spawned_rocks() -> void:
+	for rock: Node in spawned_rocks:
+		if is_instance_valid(rock):
+			rock.queue_free()
+
+	spawned_rocks.clear()
+
+
+# -------------------------------------------------------------------
+# Death
+# -------------------------------------------------------------------
+
 func die() -> void:
 	if death_started:
 		return
@@ -1010,7 +1416,22 @@ func die() -> void:
 	state = State.DEAD
 	velocity = Vector2.ZERO
 
+	_cleanup_spawned_rocks()
+
+	if ground_slam_hitbox:
+		ground_slam_hitbox.set_deferred(
+			"monitoring",
+			false
+		)
+
+	if ground_slam_collision:
+		ground_slam_collision.set_deferred(
+			"disabled",
+			true
+		)
+
 	_set_combat_active(false)
+	_stop_effect()
 	set_physics_process(false)
 
 	_camera_shake(
@@ -1023,7 +1444,7 @@ func die() -> void:
 	tween.tween_property(
 		animated_sprite_2d,
 		"scale",
-		base_sprite_scale * 1.18,
+		base_sprite_scale * 1.08,
 		0.15
 	).set_trans(
 		Tween.TRANS_BACK
@@ -1050,8 +1471,8 @@ func die() -> void:
 	await tween.finished
 
 	animated_sprite_2d.visible = false
+	_stop_effect()
 
-	# BossEncounter detects this and finishes the encounter.
 	is_dying = true
 
 
@@ -1087,13 +1508,32 @@ func _set_combat_active(enabled: bool) -> void:
 		if not enabled:
 			damage_timer.stop()
 
+	if ground_slam_hitbox:
+		ground_slam_hitbox.set_deferred(
+			"monitoring",
+			false
+		)
+
+	if ground_slam_collision:
+		ground_slam_collision.set_deferred(
+			"disabled",
+			true
+		)
+
 
 # -------------------------------------------------------------------
 # Camera
 # -------------------------------------------------------------------
 
-func _camera_shake(strength: float, duration: float) -> void:
-	var player_node: Node = get_tree().get_first_node_in_group("player")
+func _camera_shake(
+	strength: float,
+	duration: float
+) -> void:
+	var player_node: Node = (
+		get_tree().get_first_node_in_group(
+			"player"
+		)
+	)
 
 	if player_node == null:
 		return
@@ -1101,6 +1541,6 @@ func _camera_shake(strength: float, duration: float) -> void:
 	if player_node.has_method("camera_shake"):
 		player_node.call(
 			"camera_shake",
-			strength,
-			duration
-	)
+			strength * 1.2,
+			duration * 1.3
+		)

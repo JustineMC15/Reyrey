@@ -14,6 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://diwmqox7qwm8b" path="res://assets/environment/interactables/scripture.png" id="11_5e85k"]
 [ext_resource type="Script" uid="uid://4o4jlsye1arb" path="res://src/nav/boss_encounter.gd" id="12_5e85k"]
 [ext_resource type="PackedScene" uid="uid://cvic7gvemw3bq" path="res://src/enemies/guiding_superstar.tscn" id="13_n2ggb"]
+[ext_resource type="AudioStream" uid="uid://b3n4d1ad587db" path="res://assets/sound/music/The_Old_Tower_Inn.mp3" id="14_tbqxn"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tbqxn"]
 texture = ExtResource("5_m685k")
@@ -265,6 +266,9 @@ bg_color = Color(0.6, 0.6, 0.6, 0)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_m685k"]
 size = Vector2(525, 329)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vlew8"]
+size = Vector2(1865, 61)
+
 [node name="Area1-Room3" type="Node2D" unique_id=1602108746]
 
 [node name="CameraBounds" type="Node2D" parent="." unique_id=1140724593]
@@ -424,12 +428,14 @@ horizontal_alignment = 1
 vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
-[node name="BossEncounter" type="Node2D" parent="." unique_id=578853415 node_paths=PackedStringArray("trigger_area", "boss")]
+[node name="BossEncounter" type="Node2D" parent="." unique_id=578853415 node_paths=PackedStringArray("trigger_area", "boss", "rock_spawn_area")]
 position = Vector2(-9000, -404)
 script = ExtResource("12_5e85k")
 boss_id = "boss1"
 trigger_area = NodePath("TriggerArea")
 boss = NodePath("GuidingSuperstar")
+rock_spawn_area = NodePath("RockSpawnArea")
+battle_music = ExtResource("14_tbqxn")
 metadata/_custom_type_script = "uid://4o4jlsye1arb"
 
 [node name="TriggerArea" type="Area2D" parent="BossEncounter" unique_id=1126774262]
@@ -441,3 +447,10 @@ position = Vector2(5, 299)
 shape = SubResource("RectangleShape2D_m685k")
 
 [node name="GuidingSuperstar" parent="BossEncounter" unique_id=417537555 instance=ExtResource("13_n2ggb")]
+
+[node name="RockSpawnArea" type="Area2D" parent="BossEncounter" unique_id=2077949223]
+position = Vector2(-6, -460)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BossEncounter/RockSpawnArea" unique_id=1957938189]
+position = Vector2(-12.5, -60.5)
+shape = SubResource("RectangleShape2D_vlew8")

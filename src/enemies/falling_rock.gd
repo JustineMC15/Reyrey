@@ -14,15 +14,22 @@ enum RockShape {
 const DEFAULT_GRAVITY: float = 1800.0
 const DEFAULT_DAMAGE: int = 1
 
-const TELEGRAPH_SMOKE_HEIGHT: float = 420.0
 const TELEGRAPH_WIDTH: float = 34.0
 const TELEGRAPH_PARTICLES: int = 14
+const TELEGRAPH_HEIGHT: float = 630.0
 
 const BREAK_DURATION: float = 0.14
 const BREAK_PARTICLE_COUNT: int = 8
 
+# Failsafe lifetime begins when the rock actually falls.
+const FALL_LIFETIME: float = 4.0
 
-var shape_type: int = RockShape.MEDIUM
+# Visual size only.
+# Collision shapes remain controlled separately in the scene.
+const VISUAL_SCALE: float = 1.5
+
+
+var shape_type: RockShape = RockShape.MEDIUM
 
 var fall_delay: float = 2.5
 var fall_speed: float = 120.0
@@ -32,7 +39,7 @@ var damage: int = DEFAULT_DAMAGE
 var rock_scale: float = 1.0
 var rotation_speed: float = 0.0
 
-var elapsed: float = 0.0
+var fall_elapsed: float = 0.0
 var break_timer: float = 0.0
 
 var is_falling: bool = false
@@ -44,17 +51,31 @@ var telegraph_time: float = 0.0
 
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var damage_area: Area2D = $DamageArea
-@onready var damage_collision: CollisionShape2D = $DamageArea/CollisionShape2D
+@onready var damage_collision: CollisionShape2D = (
+	$DamageArea/CollisionShape2D
+)
+
+@onready var hit_sound: AudioStreamPlayer2D = $HitSound
 
 
 func _ready() -> void:
+	# Collision layer/mask are intentionally NOT assigned here.
+	# Configure them in the Inspector.
+
 	_generate_rock_properties()
 	_setup_collision()
 
 	telegraph_time = fall_delay
 
-	collision_shape.set_deferred("disabled", true)
-	damage_collision.set_deferred("disabled", true)
+	collision_shape.set_deferred(
+		"disabled",
+		true
+	)
+
+	damage_collision.set_deferred(
+		"disabled",
+		true
+	)
 
 	queue_redraw()
 
@@ -66,15 +87,30 @@ func setup(
 	damage_amount: int
 ) -> void:
 	global_position = start_pos
+
 	fall_delay = delay
 	fall_speed = initial_speed
 	damage = damage_amount
+
 	telegraph_time = delay
+	fall_elapsed = 0.0
+
+	has_hit_player = false
+	is_falling = false
+	is_breaking = false
+	break_timer = 0.0
 
 
 func trigger() -> void:
+	if is_breaking:
+		return
+
 	telegraph_time = fall_delay
 
+
+# -------------------------------------------------------------------
+# Rock generation
+# -------------------------------------------------------------------
 
 func _generate_rock_properties() -> void:
 	var shape_index: int = randi_range(
@@ -82,11 +118,23 @@ func _generate_rock_properties() -> void:
 		RockShape.LONG
 	)
 
-	shape_type = shape_index
+	# Explicit enum cast.
+	shape_type = shape_index as RockShape
 
-	rock_scale = randf_range(0.8, 1.25)
-	rotation = randf_range(0.0, TAU)
-	rotation_speed = randf_range(-3.0, 3.0)
+	rock_scale = randf_range(
+		0.8,
+		1.25
+	)
+
+	rotation = randf_range(
+		0.0,
+		TAU
+	)
+
+	rotation_speed = randf_range(
+		-3.0,
+		3.0
+	)
 
 	match shape_type:
 		RockShape.SMALL:
@@ -108,6 +156,10 @@ func _generate_rock_properties() -> void:
 			rock_scale *= 1.15
 			fall_speed *= 0.9
 
+
+# -------------------------------------------------------------------
+# Collision
+# -------------------------------------------------------------------
 
 func _setup_collision() -> void:
 	var rock_shape: CircleShape2D = CircleShape2D.new()
@@ -138,18 +190,25 @@ func _setup_collision() -> void:
 	damage_collision.shape = damage_shape
 
 
+# -------------------------------------------------------------------
+# Main physics
+# -------------------------------------------------------------------
+
 func _physics_process(delta: float) -> void:
 	if is_breaking:
 		_process_breaking(delta)
 		return
 
-	elapsed += delta
-
-	if is_falling:
-		_process_falling(delta)
-	else:
+	if not is_falling:
 		_process_telegraph(delta)
+		return
 
+	_process_falling(delta)
+
+
+# -------------------------------------------------------------------
+# Telegraph
+# -------------------------------------------------------------------
 
 func _process_telegraph(delta: float) -> void:
 	telegraph_time -= delta
@@ -165,14 +224,36 @@ func _begin_falling() -> void:
 		return
 
 	is_falling = true
+	fall_elapsed = 0.0
 
-	collision_shape.set_deferred("disabled", false)
-	damage_collision.set_deferred("disabled", false)
+	collision_shape.set_deferred(
+		"disabled",
+		false
+	)
+
+	damage_collision.set_deferred(
+		"disabled",
+		false
+	)
 
 	queue_redraw()
 
 
+# -------------------------------------------------------------------
+# Falling
+# -------------------------------------------------------------------
+
 func _process_falling(delta: float) -> void:
+	if is_breaking:
+		return
+
+	fall_elapsed += delta
+
+	# Safety cleanup if the rock somehow never reaches terrain.
+	if fall_elapsed >= FALL_LIFETIME:
+		_break()
+		return
+
 	fall_speed += gravity * delta
 
 	velocity = Vector2(
@@ -180,12 +261,14 @@ func _process_falling(delta: float) -> void:
 		fall_speed
 	)
 
-	var collision: KinematicCollision2D = move_and_collide(
-		velocity * delta
-	)
+	move_and_slide()
 
-	if collision != null:
-		_break()
+	if is_breaking:
+		return
+
+	_check_arena_collision()
+
+	if is_breaking:
 		return
 
 	rotation += rotation_speed * delta
@@ -196,12 +279,26 @@ func _process_falling(delta: float) -> void:
 
 
 func _check_arena_collision() -> void:
-	pass
+	if is_breaking:
+		return
+
+	var collision_count: int = get_slide_collision_count()
+
+	if collision_count > 0:
+		_break()
+
+# -------------------------------------------------------------------
+# Player damage
+# -------------------------------------------------------------------
+
 func _check_player_hit() -> void:
 	if has_hit_player:
 		return
 
 	for body in damage_area.get_overlapping_bodies():
+		if not is_instance_valid(body):
+			continue
+
 		if body.is_in_group("player"):
 			if body.has_method("take_damage"):
 				body.call(
@@ -213,6 +310,9 @@ func _check_player_hit() -> void:
 			break
 
 
+# -------------------------------------------------------------------
+# Break
+# -------------------------------------------------------------------
 func _break() -> void:
 	if is_breaking:
 		return
@@ -222,11 +322,37 @@ func _break() -> void:
 
 	velocity = Vector2.ZERO
 
-	collision_shape.set_deferred("disabled", true)
-	damage_collision.set_deferred("disabled", true)
+	collision_shape.set_deferred(
+		"disabled",
+		true
+	)
+
+	damage_collision.set_deferred(
+		"disabled",
+		true
+	)
+
+	# Let the impact sound continue playing after the rock is freed.
+	var hit_sound: AudioStreamPlayer2D = get_node_or_null(
+		"HitSound"
+	) as AudioStreamPlayer2D
+
+	if hit_sound != null and hit_sound.stream != null:
+		var sound_position: Vector2 = global_position
+
+		remove_child(hit_sound)
+
+		var scene: Node = get_tree().current_scene
+
+		if scene != null:
+			scene.add_child(hit_sound)
+			hit_sound.global_position = sound_position
+			hit_sound.finished.connect(
+				hit_sound.queue_free
+			)
+			hit_sound.play()
 
 	queue_redraw()
-
 
 func _process_breaking(delta: float) -> void:
 	break_timer -= delta
@@ -237,6 +363,10 @@ func _process_breaking(delta: float) -> void:
 
 	queue_redraw()
 
+
+# -------------------------------------------------------------------
+# Drawing
+# -------------------------------------------------------------------
 
 func _draw() -> void:
 	if is_breaking:
@@ -251,61 +381,123 @@ func _draw() -> void:
 
 
 func _draw_smoke_telegraph() -> void:
+	var time: float = Time.get_ticks_msec() * 0.001
+
 	var progress: float = clamp(
-		1.0 - telegraph_time / max(fall_delay, 0.01),
+		1.0
+		- telegraph_time
+		/ max(fall_delay, 0.01),
 		0.0,
 		1.0
 	)
 
-	var pulse: float = 0.65 + sin(
-		Time.get_ticks_msec() * 0.006
-	) * 0.08
+	var pulse: float = (
+		0.82
+		+ sin(time * 5.0) * 0.10
+	)
 
 	var opacity: float = lerp(
-		0.15,
-		0.32,
+		0.30,
+		0.50,
 		progress
 	)
 
+	# Cancel the rock's rotation so the smoke remains vertically aligned.
+	draw_set_transform(
+		Vector2.ZERO,
+		-rotation,
+		Vector2.ONE
+	)
+
 	for i: int in range(TELEGRAPH_PARTICLES):
-		var t: float = float(i) / float(TELEGRAPH_PARTICLES - 1)
+		var t: float = (
+			float(i)
+			/ float(TELEGRAPH_PARTICLES - 1)
+		)
 
 		var y: float = lerp(
 			0.0,
-			TELEGRAPH_SMOKE_HEIGHT,
+			TELEGRAPH_HEIGHT,
 			t
 		)
 
-		var drift: float = sin(
-			Time.get_ticks_msec() * 0.0015
-			+ float(i) * 1.7
-		) * 12.0
+		# Deliberate rapid horizontal shivering.
+		var shiver: float = (
+			sin(
+				time * 13.0
+				+ float(i) * 0.7
+			) * 4.0
+			+ sin(
+				time * 21.0
+				+ float(i) * 1.3
+			) * 2.0
+		)
 
+		# Smoke grows thicker toward the middle.
 		var width: float = lerp(
-			10.0,
-			TELEGRAPH_WIDTH,
+			12.0,
+			38.0,
 			sin(t * PI)
 		)
+
+		width += sin(
+			time * 6.0
+			+ float(i) * 1.7
+		) * 3.0
 
 		var local_alpha: float = (
 			opacity
 			* pulse
-			* (1.0 - t * 0.35)
+			* lerp(
+				0.65,
+				1.0,
+				sin(t * PI)
+			)
 		)
 
 		draw_circle(
 			Vector2(
-				drift,
+				shiver,
 				y
 			),
-			width,
+			max(width, 4.0),
 			Color(
-				0.65,
-				0.62,
+				0.58,
+				0.59,
 				0.58,
 				local_alpha
 			)
 		)
+
+		if i % 2 == 0:
+			var secondary_shiver: float = (
+				shiver * 0.7
+				+ sin(
+					time * 17.0
+					+ float(i)
+				) * 3.0
+			)
+
+			draw_circle(
+				Vector2(
+					secondary_shiver,
+					y + 5.0
+				),
+				width * 0.45,
+				Color(
+					0.48,
+					0.49,
+					0.48,
+					local_alpha * 0.5
+				)
+			)
+
+	# Restore normal transform.
+	draw_set_transform(
+		Vector2.ZERO,
+		0.0,
+		Vector2.ONE
+	)
 
 
 func _draw_rock() -> void:
@@ -365,11 +557,15 @@ func _draw_rock() -> void:
 				Vector2(-12.0, 29.0)
 			])
 
-	var transformed_points: PackedVector2Array = PackedVector2Array()
+	var transformed_points: PackedVector2Array = (
+		PackedVector2Array()
+	)
 
 	for point: Vector2 in points:
 		transformed_points.append(
-			point * rock_scale
+			point
+			* VISUAL_SCALE
+			* rock_scale
 		)
 
 	draw_colored_polygon(
@@ -383,7 +579,8 @@ func _draw_rock() -> void:
 	)
 
 	draw_polyline(
-		transformed_points + PackedVector2Array([
+		transformed_points
+		+ PackedVector2Array([
 			transformed_points[0]
 		]),
 		Color(
@@ -414,7 +611,9 @@ func _draw_break() -> void:
 			/ float(BREAK_PARTICLE_COUNT)
 		) * TAU
 
-		var direction: Vector2 = Vector2.from_angle(angle)
+		var direction: Vector2 = Vector2.from_angle(
+			angle
+		)
 
 		draw_line(
 			direction * 4.0,

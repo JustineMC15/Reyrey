@@ -25,6 +25,7 @@ class_name BossEncounter
 ## Boss:
 ##   CharacterBody2D or another Node
 ##   Must have an `is_dying` property.
+##   Should implement `reset_boss()` to restore its health/state.
 ##
 ## The target door is the door that should close when the encounter
 ## begins and reopen after the boss is defeated.
@@ -51,26 +52,51 @@ enum EntranceType {
 
 @export_category("Boss Activation")
 @export var boss_activation_delay: float = 0.0
+@export var rock_spawn_area: Area2D
+
+@export_category("Battle Music")
+@export var battle_music: AudioStream
+@export var battle_music_fade_time: float = 0.8
+@export var return_music_fade_time: float = 0.8
 
 var _started := false
 var _finished := false
+var _battle_music_active := false
+var _resetting := false
+var _player_death_reset_pending := false
+
+# Position the boss had when the room was initially loaded.
+var _boss_start_position := Vector2.ZERO
 
 
 func _ready() -> void:
 	add_to_group("boss_encounters")
 
 	# Already defeated in the save file.
+	#
+	# The room has been loaded again after the boss was defeated.
+	# Keep the boss node in the scene, but make it invisible and inactive.
 	if boss_id != "" and GameState.is_boss_defeated(boss_id):
 		_finished = true
 
+		_set_boss_active(false)
+
 		if target_door and target_door.has_method("open"):
 			target_door.open()
+
+		if trigger_area:
+			trigger_area.set_deferred("monitoring", false)
+			trigger_area.set_deferred("monitorable", false)
 
 		return
 
 	if not trigger_area:
 		push_warning("BossEncounter has no trigger_area assigned.")
 		return
+
+	# Remember the boss's original position in the level.
+	if is_instance_valid(boss):
+		_boss_start_position = boss.global_position
 
 	trigger_area.monitoring = true
 	trigger_area.monitorable = true
@@ -83,7 +109,25 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
-	if not _started or _finished:
+	# Player died during the encounter.
+	#
+	# Do not immediately reset the boss because the player's death
+	# animation and screen fade are still playing.
+	if _started and not _finished and not _resetting:
+		var player := get_tree().get_first_node_in_group("player")
+
+		if player and player.get("is_dead") == true:
+			_queue_reset_after_player_death()
+			return
+
+	# Restore room music when the player dies.
+	if _battle_music_active:
+		var player := get_tree().get_first_node_in_group("player")
+
+		if player and player.get("is_dead") == true:
+			_restore_room_music()
+
+	if not _started or _finished or _resetting:
 		return
 
 	if not is_instance_valid(boss):
@@ -111,7 +155,7 @@ func _on_trigger_body_entered(body: Node2D) -> void:
 
 
 func _start_encounter() -> void:
-	if _started or _finished:
+	if _started or _finished or _resetting:
 		return
 
 	if boss_id != "" and GameState.is_boss_defeated(boss_id):
@@ -131,6 +175,20 @@ func _start_encounter() -> void:
 	if trigger_area:
 		trigger_area.set_deferred("monitoring", false)
 
+	# Give the boss access to the encounter's rock spawn area.
+	if rock_spawn_area:
+		if boss.has_method("set_rock_spawn_area"):
+			boss.set_rock_spawn_area(rock_spawn_area)
+
+	# Switch from room music to boss battle music.
+	if battle_music != null:
+		_battle_music_active = true
+
+		Music.play_battle_music(
+			battle_music,
+			battle_music_fade_time
+		)
+
 	# Optional impact when the encounter begins.
 	if shake_on_start:
 		_shake_on_start()
@@ -138,9 +196,30 @@ func _start_encounter() -> void:
 	# Run the boss entrance.
 	await _play_boss_entrance()
 
+	# The encounter may have been reset while the entrance was playing.
+	if _resetting or _finished:
+		return
+
+	var player := get_tree().get_first_node_in_group("player")
+
+	if player and player.get("is_dead") == true:
+		_queue_reset_after_player_death()
+		return
+
 	# Small optional delay before combat begins.
 	if boss_activation_delay > 0.0:
-		await get_tree().create_timer(boss_activation_delay).timeout
+		await get_tree().create_timer(
+			boss_activation_delay
+		).timeout
+
+	if _resetting or _finished:
+		return
+
+	player = get_tree().get_first_node_in_group("player")
+
+	if player and player.get("is_dead") == true:
+		_queue_reset_after_player_death()
+		return
 
 	_activate_boss()
 
@@ -191,12 +270,15 @@ func _activate_boss() -> void:
 
 
 func _finish_encounter() -> void:
-	if _finished:
+	if _finished or _resetting:
 		return
 
 	_finished = true
+	_started = false
 
 	# Remember that this boss has been defeated.
+	#
+	# This is ONLY reached when the boss itself reports is_dying.
 	if boss_id != "":
 		GameState.defeat_boss(boss_id)
 
@@ -208,20 +290,166 @@ func _finish_encounter() -> void:
 	if shortcut_id_on_clear != "":
 		GameState.activate_shortcut(shortcut_id_on_clear)
 
+	# Return to the room's normal music.
+	_restore_room_music()
+
+
+func _queue_reset_after_player_death() -> void:
+	if _player_death_reset_pending or _resetting or _finished:
+		return
+
+	_player_death_reset_pending = true
+
+	# Do not reset the boss immediately.
+	# The player is still performing the death animation and
+	# the screen transition has not necessarily completed.
+	call_deferred("_wait_for_player_death_transition")
+
+
+func _wait_for_player_death_transition() -> void:
+	while true:
+		await get_tree().process_frame
+
+		if _finished:
+			_player_death_reset_pending = false
+			return
+
+		# While the room is unloading, leave the boss exactly where it is.
+		if GameState.is_room_unloading:
+			continue
+
+		var player := get_tree().get_first_node_in_group("player")
+
+		# The player still exists and is still dead.
+		# Wait until the death/respawn process is complete.
+		if player and player.get("is_dead") == true:
+			continue
+
+		# The player is no longer dead, meaning the respawn transition
+		# has completed.
+		break
+
+	_reset_after_player_death()
+
+
+func _reset_after_player_death() -> void:
+	if _resetting or _finished:
+		_player_death_reset_pending = false
+		return
+
+	_resetting = true
+	_player_death_reset_pending = false
+
+	# Stop considering this an active encounter.
+	_started = false
+
+	# Restore the room's normal music.
+	_restore_room_music()
+
+	if is_instance_valid(boss):
+		# Reset the boss's internal state first.
+		if boss.has_method("reset_boss"):
+			boss.reset_boss()
+		else:
+			push_warning(
+				"BossEncounter boss has no reset_boss() method. "
+				+ "The boss may retain its previous state after player death."
+			)
+
+		# Restore the boss to its original position in the level.
+		boss.global_position = _boss_start_position
+
+		# Make sure the boss is visible/active again for the next attempt.
+		_set_boss_active(true)
+
+	# Reset the arena for the next attempt.
+	if target_door and target_door.has_method("close"):
+		target_door.close()
+
+	# Allow the player to trigger the encounter again.
+	if trigger_area:
+		trigger_area.set_deferred("monitoring", true)
+		trigger_area.set_deferred("monitorable", true)
+
+	_resetting = false
+
+
+func _set_boss_active(active: bool) -> void:
+	if not is_instance_valid(boss):
+		return
+
+	if boss is CanvasItem:
+		boss.visible = active
+
+	boss.set_process(active)
+	boss.set_physics_process(active)
+
+	for child in boss.get_children():
+		_set_boss_child_active(child, active)
+
+
+func _set_boss_child_active(node: Node, active: bool) -> void:
+	if not is_instance_valid(node):
+		return
+
+	node.set_process(active)
+	node.set_physics_process(active)
+
+	if node is CanvasItem:
+		node.visible = active
+
+	if node is CollisionShape2D:
+		node.set_deferred("disabled", not active)
+
+	elif node is CollisionPolygon2D:
+		node.set_deferred("disabled", not active)
+
+	elif node is Area2D:
+		node.set_deferred("monitoring", active)
+		node.set_deferred("monitorable", active)
+
+		if not active:
+			for child in node.get_children():
+				if child is Timer:
+					child.stop()
+
+	for child in node.get_children():
+		_set_boss_child_active(child, active)
+
+
+func _restore_room_music() -> void:
+	if not _battle_music_active:
+		return
+
+	_battle_music_active = false
+
+	Music.restore_room_music(return_music_fade_time)
+
 
 func reset_boss_encounter() -> void:
 	if boss_id != "" and GameState.is_boss_defeated(boss_id):
 		return
 
+	_resetting = true
 	_started = false
 	_finished = false
+	_player_death_reset_pending = false
+
+	_restore_room_music()
 
 	if trigger_area:
 		trigger_area.set_deferred("monitoring", true)
+		trigger_area.set_deferred("monitorable", true)
 
 	if target_door and target_door.has_method("close"):
 		target_door.close()
 
-	# Reset the boss if it provides a reset method.
-	if is_instance_valid(boss) and boss.has_method("reset_boss"):
-		boss.reset_boss()
+	if is_instance_valid(boss):
+		if boss.has_method("reset_boss"):
+			boss.reset_boss()
+
+		# Restore position on a manual encounter reset too.
+		boss.global_position = _boss_start_position
+		_set_boss_active(true)
+
+	_resetting = false

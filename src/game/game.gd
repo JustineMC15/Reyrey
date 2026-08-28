@@ -23,7 +23,15 @@ var room_music: Dictionary = {
 	"res://src/rooms/A0R2.tscn":
 		preload("res://assets/sound/music/Medieval Rondo.ogg"),
 
-	"res://src/rooms/A1R1.tscn": null,
+	"res://src/rooms/A1R1.tscn":
+		preload("res://assets/sound/music/022815townbgm.ogg"),
+
+	"res://src/rooms/A1R2.tscn":
+		preload("res://assets/sound/music/022815townbgm.ogg"),
+
+	"res://src/rooms/A1R3.tscn":
+		preload("res://assets/sound/music/022815townbgm.ogg"),
+
 	"res://src/rooms/A2R1.tscn": null,
 	"res://src/rooms/A3R1.tscn": null,
 	"res://src/rooms/A4R1.tscn": null,
