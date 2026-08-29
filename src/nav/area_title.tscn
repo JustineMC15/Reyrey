@@ -13,6 +13,8 @@ border_width_bottom = 3
 border_color = Color(1, 1, 1, 1)
 
 [node name="AreaTitle" type="Area2D" unique_id=1421239322]
+collision_layer = 32
+collision_mask = 66
 script = ExtResource("1_itxvp")
 area_id = "valecourt_fields"
 area_name = "VALECOURT FIELDS"

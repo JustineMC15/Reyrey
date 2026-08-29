@@ -176,17 +176,17 @@ func load_room(scene_path: String) -> void:
 	if music_track != null:
 		Music.play_music(music_track)
 
-	var area_name: String = room_area_names.get(scene_path, "")
+	#var area_name: String = room_area_names.get(scene_path, "")
 
-	if area_name != "" \
-	and not GameState.area_names_seen.get(area_name, false):
-
-		GameState.area_names_seen[area_name] = true
-
-		var area_title := get_node_or_null("AreaTitle")
-
-		if area_title != null:
-			area_title.show_area(area_name)
+	#if area_name != "" \
+	#and not GameState.area_names_seen.get(area_name, false):
+#
+		#GameState.area_names_seen[area_name] = true
+#
+		#var area_title := get_node_or_null("AreaTitle")
+#
+		#if area_title != null:
+			#area_title.show_area(area_name)
 
 func get_current_room_scene_path() -> String:
 	return current_room_scene_path

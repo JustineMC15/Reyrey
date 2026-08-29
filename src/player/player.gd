@@ -67,7 +67,7 @@ const LEDGE_RAY_GAP := 46.0
 const LEDGE_CLIMB_OFFSET := Vector2(40.0, -20.0)
 
 # Recall
-const RECALL_MP_COST := 2
+const RECALL_MP_COST := 3
 const RECALL_LEASH_RANGE := 900.0
 
 const INVINCIBILITY_TIME := 0.5

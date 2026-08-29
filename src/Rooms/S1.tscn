@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://8vr0pfeydo4w" path="res://src/nav/camera_bounds.gd" id="1_58qcc"]
 [ext_resource type="TileSet" uid="uid://wdxl8wi6477l" path="res://assets/environment/tres/greybox.tres" id="3_6ckp0"]
+[ext_resource type="SpriteFrames" uid="uid://c6k7x53ggook" path="res://assets/environment/tres/portal.tres" id="3_0554b"]
 [ext_resource type="Texture2D" uid="uid://cth5u6xte7fwo" path="res://assets/environment/shrines/shrine_01.jpg" id="5_dsnap"]
 [ext_resource type="Texture2D" uid="uid://c7a77mknk6a3" path="res://assets/environment/16x16/Dungeon Tile Set.png" id="18_yb11u"]
 [ext_resource type="Script" uid="uid://cobwunaxv7751" path="res://src/nav/interact_gate.gd" id="24_bsssq"]
@@ -180,6 +181,14 @@ position = Vector2(-864, 0)
 scale = Vector2(2.25, 2)
 tile_map_data = PackedByteArray("AAAAAP//BgAAAAAAAAA=")
 tile_set = SubResource("TileSet_w0imt")
+
+[node name="ShrinePortal2" type="AnimatedSprite2D" parent="Environments" unique_id=1816198538]
+modulate = Color(0, 11.594878, 11.594878, 1)
+position = Vector2(2, -149)
+scale = Vector2(1.2, 1.2)
+sprite_frames = ExtResource("3_0554b")
+autoplay = "default"
+frame_progress = 0.30989665
 
 [node name="Greybox" type="TileMapLayer" parent="Environments" unique_id=1011593265]
 visible = false
