@@ -74,7 +74,7 @@ const INVINCIBILITY_TIME := 0.5
 const STAMINA_REGEN_RATE := 40.0
 const STAMINA_REGEN_DELAY := 0.4
 
-
+var transition_jump_started := false
 var is_slowed := false
 var slow_multiplier := 0.5
 
@@ -324,11 +324,35 @@ func lock_input() -> void:
 	velocity = Vector2.ZERO
 
 func _process_transition_jump(delta: float) -> void:
-	# Input remains locked during the room-entry jump.
-	# We only handle the physical launch and gravity here.
+	# The first physics frame is always the launch frame.
+	# is_on_floor() may still be true from before the room transition,
+	# so do not use it to cancel the jump until after we have moved once.
+	if not transition_jump_started:
+		transition_jump_started = true
 
+		if velocity.y > 0.0:
+			velocity.y += GRAVITY_FALL * delta
+		else:
+			velocity.y += GRAVITY_RISE * delta
+
+		if velocity.x != 0.0:
+			_set_facing(signf(velocity.x))
+
+		move_and_slide()
+
+		animated_sprite_2d.visible = true
+
+		if velocity.y < 0.0:
+			animated_sprite_2d.play("fall")
+		else:
+			animated_sprite_2d.play("falling")
+
+		return
+
+	# From this point onward, floor detection is valid.
 	if is_on_floor():
 		transition_movement = false
+		transition_jump_started = false
 		velocity = Vector2.ZERO
 
 		animated_sprite_2d.visible = true
@@ -339,21 +363,18 @@ func _process_transition_jump(delta: float) -> void:
 		return
 
 	# Apply normal player gravity.
-
 	if velocity.y > 0.0:
 		velocity.y += GRAVITY_FALL * delta
 	else:
 		velocity.y += GRAVITY_RISE * delta
 
 	# Face the direction of travel.
-
 	if velocity.x != 0.0:
 		_set_facing(signf(velocity.x))
 
 	move_and_slide()
 
 	# Transition animation.
-
 	animated_sprite_2d.visible = true
 
 	if velocity.y < 0.0:

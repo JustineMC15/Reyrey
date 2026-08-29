@@ -582,7 +582,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"run",
-"speed": 5.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -599,7 +599,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_6fdwt")
 }],
-"loop": 0,
+"loop": 2,
 "name": &"wall",
 "speed": 5.0
 }]
@@ -619,6 +619,9 @@ size = Vector2(158, 185.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0qr2r"]
 size = Vector2(176.25, 156.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vlew8"]
+size = Vector2(264.25, 197)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pf23h"]
 atlas = ExtResource("9_jj045")
@@ -2133,7 +2136,9 @@ animations = [{
 }]
 
 [node name="Player" type="CharacterBody2D" unique_id=647682657]
+collision_layer = 2
 script = ExtResource("1_jtmj1")
+footstep_sounds = Array[AudioStream]([ExtResource("20_74hqa")])
 
 [node name="PlayerUI" type="CanvasLayer" parent="." unique_id=965729947]
 
@@ -2228,7 +2233,7 @@ count_duration = 0.45
 position = Vector2(0, -101)
 scale = Vector2(0.47, 0.47)
 sprite_frames = SubResource("SpriteFrames_vlew8")
-animation = &"slam"
+animation = &"run"
 autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=443081615]
@@ -2236,8 +2241,8 @@ position = Vector2(0, -48)
 shape = SubResource("CapsuleShape2D_vlew8")
 
 [node name="DetectionArea" type="Area2D" parent="." unique_id=1961571215 groups=["player_detection"]]
-collision_layer = 255
-collision_mask = 255
+collision_layer = 64
+collision_mask = 32
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=905059994]
 position = Vector2(0, -65)
@@ -2255,8 +2260,8 @@ position_smoothing_speed = 3.0
 [node name="Collision" type="Node2D" parent="." unique_id=485835211]
 
 [node name="DashHitbox" type="Area2D" parent="Collision" unique_id=1143569417]
-collision_layer = 3
-collision_mask = 3
+collision_layer = 8
+collision_mask = 4
 monitoring = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/DashHitbox" unique_id=1992806282]
@@ -2264,19 +2269,26 @@ position = Vector2(55, -65)
 shape = SubResource("RectangleShape2D_3yow4")
 
 [node name="SwordHitbox" type="Area2D" parent="Collision" unique_id=961514375]
-collision_layer = 3
-collision_mask = 3
+collision_layer = 8
+collision_mask = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/SwordHitbox" unique_id=1229042169]
 position = Vector2(69, -86.25)
 shape = SubResource("RectangleShape2D_2q4xc")
 
 [node name="DoubleJumpHitbox" type="Area2D" parent="Collision" unique_id=874541815]
-collision_layer = 3
-collision_mask = 3
+collision_layer = 8
+collision_mask = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/DoubleJumpHitbox" unique_id=1947333485]
 shape = SubResource("RectangleShape2D_0qr2r")
+
+[node name="SlamHitbox" type="Area2D" parent="Collision" unique_id=1318119573]
+collision_layer = 8
+collision_mask = 260
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/SlamHitbox" unique_id=365831322]
+shape = SubResource("RectangleShape2D_vlew8")
 
 [node name="AnimationEffects" type="Node2D" parent="." unique_id=1283324219]
 
@@ -2316,6 +2328,7 @@ sprite_frames = SubResource("SpriteFrames_uf853")
 animation = &"wind"
 
 [node name="SlashEffect" type="AnimatedSprite2D" parent="AnimationEffects" unique_id=1617367758]
+visible = false
 position = Vector2(0, -71)
 scale = Vector2(4.4316406, 4.904094)
 sprite_frames = SubResource("SpriteFrames_y8imw")
@@ -2341,8 +2354,11 @@ animation = &"jumpwind"
 
 [node name="SlamImpactEffect" type="AnimatedSprite2D" parent="AnimationEffects" unique_id=1952516930]
 visible = false
+scale = Vector2(1.1, 1.1)
 sprite_frames = ExtResource("18_a4vah")
 animation = &"impact"
+frame = 26
+frame_progress = 1.0
 
 [node name="Sound" type="Node2D" parent="." unique_id=105425159]
 

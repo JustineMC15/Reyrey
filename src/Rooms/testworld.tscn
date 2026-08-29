@@ -17,8 +17,8 @@ bg_color = Color(0.6, 0.6, 0.6, 0)
 [node name="Testworld" type="Node2D" unique_id=1781368860]
 
 [node name="Dash" type="Area2D" parent="." unique_id=1077273479 node_paths=PackedStringArray("prompt_panel")]
-collision_layer = 4
-collision_mask = 5
+collision_layer = 32
+collision_mask = 64
 script = ExtResource("3_c8igj")
 ability_id = "dash"
 prompt_panel = NodePath("ScripturePanel")
@@ -63,8 +63,8 @@ metadata/_edit_use_anchors_ = true
 
 [node name="DoubleJump" type="Area2D" parent="." unique_id=913034584 node_paths=PackedStringArray("prompt_panel")]
 position = Vector2(447, -18)
-collision_layer = 4
-collision_mask = 5
+collision_layer = 32
+collision_mask = 64
 script = ExtResource("3_c8igj")
 ability_id = "double_jump"
 prompt_panel = NodePath("ScripturePanel")
@@ -109,8 +109,8 @@ metadata/_edit_use_anchors_ = true
 
 [node name="GroundSlam" type="Area2D" parent="." unique_id=1787065704 node_paths=PackedStringArray("prompt_panel")]
 position = Vector2(967, -25)
-collision_layer = 4
-collision_mask = 5
+collision_layer = 32
+collision_mask = 64
 script = ExtResource("3_c8igj")
 ability_id = "ground_slam"
 prompt_panel = NodePath("ScripturePanel")
@@ -155,8 +155,8 @@ metadata/_edit_use_anchors_ = true
 
 [node name="Glide" type="Area2D" parent="." unique_id=741500134 node_paths=PackedStringArray("prompt_panel")]
 position = Vector2(1549, -12)
-collision_layer = 4
-collision_mask = 5
+collision_layer = 32
+collision_mask = 64
 script = ExtResource("3_c8igj")
 ability_id = "glide"
 prompt_panel = NodePath("ScripturePanel")
@@ -201,8 +201,8 @@ metadata/_edit_use_anchors_ = true
 
 [node name="WallJump" type="Area2D" parent="." unique_id=1951107650 node_paths=PackedStringArray("prompt_panel")]
 position = Vector2(2020, -15)
-collision_layer = 4
-collision_mask = 5
+collision_layer = 32
+collision_mask = 64
 script = ExtResource("3_c8igj")
 ability_id = "wall_cling"
 prompt_panel = NodePath("ScripturePanel")
@@ -247,8 +247,8 @@ metadata/_edit_use_anchors_ = true
 
 [node name="DashChain" type="Area2D" parent="." unique_id=666938940 node_paths=PackedStringArray("prompt_panel")]
 position = Vector2(2478, -12)
-collision_layer = 4
-collision_mask = 5
+collision_layer = 32
+collision_mask = 64
 script = ExtResource("3_c8igj")
 ability_id = "dash_chain"
 prompt_panel = NodePath("ScripturePanel")
@@ -293,8 +293,8 @@ metadata/_edit_use_anchors_ = true
 
 [node name="Recall" type="Area2D" parent="." unique_id=2078594736 node_paths=PackedStringArray("prompt_panel")]
 position = Vector2(2907, -17)
-collision_layer = 4
-collision_mask = 5
+collision_layer = 32
+collision_mask = 64
 script = ExtResource("3_c8igj")
 ability_id = "recall"
 prompt_panel = NodePath("ScripturePanel")
@@ -339,8 +339,8 @@ metadata/_edit_use_anchors_ = true
 
 [node name="LedgeGrab" type="Area2D" parent="." unique_id=1948609648 node_paths=PackedStringArray("prompt_panel")]
 position = Vector2(3219, -9)
-collision_layer = 4
-collision_mask = 5
+collision_layer = 32
+collision_mask = 64
 script = ExtResource("3_c8igj")
 ability_id = "ledge_grab"
 prompt_panel = NodePath("ScripturePanel")

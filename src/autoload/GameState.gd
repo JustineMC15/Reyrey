@@ -57,12 +57,10 @@ var shrine_count: int = 0
 var claimed_shrines: Dictionary = {}
 
 const SHRINE_MP_GAINS: Array[int] = [
-	3, 3, 3, 2, 2,
-	2, 2, 2, 2, 1,
-	1, 1, 1, 1, 1,
-	1, 1
+	4, 3, 3, 3, 3, 2, 2, 2, 2,
+	2, 2, 2, 2, 1, 1, 1, 1
 ]
-
+# LCM of 2 and 3, Maxes out to 42 mana with base 6 included
 
 # --- Armor ---
 
@@ -1331,10 +1329,8 @@ func _jump_into_room(player: Node) -> void:
 	if player.has_method("lock_input"):
 		player.lock_input()
 
-	# Allow physical movement while keeping player input locked.
+	player.transition_jump_started = false
 	player.transition_movement = true
-
-	# Launch the player using the destination gate's configured velocity.
 	player.velocity = pending_jump_velocity
 
 	var safety_timer := 3.0

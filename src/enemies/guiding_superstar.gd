@@ -954,13 +954,23 @@ func _ground_slam_impact() -> void:
 		if not is_instance_valid(body):
 			continue
 
-		if body.is_in_group("enemies"):
+		# Damage the player
+		if body.is_in_group("player"):
 			if body.has_method("take_damage"):
 				body.call(
 					"take_damage",
 					GROUND_SLAM_DAMAGE
 				)
 
+		# Damage enemies
+		elif body.is_in_group("enemies"):
+			if body.has_method("take_damage"):
+				body.call(
+					"take_damage",
+					GROUND_SLAM_DAMAGE
+				)
+
+		# Trigger slam-reactive objects
 		elif body is CollisionObject2D:
 			var collision_object: CollisionObject2D = (
 				body as CollisionObject2D

@@ -34,7 +34,8 @@ radius = 43.011627
 radius = 700.0
 
 [node name="StarShower" type="CharacterBody2D" unique_id=1450154183 groups=["enemies"]]
-collision_layer = 2
+collision_layer = 4
+collision_mask = 0
 script = ExtResource("1_b5pxj")
 bullet_scene = ExtResource("2_dtla0")
 
@@ -56,8 +57,8 @@ shape = SubResource("CircleShape2D_dtla0")
 wait_time = 0.5
 
 [node name="DetectionArea" type="Area2D" parent="." unique_id=1146299464]
-collision_layer = 4
-collision_mask = 5
+collision_layer = 128
+collision_mask = 64
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=106121224]
 shape = SubResource("CircleShape2D_b5pxj")

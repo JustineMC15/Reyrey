@@ -205,8 +205,8 @@ stream = ExtResource("5_5wfwj")
 pitch_scale = 6.0
 
 [node name="DetectionArea" type="Area2D" parent="." unique_id=1092101945]
-collision_layer = 4
-collision_mask = 5
+collision_layer = 128
+collision_mask = 64
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=1889453506]
 shape = SubResource("CircleShape2D_vesgx")
@@ -226,8 +226,8 @@ frame = 10
 frame_progress = 1.0
 
 [node name="Area2D" type="Area2D" parent="PopAttack" unique_id=1404848281]
-collision_layer = 4
-collision_mask = 5
+collision_layer = 16
+collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PopAttack/Area2D" unique_id=1080490963]
 shape = SubResource("CircleShape2D_bekt7")

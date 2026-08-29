@@ -121,6 +121,20 @@ use_potion={
 ]
 }
 
+[layer_names]
+
+2d_physics/layer_1="Terrain"
+2d_physics/layer_2="Player Body"
+2d_physics/layer_3="Attackable"
+2d_physics/layer_4="Player Attack"
+3d_navigation/layer_4="Player Attack"
+2d_physics/layer_5="Hurts Player"
+2d_physics/layer_6="Interactable"
+2d_physics/layer_7="Player Interact Range"
+2d_physics/layer_8="Enemy Aggro"
+2d_physics/layer_9="Slam Surface"
+2d_physics/layer_10="Arena Hazard Terrain"
+
 [physics]
 
 3d/physics_engine="Jolt Physics"

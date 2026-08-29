@@ -97,15 +97,31 @@ func die() -> void:
 	$ShootTimer.stop()
 	$DetectionArea.set_deferred("monitoring", false)
 
+	# Hide normal enemy sprite
 	animated_sprite_2d.visible = false
+
+	# Disable collision
 	$CollisionShape2D.set_deferred("disabled", true)
 
+	# Disable contact damage
+	var killzone := get_node_or_null("Killzone")
+	if killzone:
+		killzone.set_deferred("monitoring", false)
+		var kz_collision = killzone.get_node_or_null("CollisionShape2D")
+		if kz_collision:
+			kz_collision.set_deferred("disabled", true)
+
+	# Stop movement
 	velocity = Vector2.ZERO
 
+	# Play death effect
 	death_effect.visible = true
 	death_effect.play("death")
+
+	# Play death sound
 	death_sound.play()
 
+	# Wait for death animation
 	await death_effect.animation_finished
 
 	death_effect.visible = false
@@ -133,6 +149,14 @@ func respawn() -> void:
 
 	$CollisionShape2D.set_deferred("disabled", false)
 	$DetectionArea.set_deferred("monitoring", true)
+
+	# Re-enable contact damage
+	var killzone := get_node_or_null("Killzone")
+	if killzone:
+		killzone.set_deferred("monitoring", true)
+		var kz_collision = killzone.get_node_or_null("CollisionShape2D")
+		if kz_collision:
+			kz_collision.set_deferred("disabled", false)
 
 	set_physics_process(true)
 

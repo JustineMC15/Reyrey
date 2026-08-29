@@ -11,8 +11,8 @@ size = Vector2(144, 101.5)
 bg_color = Color(0.6, 0.6, 0.6, 0)
 
 [node name="StarlightShard" type="Area2D" unique_id=1458006390]
-collision_layer = 4
-collision_mask = 5
+collision_layer = 32
+collision_mask = 64
 script = ExtResource("1_p5lqo")
 shrine_id = "shrine01"
 abandonment_text = "I abandon here my hunger"

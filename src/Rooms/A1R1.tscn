@@ -15,6 +15,9 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4pxbc"]
 size = Vector2(208.5, 206)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5okd8"]
+size = Vector2(208.5, 206)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_aik4s"]
 size = Vector2(210, 139)
 
@@ -76,8 +79,8 @@ tile_set = ExtResource("2_rgrlh")
 
 [node name="PreviousRoom" type="Area2D" parent="." unique_id=1198934175]
 position = Vector2(21, 0)
-collision_layer = 4
-collision_mask = 5
+collision_layer = 32
+collision_mask = 64
 script = ExtResource("4_5jn5y")
 gate_id = "A1R1"
 target_scene_path = "uid://d0rflcm7v2noo"
@@ -88,6 +91,22 @@ entry_direction = Vector2(-1, 0)
 position = Vector2(-125, -105)
 shape = SubResource("RectangleShape2D_4pxbc")
 
+[node name="WellSpawn" type="Area2D" parent="." unique_id=795376365]
+position = Vector2(6522, -256)
+collision_layer = 32
+collision_mask = 64
+script = ExtResource("4_5jn5y")
+gate_id = "A1R1-well"
+target_scene_path = "uid://cyb1dbd4tb7vt"
+target_gate_id = "A1R1-well"
+entry_type = 1
+entry_direction = Vector2(-1, 0)
+jump_velocity = Vector2(100, -500)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WellSpawn" unique_id=1731117399]
+position = Vector2(-292, 347)
+shape = SubResource("RectangleShape2D_5okd8")
+
 [node name="Checkpoint" parent="." unique_id=1046499597 instance=ExtResource("7_5jn5y")]
 position = Vector2(1377, -114)
 checkpoint_id = "checkpoint_02"
@@ -95,6 +114,8 @@ room_name = "A1R1"
 
 [node name="AreaTitle" parent="." unique_id=1421239322 instance=ExtResource("8_ux0nc")]
 position = Vector2(2655, -269)
+collision_layer = 32
+collision_mask = 64
 
 [node name="Enemies" type="Node2D" parent="." unique_id=1234582300]
 
@@ -113,8 +134,8 @@ movement_speed = 4.0
 
 [node name="ToRoom2" type="Area2D" parent="." unique_id=1026889895]
 position = Vector2(13279, 958)
-collision_layer = 4
-collision_mask = 5
+collision_layer = 32
+collision_mask = 64
 script = ExtResource("4_5jn5y")
 gate_id = "A1R2-next"
 target_scene_path = "uid://cckwh4qx4gprc"
@@ -127,6 +148,7 @@ shape = SubResource("RectangleShape2D_aik4s")
 
 [node name="CrumblingFloor" type="StaticBody2D" parent="." unique_id=1160466854]
 position = Vector2(7616, -1151)
+collision_mask = 0
 script = ExtResource("10_ula0g")
 metadata/_custom_type_script = "uid://b0stelnyyhd5f"
 
@@ -135,6 +157,8 @@ position = Vector2(-269, -51)
 shape = SubResource("RectangleShape2D_vlew8")
 
 [node name="DetectionArea" type="Area2D" parent="CrumblingFloor" unique_id=823840014]
+collision_layer = 32
+collision_mask = 64
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CrumblingFloor/DetectionArea" unique_id=982629204]
 position = Vector2(-269, -98)
@@ -145,6 +169,7 @@ tile_set = ExtResource("11_whoin")
 
 [node name="CrumblingFloor2" type="StaticBody2D" parent="." unique_id=2099218616]
 position = Vector2(7616, -1151)
+collision_mask = 0
 script = ExtResource("10_ula0g")
 metadata/_custom_type_script = "uid://b0stelnyyhd5f"
 
@@ -153,6 +178,8 @@ position = Vector2(-269, -51)
 shape = SubResource("RectangleShape2D_b1in2")
 
 [node name="DetectionArea" type="Area2D" parent="CrumblingFloor2" unique_id=577213648]
+collision_layer = 32
+collision_mask = 64
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CrumblingFloor2/DetectionArea" unique_id=542332722]
 position = Vector2(-269, -98)
@@ -163,6 +190,7 @@ tile_set = ExtResource("11_whoin")
 
 [node name="CrumblingFloor3" type="StaticBody2D" parent="." unique_id=1639478853]
 position = Vector2(7616, -1151)
+collision_mask = 0
 script = ExtResource("10_ula0g")
 metadata/_custom_type_script = "uid://b0stelnyyhd5f"
 
@@ -172,6 +200,8 @@ shape = SubResource("RectangleShape2D_whoin")
 
 [node name="DetectionArea" type="Area2D" parent="CrumblingFloor3" unique_id=514350224]
 rotation = -0.0003644049
+collision_layer = 32
+collision_mask = 64
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CrumblingFloor3/DetectionArea" unique_id=1641569824]
 position = Vector2(-269, -98)

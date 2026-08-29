@@ -137,8 +137,8 @@ tile_set = ExtResource("5_qswqo")
 [node name="Tutorial" type="Node2D" parent="." unique_id=1498885342]
 
 [node name="JumpTutorialTrigger" type="Area2D" parent="Tutorial" unique_id=2110227955]
-collision_layer = 4
-collision_mask = 5
+collision_layer = 0
+collision_mask = 64
 script = ExtResource("10_g5tod")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Tutorial/JumpTutorialTrigger" unique_id=62684244]
@@ -147,8 +147,8 @@ shape = SubResource("RectangleShape2D_5newe")
 
 [node name="AttackTutorialTrigger" type="Area2D" parent="Tutorial" unique_id=1091539762]
 position = Vector2(1079.5, -100)
-collision_layer = 4
-collision_mask = 5
+collision_layer = 0
+collision_mask = 64
 script = ExtResource("11_ii342")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Tutorial/AttackTutorialTrigger" unique_id=1755280831]
@@ -158,6 +158,8 @@ shape = SubResource("RectangleShape2D_vlew8")
 [node name="TutorialUI" parent="Tutorial" unique_id=973987082 instance=ExtResource("12_g3n8u")]
 
 [node name="Hazard" type="Area2D" parent="." unique_id=317113100 groups=["killzone"]]
+collision_layer = 16
+collision_mask = 2
 script = ExtResource("13_myd0v")
 
 [node name="Marker2D" type="Marker2D" parent="Hazard" unique_id=858373515]
@@ -219,8 +221,8 @@ position = Vector2(7648.5, -367.57813)
 shape = SubResource("RectangleShape2D_oc2b2")
 
 [node name="DoubleJump" type="Area2D" parent="." unique_id=1053454201 node_paths=PackedStringArray("prompt_panel")]
-collision_layer = 4
-collision_mask = 5
+collision_layer = 32
+collision_mask = 64
 script = ExtResource("14_cp3ag")
 ability_id = "double_jump"
 prompt_panel = NodePath("ScripturePanel")
@@ -267,8 +269,8 @@ metadata/_edit_use_anchors_ = true
 
 [node name="Transition" type="Area2D" parent="." unique_id=349824578]
 position = Vector2(12129, 1)
-collision_layer = 4
-collision_mask = 5
+collision_layer = 32
+collision_mask = 64
 script = ExtResource("17_bmo0p")
 gate_id = "A0R1"
 target_scene_path = "uid://d0rflcm7v2noo"
@@ -279,10 +281,9 @@ position = Vector2(133, -103)
 shape = SubResource("RectangleShape2D_ncv88")
 
 [node name="ShrineDoor" parent="." unique_id=1013456222 instance=ExtResource("18_xg3fd")]
-position = Vector2(5445, -1241)
-collision_layer = 4
-collision_mask = 5
+position = Vector2(5442, -1152)
 target_scene_path = "res://src/rooms/S1.tscn"
+entry_type = 2
 
 [node name="Checkpoint" parent="." unique_id=1046499597 instance=ExtResource("19_1eudn")]
 position = Vector2(6335, -49)

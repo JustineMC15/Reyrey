@@ -191,13 +191,14 @@ tile_map_data = PackedByteArray("AADm//b/FAACAAEAAADn//b/FAACAAEAAADo//b/FAACAAE
 tile_set = SubResource("TileSet_jhdin")
 
 [node name="Area2D" type="Area2D" parent="." unique_id=1059789757 node_paths=PackedStringArray("prompt_panel")]
-collision_layer = 4
-collision_mask = 5
+collision_layer = 32
+collision_mask = 64
 script = ExtResource("24_bsssq")
 gate_id = "shrine_entry"
 target_scene_path = "res://src/rooms/A0R1.tscn"
 target_gate_id = "shrine_door"
 prompt_panel = NodePath("CollisionShape2D/CanvasLayer/PromptPanel")
+entry_type = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1009093768]
 position = Vector2(2, -141)

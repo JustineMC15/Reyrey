@@ -221,7 +221,8 @@ animations = [{
 }]
 
 [node name="StarBullet" type="Area2D" unique_id=1772006064]
-collision_layer = 2
+collision_layer = 16
+collision_mask = 3
 script = ExtResource("1_3vp6y")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1712870173]

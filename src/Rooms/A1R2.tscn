@@ -124,8 +124,8 @@ position = Vector2(-2745, 446)
 
 [node name="Transition" type="Area2D" parent="." unique_id=1198934175]
 position = Vector2(101, -157)
-collision_layer = 4
-collision_mask = 5
+collision_layer = 32
+collision_mask = 64
 script = ExtResource("4_wqck0")
 gate_id = "A1R2"
 target_scene_path = "uid://cyb1dbd4tb7vt"
@@ -140,6 +140,7 @@ shape = SubResource("RectangleShape2D_4pxbc")
 
 [node name="CrumblingFloor" type="StaticBody2D" parent="." unique_id=229030352]
 position = Vector2(4672, 1409)
+collision_mask = 0
 script = ExtResource("8_ax6yn")
 respawn_delay = 5.0
 metadata/_custom_type_script = "uid://b0stelnyyhd5f"
@@ -150,8 +151,8 @@ shape = SubResource("RectangleShape2D_em2d7")
 
 [node name="DetectionArea" type="Area2D" parent="CrumblingFloor" unique_id=1173818713]
 position = Vector2(-82, 20)
-collision_layer = 4
-collision_mask = 5
+collision_layer = 32
+collision_mask = 64
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CrumblingFloor/DetectionArea" unique_id=1441286132]
 position = Vector2(-269, -98)
@@ -163,6 +164,7 @@ tile_set = ExtResource("9_s2ba6")
 
 [node name="CrumblingFloor2" type="StaticBody2D" parent="." unique_id=1853121855]
 position = Vector2(2240, 321)
+collision_mask = 0
 script = ExtResource("8_ax6yn")
 respawn_delay = 5.0
 metadata/_custom_type_script = "uid://b0stelnyyhd5f"
@@ -173,8 +175,8 @@ shape = SubResource("RectangleShape2D_fywof")
 
 [node name="DetectionArea" type="Area2D" parent="CrumblingFloor2" unique_id=1764194159]
 position = Vector2(560, 86)
-collision_layer = 4
-collision_mask = 5
+collision_layer = 32
+collision_mask = 64
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CrumblingFloor2/DetectionArea" unique_id=1778410513]
 position = Vector2(-269, -98)
@@ -186,6 +188,7 @@ tile_set = ExtResource("9_s2ba6")
 
 [node name="LockedDoor" type="StaticBody2D" parent="." unique_id=2067549375 node_paths=PackedStringArray("prompt_panel")]
 position = Vector2(-4292, 706)
+collision_mask = 0
 script = ExtResource("11_s2ba6")
 door_id = "farm_door"
 required_key_id = "farm_key"
@@ -197,6 +200,8 @@ position = Vector2(-182.5, -125)
 shape = SubResource("RectangleShape2D_vlew8")
 
 [node name="DetectionArea" type="Area2D" parent="LockedDoor" unique_id=1737380884]
+collision_layer = 32
+collision_mask = 64
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="LockedDoor/DetectionArea" unique_id=933588210]
 position = Vector2(-180, -126)
@@ -239,6 +244,7 @@ metadata/_edit_use_anchors_ = true
 
 [node name="LockedDoorDungeon" type="StaticBody2D" parent="." unique_id=1326625684 node_paths=PackedStringArray("prompt_panel")]
 position = Vector2(-907, 1589)
+collision_mask = 0
 script = ExtResource("11_s2ba6")
 door_id = "dungeon_door"
 required_key_id = "farm_key"
@@ -250,6 +256,8 @@ position = Vector2(-182.5, -125)
 shape = SubResource("RectangleShape2D_g134m")
 
 [node name="DetectionArea" type="Area2D" parent="LockedDoorDungeon" unique_id=258213552]
+collision_layer = 32
+collision_mask = 64
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="LockedDoorDungeon/DetectionArea" unique_id=885427030]
 position = Vector2(-180, -126)
@@ -292,8 +300,8 @@ metadata/_edit_use_anchors_ = true
 
 [node name="FarmKey" type="Area2D" parent="." unique_id=1255929889 node_paths=PackedStringArray("prompt_panel")]
 position = Vector2(5541, 716)
-collision_layer = 4
-collision_mask = 5
+collision_layer = 32
+collision_mask = 64
 script = ExtResource("14_0tfho")
 key_id = "farm_key"
 prompt_panel = NodePath("PromptPanel")
@@ -343,6 +351,8 @@ metadata/_edit_use_anchors_ = true
 
 [node name="ToRoom3" type="Area2D" parent="." unique_id=75048801]
 position = Vector2(-5424, 705)
+collision_layer = 32
+collision_mask = 64
 script = ExtResource("4_wqck0")
 gate_id = "A1R2-farm"
 target_scene_path = "uid://dbbwgt7ljhe3b"

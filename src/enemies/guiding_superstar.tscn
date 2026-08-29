@@ -438,8 +438,8 @@ radius = 100.0
 size = Vector2(519, 252)
 
 [node name="GuidingSuperstar" type="CharacterBody2D" unique_id=222027155 groups=["enemies"]]
-collision_layer = 14
-collision_mask = 128
+collision_layer = 20
+collision_mask = 512
 motion_mode = 1
 script = ExtResource("1_6yovt")
 
@@ -464,7 +464,8 @@ shape = SubResource("CircleShape2D_3c02t")
 wait_time = 0.5
 
 [node name="GroundSlamHitbox" type="Area2D" parent="." unique_id=134867730]
-collision_mask = 129
+collision_layer = 16
+collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GroundSlamHitbox" unique_id=637224952]
 position = Vector2(0, 30)

@@ -30,7 +30,7 @@ var can_attack := true
 var is_attacking := false
 
 var start_position: Vector2
-var movement_time: float = 0.0
+var movement_time: float = 0.0	
 var is_dying := false
 
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
