@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://de43303jf72ob"]
+
+[ext_resource type="Script" uid="uid://b81y3fwrccyjo" path="res://src/nav/potion_slot.gd" id="1_miiyl"]
+[ext_resource type="Texture2D" uid="uid://12a8eaf84p8a" path="res://assets/environment/interactables/pickup.png" id="2_v5qyi"]
+[ext_resource type="FontFile" uid="uid://dlinrvj4uxc6w" path="res://assets/fonts/Seshat.otf" id="3_i8vf8"]
+[ext_resource type="AudioStream" uid="uid://b8n3s48kfbc5y" path="res://assets/sound/sfx/clink1.wav" id="4_i8vf8"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8ucxl"]
+size = Vector2(161, 121)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h120q"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[node name="PotionSlot" type="Area2D" unique_id=936763216 node_paths=PackedStringArray("prompt_panel")]
+script = ExtResource("1_miiyl")
+prompt_panel = NodePath("PromptPanel")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=414448677]
+position = Vector2(-8, 33)
+texture = ExtResource("2_v5qyi")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=890289301]
+position = Vector2(-5.5, 21.5)
+shape = SubResource("RectangleShape2D_8ucxl")
+
+[node name="PromptPanel" type="Panel" parent="." unique_id=267397102]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -9559.0
+offset_top = 168.0
+offset_right = -9559.0
+offset_bottom = 168.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_h120q")
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="PromptPanel" unique_id=1755095396]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 9446.0
+offset_top = -292.0
+offset_right = 9662.0
+offset_bottom = -192.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 1
+theme_override_fonts/font = ExtResource("3_i8vf8")
+theme_override_font_sizes/font_size = 40
+text = "TAKE
+E"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="PickupSound" type="AudioStreamPlayer2D" parent="." unique_id=396839604]
+stream = ExtResource("4_i8vf8")
+pitch_scale = 8.0

@@ -68,12 +68,15 @@ size = Vector2(63, 202)
 
 [node name="Area0-Room2" type="Node2D" unique_id=1602108746]
 
-[node name="CameraBounds" type="Node2D" parent="." unique_id=1140724593]
+[node name="CameraBounds" type="Control" parent="." unique_id=1052727784]
+layout_mode = 3
+anchors_preset = 0
+offset_top = -3095.0
+offset_right = 5242.0
+offset_bottom = 133.0
+mouse_filter = 2
 script = ExtResource("1_85ldk")
-limit_left = 0
-limit_top = -4000
-limit_right = 5250
-limit_bottom = 250
+metadata/_custom_type_script = "uid://8vr0pfeydo4w"
 
 [node name="Environments" type="Node2D" parent="." unique_id=1833260432]
 
@@ -159,21 +162,23 @@ position = Vector2(415, -784)
 position = Vector2(1164, -1336)
 movement_type = 1
 
-[node name="Door" type="StaticBody2D" parent="." unique_id=1785065965]
+[node name="Interactables" type="Node2D" parent="." unique_id=159603893]
+
+[node name="Door" type="StaticBody2D" parent="Interactables" unique_id=1785065965]
 position = Vector2(3157, -264)
 collision_mask = 0
 script = ExtResource("8_osguf")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Door" unique_id=1768425974]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interactables/Door" unique_id=1768425974]
 position = Vector2(61.5, -80.5)
 shape = SubResource("RectangleShape2D_vlew8")
 
-[node name="Sprite2D" type="Sprite2D" parent="Door" unique_id=1184276025]
+[node name="Sprite2D" type="Sprite2D" parent="Interactables/Door" unique_id=1184276025]
 position = Vector2(63, -86.99999)
 scale = Vector2(1, 1.4999999)
 texture = ExtResource("9_iywou")
 
-[node name="Switch" type="StaticBody2D" parent="." unique_id=935980782 node_paths=PackedStringArray("target_door")]
+[node name="Switch" type="StaticBody2D" parent="Interactables" unique_id=935980782 node_paths=PackedStringArray("target_door")]
 position = Vector2(3650, -326)
 collision_layer = 260
 collision_mask = 8
@@ -183,17 +188,17 @@ target_door = NodePath("../Door")
 permanent_unlock = true
 open_duration = 0.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Switch" unique_id=889526398]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interactables/Switch" unique_id=889526398]
 position = Vector2(-191, -81)
 shape = SubResource("RectangleShape2D_bekt7")
 
-[node name="Sprite2D" type="Sprite2D" parent="Switch" unique_id=729394097]
+[node name="Sprite2D" type="Sprite2D" parent="Interactables/Switch" unique_id=729394097]
 modulate = Color(0.3614591, 0.19743422, 0.049734697, 1)
 position = Vector2(-191, -79)
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("10_exo67")
 
-[node name="GauntletEntry" type="StaticBody2D" parent="." unique_id=315124820]
+[node name="GauntletEntry" type="StaticBody2D" parent="Interactables" unique_id=315124820]
 position = Vector2(3264, -2424)
 collision_mask = 0
 script = ExtResource("12_peoml")
@@ -201,101 +206,101 @@ stand_time_to_crumble = 0.15
 shake_strength = 3.5
 respawn_delay = 0.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="GauntletEntry" unique_id=720714150]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interactables/GauntletEntry" unique_id=720714150]
 position = Vector2(159.5, 44)
 shape = SubResource("RectangleShape2D_ncv88")
 
-[node name="DetectionArea" type="Area2D" parent="GauntletEntry" unique_id=901867483]
+[node name="DetectionArea" type="Area2D" parent="Interactables/GauntletEntry" unique_id=901867483]
 position = Vector2(-5, -68)
 collision_layer = 0
 collision_mask = 64
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="GauntletEntry/DetectionArea" unique_id=1342423993]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interactables/GauntletEntry/DetectionArea" unique_id=1342423993]
 position = Vector2(166, 75)
 shape = SubResource("RectangleShape2D_8jhjc")
 
-[node name="TileMapLayer" type="TileMapLayer" parent="GauntletEntry" unique_id=1481222084]
+[node name="TileMapLayer" type="TileMapLayer" parent="Interactables/GauntletEntry" unique_id=1481222084]
 tile_map_data = PackedByteArray("AAAAAAAAAAANAAsAAFADAAAAAAANAAsAAFABAAAAAAAPAAoAAGACAAAAAAAPAAYAAGAEAAAAAAANAAwAAGAFAAAAAAAPAAgAAGD//wAAAAAPAAgAAFA=")
 tile_set = ExtResource("14_88xlm")
 
-[node name="Chest2" parent="." unique_id=120361229 instance=ExtResource("8_8ksfu")]
+[node name="Chest2" parent="Interactables" unique_id=120361229 instance=ExtResource("8_8ksfu")]
 position = Vector2(3801, -2430)
 chest_id = "A0R2-C2"
 star_fragment_reward = 40
 chest_tier = 2
 
-[node name="Chest" parent="." unique_id=789862022 instance=ExtResource("8_8ksfu")]
+[node name="Chest" parent="Interactables" unique_id=789862022 instance=ExtResource("8_8ksfu")]
 position = Vector2(2153, -699)
 chest_id = "A0R2-C1"
 
-[node name="HiddenArea" type="StaticBody2D" parent="." unique_id=826018606]
+[node name="HiddenArea" type="StaticBody2D" parent="Interactables" unique_id=826018606]
 position = Vector2(2432, -704)
 collision_mask = 0
 script = ExtResource("14_bqr63")
 secret_id = "room_02-wall1"
 reveal_alpha = 0.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HiddenArea" unique_id=1782889164]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interactables/HiddenArea" unique_id=1782889164]
 position = Vector2(-236.5, -186.5)
 shape = SubResource("RectangleShape2D_3c02t")
 
-[node name="TileMapLayer" type="TileMapLayer" parent="HiddenArea" unique_id=1294071906]
+[node name="TileMapLayer" type="TileMapLayer" parent="Interactables/HiddenArea" unique_id=1294071906]
 tile_map_data = PackedByteArray("AAD1//v/AAAGAA0AAAD1//z/AAAIAAoAABD1//3/AAAIAAsAABD1//7/AAAIAAwAABD1////AAAIAAsAABD1//n/AAAMAAQAAAD1//r/AAAMAAQAAAD2//n/AAAHAA4AAAD2//r/AAAHAAwAAAD2//v/AAAHAAYAAAD2//z/AAAFAAwAAAD2//3/AAAFAAoAAAD2//7/AAAMAAUAAAD2////AAAHAAYAAAD2/wAAAAALAAgAAAD3//n/AAALAAgAAAD3//r/AAAFAAoAAAD3//v/AAAMAAUAAAD3//z/AAAMAAQAAAD3//3/AAAGAAwAAAD3//7/AAALAAgAAAD3////AAAGAAoAAAD3/wAAAAAOAA4AAAD4//n/AAAFAAwAAAD4//r/AAAHAAoAAAD4//v/AAAHAA4AAAD4//z/AAAFAAwAAAD4//3/AAAHAA4AAAD4//7/AAAGAAoAAAD4////AAAMAAgAAAD4/wAAAAALAAgAAAD5//n/AAAMAAUAAAD5//r/AAAMAAQAAAD5//v/AAAHAA4AAAD5//z/AAAHAAwAAAD5//3/AAAFAAsAAAD5//7/AAAGAAsAAAD5////AAAFAAoAAAD5/wAAAAAMAAUAAAD6//n/AAAFAAsAAAD6//r/AAAFAAsAAAD6//v/AAAOAAYAAAD6//z/AAAHAAYAAAD6//3/AAAHAAsAAAD6//7/AAAFAAsAAAD6////AAAOAA4AAAD6/wAAAAAHAA4AAAD7//n/AAAFAAoAAAD7//r/AAAFAAoAAAD7//v/AAAGAAsAAAD7//z/AAAOAAYAAAD7//3/AAAHAAYAAAD7//7/AAAHAA4AAAD7////AAAMAAgAAAD7/wAAAAAMAAUAAAD8//n/AAAMAAQAAAD8//r/AAAFAAwAAAD8//v/AAAKAAgAAAD8//z/AAAHAA4AAAD8//3/AAAHAA0AAAD8//7/AAAKAAgAAAD8////AAAGAAwAAAD8/wAAAAAHAAwAAAD9//n/AAAHAA4AAAD9//r/AAAHAA0AAAD9//v/AAAMAAQAAAD9//z/AAAFAAoAAAD9//3/AAAOAAYAAAD9//7/AAAMAAUAAAD9////AAAOAA4AAAD9/wAAAAAOAAYAAAD+//n/AAAOAA4AAAD+//r/AAAOAA4AAAD+//v/AAAFAAsAAAD+//z/AAAGAAoAAAD+//3/AAAFAAsAAAD+//7/AAAFAAsAAAD+////AAAFAAsAAAD+/wAAAAALAAgAAAD///n/AAAGAAsAAAD///r/AAAGAAoAAAD///v/AAAOAAYAAAD///z/AAAHAA0AAAD///3/AAAMAAgAAAD///7/AAAOAAYAAAD/////AAAFAAwAAAD//wAAAAAGAAsAAAD1/wAAAAAIAAwAABA=")
 tile_set = ExtResource("14_88xlm")
 
-[node name="DetectionArea" type="Area2D" parent="HiddenArea" unique_id=1436079572]
+[node name="DetectionArea" type="Area2D" parent="Interactables/HiddenArea" unique_id=1436079572]
 collision_layer = 0
 collision_mask = 64
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HiddenArea/DetectionArea" unique_id=611188849]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interactables/HiddenArea/DetectionArea" unique_id=611188849]
 position = Vector2(-631.5, -137)
 shape = SubResource("RectangleShape2D_hdxto")
 
-[node name="HiddenArea2" type="StaticBody2D" parent="." unique_id=1874048145]
+[node name="HiddenArea2" type="StaticBody2D" parent="Interactables" unique_id=1874048145]
 position = Vector2(2816, -1600)
 collision_mask = 0
 script = ExtResource("14_bqr63")
 secret_id = "room_02-wall2"
 reveal_alpha = 0.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HiddenArea2" unique_id=926721508]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interactables/HiddenArea2" unique_id=926721508]
 position = Vector2(729, 310)
 shape = SubResource("RectangleShape2D_3c02t")
 
-[node name="TileMapLayer" type="TileMapLayer" parent="HiddenArea2" unique_id=2044184031]
+[node name="TileMapLayer" type="TileMapLayer" parent="Interactables/HiddenArea2" unique_id=2044184031]
 position = Vector2(0, -1)
 tile_map_data = PackedByteArray("AAD///T/AAAFAAwAAAD///X/AAAMAAgAAAD///b/AAAHAAwAAAD///f/AAAHAAYAAAD///j/AAALAAQAAAD///n/AAALAAgAAAD///r/AAAHAAYAAAD///v/AAAGAAwAAAD///z/AAAJAAgAAAD///3/AAAGAAsAAAD///7/AAAGAAwAAAD/////AAAGAAsAAAD//wAAAAAJAAgAAAAAAPT/AAAMAAgAAAAAAPX/AAAHAAwAAAAAAPb/AAAHAAsAAAAAAPf/AAANAAYAAAAAAPj/AAAHAAoAAAAAAPn/AAAGAAwAAAAAAPr/AAAKAAgAAAAAAPv/AAAOAA4AAAAAAPz/AAAFAAoAAAAAAP3/AAAKAAgAAAAAAP7/AAAHAAwAAAAAAP//AAAHAA4AAAAAAAAAAAAHAAwAAAABAPT/AAAHAA0AAAABAPX/AAAFAAoAAAABAPb/AAAHAAYAAAABAPf/AAAOAA4AAAABAPj/AAAFAAsAAAABAPn/AAAFAAoAAAABAPr/AAAFAAsAAAABAPv/AAAGAAwAAAABAPz/AAAHAA4AAAABAP3/AAAHAA4AAAABAP7/AAAJAAgAAAABAP//AAAHAAYAAAABAAAAAAAHAAwAAAACAPT/AAAHAA4AAAACAPX/AAAMAAQAAAACAPb/AAAHAA0AAAACAPf/AAAHAA0AAAACAPj/AAAJAAgAAAACAPn/AAAHAAoAAAACAPr/AAAFAAsAAAACAPv/AAAFAAwAAAACAPz/AAANAAYAAAACAP3/AAAOAA4AAAACAP7/AAAHAA4AAAACAP//AAAGAAwAAAACAAAAAAAMAAQAAAADAPT/AAAOAA4AAAADAPX/AAAMAAQAAAADAPb/AAAGAAoAAAADAPf/AAAGAAsAAAADAPj/AAAGAAsAAAADAPn/AAAHAAwAAAADAPr/AAAGAAoAAAADAPv/AAALAAgAAAADAPz/AAAKAAgAAAADAP3/AAAOAA4AAAADAP7/AAAFAAwAAAADAP//AAANAAYAAAADAAAAAAANAAYAAAAEAPT/AAAHAAsAAAAEAPX/AAAHAAoAAAAEAPb/AAAFAAsAAAAEAPf/AAAMAAgAAAAEAPj/AAAHAAsAAAAEAPn/AAAFAAwAAAAEAPr/AAAGAAoAAAAEAPv/AAAGAAsAAAAEAPz/AAAHAAoAAAAEAP3/AAAKAAgAAAAEAP7/AAAHAAsAAAAEAP//AAAJAAgAAAAEAAAAAAAFAAwAAAAFAPT/AAAJAAgAAAAFAPX/AAAHAAoAAAAFAPb/AAAHAA4AAAAFAPf/AAAHAAwAAAAFAPj/AAAOAA4AAAAFAPn/AAAHAAYAAAAFAPr/AAAGAAwAAAAFAPv/AAALAAQAAAAFAPz/AAAGAAwAAAAFAP3/AAAGAAoAAAAFAP7/AAAFAAsAAAAFAP//AAAFAAwAAAAFAAAAAAAKAAgAAAAGAPT/AAAOAA4AAAAGAPX/AAAJAAgAAAAGAPb/AAAGAAwAAAAGAPf/AAAMAAQAAAAGAPj/AAAOAAYAAAAGAPn/AAAHAAwAAAAGAPr/AAAGAAwAAAAGAPv/AAAHAAsAAAAGAPz/AAAHAAoAAAAGAP3/AAAGAAoAAAAGAP7/AAAGAAoAAAAGAP//AAAGAAoAAAAGAAAAAAAKAAgAAAAHAPT/AAAHAA4AAAAHAPX/AAAHAAsAAAAHAPb/AAAKAAgAAAAHAPf/AAAMAAQAAAAHAPj/AAAMAAQAAAAHAPn/AAAHAAYAAAAHAPr/AAAHAAYAAAAHAPv/AAAHAAoAAAAHAPz/AAAHAAYAAAAHAP3/AAAHAAsAAAAHAP7/AAAGAAoAAAAHAP//AAAFAAwAAAAHAAAAAAAHAA0AAAAIAPT/AAAHAAYAAAAIAPX/AAAGAAsAAAAIAPb/AAANAAYAAAAIAPf/AAALAAQAAAAIAPj/AAAOAAYAAAAIAPn/AAAKAAgAAAAIAPr/AAAFAAoAAAAIAPv/AAAGAAoAAAAIAPz/AAAKAAgAAAAIAP3/AAAMAAQAAAAIAP7/AAAMAAgAAAAIAP//AAALAAgAAAAIAAAAAAAGAAoAAAAJAPT/AAAKAAgAAAAJAPX/AAAHAAsAAAAJAPb/AAALAAQAAAAJAPf/AAAGAAwAAAAJAPj/AAAHAAwAAAAJAPn/AAAOAA4AAAAJAPr/AAALAAgAAAAJAPv/AAAHAAYAAAAJAPz/AAAGAAsAAAAJAP3/AAAHAA4AAAAJAP7/AAAGAAoAAAAJAP//AAAGAAwAAAAJAAAAAAAGAAsAAAAKAPT/AAAFAAsAAAAKAPX/AAAHAAsAAAAKAPb/AAAOAA4AAAAKAPf/AAAFAAsAAAAKAPj/AAAJAAgAAAAKAPn/AAAMAAgAAAAKAPr/AAANAAYAAAAKAPv/AAAJAAgAAAAKAPz/AAAOAAYAAAAKAP3/AAALAAgAAAAKAP7/AAAGAAwAAAAKAP//AAAHAAsAAAAKAAAAAAALAAgAAAALAPT/AAAJAAgAAAALAPX/AAAMAAgAAAALAPb/AAANAAYAAAALAPf/AAAKAAgAAAALAPj/AAAHAA0AAAALAPn/AAALAAgAAAALAPr/AAAFAAwAAAALAPv/AAAOAAYAAAALAPz/AAAGAAoAAAALAP3/AAAHAA4AAAALAP7/AAAHAAsAAAALAP//AAAJAAgAAAALAAAAAAAHAA4AAAAMAPT/AAAOAA4AAAAMAPX/AAAFAAoAAAAMAPb/AAAHAA0AAAAMAPf/AAAHAAYAAAAMAPj/AAAHAA4AAAAMAPn/AAAFAAoAAAAMAPr/AAAFAAsAAAAMAPv/AAAOAA4AAAAMAPz/AAAMAAQAAAAMAP3/AAAHAAoAAAAMAP7/AAAHAAYAAAAMAP//AAAFAAwAAAAMAAAAAAAFAAwAAAANAPT/AAAHAAsAAAANAPX/AAANAAYAAAANAPb/AAAGAAsAAAANAPf/AAAKAAgAAAANAPj/AAAMAAgAAAANAPn/AAAGAAsAAAANAPr/AAAHAAwAAAANAPv/AAAMAAgAAAANAPz/AAAOAA4AAAANAP3/AAALAAQAAAANAP7/AAAHAAwAAAANAP//AAAMAAgAAAANAAAAAAAFAAsAAAAOAPT/AAALAAgAAAAOAPX/AAAFAAoAAAAOAPb/AAAOAAYAAAAOAPf/AAANAAYAAAAOAPj/AAALAAgAAAAOAPn/AAAMAAgAAAAOAPr/AAALAAgAAAAOAPv/AAAHAAsAAAAOAPz/AAAFAAsAAAAOAP3/AAAGAAoAAAAOAP7/AAAHAA4AAAAOAP//AAAGAAwAAAAOAAAAAAAHAAoAAAAPAPT/AAAKAAgAAAAPAPX/AAAHAAwAAAAPAPb/AAAOAA4AAAAPAPf/AAAOAAYAAAAPAPj/AAAMAAgAAAAPAPn/AAAKAAgAAAAPAPr/AAAHAA0AAAAPAPv/AAAOAA4AAAAPAPz/AAAJAAgAAAAPAP3/AAAGAAsAAAAPAP7/AAAMAAQAAAAPAP//AAAHAAoAAAAPAAAAAAAFAAoAAAAQAPT/AAAKAAgAAAAQAPX/AAAOAA4AAAAQAPb/AAAHAA0AAAAQAPf/AAAKAAgAAAAQAPj/AAAHAAwAAAAQAPn/AAAMAAgAAAAQAPr/AAAOAA4AAAAQAPv/AAAGAAoAAAAQAPz/AAANAAYAAAAQAP3/AAAGAAwAAAAQAP7/AAAJAAgAAAAQAP//AAALAAgAAAAQAAAAAAAFAAoAAAARAPT/AAALAAgAAAARAPX/AAAGAAwAAAARAPb/AAAMAAgAAAARAPf/AAAHAAYAAAARAPj/AAAGAAwAAAARAPn/AAAOAA4AAAARAPr/AAAFAAsAAAARAPv/AAAHAAoAAAARAPz/AAAHAAoAAAARAP3/AAAOAA4AAAARAP7/AAAHAAsAAAARAP//AAAHAA4AAAARAAAAAAAHAAoAAAASAPT/AAAGAAsAAAASAPX/AAAHAAoAAAASAPb/AAAFAAwAAAASAPf/AAAGAAwAAAASAPj/AAALAAQAAAASAPn/AAAGAAwAAAASAPr/AAAFAAwAAAASAPv/AAAGAAoAAAASAPz/AAAHAAYAAAASAP3/AAAFAAoAAAASAP7/AAAHAA0AAAASAP//AAAMAAQAAAASAAAAAAAJAAgAAAATAPT/AAAMAAgAAAATAPX/AAAGAAwAAAATAPb/AAAHAAwAAAATAPf/AAAHAAYAAAATAPj/AAAHAAYAAAATAPn/AAAFAAwAAAATAPr/AAANAAYAAAATAPv/AAAJAAgAAAATAPz/AAAOAAYAAAATAP3/AAAKAAgAAAATAP7/AAAMAAQAAAATAP//AAAHAA0AAAATAAAAAAAFAAwAAAA=")
 tile_set = ExtResource("14_88xlm")
 
-[node name="DetectionArea" type="Area2D" parent="HiddenArea2" unique_id=38106584]
+[node name="DetectionArea" type="Area2D" parent="Interactables/HiddenArea2" unique_id=38106584]
 collision_layer = 0
 collision_mask = 64
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HiddenArea2/DetectionArea" unique_id=1039585389]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interactables/HiddenArea2/DetectionArea" unique_id=1039585389]
 position = Vector2(621.25, -697.5)
 shape = SubResource("RectangleShape2D_gklib")
 
-[node name="HazardZone" type="Area2D" parent="." unique_id=335470505]
+[node name="HazardZone" type="Area2D" parent="Interactables" unique_id=335470505]
 position = Vector2(2116, -2504)
 collision_layer = 16
 collision_mask = 2
 script = ExtResource("16_8nbx2")
 metadata/_custom_type_script = "uid://twmqytbf8u0p"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HazardZone" unique_id=459439298]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interactables/HazardZone" unique_id=459439298]
 position = Vector2(92, 118)
 shape = SubResource("RectangleShape2D_qarp1")
 
-[node name="Marker2D" type="Marker2D" parent="HazardZone" unique_id=1621807746]
+[node name="Marker2D" type="Marker2D" parent="Interactables/HazardZone" unique_id=1621807746]
 position = Vector2(-218, 71)
 
-[node name="Marker2D2" type="Marker2D" parent="HazardZone" unique_id=1982299930]
+[node name="Marker2D2" type="Marker2D" parent="Interactables/HazardZone" unique_id=1982299930]
 position = Vector2(94, 72)
 
-[node name="Marker2D3" type="Marker2D" parent="HazardZone" unique_id=1056133507]
+[node name="Marker2D3" type="Marker2D" parent="Interactables/HazardZone" unique_id=1056133507]
 position = Vector2(559, 72)
 
-[node name="EnemyGauntlet" type="Node2D" parent="." unique_id=2143053258 node_paths=PackedStringArray("trigger_area", "target_door", "waves")]
+[node name="EnemyGauntlet" type="Node2D" parent="Interactables" unique_id=2143053258 node_paths=PackedStringArray("trigger_area", "target_door", "waves")]
 position = Vector2(3458, -1860)
 script = ExtResource("16_qqdsg")
 gauntlet_id = "fields"
@@ -306,9 +311,9 @@ battle_music = ExtResource("17_qqdsg")
 SPAWN_DURATION = 0.5
 metadata/_custom_type_script = "uid://b8hftrdaurelt"
 
-[node name="Wave1" type="Node2D" parent="EnemyGauntlet" unique_id=524114146]
+[node name="Wave1" type="Node2D" parent="Interactables/EnemyGauntlet" unique_id=524114146]
 
-[node name="GuidingStar" parent="EnemyGauntlet/Wave1" unique_id=2030639282 instance=ExtResource("3_tjidu")]
+[node name="GuidingStar" parent="Interactables/EnemyGauntlet/Wave1" unique_id=2030639282 instance=ExtResource("3_tjidu")]
 position = Vector2(68, 191)
 star_fragment_reward = 0
 spin_speed = 3.0
@@ -316,34 +321,34 @@ movement_type = 1
 movement_distance = 200.0
 movement_speed = 3.0
 
-[node name="Wave2" type="Node2D" parent="EnemyGauntlet" unique_id=290974666]
+[node name="Wave2" type="Node2D" parent="Interactables/EnemyGauntlet" unique_id=290974666]
 
-[node name="GuidingStar2" parent="EnemyGauntlet/Wave2" unique_id=622280390 instance=ExtResource("3_tjidu")]
+[node name="GuidingStar2" parent="Interactables/EnemyGauntlet/Wave2" unique_id=622280390 instance=ExtResource("3_tjidu")]
 position = Vector2(-278, 13)
 star_fragment_reward = 0
 movement_distance = 150.0
 
-[node name="GuidingStar3" parent="EnemyGauntlet/Wave2" unique_id=1736255402 instance=ExtResource("3_tjidu")]
+[node name="GuidingStar3" parent="Interactables/EnemyGauntlet/Wave2" unique_id=1736255402 instance=ExtResource("3_tjidu")]
 position = Vector2(224, 3)
 star_fragment_reward = 0
 movement_distance = 150.0
 movement_speed = 3.0
 
-[node name="Wave3" type="Node2D" parent="EnemyGauntlet" unique_id=1416283650]
+[node name="Wave3" type="Node2D" parent="Interactables/EnemyGauntlet" unique_id=1416283650]
 
-[node name="GuidingStar4" parent="EnemyGauntlet/Wave3" unique_id=1998997245 instance=ExtResource("3_tjidu")]
+[node name="GuidingStar4" parent="Interactables/EnemyGauntlet/Wave3" unique_id=1998997245 instance=ExtResource("3_tjidu")]
 position = Vector2(-1, -59)
 star_fragment_reward = 0
 movement_distance = 200.0
 
-[node name="GuidingStar5" parent="EnemyGauntlet/Wave3" unique_id=1125533009 instance=ExtResource("3_tjidu")]
+[node name="GuidingStar5" parent="Interactables/EnemyGauntlet/Wave3" unique_id=1125533009 instance=ExtResource("3_tjidu")]
 position = Vector2(294, 196)
 star_fragment_reward = 0
 spin_speed = 3.0
 movement_distance = 200.0
 movement_speed = 3.0
 
-[node name="GuidingStar6" parent="EnemyGauntlet/Wave3" unique_id=563031540 instance=ExtResource("3_tjidu")]
+[node name="GuidingStar6" parent="Interactables/EnemyGauntlet/Wave3" unique_id=563031540 instance=ExtResource("3_tjidu")]
 position = Vector2(-362, 197)
 star_fragment_reward = 0
 spin_speed = 3.0
@@ -351,15 +356,15 @@ movement_type = 1
 movement_distance = 200.0
 movement_speed = 3.0
 
-[node name="Area2D" type="Area2D" parent="EnemyGauntlet" unique_id=1098599207]
+[node name="Area2D" type="Area2D" parent="Interactables/EnemyGauntlet" unique_id=1098599207]
 collision_layer = 32
 collision_mask = 64
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyGauntlet/Area2D" unique_id=961228350]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interactables/EnemyGauntlet/Area2D" unique_id=961228350]
 position = Vector2(-32.5, 221.5)
 shape = SubResource("RectangleShape2D_8nbx2")
 
-[node name="BreakableWall" type="StaticBody2D" parent="." unique_id=1889092128]
+[node name="BreakableWall" type="StaticBody2D" parent="Interactables" unique_id=1889092128]
 position = Vector2(4096, -2624)
 collision_layer = 261
 collision_mask = 0
@@ -367,25 +372,25 @@ script = ExtResource("19_gklib")
 wall_id = "room_02-gauntletwall"
 metadata/_custom_type_script = "uid://ubj82f4sgt82"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="BreakableWall" unique_id=2093138931]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interactables/BreakableWall" unique_id=2093138931]
 position = Vector2(-223, 32.25)
 shape = SubResource("RectangleShape2D_nca3n")
 
-[node name="TileMapLayer" type="TileMapLayer" parent="BreakableWall" unique_id=1979147888]
+[node name="TileMapLayer" type="TileMapLayer" parent="Interactables/BreakableWall" unique_id=1979147888]
 tile_map_data = PackedByteArray("AAD//wAAAAANAAoAAAD//wEAAAANAAsAAAD//wIAAAANAAwAAAA=")
 tile_set = ExtResource("14_88xlm")
 
-[node name="GauntletDoor" type="StaticBody2D" parent="." unique_id=1707237868]
+[node name="GauntletDoor" type="StaticBody2D" parent="Interactables" unique_id=1707237868]
 position = Vector2(4096, -1792)
 collision_mask = 0
 script = ExtResource("8_osguf")
 reveal_alpha = 0.0
 metadata/_custom_type_script = "uid://5vbw01sd268j"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="GauntletDoor" unique_id=1183476173]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interactables/GauntletDoor" unique_id=1183476173]
 position = Vector2(-32.5, 91)
 shape = SubResource("RectangleShape2D_qqdsg")
 
-[node name="TileMapLayer" type="TileMapLayer" parent="GauntletDoor" unique_id=1916754332]
+[node name="TileMapLayer" type="TileMapLayer" parent="Interactables/GauntletDoor" unique_id=1916754332]
 tile_map_data = PackedByteArray("AAD//wAAAAAHAA0AAAD//wEAAAAHAA0AAAD//wIAAAAHAA0AAAAAAO//AAAHAAwAAAAAAPD/AAAFAAoAAAAAAPH/AAAFAAsAAAAAAPL/AAAFAAwAAAAAAPP/AAAHAAoAAAAAAPT/AAAHAAsAAAAAAPX/AAAGAAwAAAAAAPb/AAAHAAsAAAAAAPf/AAAFAAwAAAAAAPj/AAAHAAoAAAAAAPn/AAAFAAoAAAAAAPr/AAAFAAoAAAAAAPv/AAAHAAwAAAAAAPz/AAAGAAwAAAAAAP3/AAAFAAsAAAAAAP7/AAAHAAsAAAAAAP//AAAHAAoAAAAAAAAAAAAFAAwAAAAAAAEAAAAHAAsAAAAAAAIAAAAGAAsAAAAAAAMAAAAHAAoAAAAAAAQAAAAFAAwAAAAAAAUAAAAFAAoAAAAAAAYAAAAFAAwAAAAAAAcAAAAGAAsAAAAAAAgAAAAGAAsAAAAAAAkAAAAHAAoAAAAAAAoAAAAGAAoAAAAAAAsAAAAFAAoAAAAAAAwAAAAFAAsAAAAAAA0AAAAHAAsAAAAAAA4AAAAGAAsAAAAAAA8AAAAGAAsAAAAAABAAAAAHAAoAAAAAABEAAAAHAAoAAAAAABIAAAAGAAoAAAAAABMAAAAHAAoAAAABAO//AAAHAAwAAAABAPD/AAAHAAsAAAABAPH/AAAHAAsAAAABAPL/AAAFAAoAAAABAPP/AAAGAAsAAAABAPT/AAAGAAsAAAABAPX/AAAHAAwAAAABAPb/AAAHAAoAAAABAPf/AAAHAAwAAAABAPj/AAAGAAwAAAABAPn/AAAHAAoAAAABAPr/AAAHAAwAAAABAPv/AAAGAAsAAAABAPz/AAAGAAoAAAABAP3/AAAGAAwAAAABAP7/AAAHAAsAAAABAP//AAAFAAoAAAABAAAAAAAGAAwAAAABAAEAAAAFAAsAAAABAAIAAAAFAAoAAAABAAMAAAAFAAsAAAABAAQAAAAGAAoAAAABAAUAAAAGAAwAAAABAAYAAAAHAAsAAAABAAcAAAAGAAoAAAABAAgAAAAFAAwAAAABAAkAAAAFAAwAAAABAAoAAAAHAAwAAAABAAsAAAAHAAoAAAABAAwAAAAGAAsAAAABAA0AAAAFAAoAAAABAA4AAAAGAAoAAAABAA8AAAAHAAsAAAABABAAAAAHAAoAAAABABEAAAAHAAwAAAABABIAAAAGAAsAAAABABMAAAAHAAsAAAACAO//AAAGAAwAAAACAPD/AAAHAAwAAAACAPH/AAAHAAwAAAACAPL/AAAGAAsAAAACAPP/AAAGAAwAAAACAPT/AAAHAAsAAAACAPX/AAAFAAwAAAACAPb/AAAGAAwAAAACAPf/AAAHAAsAAAACAPj/AAAGAAsAAAACAPn/AAAHAAwAAAACAPr/AAAFAAsAAAACAPv/AAAHAAwAAAACAPz/AAAHAAsAAAACAP3/AAAFAAwAAAACAP7/AAAGAAsAAAACAP//AAAGAAoAAAACAAAAAAAGAAwAAAACAAEAAAAFAAsAAAACAAIAAAAHAAsAAAACAAMAAAAHAAoAAAACAAQAAAAGAAoAAAACAAUAAAAGAAwAAAACAAYAAAAFAAwAAAACAAcAAAAHAAoAAAACAAgAAAAGAAoAAAACAAkAAAAFAAwAAAACAAoAAAAGAAsAAAACAAsAAAAHAAoAAAACAAwAAAAGAAoAAAACAA0AAAAHAAoAAAACAA4AAAAFAAoAAAACAA8AAAAGAAwAAAACABAAAAAFAAwAAAACABEAAAAHAAwAAAACABIAAAAFAAsAAAACABMAAAAFAAsAAAADAO//AAAHAAsAAAADAPD/AAAFAAwAAAADAPH/AAAHAAsAAAADAPL/AAAHAAoAAAADAPP/AAAFAAsAAAADAPT/AAAFAAoAAAADAPX/AAAHAAwAAAADAPb/AAAGAAsAAAADAPf/AAAGAAsAAAADAPj/AAAFAAsAAAADAPn/AAAHAAsAAAADAPr/AAAHAAwAAAADAPv/AAAHAAsAAAADAPz/AAAFAAwAAAADAP3/AAAGAAsAAAADAP7/AAAGAAwAAAADAP//AAAGAAsAAAADAAAAAAAHAAoAAAADAAEAAAAGAAoAAAADAAIAAAAGAAwAAAADAAMAAAAFAAwAAAADAAQAAAAGAAwAAAADAAUAAAAHAAwAAAADAAYAAAAFAAwAAAADAAcAAAAHAAsAAAADAAgAAAAGAAwAAAADAAkAAAAFAAoAAAADAAoAAAAHAAsAAAADAAsAAAAFAAsAAAADAAwAAAAHAAsAAAADAA0AAAAGAAoAAAADAA4AAAAGAAoAAAADAA8AAAAGAAsAAAADABAAAAAFAAsAAAADABEAAAAHAAsAAAADABIAAAAGAAsAAAADABMAAAAFAAwAAAAEAO//AAAHAAsAAAAEAPD/AAAHAAsAAAAEAPH/AAAGAAwAAAAEAPL/AAAHAAsAAAAEAPP/AAAHAAwAAAAEAPT/AAAGAAsAAAAEAPX/AAAGAAoAAAAEAPb/AAAHAAoAAAAEAPf/AAAHAAwAAAAEAPj/AAAHAAsAAAAEAPn/AAAGAAsAAAAEAPr/AAAFAAsAAAAEAPv/AAAGAAsAAAAEAPz/AAAGAAwAAAAEAP3/AAAHAAwAAAAEAP7/AAAHAAwAAAAEAP//AAAHAAsAAAAEAAAAAAAHAAoAAAAEAAEAAAAHAAoAAAAEAAIAAAAHAAwAAAAEAAMAAAAGAAsAAAAEAAQAAAAFAAsAAAAEAAUAAAAGAAsAAAAEAAYAAAAHAAoAAAAEAAcAAAAGAAwAAAAEAAgAAAAHAAsAAAAEAAkAAAAHAAwAAAAEAAoAAAAGAAoAAAAEAAsAAAAGAAoAAAAEAAwAAAAFAAwAAAAEAA0AAAAGAAsAAAAEAA4AAAAFAAoAAAAEAA8AAAAFAAoAAAAEABAAAAAFAAoAAAAEABEAAAAFAAsAAAAEABIAAAAFAAoAAAAEABMAAAAGAAwAAAAFAO//AAAGAAoAAAAFAPD/AAAHAAwAAAAFAPH/AAAGAAsAAAAFAPL/AAAHAAsAAAAFAPP/AAAFAAoAAAAFAPT/AAAGAAwAAAAFAPX/AAAGAAsAAAAFAPb/AAAGAAwAAAAFAPf/AAAFAAwAAAAFAPj/AAAHAAwAAAAFAPn/AAAFAAoAAAAFAPr/AAAHAAwAAAAFAPv/AAAFAAwAAAAFAPz/AAAGAAsAAAAFAP3/AAAFAAsAAAAFAP7/AAAHAAoAAAAFAP//AAAHAAoAAAAFAAAAAAAGAAoAAAAFAAEAAAAGAAoAAAAFAAIAAAAHAAoAAAAFAAMAAAAGAAwAAAAFAAQAAAAHAAsAAAAFAAUAAAAGAAsAAAAFAAYAAAAGAAoAAAAFAAcAAAAGAAoAAAAFAAgAAAAGAAsAAAAFAAkAAAAGAAsAAAAFAAoAAAAHAAoAAAAFAAsAAAAFAAsAAAAFAAwAAAAFAAsAAAAFAA0AAAAHAAoAAAAFAA4AAAAGAAsAAAAFAA8AAAAGAAsAAAAFABAAAAAFAAsAAAAFABEAAAAFAAwAAAAFABIAAAAHAAoAAAAFABMAAAAHAAwAAAAGAO//AAAGAAwAAAAGAPD/AAAFAAsAAAAGAPH/AAAHAAwAAAAGAPL/AAAGAAoAAAAGAPP/AAAGAAwAAAAGAPT/AAAFAAoAAAAGAPX/AAAGAAsAAAAGAPb/AAAHAAsAAAAGAPf/AAAHAAsAAAAGAPj/AAAHAAwAAAAGAPn/AAAGAAwAAAAGAPr/AAAGAAwAAAAGAPv/AAAGAAoAAAAGAPz/AAAFAAsAAAAGAP3/AAAHAAwAAAAGAP7/AAAFAAwAAAAGAP//AAAFAAsAAAAGAAAAAAAHAAwAAAAGAAEAAAAFAAoAAAAGAAIAAAAFAAsAAAAGAAMAAAAFAAsAAAAGAAQAAAAFAAoAAAAGAAUAAAAFAAwAAAAGAAYAAAAFAAsAAAAGAAcAAAAHAAwAAAAGAAgAAAAGAAwAAAAGAAkAAAAFAAwAAAAGAAoAAAAGAAoAAAAGAAsAAAAHAAsAAAAGAAwAAAAFAAwAAAAGAA0AAAAFAAwAAAAGAA4AAAAHAAsAAAAGAA8AAAAGAAsAAAAGABAAAAAHAAwAAAAGABEAAAAFAAwAAAAGABIAAAAFAAwAAAAGABMAAAAFAAsAAAAHAO//AAAFAAsAAAAHAPD/AAAGAAoAAAAHAPH/AAAGAAsAAAAHAPL/AAAGAAwAAAAHAPP/AAAHAAsAAAAHAPT/AAAHAAoAAAAHAPX/AAAGAAoAAAAHAPb/AAAGAAwAAAAHAPf/AAAFAAwAAAAHAPj/AAAGAAwAAAAHAPn/AAAFAAwAAAAHAPr/AAAFAAwAAAAHAPv/AAAHAAoAAAAHAPz/AAAGAAwAAAAHAP3/AAAFAAwAAAAHAP7/AAAFAAoAAAAHAP//AAAGAAoAAAAHAAAAAAAHAAwAAAAHAAEAAAAGAAoAAAAHAAIAAAAHAA0AAAAHAAMAAAAHAA0AAAAHAAQAAAAHAA0AAAAHAAUAAAAHAA0AAAAHAAYAAAAHAA0AAAAHAAcAAAAHAA0AAAAHAAgAAAAHAA0AAAAHAAkAAAAHAA0AAAAHAAoAAAAHAA0AAAAHAAsAAAAHAA0AAAAHAAwAAAAHAA0AAAAHAA0AAAAHAA0AAAAHAA4AAAAHAA0AAAAHAA8AAAAHAA0AAAAHABAAAAAGAAwAAAAHABEAAAAGAAsAAAAHABIAAAAHAAoAAAAHABMAAAAHAAoAAAD///P/AAAEAAoAAAD///T/AAAEAAsAAAD///X/AAAEAAwAAAD/////AAAHAA0AAAD//wMAAAAHAA0AAAD//wQAAAAHAA0AAAD//wUAAAAHAA0AAAD//wYAAAAHAA0AAAD//wcAAAAHAA0AAAD//wgAAAAHAA0AAAD//wkAAAAHAA0AAAD//woAAAAHAA0AAAD+/woAAAAHAA0AAAD+/wsAAAAHAA0AAAD+/wwAAAAHAA0AAAD+/w0AAAAHAA0AAAD+/w4AAAAHAA0AAAD+/w8AAAAHAA0AAAD//xMAAAAHAA0AAAD//xIAAAAHAA0AAAD//xEAAAAHAA0AAAD//xAAAAAHAA0AAAD//w8AAAAHAA0AAAD//w4AAAAHAA0AAAD+/wkAAAAHAA0AAAD+/wgAAAAHAA0AAAD//wwAAAAHAA0AAAD//w0AAAAHAA0AAAD//wsAAAAHAA0AAAAIABIAAAAHAA0AAAAIABEAAAAHAA0AAAAIABAAAAAHAA0AAAAIAA8AAAAHAA0AAAAIAP7/AAAHAA0AAAAIAP//AAAHAA0AAAAIAAAAAAAHAA0AAAAIAAEAAAAHAA0AAAAIAAIAAAAHAA0AAAAIAAMAAAAHAA0AAAAIAAQAAAAHAA0AAAAIAAUAAAAHAA0AAAAIAAYAAAAHAA0AAAAIAAcAAAAHAA0AAAAIAAgAAAAHAA0AAAAIAAkAAAAHAA0AAAAIAAoAAAAHAA0AAAAIAAsAAAAHAA0AAAAIAAwAAAAHAA0AAAAIAA0AAAAHAA0AAAAIAA4AAAAHAA0AAAD///H/AAAGAAwAAAD///L/AAAGAA0AAAD///b/AAAKAAYAAAA=")
 tile_set = ExtResource("14_88xlm")

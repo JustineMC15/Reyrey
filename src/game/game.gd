@@ -268,6 +268,8 @@ func position_player_at_checkpoint(checkpoint_id: String) -> void:
 	)
 
 
+var current_room_camera_bounds: CameraBounds = null
+
 func _apply_camera_bounds(room: Node) -> void:
 	var camera := player.get_node_or_null("Camera2D") as Camera2D
 
@@ -276,18 +278,38 @@ func _apply_camera_bounds(room: Node) -> void:
 		return
 
 	var bounds := room.get_node_or_null("CameraBounds") as CameraBounds
+	current_room_camera_bounds = bounds
 
 	if bounds == null:
 		camera.limit_enabled = false
 		return
 
+	var limits: Rect2i = bounds.get_limits()
+
 	camera.limit_enabled = true
+	camera.limit_left = limits.position.x
+	camera.limit_top = limits.position.y
+	camera.limit_right = limits.end.x
+	camera.limit_bottom = limits.end.y
 
-	camera.limit_left = bounds.limit_left
-	camera.limit_top = bounds.limit_top
-	camera.limit_right = bounds.limit_right
-	camera.limit_bottom = bounds.limit_bottom
-
-	# Make sure this is the camera currently controlling the viewport.
 	camera.enabled = true
 	camera.make_current()
+
+
+func restore_room_camera_bounds() -> void:
+	var camera := player.get_node_or_null("Camera2D") as Camera2D
+
+	if camera == null:
+		return
+
+	if current_room_camera_bounds == null:
+		camera.limit_enabled = false
+		return
+
+	var limits: Rect2i = current_room_camera_bounds.get_limits()
+
+	camera.limit_enabled = true
+	camera.limit_left = limits.position.x
+	camera.limit_top = limits.position.y
+	camera.limit_right = limits.end.x
+	camera.limit_bottom = limits.end.y

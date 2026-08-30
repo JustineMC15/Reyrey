@@ -1,0 +1,74 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://f8uguhcce77w"]
+
+[ext_resource type="Texture2D" uid="uid://dka3rf7gsier0" path="res://assets/characters/player/slash.png" id="1_yxd37"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a4vah"]
+atlas = ExtResource("1_yxd37")
+region = Rect2(0, 0, 64, 47)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vwi60"]
+atlas = ExtResource("1_yxd37")
+region = Rect2(64, 0, 64, 47)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o04tx"]
+atlas = ExtResource("1_yxd37")
+region = Rect2(128, 0, 64, 47)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j2873"]
+atlas = ExtResource("1_yxd37")
+region = Rect2(0, 47, 64, 47)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dpt0q"]
+atlas = ExtResource("1_yxd37")
+region = Rect2(64, 47, 64, 47)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wcxbk"]
+atlas = ExtResource("1_yxd37")
+region = Rect2(128, 47, 64, 47)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p6grl"]
+atlas = ExtResource("1_yxd37")
+region = Rect2(0, 94, 64, 47)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e7e1q"]
+atlas = ExtResource("1_yxd37")
+region = Rect2(64, 94, 64, 47)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xmpm3"]
+atlas = ExtResource("1_yxd37")
+region = Rect2(128, 94, 64, 47)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a4vah")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vwi60")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o04tx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j2873")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dpt0q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wcxbk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p6grl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e7e1q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xmpm3")
+}],
+"loop": 0,
+"name": &"slash",
+"speed": 24.0
+}]

@@ -144,12 +144,6 @@ size = Vector2(255.99658, 26)
 
 [node name="Area1-Room1" type="Node2D" unique_id=1602108746]
 
-[node name="CameraBounds" type="Node2D" parent="." unique_id=1140724593]
-script = ExtResource("1_hie06")
-limit_left = 0
-limit_right = 18050
-limit_bottom = 950
-
 [node name="Environments" type="Node2D" parent="." unique_id=1833260432]
 
 [node name="Parallax2D2" type="Parallax2D" parent="Environments" unique_id=279744974]
@@ -508,3 +502,13 @@ position = Vector2(3707, -1701)
 gate_id = "A1R1-shrine"
 target_gate_id = "shrine02"
 entry_type = 2
+
+[node name="CameraBounds" type="Control" parent="." unique_id=10876559]
+layout_mode = 3
+anchors_preset = 0
+offset_top = -2250.0
+offset_right = 18123.0
+offset_bottom = 948.0
+mouse_filter = 2
+script = ExtResource("1_hie06")
+metadata/_custom_type_script = "uid://8vr0pfeydo4w"

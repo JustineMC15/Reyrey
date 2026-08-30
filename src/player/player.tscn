@@ -13,15 +13,18 @@
 [ext_resource type="Texture2D" uid="uid://ghmcxyguk81d" path="res://assets/particles/VFX Free Pack/Effect_Explosion2/60fps/Spritesheets/Effect_Explosion2_1_355x365.png" id="9_jj045"]
 [ext_resource type="Texture2D" uid="uid://cr36hkh6tfafb" path="res://assets/particles/Fire_Circles/fire_circles_50x50px.png" id="10_7wf8o"]
 [ext_resource type="Texture2D" uid="uid://d15ikiah2ovr6" path="res://assets/particles/Holy VFX/Holy VFX 02.png" id="11_afsxn"]
+[ext_resource type="Texture2D" uid="uid://bp1ij8fts1tbt" path="res://assets/characters/player/pogo.png" id="11_j2873"]
 [ext_resource type="Texture2D" uid="uid://cwijr37w5o5jr" path="res://assets/particles/ApyrYoun - Visual Effects v01/wave slash 01.png" id="12_b1ckw"]
+[ext_resource type="Texture2D" uid="uid://dve1kbqaim0rn" path="res://assets/characters/player/sprint.png" id="12_vwi60"]
+[ext_resource type="Texture2D" uid="uid://g6ouha5s31m1" path="res://assets/characters/player/upslash.png" id="14_dpt0q"]
 [ext_resource type="AudioStream" uid="uid://bf0pdsaqe0bbn" path="res://assets/sound/sfx/sword_sfx.wav" id="14_imkep"]
-[ext_resource type="Texture2D" uid="uid://dka3rf7gsier0" path="res://assets/characters/player/slash.png" id="14_k60ra"]
 [ext_resource type="AudioStream" uid="uid://d6gan3ldw81i" path="res://assets/sound/sfx/thud2.wav" id="15_bngr8"]
 [ext_resource type="AudioStream" uid="uid://c5dready3pc12" path="res://assets/sound/sfx/audiomass-output.mp3" id="16_ct55r"]
 [ext_resource type="AudioStream" uid="uid://bjmk088kx5b43" path="res://assets/sound/sfx/Magic Smite.wav" id="17_hkhu1"]
 [ext_resource type="AudioStream" uid="uid://lv1x0oxqxece" path="res://assets/sound/player_movement_samples/30_Jump_03.wav" id="18_2njrj"]
 [ext_resource type="SpriteFrames" uid="uid://cd282wj8g3f3i" path="res://src/enemies/impact.tres" id="18_a4vah"]
 [ext_resource type="AudioStream" uid="uid://cyu4xbuh48gsv" path="res://assets/sound/sfx/flame.ogg" id="19_f0ff4"]
+[ext_resource type="SpriteFrames" uid="uid://f8uguhcce77w" path="res://assets/characters/player/slash.tres" id="19_j2873"]
 [ext_resource type="AudioStream" uid="uid://bpmfg3tpjk4jw" path="res://assets/sound/player_movement_samples/03_Step_grass_03.wav" id="20_74hqa"]
 [ext_resource type="Texture2D" uid="uid://tgo4pm5ll8be" path="res://assets/particles/VFX Free Pack/Effect_BloodImpact/60fps/Spritesheets/Effect_BloodImpact_1_60x63.png" id="21_pbthl"]
 [ext_resource type="Texture2D" uid="uid://bwpducg7vqtep" path="res://assets/particles/ApyrYoun - Visual Effects v01/impact 01.png" id="22_jhq84"]
@@ -272,6 +275,26 @@ region = Rect2(0, 0, 512, 512)
 atlas = ExtResource("8_bngr8")
 region = Rect2(512, 0, 512, 512)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_f0c71"]
+atlas = ExtResource("11_j2873")
+region = Rect2(0, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fpqwn"]
+atlas = ExtResource("11_j2873")
+region = Rect2(512, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8iif5"]
+atlas = ExtResource("11_j2873")
+region = Rect2(1024, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kpcs5"]
+atlas = ExtResource("11_j2873")
+region = Rect2(1536, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_axsi3"]
+atlas = ExtResource("11_j2873")
+region = Rect2(2048, 0, 512, 512)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_f0ff4"]
 atlas = ExtResource("9_ct55r")
 region = Rect2(0, 0, 512, 512)
@@ -299,6 +322,50 @@ region = Rect2(2560, 0, 512, 512)
 [sub_resource type="AtlasTexture" id="AtlasTexture_cssau"]
 atlas = ExtResource("5_b1ckw")
 region = Rect2(4096, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h0enb"]
+atlas = ExtResource("12_vwi60")
+region = Rect2(0, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_phdu6"]
+atlas = ExtResource("12_vwi60")
+region = Rect2(512, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4ptlo"]
+atlas = ExtResource("12_vwi60")
+region = Rect2(1024, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_evlgt"]
+atlas = ExtResource("12_vwi60")
+region = Rect2(1536, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gsylq"]
+atlas = ExtResource("12_vwi60")
+region = Rect2(2048, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_utg71"]
+atlas = ExtResource("12_vwi60")
+region = Rect2(2560, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rhq4p"]
+atlas = ExtResource("14_dpt0q")
+region = Rect2(0, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bgxyk"]
+atlas = ExtResource("14_dpt0q")
+region = Rect2(512, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0iufa"]
+atlas = ExtResource("14_dpt0q")
+region = Rect2(1024, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u3ern"]
+atlas = ExtResource("14_dpt0q")
+region = Rect2(1536, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vhlnr"]
+atlas = ExtResource("14_dpt0q")
+region = Rect2(2048, 0, 512, 512)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_vlew8"]
 animations = [{
@@ -562,6 +629,26 @@ animations = [{
 "speed": 5.0
 }, {
 "frames": [{
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_f0c71")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_fpqwn")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_8iif5")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_kpcs5")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_axsi3")
+}],
+"loop": 0,
+"name": &"pogo",
+"speed": 24.0
+}, {
+"frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_f0ff4")
 }, {
@@ -594,6 +681,49 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_h0enb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_phdu6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4ptlo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_evlgt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gsylq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_utg71")
+}],
+"loop": 1,
+"name": &"sprint",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_rhq4p")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_bgxyk")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_0iufa")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_u3ern")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_vhlnr")
+}],
+"loop": 0,
+"name": &"upslash",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_rhqye")
 }, {
 "duration": 1.0,
@@ -622,6 +752,12 @@ size = Vector2(176.25, 156.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vlew8"]
 size = Vector2(264.25, 197)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_j2873"]
+size = Vector2(145, 239.75)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dpt0q"]
+size = Vector2(120, 240.75)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pf23h"]
 atlas = ExtResource("9_jj045")
@@ -1642,77 +1778,6 @@ animations = [{
 "speed": 30.0
 }]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_a4vah"]
-atlas = ExtResource("14_k60ra")
-region = Rect2(0, 0, 64, 47)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_vwi60"]
-atlas = ExtResource("14_k60ra")
-region = Rect2(64, 0, 64, 47)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_o04tx"]
-atlas = ExtResource("14_k60ra")
-region = Rect2(128, 0, 64, 47)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_j2873"]
-atlas = ExtResource("14_k60ra")
-region = Rect2(0, 47, 64, 47)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_dpt0q"]
-atlas = ExtResource("14_k60ra")
-region = Rect2(64, 47, 64, 47)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_wcxbk"]
-atlas = ExtResource("14_k60ra")
-region = Rect2(128, 47, 64, 47)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_p6grl"]
-atlas = ExtResource("14_k60ra")
-region = Rect2(0, 94, 64, 47)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_e7e1q"]
-atlas = ExtResource("14_k60ra")
-region = Rect2(64, 94, 64, 47)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_xmpm3"]
-atlas = ExtResource("14_k60ra")
-region = Rect2(128, 94, 64, 47)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_y8imw"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_a4vah")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_vwi60")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_o04tx")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_j2873")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_dpt0q")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_wcxbk")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_p6grl")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_e7e1q")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_xmpm3")
-}],
-"loop": 0,
-"name": &"slash",
-"speed": 24.0
-}]
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_36p4m"]
 atlas = ExtResource("21_pbthl")
 region = Rect2(0, 0, 60, 63)
@@ -2233,8 +2298,10 @@ count_duration = 0.45
 position = Vector2(0, -101)
 scale = Vector2(0.47, 0.47)
 sprite_frames = SubResource("SpriteFrames_vlew8")
-animation = &"run"
+animation = &"upslash"
 autoplay = "idle"
+frame = 4
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=443081615]
 position = Vector2(0, -48)
@@ -2296,6 +2363,22 @@ collision_mask = 260
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/SlamHitbox" unique_id=365831322]
 shape = SubResource("RectangleShape2D_vlew8")
 
+[node name="Pogo" type="Area2D" parent="Collision" unique_id=71167603]
+collision_layer = 8
+collision_mask = 4
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Collision/Pogo" unique_id=903299424]
+position = Vector2(30.5, -21.125)
+shape = SubResource("RectangleShape2D_j2873")
+
+[node name="UpSlash" type="Area2D" parent="Collision" unique_id=625210239]
+collision_layer = 8
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/UpSlash" unique_id=1066314198]
+position = Vector2(35, -121.625)
+shape = SubResource("RectangleShape2D_dpt0q")
+
 [node name="AnimationEffects" type="Node2D" parent="." unique_id=1283324219]
 
 [node name="DoubleJumpFire1" type="AnimatedSprite2D" parent="AnimationEffects" unique_id=765679450]
@@ -2337,8 +2420,28 @@ animation = &"wind"
 visible = false
 position = Vector2(0, -71)
 scale = Vector2(4.4316406, 4.904094)
-sprite_frames = SubResource("SpriteFrames_y8imw")
+sprite_frames = ExtResource("19_j2873")
 animation = &"slash"
+
+[node name="UpSlash" type="AnimatedSprite2D" parent="AnimationEffects" unique_id=1561007233]
+visible = false
+position = Vector2(40, -120)
+rotation = -1.5707964
+scale = Vector2(4.4316406, 4.904094)
+sprite_frames = ExtResource("19_j2873")
+animation = &"slash"
+frame = 8
+frame_progress = 1.0
+
+[node name="Pogo" type="AnimatedSprite2D" parent="AnimationEffects" unique_id=1123817059]
+visible = false
+position = Vector2(0, -20)
+rotation = 1.5707964
+scale = Vector2(4.4316406, 4.904094)
+sprite_frames = ExtResource("19_j2873")
+animation = &"slash"
+frame = 8
+frame_progress = 1.0
 
 [node name="DeathAnimation" type="AnimatedSprite2D" parent="AnimationEffects" unique_id=1701833025]
 visible = false
