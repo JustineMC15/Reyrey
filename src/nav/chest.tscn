@@ -275,11 +275,12 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Chest" type="Area2D" unique_id=120361229 node_paths=PackedStringArray("prompt_panel")]
+[node name="Chest" type="Area2D" unique_id=120361229 node_paths=PackedStringArray("prompt_panel", "opening_sound")]
 collision_layer = 32
 collision_mask = 64
 script = ExtResource("1_7cujf")
 prompt_panel = NodePath("Panel")
+opening_sound = NodePath("AudioStreamPlayer")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=262223436]
 position = Vector2(0, -136.28125)
@@ -316,5 +317,7 @@ E"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=78586569]
+[node name="AudioStreamPlayer" type="AudioStreamPlayer2D" parent="." unique_id=684843863]
 stream = ExtResource("4_w48m4")
+volume_db = -5.0
+pitch_scale = 2.0

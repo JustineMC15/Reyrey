@@ -27,15 +27,20 @@ func _ready() -> void:
 	save_quit_button.pressed.connect(_on_save_and_quit)
 
 
+
 func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_action_pressed("ui_cancel"):
 		return
 
-	if InventoryUI.is_open or not GameState.can_trigger_gate():
+	if get_tree().get_first_node_in_group("player") == null:
 		return
 
-	if get_tree().get_first_node_in_group("player") == null:
-		return # Not in gameplay (e.g. still on the main menu)
+	if is_open:
+		toggle()
+		return
+
+	if not GameState.can_trigger_gate() or GameState.is_other_modal_open("pause"):
+		return
 
 	toggle()
 
@@ -48,6 +53,8 @@ func toggle() -> void:
 
 
 func open() -> void:
+	is_open = true
+	GameState.register_modal_open("pause")
 	is_open = true
 	root_panel.show()
 	root_panel.modulate.a = 0.0
@@ -69,6 +76,7 @@ func open() -> void:
 
 func close() -> void:
 	is_open = false
+	GameState.register_modal_closed("pause")
 
 	if fade_tween:
 		fade_tween.kill()

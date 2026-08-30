@@ -40,7 +40,9 @@ const DASH_COOLDOWN := 0.6
 const DASH_CHAIN_COOLDOWN := 0.15
 const DASH_CHAIN_STAMINA_COST := 25.0
 const DASH_MP_COST := 2
-
+const DASH_CHAIN_WINDOW := 0.2
+# Sprint
+const LITANY_STEP_SPEED_MULTIPLIER := 1.4
 # Ground Slam
 const GROUND_SLAM_FALL_SPEED := 3000.0
 const GROUND_SLAM_ACCEL := 10000.0
@@ -56,23 +58,32 @@ const WALL_SLIDE_MAX_SPEED := 220.0
 const WALL_JUMP_HORIZONTAL_SPEED := 900.0
 const WALL_JUMP_VERTICAL_VELOCITY := -1100.0
 const WALL_JUMP_LOCK_TIME := 0.18
-const WALL_CLING_STAMINA_DRAIN_RATE := 30.0
-const MIN_STAMINA_TO_WALL_CLING := 5.0
+const WALL_CLING_STAMINA_COST := 20.0
 
 # Ledge Grab
-const LEDGE_GRAB_HANG_TIME := 1.5
-const LEDGE_CHECK_DISTANCE := 34.0
-const LEDGE_RAY_FRONT_Y := -118.0
-const LEDGE_RAY_GAP := 46.0
-const LEDGE_CLIMB_OFFSET := Vector2(40.0, -20.0)
+const LEDGE_AUTO_CLIMB_DELAY := 0.4 
+const LEDGE_CHECK_DISTANCE := 32.0
+const LEDGE_RAY_FRONT_Y := -84.0
+const LEDGE_RAY_GAP := 96.0
+const LEDGE_CLIMB_OFFSET := Vector2(40.0, -36.0)
 
 # Recall
 const RECALL_MP_COST := 3
 const RECALL_LEASH_RANGE := 900.0
 
 const INVINCIBILITY_TIME := 0.5
+# Stamina
+
 const STAMINA_REGEN_RATE := 40.0
 const STAMINA_REGEN_DELAY := 0.4
+# Mana
+
+const MP_REGEN_RATE := 0.12            # MP/sec baseline
+const MP_REGEN_COMBAT_MULTIPLIER := 6.0
+const MP_REGEN_COMBAT_DURATION := 4.0
+
+var _mp_regen_accumulator := 0.0
+var _mp_combat_boost_timer := 0.0
 
 var transition_jump_started := false
 var is_slowed := false
@@ -86,8 +97,17 @@ var max_health := 5
 var health := max_health
 var is_dead := false
 
-var max_mp := 3
-var mp := max_mp
+var max_mp: int:
+	get:
+		return GameState.max_mp
+	set(value):
+		GameState.max_mp = value
+
+var mp: int:
+	get:
+		return GameState.current_mp
+	set(value):
+		GameState.current_mp = value
 
 var invincible := false
 
@@ -115,7 +135,9 @@ var dash_damage := 3
 var dash_damage_weak := 1
 var dash_hit_enemies: Array[Node] = []
 var dash_empowered := false
-
+var dash_chain_window_timer := 0.0
+# Sprint
+var litany_hold_active := false
 # Ground Slam
 var is_ground_slamming := false
 var camera_base_offset: Vector2
@@ -131,7 +153,7 @@ var wall_normal_x := 0.0
 
 # Ledge Grab
 var is_ledge_grabbing := false
-var ledge_hang_timer := 0.0
+var ledge_climb_timer := 0.0
 var ledge_facing_dir := 1.0
 var ledge_ray_front: RayCast2D
 var ledge_ray_above: RayCast2D
@@ -260,13 +282,13 @@ func reset_after_death() -> void:
 	is_wall_clinging = false
 	is_ledge_grabbing = false
 	is_attacking = false
-
+	litany_hold_active = false
 	jumps_used = 0
 	coyote_timer = 0.0
 	jump_buffer_timer = 0.0
 	wall_jump_lock_timer = 0.0
-	ledge_hang_timer = 0.0
-
+	ledge_climb_timer = 0.0
+	dash_chain_window_timer = 0.0
 	# Reset combat.
 	sword_has_hit = false
 	dash_empowered = false
@@ -426,7 +448,7 @@ func sword_attack() -> void:
 	for body in sword_hitbox.get_overlapping_bodies():
 		if body.is_in_group("enemies") or body.is_in_group("attackable"):
 			body.take_damage(sword_damage)
-
+			boost_mp_regen()
 	sword_hitbox.monitoring = false
 
 
@@ -436,7 +458,7 @@ func fire_attack(damage: int) -> void:
 	for body in fire_hitbox.get_overlapping_bodies():
 		if body.is_in_group("enemies") or body.is_in_group("attackable"):
 			body.take_damage(damage)
-
+			boost_mp_regen()
 
 func dash_attack() -> void:
 	var damage := dash_damage if dash_empowered else dash_damage_weak
@@ -446,7 +468,7 @@ func dash_attack() -> void:
 		and not body in dash_hit_enemies:
 			body.take_damage(damage)
 			dash_hit_enemies.append(body)
-
+			boost_mp_regen()
 # GROUND SLAM
 
 func ground_slam_impact() -> void:
@@ -564,7 +586,6 @@ func _trigger_recall() -> void:
 
 	mp -= RECALL_MP_COST
 	mp_changed.emit(mp, max_mp)
-	GameState.current_mp = mp
 
 	global_position = recall_anchor_position
 	velocity = Vector2.ZERO
@@ -597,7 +618,7 @@ func _flash_recall(color: Color) -> void:
 func _start_ledge_grab(dir: float) -> void:
 	is_ledge_grabbing = true
 	ledge_facing_dir = dir
-	ledge_hang_timer = LEDGE_GRAB_HANG_TIME
+	ledge_climb_timer = LEDGE_AUTO_CLIMB_DELAY
 
 	velocity = Vector2.ZERO
 
@@ -799,8 +820,6 @@ func _ready() -> void:
 	add_to_group("player")
 	$DetectionArea.add_to_group("player_detection")
 
-	max_mp = GameState.max_mp
-	mp = GameState.current_mp
 	max_health = GameState.max_health
 	health = max_health
 	floor_snap_length = 4.0
@@ -887,21 +906,38 @@ func _physics_process(delta: float) -> void:
 	# STAMINA REGEN
 
 	_process_stamina_regen(delta)
+	_process_mp_regen(delta)
 
 	# DASH COOLDOWN
 
 	if dash_cooldown_timer > 0.0:
 		dash_cooldown_timer -= delta
 
+	# DASH CHAIN WINDOW
+
+	if dash_chain_window_timer > 0.0:
+		dash_chain_window_timer -= delta
+
 	# DASH START
 
 	if Input.is_action_just_pressed("dash") \
 	and GameState.has_ability("dash") \
-	and dash_cooldown_timer <= 0.0 \
-	and not is_dashing:
+	and not is_dashing \
+	and (
+		dash_cooldown_timer <= 0.0
+		or dash_chain_window_timer > 0.0
+	):
 
-		var dash_chained := GameState.has_ability("dash_chain") \
-			and spend_stamina(DASH_CHAIN_STAMINA_COST)
+		var chaining := GameState.has_ability("dash_chain") \
+			and dash_chain_window_timer > 0.0
+
+		var dash_chained := false
+
+		if chaining:
+			dash_chained = spend_stamina(DASH_CHAIN_STAMINA_COST)
+
+			if dash_chained:
+				dash_chain_window_timer = 0.0
 
 		is_dashing = true
 		is_gliding = false
@@ -909,7 +945,12 @@ func _physics_process(delta: float) -> void:
 		is_wall_clinging = false
 		_end_ledge_grab()
 		dash_timer = DASH_DURATION
-		dash_cooldown_timer = DASH_CHAIN_COOLDOWN if dash_chained else DASH_COOLDOWN
+
+		dash_cooldown_timer = (
+			DASH_CHAIN_COOLDOWN
+			if dash_chained
+			else DASH_COOLDOWN
+		)
 
 		cancel_attack()
 
@@ -928,28 +969,25 @@ func _physics_process(delta: float) -> void:
 			mp -= DASH_MP_COST
 
 			mp_changed.emit(mp, max_mp)
-			GameState.current_mp = mp
 
 			invincible = true
 		else:
 			invincible = false
 
-		# Hitbox stays active either way now — an unempowered dash
-		# still lands a weak hit, it just skips i-frames and the
-		# MP spend. See dash_attack().
+		# Hitbox stays active either way.
 		dash_hitbox.monitoring = true
 		dash_hit_enemies.clear()
+
 		# DASH ANIMATION
+
 		animated_sprite_2d.visible = true
 		animated_sprite_2d.play("dash")
 
 		# DASH EFFECTS
 
-		# Wind effect always plays.
 		wind_effect.visible = true
 		wind_effect.play("wind")
 
-		# Holy effect only plays on empowered dash.
 		if dash_empowered:
 			holy_effect.visible = true
 			holy_effect.play("dash")
@@ -996,7 +1034,12 @@ func _physics_process(delta: float) -> void:
 		if dash_timer <= 0.0:
 			is_dashing = false
 
+			# Open the chain window after every dash.
+			if GameState.has_ability("dash_chain"):
+				dash_chain_window_timer = DASH_CHAIN_WINDOW
+
 			invincible = false
+
 			dash_hitbox.monitoring = false
 			dash_empowered = false
 
@@ -1011,6 +1054,14 @@ func _physics_process(delta: float) -> void:
 			wind_effect.visible = false
 
 		return
+
+	# LITANY STEP HOLD
+
+	litany_hold_active = GameState.has_ability("dash_chain") \
+		and Input.is_action_pressed("dash") \
+		and not is_dashing \
+		and not is_ground_slamming \
+		and not is_ledge_grabbing
 
 	# GROUND SLAM PROCESS
 
@@ -1037,11 +1088,7 @@ func _physics_process(delta: float) -> void:
 	# LEDGE GRAB PROCESS
 
 	if is_ledge_grabbing:
-		ledge_hang_timer -= delta
-
-		if Input.is_action_just_pressed("jump"):
-			_climb_ledge()
-			return
+		ledge_climb_timer -= delta
 
 		var release_axis := Input.get_axis(
 			"move_left",
@@ -1054,10 +1101,12 @@ func _physics_process(delta: float) -> void:
 			(ledge_facing_dir < 0.0 and release_axis > 0.0)
 		)
 
-		if pressing_away \
-		or Input.is_action_just_pressed("ground_slam") \
-		or ledge_hang_timer <= 0.0:
+		if pressing_away or Input.is_action_just_pressed("ground_slam"):
 			_release_ledge()
+			return
+
+		if ledge_climb_timer <= 0.0:
+			_climb_ledge()
 
 		return
 
@@ -1090,15 +1139,21 @@ func _physics_process(delta: float) -> void:
 	and GameState.has_ability("recall") \
 	and not is_dashing \
 	and not is_ground_slamming:
+
 		ability_used.emit("recall")
+
 		if not has_recall_anchor:
 			_place_recall_anchor()
 		else:
 			_trigger_recall()
-# POTION INPUT
 
-	if Input.is_action_just_pressed("use_potion") and GameState.potion_charged:
+	# POTION INPUT
+
+	if Input.is_action_just_pressed("use_potion") \
+	and GameState.potion_charged:
+
 		GameState.use_potion(self)
+
 	# COYOTE TIMER
 
 	if is_on_floor():
@@ -1116,7 +1171,7 @@ func _physics_process(delta: float) -> void:
 	and not is_ground_slamming \
 	and velocity.y >= 0.0 \
 	and wall_jump_lock_timer <= 0.0 \
-	and (is_wall_clinging or stamina > MIN_STAMINA_TO_WALL_CLING):
+	and (is_wall_clinging or stamina >= WALL_CLING_STAMINA_COST):
 
 		var wall_normal := get_wall_normal()
 
@@ -1128,21 +1183,18 @@ func _physics_process(delta: float) -> void:
 
 		if pressing_into_wall:
 			if not is_wall_clinging:
-				ability_used.emit("wall_cling")
-			is_wall_clinging = true
-			wall_normal_x = wall_normal.x
-			jumps_used = 0
+				if spend_stamina(WALL_CLING_STAMINA_COST):
+					is_wall_clinging = true
+					ability_used.emit("wall_cling")
+
+			if is_wall_clinging:
+				wall_normal_x = wall_normal.x
+				jumps_used = 0
 		else:
 			is_wall_clinging = false
 
 	else:
 		is_wall_clinging = false
-
-	# WALL CLING STAMINA DRAIN
-
-	if is_wall_clinging:
-		if not drain_stamina(WALL_CLING_STAMINA_DRAIN_RATE * delta):
-			is_wall_clinging = false
 
 	# LEDGE GRAB DETECTION
 
@@ -1176,6 +1228,7 @@ func _physics_process(delta: float) -> void:
 
 			if ledge_ray_front.is_colliding() \
 			and not ledge_ray_above.is_colliding():
+
 				ability_used.emit("ledge_grab")
 				_start_ledge_grab(ledge_dir)
 
@@ -1254,6 +1307,7 @@ func _physics_process(delta: float) -> void:
 		jump_buffer_timer = 0.0
 		jumps_used = 2
 		ability_used.emit("double_jump")
+
 		jump_effect.visible = true
 		jump_effect.play("jumpwind")
 
@@ -1264,7 +1318,6 @@ func _physics_process(delta: float) -> void:
 			mp -= DOUBLE_JUMP_MP_COST
 
 			mp_changed.emit(mp, max_mp)
-			GameState.current_mp = mp
 
 			double_jump_fire_1.visible = true
 			double_jump_fire_2.visible = true
@@ -1338,8 +1391,10 @@ func _physics_process(delta: float) -> void:
 		and Input.is_action_pressed("glide") \
 		and velocity.y > 0.0 \
 		and not is_ground_slamming:
+
 			if not is_gliding:
 				ability_used.emit("glide")
+
 			is_gliding = true
 
 			velocity.y += GRAVITY_GLIDE * delta
@@ -1347,14 +1402,19 @@ func _physics_process(delta: float) -> void:
 				velocity.y,
 				GLIDE_MAX_FALL_SPEED
 			)
+
 		else:
+
 			is_gliding = false
+
 			velocity.y += (
 				GRAVITY_FALL
 				if velocity.y > 0
 				else GRAVITY_RISE
 			) * delta
+
 	else:
+
 		is_gliding = false
 		is_wall_clinging = false
 
@@ -1365,7 +1425,7 @@ func _physics_process(delta: float) -> void:
 		"move_right"
 	)
 
-	# FACINGF
+	# FACING
 
 	if direction != 0.0:
 		_set_facing(direction)
@@ -1379,6 +1439,10 @@ func _physics_process(delta: float) -> void:
 
 	if speed_boost_active:
 		current_speed *= speed_boost_multiplier
+
+	if litany_hold_active:
+		current_speed *= LITANY_STEP_SPEED_MULTIPLIER
+
 	if direction:
 		velocity.x = direction * current_speed
 	else:
@@ -1416,7 +1480,7 @@ func _physics_process(delta: float) -> void:
 	and animated_sprite_2d.animation == "attack":
 
 		if animated_sprite_2d.frame >= 1 \
-		and animated_sprite_2d.frame <= 5 \
+		and animated_sprite_2d.frame <= 7 \
 		and not sword_has_hit:
 
 			sword_has_hit = true
@@ -1490,7 +1554,7 @@ func _physics_process(delta: float) -> void:
 				elif animated_sprite_2d.animation != "glide":
 					animated_sprite_2d.play("glide")
 
-			# RISING / JUMPING
+			# FALLING
 
 			elif velocity.y >= 0:
 
@@ -1503,12 +1567,14 @@ func _physics_process(delta: float) -> void:
 					animated_sprite_2d.play("fall")
 
 				if animated_sprite_2d.animation == "fall":
-					var fall_frame_count := animated_sprite_2d.sprite_frames.get_frame_count("fall")
+
+					var fall_frame_count := \
+						animated_sprite_2d.sprite_frames.get_frame_count("fall")
 
 					if animated_sprite_2d.frame >= fall_frame_count - 1:
 						animated_sprite_2d.play("falling")
 
-			# FALLING
+			# RISING
 
 			else:
 
@@ -1524,7 +1590,6 @@ func _physics_process(delta: float) -> void:
 				and animated_sprite_2d.frame >= 4:
 
 					animated_sprite_2d.play("falling")
-
 
 # JUMP EFFECT
 
@@ -1543,7 +1608,6 @@ func restore_full_health() -> void:
 func restore_full_mp() -> void:
 	mp = max_mp
 	mp_changed.emit(mp, max_mp)
-	GameState.current_mp = mp
 # New functions — near restore_full_health() / restore_full_mp()
 
 func apply_double_sword_damage(duration: float) -> void:
@@ -1603,19 +1667,19 @@ func spend_stamina(amount: float) -> bool:
 	return true
 
 
-
-func drain_stamina(amount: float) -> bool:
-	if infinite_stamina_active:
-		return true
-
-	if stamina <= 0.0:
-		return false
-
-	stamina = max(stamina - amount, 0.0)
-	stamina_regen_timer = STAMINA_REGEN_DELAY
-	stamina_changed.emit(stamina, max_stamina)
-
-	return stamina > 0.0
+# Unused, could be called later if needed
+#func drain_stamina(amount: float) -> bool:
+	#if infinite_stamina_active:
+		#return true
+#
+	#if stamina <= 0.0:
+		#return false
+#
+	#stamina = max(stamina - amount, 0.0)
+	#stamina_regen_timer = STAMINA_REGEN_DELAY
+	#stamina_changed.emit(stamina, max_stamina)
+#
+	#return stamina > 0.0
 
 
 func restore_full_stamina() -> void:
@@ -1625,6 +1689,9 @@ func restore_full_stamina() -> void:
 
 
 func _process_stamina_regen(delta: float) -> void:
+	if not is_on_floor():
+		return
+
 	if stamina >= max_stamina:
 		return
 
@@ -1639,7 +1706,30 @@ func _process_stamina_regen(delta: float) -> void:
 
 	stamina_changed.emit(stamina, max_stamina)
 
+func _process_mp_regen(delta: float) -> void:
+	if mp >= max_mp:
+		_mp_regen_accumulator = 0.0
+		return
 
+	var rate := MP_REGEN_RATE
+
+	if _mp_combat_boost_timer > 0.0:
+		_mp_combat_boost_timer -= delta
+		rate *= MP_REGEN_COMBAT_MULTIPLIER
+
+	_mp_regen_accumulator += rate * delta
+
+	if _mp_regen_accumulator >= 1.0:
+		var gain := int(_mp_regen_accumulator)
+		_mp_regen_accumulator -= gain
+
+		mp = min(mp + gain, max_mp)
+		mp_changed.emit(mp, max_mp)
+		GameState.current_mp = mp
+
+
+func boost_mp_regen() -> void:
+	_mp_combat_boost_timer = MP_REGEN_COMBAT_DURATION
 # SLOW EFFECT
 
 func set_slowed(slowed: bool) -> void:

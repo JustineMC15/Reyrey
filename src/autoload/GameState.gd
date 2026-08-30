@@ -219,6 +219,31 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_build_fade_overlay()
 	star_fragments_changed.connect(_on_star_fragments_changed)
+
+# --- Modal UI panels ---
+#
+# Each full-screen modal registers itself here on open/close instead
+# of every panel's toggle handler manually enumerating every other
+# panel by name. Adding a new modal (map, potion unlock map, etc.)
+# means one register call in that panel — zero edits to existing ones.
+
+var _open_modals: Dictionary = {}  # panel_name -> true
+
+
+func register_modal_open(panel_name: String) -> void:
+	_open_modals[panel_name] = true
+
+
+func register_modal_closed(panel_name: String) -> void:
+	_open_modals.erase(panel_name)
+
+
+func is_other_modal_open(panel_name: String) -> bool:
+	for key in _open_modals.keys():
+		if key != panel_name:
+			return true
+	return false
+
 # --- Story beats (one-time cutscenes) ---
 
 var story_beats_seen: Dictionary = {}

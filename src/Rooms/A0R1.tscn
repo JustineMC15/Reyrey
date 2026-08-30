@@ -135,6 +135,14 @@ material = SubResource("ShaderMaterial_e8g2v")
 tile_map_data = PackedByteArray("AAD///3/CgAEAAgAAAD///7/CgAEAAkAAAAAAP3/CgAFAAgAAAAAAP7/CgAFAAkAAAABAP3/CgAGAAgAAAABAP7/CgAGAAkAAAD/////CgAEAAkAAAAAAP//CgAFAAkAAAABAP//CgAGAAkAAAACAP//CgALAAYAAAACAP7/CgALAAYAAAACAP3/CgALAAYAAAADAP3/CgAXAAMAAAADAPz/CgAWAAIAAAACAPz/CgALAAYAAAADAP7/CgAWAAQAAAADAP//CgALAAYAAAAEAP//CgALAAYAAAAEAP7/CgALAAYAAAAEAP3/CgALAAYAAAAEAPz/CgALAAYAAAABAPz/CgALAAYAAAAAAPz/CgALAAYAAAD///z/CgALAAYAAAD+//z/CgALAAYAAAD+//v/CgALAAYAAAD///v/CgALAAYAAAAAAPv/CgALAAYAAAABAPv/CgALAAYAAAACAPv/CgALAAYAAAADAPv/CgALAAYAAAAEAPv/CgALAAYAAAD+//3/CgALAAYAAAD+//7/CgALAAYAAAD+////CgALAAYAAAD9////CgALAAYAAAD8////CgALAAYAAAD8//7/CgALAAYAAAD9//7/CgAWAAQAAAD9//3/CgAXAAMAAAD8//3/CgALAAYAAAD8//z/CgALAAYAAAD8//v/CgALAAYAAAD9//v/CgALAAYAAAD9//z/CgAWAAIAAAAFAPn/CgANAAQAAAAFAPr/CgANAAQAAAAFAPv/CgANAAQAAAAFAPz/CgANAAQAAAAFAP3/CgANAAQAAAAFAP7/CgANAAQAAAAFAP//CgANAAQAAAAHAP//CgAPAAQAAAAHAP7/CgAPAAQAAAAHAP3/CgAPAAQAAAAHAPz/CgAPAAQAAAAHAPv/CgAPAAQAAAAHAPr/CgAPAAQAAAAHAPn/CgAPAAQAAAAGAP3/CgACAAcAAAAGAP7/CgALAAYAAAAGAP//CgALAAYAAAAGAPr/CgARAAQAAAAGAPn/CgARAAMAAAD7////CgAPAAQAAAD7//7/CgAPAAQAAAD7//3/CgAPAAQAAAD7//z/CgAPAAQAAAD7//v/CgAPAAQAAAD7//r/CgAPAAQAAAD7//n/CgAPAAQAAAD6//n/CgARAAMAAAD6//r/CgARAAQAAAD6////CgALAAQAAAD5////CgANAAQAAAD5//7/CgANAAQAAAD5//3/CgANAAQAAAD5//z/CgANAAQAAAD5//v/CgANAAQAAAD5//r/CgANAAQAAAD5//n/CgANAAQAAAD8//r/CgANAAIAAAD9//r/CgANAAIAAAD+//r/CgANAAIAAAD///r/CgANAAIAAAAAAPr/CgANAAIAAAABAPr/CgANAAIAAAACAPr/CgANAAIAAAADAPr/CgANAAIAAAAEAPr/CgANAAIAAAAFAPj/CgAMAAIAAAAGAPj/CgARAAIAAAAHAPj/CgAMAAIAAAD5//j/CgAMAAIAAAD6//j/CgARAAIAAAD7//j/CgAMAAIAAAD6//3/CgACAAcAAAD6//z/CgACAAUAAAAGAPz/CgACAAUAAAD6//v/CgALAAYAAAD6//7/CgALAAYAAAAGAPv/CgALAAYAAAA=")
 tile_set = ExtResource("5_qswqo")
 
+[node name="ShrinePortal" type="AnimatedSprite2D" parent="Environments" unique_id=959641106]
+modulate = Color(0, 11.594878, 11.594878, 1)
+position = Vector2(5443, -1255)
+scale = Vector2(0.8, 0.8)
+sprite_frames = ExtResource("19_wjqep")
+autoplay = "default"
+frame_progress = 0.76490486
+
 [node name="Tutorial" type="Node2D" parent="." unique_id=1498885342]
 
 [node name="JumpTutorialTrigger" type="Area2D" parent="Tutorial" unique_id=2110227955]
@@ -283,16 +291,10 @@ shape = SubResource("RectangleShape2D_ncv88")
 
 [node name="ShrineDoor" parent="." unique_id=1013456222 instance=ExtResource("18_xg3fd")]
 position = Vector2(5442, -1152)
+gate_id = "A0R1-shrine"
 target_scene_path = "res://src/rooms/S1.tscn"
+target_gate_id = "shrine01"
 entry_type = 2
-
-[node name="ShrinePortal" type="AnimatedSprite2D" parent="." unique_id=959641106]
-modulate = Color(0, 11.594878, 11.594878, 1)
-position = Vector2(5443, -1255)
-scale = Vector2(0.8, 0.8)
-sprite_frames = ExtResource("19_wjqep")
-autoplay = "default"
-frame_progress = 0.76490486
 
 [node name="Checkpoint" parent="." unique_id=1046499597 instance=ExtResource("19_1eudn")]
 position = Vector2(6335, -49)
@@ -331,7 +333,3 @@ position = Vector2(-52, -2)
 position = Vector2(7510, -574)
 chest_id = "A0R1-C1"
 star_fragment_reward = 20
-
-[node name="GuidingStar" parent="." unique_id=222027155 instance=ExtResource("20_e8c74")]
-position = Vector2(1249, -191)
-movement_distance = 100.0

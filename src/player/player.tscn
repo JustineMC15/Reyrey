@@ -1681,25 +1681,25 @@ region = Rect2(128, 94, 64, 47)
 [sub_resource type="SpriteFrames" id="SpriteFrames_y8imw"]
 animations = [{
 "frames": [{
-"duration": 0.7,
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_a4vah")
 }, {
-"duration": 0.7,
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_vwi60")
 }, {
-"duration": 0.9,
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_o04tx")
 }, {
-"duration": 2.0,
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_j2873")
 }, {
-"duration": 0.12,
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_dpt0q")
 }, {
-"duration": 1.1,
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_wcxbk")
 }, {
-"duration": 1.1,
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_p6grl")
 }, {
 "duration": 1.0,
@@ -2256,6 +2256,12 @@ process_callback = 0
 limit_enabled = false
 position_smoothing_enabled = true
 position_smoothing_speed = 3.0
+drag_horizontal_enabled = true
+drag_vertical_enabled = true
+drag_left_margin = 0.08
+drag_top_margin = 0.05
+drag_right_margin = 0.08
+drag_bottom_margin = 0.05
 
 [node name="Collision" type="Node2D" parent="." unique_id=485835211]
 

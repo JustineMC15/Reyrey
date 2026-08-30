@@ -1,6 +1,16 @@
 extends CanvasLayer
 
-@export var scripture_icons: Dictionary = {}    # ability_id -> Texture2D (grid sprite)
+
+@export var scripture_icons: Dictionary = {
+	"double_jump": preload("res://assets/ui/scripture/scripture1.png"),
+	"dash": preload("res://assets/ui/scripture/scripture2.png"),
+	"ground_slam": preload("res://assets/ui/scripture/scripture3.png"),
+	"glide": preload("res://assets/ui/scripture/scripture4.png"),
+	"dash_chain": preload("res://assets/ui/scripture/scripture5.png"),
+	"wall_cling": preload("res://assets/ui/scripture/scripture6.png"),
+	"recall": preload("res://assets/ui/scripture/scripture7.png"),
+	"ledge_grab": preload("res://assets/ui/scripture/scripture8.png"),
+}  # ability_id -> Texture2D (grid sprite)
 @export var ability_images: Dictionary = {}     # ability_id -> Texture2D (large illustration, NOT the sprite — spec requires a separate image here)
 @export var shard_icon: Texture2D               # fallback Starlight Shard symbol
 @export var shard_icons: Dictionary = {
@@ -74,7 +84,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		toggle()
 		return
 
-	if not GameState.can_trigger_gate() or PauseMenu.is_open:
+	if not GameState.can_trigger_gate() or GameState.is_other_modal_open("inventory"):
 		return
 
 	toggle()
@@ -86,6 +96,7 @@ func toggle() -> void:
 
 func open() -> void:
 	is_open = true
+	GameState.register_modal_open("inventory")
 	_populate()
 
 	root_panel.show()
@@ -99,6 +110,7 @@ func open() -> void:
 
 func close() -> void:
 	is_open = false
+	GameState.register_modal_closed("inventory")
 
 	get_viewport().gui_release_focus()
 

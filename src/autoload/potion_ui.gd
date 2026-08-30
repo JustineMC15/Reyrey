@@ -55,11 +55,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		toggle()
 		return
 
-	if not GameState.can_trigger_gate() or InventoryUI.is_open or PauseMenu.is_open:
+	if not GameState.can_trigger_gate() or GameState.is_other_modal_open("potion"):
 		return
 
 	toggle()
-
 
 func toggle() -> void:
 	close() if is_open else open()
@@ -67,6 +66,7 @@ func toggle() -> void:
 
 func open() -> void:
 	is_open = true
+	GameState.register_modal_open("potion")
 	_populate()
 
 	root_panel.show()
@@ -78,6 +78,7 @@ func open() -> void:
 
 func close() -> void:
 	is_open = false
+	GameState.register_modal_closed("potion")
 
 	var tween := create_tween()
 	tween.tween_property(root_panel, "modulate:a", 0.0, 0.15)

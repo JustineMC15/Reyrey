@@ -13,9 +13,9 @@ bg_color = Color(0.6, 0.6, 0.6, 0)
 collision_layer = 32
 collision_mask = 64
 script = ExtResource("1_xf7d7")
-gate_id = "shrine_door"
-target_scene_path = "res://scenes/Rooms/shrine_01.tscn"
-target_gate_id = "shrine_entry"
+gate_id = "shrine01"
+target_scene_path = "res://src/rooms/S2.tscn"
+target_gate_id = "A1R1-shrine"
 prompt_panel = NodePath("PromptLayer/ShrinePanel")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=173916701]

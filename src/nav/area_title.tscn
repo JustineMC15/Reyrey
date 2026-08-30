@@ -16,8 +16,7 @@ border_color = Color(1, 1, 1, 1)
 collision_layer = 32
 collision_mask = 66
 script = ExtResource("1_itxvp")
-area_id = "valecourt_fields"
-area_name = "VALECOURT FIELDS"
+area_id = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1938763796]
 shape = SubResource("RectangleShape2D_itxvp")
