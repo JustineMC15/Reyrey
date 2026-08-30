@@ -104,10 +104,10 @@ func get_armor_data() -> Dictionary:
 # --- Ability system ---
 
 var keybind_display: Dictionary = {
-	"jump": "Space",
-	"dash": "Shift",
-	"ground_slam": "S / ↓",
-	"glide": "Shift",
+	"jump": "Space / Z",
+	"dash": "Shift / C",
+	"ground_slam": "V / CTRL",
+	"glide": "Space / Z",
 	"recall": "R",
 	"interact": "E",
 }

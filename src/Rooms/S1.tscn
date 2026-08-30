@@ -27,12 +27,16 @@ bg_color = Color(0.6, 0.6, 0.6, 0)
 
 [node name="shrine_01" type="Node2D" unique_id=1912822629]
 
-[node name="CameraBounds" type="Node2D" parent="." unique_id=486778997]
+[node name="CameraBounds" type="Control" parent="." unique_id=680786900]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -1022.0
+offset_top = -2686.0
+offset_right = 1019.0
+offset_bottom = 193.0
+mouse_filter = 2
 script = ExtResource("1_58qcc")
-limit_left = -1000
-limit_top = -2550
-limit_right = 1000
-limit_bottom = 200
+metadata/_custom_type_script = "uid://8vr0pfeydo4w"
 
 [node name="Environments" type="Node2D" parent="." unique_id=74809527]
 

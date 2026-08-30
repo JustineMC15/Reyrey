@@ -19,6 +19,8 @@ signal mp_changed(current_mp, max_mp)
 signal stamina_changed(current_stamina, max_stamina)
 signal ability_used(ability_id: String)
 
+enum AttackType { SWORD, POGO, UPSLASH }
+
 const SPEED := 430.0
 const HAZARD_INVINCIBILITY_TIME := 1.0
 const JUMP_VELOCITY := -1200.0
@@ -67,6 +69,11 @@ const LEDGE_RAY_FRONT_Y := -84.0
 const LEDGE_RAY_GAP := 96.0
 const LEDGE_CLIMB_OFFSET := Vector2(40.0, -36.0)
 
+# Pogo
+const POGO_STAMINA_COST := 20.0
+const POGO_BOUNCE_VELOCITY := -1000.0
+const POGO_BOUNCE_VELOCITY_WEAK := -550.0
+
 # Recall
 const RECALL_MP_COST := 3
 const RECALL_LEASH_RANGE := 900.0
@@ -114,6 +121,8 @@ var invincible := false
 var sword_damage := 1
 var sword_has_hit := false
 var _sword_damage_base := 1
+var current_attack_type: AttackType = AttackType.SWORD
+var pogo_empowered := false
 
 var damage_reduction_active := false
 var damage_reduction_multiplier := 0.5
@@ -192,6 +201,8 @@ var transition_walk_direction := 1.0
 @onready var dash_hitbox: Area2D = $Collision/DashHitbox
 @onready var sword_hitbox: Area2D = $Collision/SwordHitbox
 @onready var fire_hitbox: Area2D = $Collision/DoubleJumpHitbox
+@onready var pogo_hitbox: Area2D = $Collision/Pogo
+@onready var upslash_hitbox: Area2D = $Collision/UpSlash
 
 # ANIMATION EFFECTS
 @onready var double_jump_fire_1: AnimatedSprite2D = $AnimationEffects/DoubleJumpFire1
@@ -199,6 +210,8 @@ var transition_walk_direction := 1.0
 @onready var holy_effect: AnimatedSprite2D = $AnimationEffects/HolyEffect
 @onready var wind_effect: AnimatedSprite2D = $AnimationEffects/WindEffect
 @onready var slash_effect: AnimatedSprite2D = $AnimationEffects/SlashEffect
+@onready var pogo_effect: AnimatedSprite2D = $AnimationEffects/Pogo
+@onready var upslash_effect: AnimatedSprite2D = $AnimationEffects/UpSlash
 @onready var death_animation: AnimatedSprite2D = $AnimationEffects/DeathAnimation
 @onready var jump_effect: AnimatedSprite2D = $AnimationEffects/JumpEffect
 @onready var slam_impact_effect: AnimatedSprite2D = $AnimationEffects/SlamImpactEffect
@@ -211,6 +224,10 @@ var _holy_effect_base_scale: Vector2
 var _holy_effect_base_position: Vector2
 var _wind_effect_base_scale: Vector2
 var _wind_effect_base_position: Vector2
+var _upslash_effect_base_scale: Vector2
+var _upslash_effect_base_position: Vector2
+var _pogo_effect_base_scale: Vector2
+var _pogo_effect_base_position: Vector2
 
 var facing_direction := 1.0
 # SOUND
@@ -241,18 +258,30 @@ func _apply_direction_to_effects(direction: float) -> void:
 
 	wind_effect.scale.x = abs(_wind_effect_base_scale.x) * sign_x
 	wind_effect.position.x = _wind_effect_base_position.x * sign_x
+
+	upslash_effect.scale.x = abs(_upslash_effect_base_scale.x) * sign_x
+	upslash_effect.position.x = _upslash_effect_base_position.x * sign_x
+	upslash_effect.flip_h = sign_x < 0.0
+
+	pogo_effect.scale.x = abs(_pogo_effect_base_scale.x) * sign_x
+	pogo_effect.position.x = _pogo_effect_base_position.x * sign_x
+	pogo_effect.flip_h = sign_x < 0.0
 func _set_facing(direction: float) -> void:
 	if direction > 0.0:
 		facing_direction = 1.0
 		animated_sprite_2d.flip_h = false
 		sword_hitbox.scale.x = 1.0
 		dash_hitbox.scale.x = 1.0
+		pogo_hitbox.scale.x = 1.0
+		upslash_hitbox.scale.x = 1.0
 
 	elif direction < 0.0:
 		facing_direction = -1.0
 		animated_sprite_2d.flip_h = true
 		sword_hitbox.scale.x = -1.0
 		dash_hitbox.scale.x = -1.0
+		pogo_hitbox.scale.x = -1.0
+		upslash_hitbox.scale.x = -1.0
 
 	_apply_direction_to_effects(facing_direction)
 # DEATH RESET
@@ -294,6 +323,8 @@ func reset_after_death() -> void:
 	dash_empowered = false
 	dash_hit_enemies.clear()
 	sword_damage = _sword_damage_base
+	current_attack_type = AttackType.SWORD
+	pogo_empowered = false
 	damage_reduction_active = false
 	speed_boost_active = false
 	infinite_stamina_active = false
@@ -302,6 +333,8 @@ func reset_after_death() -> void:
 	sword_hitbox.monitoring = false
 	fire_hitbox.monitoring = false
 	dash_hitbox.monitoring = false
+	pogo_hitbox.monitoring = false
+	upslash_hitbox.monitoring = false
 
 	# Keep collision disabled until respawn is complete.
 	standing_collision.disabled = true
@@ -319,6 +352,8 @@ func reset_after_death() -> void:
 	holy_effect.visible = false
 	wind_effect.visible = false
 	slash_effect.visible = false
+	pogo_effect.visible = false
+	upslash_effect.visible = false
 	jump_effect.visible = false
 	slam_impact_effect.visible = false
 	
@@ -331,6 +366,8 @@ func disable_world_interaction() -> void:
 	sword_hitbox.monitoring = false
 	fire_hitbox.monitoring = false
 	dash_hitbox.monitoring = false
+	pogo_hitbox.monitoring = false
+	upslash_hitbox.monitoring = false
 
 	standing_collision.disabled = true
 func enable_collision_only() -> void:
@@ -432,12 +469,61 @@ func unlock_input() -> void:
 func cancel_attack() -> void:
 	is_attacking = false
 	sword_has_hit = false
+
 	slash_effect.stop()
 	slash_effect.visible = false
 	sword_hitbox.monitoring = false
 
-	if animated_sprite_2d.animation == "attack":
+	pogo_effect.stop()
+	pogo_effect.visible = false
+	pogo_hitbox.monitoring = false
+
+	upslash_effect.stop()
+	upslash_effect.visible = false
+	upslash_hitbox.monitoring = false
+
+	if animated_sprite_2d.animation == "attack" \
+	or animated_sprite_2d.animation == "pogo" \
+	or animated_sprite_2d.animation == "upslash":
 		animated_sprite_2d.play("idle")
+
+
+func _start_sword_attack() -> void:
+	current_attack_type = AttackType.SWORD
+
+	animated_sprite_2d.visible = true
+	animated_sprite_2d.play("attack")
+
+	slash_effect.visible = true
+	slash_effect.flip_h = animated_sprite_2d.flip_h
+	slash_effect.play("slash")
+
+	sword_sound.play()
+
+
+func _start_pogo_attack() -> void:
+	current_attack_type = AttackType.POGO
+	pogo_empowered = spend_stamina(POGO_STAMINA_COST)
+
+	animated_sprite_2d.visible = true
+	animated_sprite_2d.play("pogo")
+
+	pogo_effect.visible = true
+	pogo_effect.play("slash")
+
+	sword_sound.play()
+
+
+func _start_upslash_attack() -> void:
+	current_attack_type = AttackType.UPSLASH
+
+	animated_sprite_2d.visible = true
+	animated_sprite_2d.play("upslash")
+
+	upslash_effect.visible = true
+	upslash_effect.play("slash")
+
+	sword_sound.play()
 
 
 func sword_attack() -> void:
@@ -450,6 +536,42 @@ func sword_attack() -> void:
 			body.take_damage(sword_damage)
 			boost_mp_regen()
 	sword_hitbox.monitoring = false
+
+
+func pogo_attack() -> void:
+	pogo_hitbox.monitoring = true
+
+	await get_tree().physics_frame
+
+	var hit_something := false
+
+	for body in pogo_hitbox.get_overlapping_bodies():
+		if body.is_in_group("enemies") or body.is_in_group("attackable"):
+			body.take_damage(sword_damage)
+			boost_mp_regen()
+			hit_something = true
+
+	pogo_hitbox.monitoring = false
+
+	if hit_something:
+		velocity.y = (
+			POGO_BOUNCE_VELOCITY
+			if pogo_empowered
+			else POGO_BOUNCE_VELOCITY_WEAK
+		)
+
+
+func upslash_attack() -> void:
+	upslash_hitbox.monitoring = true
+
+	await get_tree().physics_frame
+
+	for body in upslash_hitbox.get_overlapping_bodies():
+		if body.is_in_group("enemies") or body.is_in_group("attackable"):
+			body.take_damage(sword_damage)
+			boost_mp_regen()
+
+	upslash_hitbox.monitoring = false
 
 
 func fire_attack(damage: int) -> void:
@@ -752,6 +874,8 @@ func die() -> void:
 	sword_hitbox.monitoring = false
 	fire_hitbox.monitoring = false
 	dash_hitbox.monitoring = false
+	pogo_hitbox.monitoring = false
+	upslash_hitbox.monitoring = false
 
 	# Disable collision.
 	standing_collision.set_deferred("disabled", true)
@@ -765,6 +889,8 @@ func die() -> void:
 	holy_effect.visible = false
 	wind_effect.visible = false
 	slash_effect.visible = false
+	pogo_effect.visible = false
+	upslash_effect.visible = false
 	jump_effect.visible = false
 	slam_impact_effect.visible = false
 
@@ -800,7 +926,9 @@ func _on_fire_animation_finished() -> void:
 # ANIMATION SIGNALS
 
 func _on_animation_finished() -> void:
-	if animated_sprite_2d.animation == "attack":
+	if animated_sprite_2d.animation == "attack" \
+	or animated_sprite_2d.animation == "pogo" \
+	or animated_sprite_2d.animation == "upslash":
 		cancel_attack()
 
 
@@ -832,6 +960,12 @@ func _ready() -> void:
 	slash_effect.visible = false
 	sword_hitbox.monitoring = false
 
+	pogo_effect.visible = false
+	pogo_hitbox.monitoring = false
+
+	upslash_effect.visible = false
+	upslash_hitbox.monitoring = false
+
 	double_jump_fire_1.visible = false
 	double_jump_fire_2.visible = false
 	fire_hitbox.monitoring = false
@@ -851,6 +985,10 @@ func _ready() -> void:
 	_holy_effect_base_position = holy_effect.position
 	_wind_effect_base_scale = wind_effect.scale
 	_wind_effect_base_position = wind_effect.position
+	_upslash_effect_base_scale = upslash_effect.scale
+	_upslash_effect_base_position = upslash_effect.position
+	_pogo_effect_base_scale = pogo_effect.scale
+	_pogo_effect_base_position = pogo_effect.position
 	# LEDGE GRAB RAYS
 
 	ledge_ray_front = RayCast2D.new()
@@ -1465,26 +1603,38 @@ func _physics_process(delta: float) -> void:
 		was_gliding = false
 		is_wall_clinging = false
 
-		animated_sprite_2d.visible = true
-		animated_sprite_2d.play("attack")
+		var aiming_down := Input.is_action_pressed("pogo")
+		var aiming_up := Input.is_action_pressed("upslash")
 
-		slash_effect.visible = true
-		slash_effect.flip_h = animated_sprite_2d.flip_h
-		slash_effect.play("slash")
+		if aiming_down and not is_on_floor():
+			_start_pogo_attack()
+		elif aiming_up:
+			_start_upslash_attack()
+		else:
+			_start_sword_attack()
 
-		sword_sound.play()
-
-	# SWORD HIT DETECTION
+	# SWORD / POGO / UPSLASH HIT DETECTION
 
 	if is_attacking \
-	and animated_sprite_2d.animation == "attack":
+	and not sword_has_hit \
+	and animated_sprite_2d.frame >= 1 \
+	and animated_sprite_2d.frame <= 7:
 
-		if animated_sprite_2d.frame >= 1 \
-		and animated_sprite_2d.frame <= 7 \
-		and not sword_has_hit:
+		match current_attack_type:
+			AttackType.SWORD:
+				if animated_sprite_2d.animation == "attack":
+					sword_has_hit = true
+					sword_attack()
 
-			sword_has_hit = true
-			sword_attack()
+			AttackType.POGO:
+				if animated_sprite_2d.animation == "pogo":
+					sword_has_hit = true
+					pogo_attack()
+
+			AttackType.UPSLASH:
+				if animated_sprite_2d.animation == "upslash":
+					sword_has_hit = true
+					upslash_attack()
 
 	# ANIMATIONS
 
@@ -1504,7 +1654,7 @@ func _physics_process(delta: float) -> void:
 
 			else:
 
-				animated_sprite_2d.play("run")
+				animated_sprite_2d.play("sprint" if litany_hold_active else "run")
 
 				if animated_sprite_2d.frame in [5, 13, 22]:
 
@@ -1524,7 +1674,7 @@ func _physics_process(delta: float) -> void:
 				animated_sprite_2d.play("idle")
 				last_footstep_frame = -1
 			else:
-				animated_sprite_2d.play("run")
+				animated_sprite_2d.play("sprint" if litany_hold_active else "run")
 
 		# AIR
 
