@@ -11,11 +11,10 @@ size = Vector2(161, 121)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g134m"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
 
-[node name="FarmKey" type="Area2D" unique_id=865693171 node_paths=PackedStringArray("prompt_panel")]
+[node name="Key" type="Area2D" unique_id=865693171 node_paths=PackedStringArray("prompt_panel")]
 collision_layer = 32
 collision_mask = 64
 script = ExtResource("1_pko5v")
-key_id = "farm_key"
 prompt_panel = NodePath("PromptPanel")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=658105700]

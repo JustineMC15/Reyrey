@@ -22,12 +22,12 @@ extends CanvasLayer
 } # Will use placeholder fallback shard for now while i work on 6-17
 @export var sword_icon: Texture2D
 @export var armor_icons: Dictionary = {
-	0: preload("res://assets/ui/armor1.png"),
-	1: preload("res://assets/ui/armor2.png"),
-	2: preload("res://assets/ui/armor3.png"),
-	3: preload("res://assets/ui/armor4.png"),
-	4: preload("res://assets/ui/armor5.png"),
-	5: preload("res://assets/ui/armor6.png")
+	0: preload("res://assets/ui/armor/armor1.png"),
+	1: preload("res://assets/ui/armor/armor2.png"),
+	2: preload("res://assets/ui/armor/armor3.png"),
+	3: preload("res://assets/ui/armor/armor4.png"),
+	4: preload("res://assets/ui/armor/armor5.png"),
+	5: preload("res://assets/ui/armor/armor6.png")
 }     # armor_tier (int) -> Texture2D
 @export var star_fragment_icon: Texture2D
 @export var icon_button_scene: PackedScene

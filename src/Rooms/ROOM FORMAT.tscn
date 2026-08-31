@@ -1,36 +1,75 @@
-[gd_scene format=3 uid="uid://doiyywqp3v48e"]
+[gd_scene format=4 uid="uid://doiyywqp3v48e"]
 
-[ext_resource type="Script" uid="uid://8vr0pfeydo4w" path="res://src/nav/camera_bounds.gd" id="1_h4qts"]
 [ext_resource type="TileSet" uid="uid://wdxl8wi6477l" path="res://assets/environment/tres/greybox.tres" id="2_4nf26"]
-[ext_resource type="PackedScene" uid="uid://c20o6wohk6hul" path="res://src/enemies/guiding_star.tscn" id="3_vnqtj"]
+[ext_resource type="Shader" uid="uid://bnp4c3j8expyg" path="res://src/shader/foilage.gdshader" id="2_xl3ql"]
+[ext_resource type="TileSet" uid="uid://c2b467m7053q3" path="res://assets/environment/tres/Design64x64.tres" id="3_3x2pl"]
 [ext_resource type="Script" uid="uid://d6mwrb2d16q5" path="res://src/nav/gate.gd" id="4_itegj"]
+[ext_resource type="TileSet" uid="uid://bh5re3fvbw1fu" path="res://assets/environment/tres/64x64.tres" id="4_ry502"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_4pxbc"]
-size = Vector2(208.5, 206)
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tx8te"]
+shader = ExtResource("2_xl3ql")
+shader_parameter/wind_strength = 0.25
+shader_parameter/wind_speed = 1.3
+shader_parameter/wind_frequency = 4.0
 
-[node name="Room_03" type="Node2D" unique_id=1602108746]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vlew8"]
+size = Vector2(100, 150)
 
-[node name="CameraBounds" type="Node2D" parent="." unique_id=1140724593]
-script = ExtResource("1_h4qts")
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_grhhy"]
+size = Vector2(100, 150)
+
+[node name="Area#-Room#" type="Node2D" unique_id=1602108746]
 
 [node name="Environments" type="Node2D" parent="." unique_id=1833260432]
 
 [node name="Greybox" type="TileMapLayer" parent="Environments" unique_id=1995920700]
+tile_map_data = PackedByteArray("AAD+/wAAAAAAAAAAAAD//wAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAACAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAFAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAHAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=")
 tile_set = ExtResource("2_4nf26")
 
-[node name="GuidingStar" parent="." unique_id=1933994159 instance=ExtResource("3_vnqtj")]
-position = Vector2(345, -71)
-movement_type = 1
+[node name="64x64Foilage" type="TileMapLayer" parent="Environments" unique_id=1197104403]
+material = SubResource("ShaderMaterial_tx8te")
+tile_set = ExtResource("3_3x2pl")
 
-[node name="Transition" type="Area2D" parent="." unique_id=1198934175]
-collision_layer = 4
-collision_mask = 5
+[node name="64x64BG" type="TileMapLayer" parent="Environments" unique_id=94895237]
+tile_set = ExtResource("4_ry502")
+
+[node name="64x64Building" type="TileMapLayer" parent="Environments" unique_id=938845200]
+modulate = Color(0.7473163, 0.7473163, 0.7473163, 1)
+tile_set = ExtResource("4_ry502")
+
+[node name="64x64BuildingDark" type="TileMapLayer" parent="Environments" unique_id=796822105]
+modulate = Color(0.33150214, 0.33150214, 0.33150214, 1)
+tile_set = ExtResource("4_ry502")
+
+[node name="64x64Design" type="TileMapLayer" parent="Environments" unique_id=516647955]
+tile_set = ExtResource("3_3x2pl")
+
+[node name="64x64" type="TileMapLayer" parent="Environments" unique_id=1544044842]
+tile_set = ExtResource("4_ry502")
+
+[node name="Enemies" type="Node2D" parent="." unique_id=1366853970]
+
+[node name="Interactables" type="Node2D" parent="." unique_id=18155808]
+
+[node name="Gates" type="Node2D" parent="." unique_id=152760247]
+
+[node name="From" type="Area2D" parent="Gates" unique_id=26760289]
+collision_layer = 32
+collision_mask = 64
 script = ExtResource("4_itegj")
-entry_direction = Vector2(-1, 0)
+metadata/_custom_type_script = "uid://d6mwrb2d16q5"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Transition" unique_id=1128700579]
-position = Vector2(-387, -105)
-shape = SubResource("RectangleShape2D_4pxbc")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gates/From" unique_id=36066333]
+position = Vector2(-50, -75)
+shape = SubResource("RectangleShape2D_vlew8")
 
-[node name="PlayerSpawn" type="Marker2D" parent="." unique_id=805233656 groups=["player_spawn"]]
-position = Vector2(-221, -1)
+[node name="To" type="Area2D" parent="Gates" unique_id=2107550537]
+position = Vector2(389, -1)
+collision_layer = 32
+collision_mask = 64
+script = ExtResource("4_itegj")
+metadata/_custom_type_script = "uid://d6mwrb2d16q5"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gates/To" unique_id=737343698]
+position = Vector2(50, -75)
+shape = SubResource("RectangleShape2D_grhhy")

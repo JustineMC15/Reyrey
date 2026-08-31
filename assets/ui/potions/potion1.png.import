@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cblhpcw2b3acc"
-path="res://.godot/imported/armor1.png-77ef6b1dd91fa1f950fab7a2a43b135d.ctex"
+uid="uid://by0va2mjy6gui"
+path="res://.godot/imported/potion1.png-2e6a6ad89cfaef4355e68b11bd3741e7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/armor1.png"
-dest_files=["res://.godot/imported/armor1.png-77ef6b1dd91fa1f950fab7a2a43b135d.ctex"]
+source_file="res://assets/ui/potions/potion1.png"
+dest_files=["res://.godot/imported/potion1.png-2e6a6ad89cfaef4355e68b11bd3741e7.ctex"]
 
 [params]
 

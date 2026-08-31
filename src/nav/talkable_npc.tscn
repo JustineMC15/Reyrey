@@ -1,0 +1,118 @@
+[gd_scene format=3 uid="uid://n2l6ea87ytfa"]
+
+[ext_resource type="Script" uid="uid://cr8a150shlj3d" path="res://src/nav/talkable_npc.gd" id="1_85fxb"]
+[ext_resource type="FontFile" uid="uid://dlinrvj4uxc6w" path="res://assets/fonts/Seshat.otf" id="2_a11eq"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bekt7"]
+size = Vector2(151, 238)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gyt8m"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_85fxb"]
+content_margin_left = 20.0
+content_margin_top = 18.0
+content_margin_right = 20.0
+content_margin_bottom = 18.0
+bg_color = Color(0.22658296, 0.22658296, 0.22091639, 0.90000004)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.78431374, 0.46666667, 0.14117648, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="TalkableNPC" type="Area2D" unique_id=228051666 node_paths=PackedStringArray("prompt_panel")]
+collision_layer = 32
+collision_mask = 64
+script = ExtResource("1_85fxb")
+prompt_panel = NodePath("PromptPanel")
+metadata/_custom_type_script = "uid://cr8a150shlj3d"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=187558220]
+position = Vector2(0, -120)
+shape = SubResource("RectangleShape2D_bekt7")
+
+[node name="PromptPanel" type="Panel" parent="." unique_id=353277894]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -9555.0
+offset_top = -13.599976
+offset_right = -9555.0
+offset_bottom = -13.599976
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_gyt8m")
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="PromptPanel" unique_id=2049828911]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 9446.0
+offset_top = -292.0
+offset_right = 9662.0
+offset_bottom = -192.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+theme_override_fonts/font = ExtResource("2_a11eq")
+theme_override_font_sizes/font_size = 40
+text = "READ
+E"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="DialoguePanel" type="Panel" parent="." unique_id=1110587660]
+offset_left = -600.0
+offset_top = -500.0
+offset_right = 400.0
+offset_bottom = -250.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_85fxb")
+metadata/_edit_use_anchors_ = true
+
+[node name="MarginContainer" type="MarginContainer" parent="DialoguePanel" unique_id=850626954]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -15.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 38
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 38
+
+[node name="VBoxContainer" type="VBoxContainer" parent="DialoguePanel/MarginContainer" unique_id=800481761]
+layout_mode = 2
+
+[node name="SpeakerLabel" type="Label" parent="DialoguePanel/MarginContainer/VBoxContainer" unique_id=750226071]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78431374, 0.46666667, 0.14117648, 1)
+theme_override_colors/font_outline_color = Color(0.78431374, 0.46666667, 0.14117648, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("2_a11eq")
+theme_override_font_sizes/font_size = 32
+autowrap_mode = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="DialogueLabel" type="Label" parent="DialoguePanel/MarginContainer/VBoxContainer" unique_id=1191579051]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.91764706, 0.8784314, 0.7411765, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 1
+theme_override_fonts/font = ExtResource("2_a11eq")
+theme_override_font_sizes/font_size = 40
+autowrap_mode = 3
+metadata/_edit_use_anchors_ = true

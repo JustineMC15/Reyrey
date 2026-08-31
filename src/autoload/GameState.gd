@@ -1483,7 +1483,31 @@ func unlock_potion_slot(category: String) -> void:
 
 	unlocked_potion_slots[category] = true
 	potion_slot_unlocked.emit(category)
+func has_any_potion_slot_unlocked() -> bool:
+	return not unlocked_potion_slots.is_empty()
 
+
+# Returns effect_ids ordered by ascending fragment_cost — the order
+# the linear Potion Unlock Map chains them in. Ties keep their
+# original potion_effect_data declaration order.
+func get_potion_effects_by_progression() -> Array:
+	var ids := potion_effect_data.keys()
+	var original_order := {}
+
+	for i in ids.size():
+		original_order[ids[i]] = i
+
+	ids.sort_custom(func(a, b):
+		var cost_a: int = potion_effect_data[a].get("fragment_cost", 0)
+		var cost_b: int = potion_effect_data[b].get("fragment_cost", 0)
+
+		if cost_a == cost_b:
+			return original_order[a] < original_order[b]
+
+		return cost_a < cost_b
+	)
+
+	return ids
 
 # --- Effects (fragment-gated, never picked up in the world) ---
 

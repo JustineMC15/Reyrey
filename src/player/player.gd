@@ -215,7 +215,7 @@ var transition_walk_direction := 1.0
 @onready var death_animation: AnimatedSprite2D = $AnimationEffects/DeathAnimation
 @onready var jump_effect: AnimatedSprite2D = $AnimationEffects/JumpEffect
 @onready var slam_impact_effect: AnimatedSprite2D = $AnimationEffects/SlamImpactEffect
-
+@onready var recall_effect: AnimatedSprite2D = $AnimationEffects/Recall
 var _double_jump_fire_1_base_scale: Vector2
 var _double_jump_fire_1_base_position: Vector2
 var _double_jump_fire_2_base_scale: Vector2
@@ -712,11 +712,19 @@ func _trigger_recall() -> void:
 	global_position = recall_anchor_position
 	velocity = Vector2.ZERO
 
+	recall_effect.visible = true
+	recall_effect.stop()
+	recall_effect.frame = 0
+	recall_effect.play("recall")
+
 	_camera_shake(6.0, 0.15)
 	_flash_recall(Color(1.3, 1.5, 2.2, 1))
 
 	_clear_recall_anchor()
-
+	
+func _on_recall_effect_finished() -> void:
+	if recall_effect.animation == "recall":
+		recall_effect.visible = false
 
 func _clear_recall_anchor() -> void:
 	has_recall_anchor = false
@@ -973,6 +981,7 @@ func _ready() -> void:
 	holy_effect.visible = false
 	wind_effect.visible = false
 	dash_hitbox.monitoring = false
+	recall_effect.visible = false
 
 	death_animation.visible = false
 	jump_effect.visible = false
@@ -1022,7 +1031,9 @@ func _ready() -> void:
 	slam_impact_effect.animation_finished.connect(
 		_on_slam_impact_finished
 	)
-
+	recall_effect.animation_finished.connect(
+	_on_recall_effect_finished
+	)
 	mp_changed.emit(mp, max_mp)
 	stamina_changed.emit(stamina, max_stamina)
 	_sword_damage_base = sword_damage
@@ -1283,6 +1294,7 @@ func _physics_process(delta: float) -> void:
 		if not has_recall_anchor:
 			_place_recall_anchor()
 		else:
+
 			_trigger_recall()
 
 	# POTION INPUT

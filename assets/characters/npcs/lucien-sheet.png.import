@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c1tm14fppp6jt"
-path="res://.godot/imported/armor4.png-08260a73f7ff6ab56d4ada2c33e67580.ctex"
+uid="uid://b7xo7ebfvckkk"
+path="res://.godot/imported/lucien-sheet.png-1b05cc23469e02199e0fc3828e238006.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/armor4.png"
-dest_files=["res://.godot/imported/armor4.png-08260a73f7ff6ab56d4ada2c33e67580.ctex"]
+source_file="res://assets/characters/npcs/lucien-sheet.png"
+dest_files=["res://.godot/imported/lucien-sheet.png-1b05cc23469e02199e0fc3828e238006.ctex"]
 
 [params]
 
