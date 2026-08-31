@@ -129,7 +129,7 @@ func get_keybind_text(ability_id: String) -> String:
 var ability_data: Dictionary = {
 	"double_jump": {
 		"name": "Spark Flame",
-		"description": "Grants a second jump while airborne. Consumes MP for an empowered flame burst; falls back to a weaker smoke jump if MP is empty.",
+		"description": "A small flame that bears its bearer aloft once more. When fed with MP, it burns brighter and carries greater force.",
 		"tin_text": "Combustion. Whoever wrote this world's laws decided that flame needs something to eat before it's allowed to exist. No exceptions, not even for me. I can stop a heart, I can stop a star, and I still have to feed the fire before it will hold you up. Pathetic economy. Eternity doesn't need to be fed. I checked.",
 		"reynauld_text": "It kicks like a mule and smells like my eyebrows. Effective, though. I've decided not to ask what it's burning. Whatever it is, it isn't coin, and that's the only ingredient I ever worry about running out of.",
 		"input_action": "jump",
@@ -138,7 +138,7 @@ var ability_data: Dictionary = {
 
 	"dash": {
 		"name": "Holy Lance",
-		"description": "A quick burst of forward speed. Consumes MP to deal damage and grant brief invincibility; without MP it still moves you, but deals no damage.",
+		"description": "A swift thrust that carries its bearer a great distance. When fed with MP, it strikes foes and shields the bearer from harm.",
 		"tin_text": "Distance is the world's favorite lie. It insists that two things wanting to be close isn't enough — that wanting has to be spent crossing empty space first, like affection is a toll road. I built through this the same year I built through kingdoms. It still charges me anyway. Some laws don't care how old you are.",
 		"reynauld_text": "It throws me forward faster than my legs would ever agree to. I used to close distance with my own two feet, thank you. Now I let something invisible do it for me and pretend that's dignified. It isn't. It is, however, faster, and I am a practical man.",
 		"input_action": "dash",
@@ -147,7 +147,7 @@ var ability_data: Dictionary = {
 
 	"ground_slam": {
 		"name": "Martyr's Drop",
-		"description": "Slam downward from the air, damaging anything nearby on landing and breaking certain floors.",
+		"description": "A mighty descent that shakes the earth beneath the bearer, harming those nearby and shattering fragile ground.",
 		"tin_text": "Everything that rises has to come back down. I hate that rule more than any other, because I have tested every exception I could think of and the world simply waited me out. I have stopped stars mid-fall. I have not stopped myself. Apparently that's not how the arrangement works.",
 		"reynauld_text": "They named it after martyrs, which I assume is meant to be poetic. I'd rather it be named after the ground, which is the thing doing all the suffering. I've cracked three shields testing this. I am billing someone. I haven't decided who yet.",
 		"input_action": "ground_slam",
@@ -156,7 +156,7 @@ var ability_data: Dictionary = {
 
 	"glide": {
 		"name": "Vigil Wind",
-		"description": "Hold to slow your fall and glide horizontally instead of dropping straight down.",
+		"description": "A gentle wind that carries the bearer through the air, slowing their fall and carrying them aloft.",
 		"tin_text": "You're allowed to stay up. You are not allowed to stop asking. The moment you let go of the wanting, gravity remembers you exist and collects what it's owed. I used to think that was cruelty. Now I think it might be the only honest law this world has. Nothing stays aloft by accident. Not wind. Not devotion.",
 		"reynauld_text": "I hold the wind the way I hold a vigil — badly, and with my arm going numb halfway through. Still, it's the first time this armor hasn't tried to kill me on the way down. I'll take unnatural mercy over natural consequence any day of the week.",
 		"input_action": "glide",
@@ -165,7 +165,7 @@ var ability_data: Dictionary = {
 
 	"dash_chain": {
 		"name": "Litany Step",
-		"description": "Chain a second dash immediately after the first by spending stamina, skipping the normal dash cooldown.",
+		"description": "A practiced step that may be repeated before the first has faded, though each repetition taxes the body.",
 		"tin_text": "Say a thing enough times and the world decides you've used it up. Chant it, mean it, repeat it — the meaning is supposed to survive the repetition, and instead the world taxes you for each recitation until there's nothing left to say. I have said the same three words for eight hundred years. I would like an exception. I have never once received one.",
 		"reynauld_text": "Every knight drills the same forms until his arms forget how to do anything else. This isn't so different — same step, over and over, until the body stops asking permission. I only wish my knees had been consulted before agreeing to this many repetitions.",
 		"input_action": "dash",
@@ -174,7 +174,7 @@ var ability_data: Dictionary = {
 
 	"wall_cling": {
 		"name": "Wick Ember",
-		"description": "Cling to walls while airborne to slow your descent, at the cost of draining stamina.",
+		"description": "A dying ember that clings to stone. While grasped, it slows the bearer’s fall, though the flame is spent with each moment.",
 		"tin_text": "A wick doesn't get to choose how long it burns. It holds on, it gives light, and the whole time it's being consumed for the privilege. I resent that grip is never free. I resent it more that I understand it — I have held on to things for centuries and called it strength, when it was only ever a slower way of running out.",
 		"reynauld_text": "My gauntlets are earning their keep tonight. Stone does not care for knuckles, and I suspect my knuckles have opinions about stone they've been too polite to share until now. I'll manage. I've held worse things longer for less reason.",
 		"input_action": "",
@@ -183,7 +183,7 @@ var ability_data: Dictionary = {
 
 	"recall": {
 		"name": "Star Anchor",
-		"description": "Place a marker, then teleport back to it. Costs MP to activate the return.",
+		"description": "A mark that binds the bearer to a chosen place. From afar, the mark may draw them home.",
 		"tin_text": "You don't get to return to what you didn't think to keep. That's the law underneath every star chart, every memory, every fool who assumed the past would wait for them to come back and collect it. I mark my place now. Every time. I learned that lesson the hard way, and I intend to make sure I never learn it again.",
 		"reynauld_text": "It hauls me backward like I'm on a leash I never agreed to wear, and somehow I don't mind it. I know where the mark is because he put it there. I've decided that's reason enough to trust it. I don't extend that courtesy to much else in this world.",
 		"input_action": "recall",
@@ -192,7 +192,7 @@ var ability_data: Dictionary = {
 
 	"ledge_grab": {
 		"name": "Censer Swing",
-		"description": "Automatically catch a ledge while falling near one; press Jump to climb up.",
+		"description": "A swinging censer that catches the bearer upon a ledge, should one be within reach.",
 		"tin_text": "The world does not catch you by default. That's the part nobody tells you. Every ledge, every fall, every threshold — you either seize it yourself or you don't, and the universe watches without opinion either way. I used to think mercy was rare because people were cruel. It's rarer than that. Mercy isn't even the world's job.",
 		"reynauld_text": "I've been pulled from worse drops by worse hands. This one, at least, is mine — I catch the edge myself, every time, and no one has to come looking for what's left of me at the bottom. Small comfort. I'll take it.",
 		"input_action": "",
