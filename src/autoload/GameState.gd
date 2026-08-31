@@ -200,7 +200,19 @@ var ability_data: Dictionary = {
 	},
 }
 
-
+# Big claim-popup illustration per ability — separate from the small
+# scripture grid sprite in inventory_ui.gd. Order matches the
+# declaration order above (double_jump..ledge_grab -> 1..8).
+const ABILITY_TUTORIAL_IMAGES := {
+	"double_jump": preload(	"res://assets/ui/tutorials/abilitytutorial1.png"),
+	"dash": preload("res://assets/ui/tutorials/abilitytutorial2.png"),
+	"ground_slam": preload("res://assets/ui/tutorials/abilitytutorial3.png"),
+	"glide": preload("res://assets/ui/tutorials/abilitytutorial4.png"),
+	"dash_chain": preload("res://assets/ui/tutorials/abilitytutorial5.png"),
+	"wall_cling": preload("res://assets/ui/tutorials/abilitytutorial6.png"),
+	"recall": preload("res://assets/ui/tutorials/abilitytutorial7.png"),
+	"ledge_grab": preload("res://assets/ui/tutorials/abilitytutorial8.png"),
+}
 signal ability_claimed(ability_id)
 
 var tutorials_seen: Dictionary = {
@@ -229,10 +241,12 @@ func _ready() -> void:
 
 var _open_modals: Dictionary = {}  # panel_name -> true
 
+signal modal_opened(panel_name: String)
+
 
 func register_modal_open(panel_name: String) -> void:
 	_open_modals[panel_name] = true
-
+	modal_opened.emit(panel_name)
 
 func register_modal_closed(panel_name: String) -> void:
 	_open_modals.erase(panel_name)
@@ -774,30 +788,6 @@ func _run_claim_sequence(
 	vbox.add_theme_constant_override("separation", 14)
 	center.add_child(vbox)
 
-	if icon:
-		var icon_rect := TextureRect.new()
-		icon_rect.texture = icon
-		icon_rect.custom_minimum_size = Vector2(96, 96)
-		icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		icon_rect.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-		vbox.add_child(icon_rect)
-
-		var pulse := create_tween().set_loops()
-
-		pulse.tween_property(
-			icon_rect,
-			"scale",
-			Vector2(1.15, 1.15),
-			0.6
-		).set_trans(Tween.TRANS_SINE)
-
-		pulse.tween_property(
-			icon_rect,
-			"scale",
-			Vector2(1.0, 1.0),
-			0.6
-		)
-
 	var title := Label.new()
 	title.text = data.get(
 		"name",
@@ -812,14 +802,37 @@ func _run_claim_sequence(
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(title)
 
-	for key in ["tin_text", "reynauld_text"]:
-		if data.has(key):
-			var line := Label.new()
-			line.text = data[key]
-			line.autowrap_mode = TextServer.AUTOWRAP_WORD
-			line.custom_minimum_size = Vector2(760, 0)
-			line.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			vbox.add_child(line)
+	# Picture — same "resize to fit, keep aspect, don't hand-resize the
+	# source PNG" setup as DetailIcon in inventory_ui.tscn: fixed box
+	# via custom_minimum_size + EXPAND_IGNORE_SIZE so the box size wins,
+	# STRETCH_KEEP_ASPECT_CENTERED so any resolution PNG fits inside it.
+	var picture: Texture2D = ABILITY_TUTORIAL_IMAGES.get(ability_id, icon)
+
+	if picture:
+		var picture_rect := TextureRect.new()
+		picture_rect.texture = picture
+		picture_rect.custom_minimum_size = Vector2(400, 240)
+		picture_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		picture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		picture_rect.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		vbox.add_child(picture_rect)
+
+	if data.has("description"):
+		var description_label := Label.new()
+		description_label.text = data["description"]
+		description_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+		description_label.custom_minimum_size = Vector2(420, 0)
+		description_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		vbox.add_child(description_label)
+
+	var keybind_text := get_keybind_text(ability_id)
+
+	if keybind_text != "":
+		var keybind_label := Label.new()
+		keybind_label.text = keybind_text
+		keybind_label.modulate.a = 0.8
+		keybind_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		vbox.add_child(keybind_label)
 
 	var prompt := Label.new()
 	prompt.text = "Press Enter / Space to continue"
@@ -904,7 +917,6 @@ func _run_claim_sequence(
 
 	_transition_lock = false
 	ability_claimed.emit(ability_id)
-
 
 # --- Checkpoints ---
 func soft_respawn_enemies() -> void:

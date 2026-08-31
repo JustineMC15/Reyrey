@@ -18,6 +18,7 @@
 [ext_resource type="Script" uid="uid://b0stelnyyhd5f" path="res://src/nav/crumbling_floor.gd" id="10_ula0g"]
 [ext_resource type="PackedScene" uid="uid://bn0hig7ndpdco" path="res://src/nav/chest.tscn" id="11_iw880"]
 [ext_resource type="TileSet" uid="uid://bh5re3fvbw1fu" path="res://assets/environment/tres/64x64.tres" id="11_whoin"]
+[ext_resource type="Texture2D" uid="uid://cyt803nnvmcpu" path="res://assets/environment/parallax/wheat.png" id="12_7123c"]
 [ext_resource type="PackedScene" uid="uid://65o0wpmgpsyw" path="res://src/nav/interact_gate.tscn" id="18_bgl6i"]
 [ext_resource type="PackedScene" uid="uid://dynuhhpg4mbop" path="res://src/enemies/guiding_star_follow.tscn" id="19_a84nq"]
 [ext_resource type="PackedScene" uid="uid://n2l6ea87ytfa" path="res://src/nav/talkable_npc.tscn" id="21_wkf5l"]
@@ -92,6 +93,17 @@ animations = [{
 "speed": 2.0
 }]
 
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_t3qfa"]
+lifetime_randomness = 0.5
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(9000, 1500, 1)
+direction = Vector3(1, -0.5, 0)
+initial_velocity_min = 200.0
+initial_velocity_max = 400.0
+scale_min = 2.5
+scale_max = 5.0
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4pxbc"]
 size = Vector2(208.5, 568)
 
@@ -100,6 +112,9 @@ size = Vector2(210, 139)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5okd8"]
 size = Vector2(208.5, 206)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1gs0d"]
+size = Vector2(100, 150)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vlew8"]
 size = Vector2(192, 64)
@@ -235,6 +250,17 @@ chest_id = "A1R1-C1"
 star_fragment_reward = 20
 chest_tier = 1
 
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Environments" unique_id=1721299470]
+position = Vector2(8348, -838)
+amount = 500
+texture = ExtResource("12_7123c")
+lifetime = 10.0
+preprocess = 8.0
+speed_scale = 0.5
+visibility_rect = Rect2(-9000, -1500, 18000, 3000)
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_t3qfa")
+
 [node name="Enemies" type="Node2D" parent="." unique_id=1234582300]
 
 [node name="GuidingStar" parent="Enemies" unique_id=1933994159 instance=ExtResource("3_4x4sb")]
@@ -315,6 +341,20 @@ jump_velocity = Vector2(100, -500)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gates/WellSpawn" unique_id=1731117399]
 position = Vector2(-292, 347)
 shape = SubResource("RectangleShape2D_5okd8")
+
+[node name="ToArea2" type="Area2D" parent="Gates" unique_id=226916675]
+position = Vector2(18099, 193)
+collision_layer = 32
+collision_mask = 64
+script = ExtResource("4_5jn5y")
+gate_id = "A2R1-entry"
+target_scene_path = "uid://cc4ttjxv1j2xn"
+target_gate_id = "A2R1"
+metadata/_custom_type_script = "uid://d6mwrb2d16q5"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gates/ToArea2" unique_id=1936419134]
+position = Vector2(50, -75)
+shape = SubResource("RectangleShape2D_1gs0d")
 
 [node name="Interactables" type="Node2D" parent="." unique_id=1024094196]
 

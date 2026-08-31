@@ -28,6 +28,7 @@ Cutscene="*uid://cnynsl6c4ls82"
 StoryContent="*uid://dmguht8p4o884"
 AbilityTutorialUI="*uid://bmbxsx6hxbyp2"
 PotionMapUI="*uid://k5w5sq6c6two"
+PotionTutorialUI="*uid://bjjnlgbqcqo0k"
 
 [display]
 
