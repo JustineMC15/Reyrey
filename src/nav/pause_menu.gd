@@ -105,9 +105,16 @@ func _autosave() -> void:
 
 func _on_save_and_exit_to_menu() -> void:
 	_autosave()
-	close()
-	get_tree().change_scene_to_file("res://src/nav/main_menu.tscn")
 
+	if fade_tween:
+		fade_tween.kill()
+
+	is_open = false
+	GameState.register_modal_closed("pause")
+	root_panel.hide()
+	get_tree().paused = false
+
+	get_tree().change_scene_to_file("res://src/nav/main_menu.tscn")
 
 func _on_save_and_quit() -> void:
 	_autosave()

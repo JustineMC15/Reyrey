@@ -4,13 +4,13 @@ extends Node
 # Plain data only. Each line: {"speaker": String, "text": String,
 # "image": Texture2D (optional)}.
 const OPENING_LINES := [
-	{"": "", "text": "A millennium..."},
-	{"": "", "text": "A millennium has passed since the stars halted their celestial pilgrimage.."},
-	{"": "", "text": "The world shall soon follow."},
-	{"": "", "text": "..."},
-	{"": "", "text": "A star in the shape of a hollow rhombus will soon descend upon the icy ends of the earth."},
-	{"": "", "text": "Alongside — rather, in search of his herald."},
-	{"": "", "text": "Bearing the crest upon his tabard."},
+	{"text": "A millennium..."},
+	{"text": "A millennium has passed since the stars halted their celestial pilgrimage.."},
+	{"text": "The world shall soon follow."},
+	{"text": "..."},
+	{"text": "A star in the shape of a hollow rhombus will soon descend upon the icy ends of the earth."},
+	{"text": "Alongside — rather, in search of his herald."},
+	{"text": "Bearing the crest upon his tabard."},
 ]
 
 const ENDING_BASE_LINES := [

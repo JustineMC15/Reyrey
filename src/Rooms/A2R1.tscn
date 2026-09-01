@@ -98,7 +98,7 @@ scale_min = 2.5
 scale_max = 5.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0pp37"]
-size = Vector2(2862, 157)
+size = Vector2(1743, 157)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vlew8"]
 size = Vector2(100, 150)
@@ -211,7 +211,7 @@ collision_mask = 2
 script = ExtResource("11_ja7dr")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Interactables/Hazard" unique_id=1788857999]
-position = Vector2(199, 68.5)
+position = Vector2(-373, 26)
 shape = SubResource("RectangleShape2D_0pp37")
 
 [node name="Marker2D" type="Marker2D" parent="Interactables/Hazard" unique_id=1609058797]

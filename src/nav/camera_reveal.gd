@@ -109,6 +109,12 @@ func _on_area_entered(area: Area2D) -> void:
 		return
 
 	_triggered = true
+	if GameState.camera_offset_locked:
+		return
+
+	GameState.camera_offset_locked = true
+	_triggered = true
+
 	_run_reveal(camera)
 
 
@@ -134,5 +140,6 @@ func _run_reveal(camera: Camera2D) -> void:
 	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 	await tween.finished
-
+	_active = false
+	GameState.camera_offset_locked = false
 	_active = false

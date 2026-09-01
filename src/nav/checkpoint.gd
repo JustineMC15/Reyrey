@@ -112,6 +112,9 @@ func rest() -> void:
 	if not player_inside:
 		return
 
+	if not GameState.can_trigger_gate():
+		return
+
 	var players := get_tree().get_nodes_in_group("player")
 
 	if players.is_empty():

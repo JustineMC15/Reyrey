@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://8vr0pfeydo4w" path="res://src/nav/camera_bounds.gd" id="1_phhcl"]
 [ext_resource type="Texture2D" uid="uid://dw56c5wv2b3xw" path="res://assets/environment/parallax/tutorialbgLAYER1.png" id="2_3bt6u"]
+[ext_resource type="Script" uid="uid://5vbw01sd268j" path="res://src/nav/simple_door.gd" id="2_5i7uk"]
 [ext_resource type="TileSet" uid="uid://wdxl8wi6477l" path="res://assets/environment/tres/greybox.tres" id="2_i3l4f"]
 [ext_resource type="Texture2D" uid="uid://dt8m3k5huc27j" path="res://assets/ui/save_previews/valecourt.png" id="3_y0v7c"]
 [ext_resource type="Script" uid="uid://d6mwrb2d16q5" path="res://src/nav/gate.gd" id="4_y0v7c"]
@@ -328,6 +329,12 @@ animations = [{
 "speed": 2.0
 }]
 
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_12oe3"]
+load_path = "res://.godot/imported/door4b(wooden).png-a224567dfee06fe2418ba2d86afdab1a.ctex"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vaqhx"]
+size = Vector2(54, 197)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_m685k"]
 size = Vector2(525, 1016.5)
 
@@ -450,15 +457,32 @@ tile_set = ExtResource("7_03ufi")
 position = Vector2(-4292, -319)
 movement_distance = 100.0
 
-[node name="BossEncounter" type="Node2D" parent="." unique_id=578853415 node_paths=PackedStringArray("trigger_area", "boss", "rock_spawn_area")]
+[node name="BossEncounter" type="Node2D" parent="." unique_id=578853415 node_paths=PackedStringArray("trigger_area", "boss", "target_door", "rock_spawn_area")]
 position = Vector2(-9000, -404)
 script = ExtResource("12_5e85k")
 boss_id = "boss1"
 trigger_area = NodePath("TriggerArea")
 boss = NodePath("GuidingSuperstar")
+target_door = NodePath("SimpleDoor")
 rock_spawn_area = NodePath("RockSpawnArea")
 battle_music = ExtResource("14_tbqxn")
 metadata/_custom_type_script = "uid://4o4jlsye1arb"
+
+[node name="SimpleDoor" type="StaticBody2D" parent="BossEncounter" unique_id=2018904749]
+position = Vector2(919, 809)
+script = ExtResource("2_5i7uk")
+start_open = true
+reveal_alpha = 0.1
+metadata/_custom_type_script = "uid://5vbw01sd268j"
+
+[node name="Sprite2D" type="Sprite2D" parent="BossEncounter/SimpleDoor" unique_id=995959978]
+position = Vector2(44.00005, -435)
+scale = Vector2(0.91406095, 1.4999998)
+texture = SubResource("CompressedTexture2D_12oe3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BossEncounter/SimpleDoor" unique_id=995703030]
+position = Vector2(43, -436.5)
+shape = SubResource("RectangleShape2D_vaqhx")
 
 [node name="TriggerArea" type="Area2D" parent="BossEncounter" unique_id=1126774262]
 collision_layer = 32

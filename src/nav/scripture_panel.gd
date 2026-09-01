@@ -32,7 +32,7 @@ func _process(_delta: float) -> void:
 		if prompt_panel:
 			prompt_panel.hide()
 
-		GameState.claim_ability(ability_id, player_ref, claim_icon)
+		await GameState.claim_ability(ability_id, player_ref, claim_icon)
 
 		if player_ref.has_method("restore_full_mp"):
 			player_ref.restore_full_mp()

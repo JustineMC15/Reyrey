@@ -653,10 +653,13 @@ func camera_shake(strength: float, duration: float) -> void:
 	_camera_shake(strength, duration)
 
 func _camera_shake(strength: float, duration: float) -> void:
-	if not camera:
+	if not camera or GameState.camera_offset_locked:
 		return
 
+	GameState.camera_offset_locked = true
+
 	var shake_tween := create_tween()
+	shake_tween.set_ignore_time_scale(true)
 	var steps := 6
 
 	for i in steps:
@@ -664,20 +667,10 @@ func _camera_shake(strength: float, duration: float) -> void:
 			randf_range(-strength, strength),
 			randf_range(-strength, strength)
 		)
+		shake_tween.tween_property(camera, "offset", camera_base_offset + random_offset, duration / float(steps))
 
-		shake_tween.tween_property(
-			camera,
-			"offset",
-			camera_base_offset + random_offset,
-			duration / float(steps)
-		)
-
-	shake_tween.tween_property(
-		camera,
-		"offset",
-		camera_base_offset,
-		0.05
-	)
+	shake_tween.tween_property(camera, "offset", camera_base_offset, 0.05)
+	shake_tween.tween_callback(func(): GameState.camera_offset_locked = false)
 
 
 func _on_slam_impact_finished() -> void:
@@ -1807,11 +1800,6 @@ func apply_infinite_stamina(duration: float) -> void:
 	if is_instance_valid(self):
 		infinite_stamina_active = false
 
-func increase_max_mp(amount: int) -> void:
-	max_mp += amount
-	mp_changed.emit(mp, max_mp)
-
-
 # STAMINA
 
 func spend_stamina(amount: float) -> bool:
@@ -1869,6 +1857,9 @@ func _process_stamina_regen(delta: float) -> void:
 	stamina_changed.emit(stamina, max_stamina)
 
 func _process_mp_regen(delta: float) -> void:
+	if _mp_combat_boost_timer > 0.0:
+		_mp_combat_boost_timer -= delta
+
 	if mp >= max_mp:
 		_mp_regen_accumulator = 0.0
 		return
@@ -1876,7 +1867,6 @@ func _process_mp_regen(delta: float) -> void:
 	var rate := MP_REGEN_RATE
 
 	if _mp_combat_boost_timer > 0.0:
-		_mp_combat_boost_timer -= delta
 		rate *= MP_REGEN_COMBAT_MULTIPLIER
 
 	_mp_regen_accumulator += rate * delta
@@ -1884,11 +1874,8 @@ func _process_mp_regen(delta: float) -> void:
 	if _mp_regen_accumulator >= 1.0:
 		var gain := int(_mp_regen_accumulator)
 		_mp_regen_accumulator -= gain
-
 		mp = min(mp + gain, max_mp)
 		mp_changed.emit(mp, max_mp)
-		GameState.current_mp = mp
-
 
 func boost_mp_regen() -> void:
 	_mp_combat_boost_timer = MP_REGEN_COMBAT_DURATION

@@ -230,10 +230,8 @@ func position_player_at_checkpoint(checkpoint_id: String) -> void:
 	var checkpoints := get_tree().get_nodes_in_group("checkpoints")
 
 	for checkpoint in checkpoints:
-		if not checkpoint.has_method("get") \
-		and not "checkpoint_id" in checkpoint:
+		if not ("checkpoint_id" in checkpoint):
 			continue
-
 		if checkpoint.checkpoint_id != checkpoint_id:
 			continue
 

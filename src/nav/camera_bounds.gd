@@ -20,7 +20,7 @@ func _ready() -> void:
 			size = Vector2(640, 360)  # visible starting size on first add
 		set_process(true)
 
-
+	
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint():
 		queue_redraw()

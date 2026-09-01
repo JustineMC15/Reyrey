@@ -751,9 +751,6 @@ size = Vector2(158, 185.5)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0qr2r"]
 size = Vector2(176.25, 156.5)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_vlew8"]
-size = Vector2(264.25, 197)
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_j2873"]
 size = Vector2(142, 239.75)
 
@@ -2704,13 +2701,6 @@ collision_mask = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/DoubleJumpHitbox" unique_id=1947333485]
 shape = SubResource("RectangleShape2D_0qr2r")
-
-[node name="SlamHitbox" type="Area2D" parent="Collision" unique_id=1318119573]
-collision_layer = 8
-collision_mask = 260
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/SlamHitbox" unique_id=365831322]
-shape = SubResource("RectangleShape2D_vlew8")
 
 [node name="Pogo" type="Area2D" parent="Collision" unique_id=71167603]
 collision_layer = 8

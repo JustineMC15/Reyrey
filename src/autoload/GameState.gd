@@ -112,6 +112,7 @@ var keybind_display: Dictionary = {
 	"interact": "E",
 }
 
+var camera_offset_locked: bool = false
 
 func get_keybind_text(ability_id: String) -> String:
 	var data: Dictionary = ability_data.get(ability_id, {})
@@ -738,11 +739,7 @@ func has_ability(ability_id: String) -> bool:
 	return abilities.get(ability_id, false)
 
 
-func claim_ability(
-	ability_id: String,
-	player: Node,
-	icon: Texture2D = null
-) -> void:
+func claim_ability(ability_id: String, player: Node, icon: Texture2D = null) -> void:
 	if has_ability(ability_id):
 		return
 
@@ -751,12 +748,7 @@ func claim_ability(
 	if player and player.has_method("lock_input"):
 		player.lock_input()
 
-	_run_claim_sequence(
-		ability_id,
-		player,
-		icon
-	)
-
+	await _run_claim_sequence(ability_id, player, icon)
 
 func _run_claim_sequence(
 	ability_id: String,
@@ -969,6 +961,9 @@ func respawn_player() -> void:
 	var game := _get_game()
 
 	if game == null:
+		var recovery_fade := create_tween()
+		recovery_fade.tween_property(_fade_rect, "color:a", 0.0, FADE_DURATION)
+		await recovery_fade.finished
 		_transition_lock = false
 		return
 
@@ -1190,14 +1185,7 @@ func go_to_room(
 
 func _fade_out_and_load(target_scene_path: String) -> void:
 	var tween := create_tween()
-
-	tween.tween_property(
-		_fade_rect,
-		"color:a",
-		1.0,
-		FADE_DURATION
-	)
-
+	tween.tween_property(_fade_rect, "color:a", 1.0, FADE_DURATION)
 	await tween.finished
 
 	LoadingScreen.show_loading()
@@ -1206,22 +1194,17 @@ func _fade_out_and_load(target_scene_path: String) -> void:
 
 	if game == null:
 		LoadingScreen.hide_loading()
-		_transition_lock = false
+		await _fade_in()
 		return
 
 	if not game.has_method("load_room"):
-		push_error(
-			"GameState: Game instance has no load_room() method."
-		)
-
+		push_error("GameState: Game instance has no load_room() method.")
 		LoadingScreen.hide_loading()
-		_transition_lock = false
+		await _fade_in()
 		return
 
 	await game.load_room(target_scene_path)
-
 	LoadingScreen.hide_loading()
-
 	await _on_new_room_ready()
 
 func _on_new_room_ready() -> void:
@@ -1241,6 +1224,8 @@ func _position_player_at_gate() -> void:
 
 	if players.is_empty():
 		push_error("GameState: No player found during room transition.")
+		pending_spawn_gate_id = ""
+		await _fade_in()
 		return
 
 	var player = players[0]
@@ -1253,22 +1238,17 @@ func _position_player_at_gate() -> void:
 		if camera:
 			camera.position_smoothing_enabled = false
 
-		# Place player at destination gate.
 		player.global_position = gate.global_position
 		player.velocity = Vector2.ZERO
 
-		# Freeze player movement during arrival.
 		if player.has_method("lock_input"):
 			player.lock_input()
-
-		# Turn collision back on without unlocking movement.
 		if player.has_method("enable_collision_only"):
 			player.enable_collision_only()
 
 		await get_tree().physics_frame
 
 		pending_spawn_gate_id = ""
-
 		await _start_room_entry(player)
 
 		if camera:
@@ -1276,10 +1256,10 @@ func _position_player_at_gate() -> void:
 
 		return
 
-	push_error(
-		"GameState: Destination gate not found: "
-		+ pending_spawn_gate_id
-	)
+	push_error("GameState: Destination gate not found: " + pending_spawn_gate_id)
+
+	pending_spawn_gate_id = ""
+	await _fade_in()
 
 
 func _start_room_entry(player: Node) -> void:
@@ -1562,20 +1542,15 @@ func _check_potion_effect_unlocks() -> void:
 func set_selected_potion_effect(category: String, effect_id: String) -> void:
 	if not POTION_CATEGORIES.has(category):
 		return
-
 	if not is_potion_slot_unlocked(category):
 		return
-
 	if effect_id != "" and not is_potion_effect_unlocked(effect_id):
 		return
 
 	selected_potion_effects[category] = effect_id
-
-	if _has_any_potion_selection():
-		potion_charged = true
+	potion_charged = _has_any_potion_selection()
 
 	potion_mix_changed.emit()
-
 
 func _has_any_potion_selection() -> bool:
 	for category in POTION_CATEGORIES:
