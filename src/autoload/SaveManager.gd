@@ -3,7 +3,22 @@ extends Node
 const SAVE_DIR := "user://saves/"
 const SETTINGS_PATH := "user://settings.json"
 
+# Audio bus names. "Music" and "SFX" must exist as child buses of
+# "Master" in the project's Audio panel (Godot editor, bottom dock)
+# for these to have any effect — this is a one-time manual setup
+# step, not something a script can create. Until those buses exist,
+# set_bus_volume() silently no-ops for them (same as if the slider
+# weren't there at all), so nothing breaks in the meantime.
+const BUS_MASTER := "Master"
+const BUS_MUSIC := "Music"
+const BUS_SFX := "SFX"
+
 var current_slot: int = 1
+
+# Prevents _load_settings_and_apply() from triggering three redundant
+# file writes (one per bus) while it is still applying the values it
+# just read from disk.
+var _is_loading_settings := false
 
 
 # Area presets
@@ -162,11 +177,42 @@ func get_area_name_from_room_code(room_code: String) -> String:
 	return get_area_name(area_id)
 
 
-# Settings
+# --- Settings / Audio buses ---
 
-func save_settings(master_volume_linear: float) -> void:
+## Sets a bus's volume (0.0-1.0 linear) and persists all three bus
+## volumes to disk. Silently does nothing if the named bus doesn't
+## exist yet in the project's Audio panel.
+func set_bus_volume(bus_name: String, volume_linear: float) -> void:
+	var bus_index := AudioServer.get_bus_index(bus_name)
+
+	if bus_index == -1:
+		return
+
+	AudioServer.set_bus_volume_db(
+		bus_index,
+		linear_to_db(clampf(volume_linear, 0.0001, 1.0))
+	)
+
+	if not _is_loading_settings:
+		_save_current_volumes()
+
+
+## Returns a bus's current volume as 0.0-1.0 linear. Falls back to
+## 1.0 (full volume) if the bus doesn't exist yet.
+func get_bus_volume(bus_name: String) -> float:
+	var bus_index := AudioServer.get_bus_index(bus_name)
+
+	if bus_index == -1:
+		return 1.0
+
+	return db_to_linear(AudioServer.get_bus_volume_db(bus_index))
+
+
+func _save_current_volumes() -> void:
 	var data := {
-		"master_volume": master_volume_linear
+		"master_volume": get_bus_volume(BUS_MASTER),
+		"music_volume": get_bus_volume(BUS_MUSIC),
+		"sfx_volume": get_bus_volume(BUS_SFX),
 	}
 
 	var file := FileAccess.open(SETTINGS_PATH, FileAccess.WRITE)
@@ -193,9 +239,10 @@ func _load_settings_and_apply() -> void:
 	if typeof(parsed) != TYPE_DICTIONARY:
 		return
 
-	var vol: float = parsed.get("master_volume", 1.0)
+	_is_loading_settings = true
 
-	AudioServer.set_bus_volume_db(
-		AudioServer.get_bus_index("Master"),
-		linear_to_db(clampf(vol, 0.0001, 1.0))
-	)
+	set_bus_volume(BUS_MASTER, parsed.get("master_volume", 1.0))
+	set_bus_volume(BUS_MUSIC, parsed.get("music_volume", 1.0))
+	set_bus_volume(BUS_SFX, parsed.get("sfx_volume", 1.0))
+
+	_is_loading_settings = false

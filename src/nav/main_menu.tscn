@@ -1,10 +1,180 @@
 [gd_scene format=3 uid="uid://dvesqnrjunxw5"]
 
-[ext_resource type="Script" uid="uid://k51v7no43mqt" path="res://src/nav/main_menu.gd" id="1_j74n5"]
 [ext_resource type="Texture2D" uid="uid://pn6ms78tka3" path="res://assets/ui/titlescreen.jpg" id="2_i52fv"]
 [ext_resource type="PackedScene" uid="uid://c65e1wrlffqdl" path="res://src/nav/save_slot_card.tscn" id="2_j74n5"]
 [ext_resource type="FontFile" uid="uid://bm7sn47lsd7nb" path="res://assets/fonts/UncialAntiqua-Regular.ttf" id="3_p06dg"]
 [ext_resource type="FontFile" uid="uid://dbakhsfowc28k" path="res://assets/fonts/durendalandoliphantregular-lvwl4.ttf" id="4_62cx4"]
+
+[sub_resource type="GDScript" id="GDScript_0hde8"]
+script/source = "extends Control
+
+const PANEL_FADE_DURATION := 0.2
+
+## Drop your button-press SFX here once you have it — every menu
+## navigation button plays it before tweening to the next panel.
+@export var click_sound: AudioStream
+
+@onready var title_label: Label = $Title
+
+@onready var main_buttons: VBoxContainer = $MainButtons
+@onready var start_button: Button = $MainButtons/Start
+@onready var options_button: Button = $MainButtons/Options
+@onready var exit_button: Button = $MainButtons/Exit
+
+@onready var save_slots_panel: Control = $SaveSlotsPanel
+@onready var save_slot_cards: Array[SaveSlotCard] = [
+	$SaveSlotsPanel/Layout/CardRow/SaveSlotCard1,
+	$SaveSlotsPanel/Layout/CardRow/SaveSlotCard2,
+	$SaveSlotsPanel/Layout/CardRow/SaveSlotCard3,
+	$SaveSlotsPanel/Layout/CardRow/SaveSlotCard4,
+]
+
+@onready var settings_panel: Control = $SettingsPanel
+@onready var master_slider: HSlider = $SettingsPanel/Layout/MasterRow/MasterSlider
+@onready var music_slider: HSlider = $SettingsPanel/Layout/MusicRow/MusicSlider
+@onready var sound_slider: HSlider = $SettingsPanel/Layout/SoundRow/SoundSlider
+@onready var settings_back_button: Button = $SettingsPanel/Layout/Back
+
+var click_player: AudioStreamPlayer
+
+
+func _ready() -> void:
+	settings_panel.hide()
+	settings_panel.modulate.a = 0.0
+
+	save_slots_panel.hide()
+	save_slots_panel.modulate.a = 0.0
+
+	click_player = AudioStreamPlayer.new()
+	click_player.bus = \"SFX\"
+	add_child(click_player)
+
+	if click_sound:
+		click_player.stream = click_sound
+
+	_setup_slot_cards()
+
+	start_button.pressed.connect(_on_start_pressed)
+	options_button.pressed.connect(_on_settings_pressed)
+	exit_button.pressed.connect(_on_quit_pressed)
+	settings_back_button.pressed.connect(_on_settings_back_pressed)
+
+	master_slider.value = SaveManager.get_bus_volume(SaveManager.BUS_MASTER)
+	music_slider.value = SaveManager.get_bus_volume(SaveManager.BUS_MUSIC)
+	sound_slider.value = SaveManager.get_bus_volume(SaveManager.BUS_SFX)
+
+	master_slider.value_changed.connect(_on_master_volume_changed)
+	music_slider.value_changed.connect(_on_music_volume_changed)
+	sound_slider.value_changed.connect(_on_sound_volume_changed)
+
+	Music.play_music(
+		preload(\"res://assets/sound/music/Night Vigil.mp3\")
+	)
+
+
+func _setup_slot_cards() -> void:
+	for i in save_slot_cards.size():
+		var slot := i + 1
+		var card := save_slot_cards[i]
+
+		if SaveManager.has_save(slot):
+			card.setup_from_save(slot, SaveManager.get_slot_summary(slot))
+		else:
+			card.setup_empty(slot)
+
+		card.picked.connect(_on_slot_picked)
+
+
+func _play_click() -> void:
+	if click_player.stream:
+		click_player.play()
+
+
+func _fade_out_panel(panel: Control) -> void:
+	if panel == null or not panel.visible:
+		return
+
+	var tween := create_tween()
+	tween.tween_property(panel, \"modulate:a\", 0.0, PANEL_FADE_DURATION)
+	await tween.finished
+
+	panel.hide()
+
+
+func _fade_in_panel(panel: Control) -> void:
+	if panel == null:
+		return
+
+	panel.modulate.a = 0.0
+	panel.show()
+
+	var tween := create_tween()
+	tween.tween_property(panel, \"modulate:a\", 1.0, PANEL_FADE_DURATION)
+	await tween.finished
+
+
+func _on_start_pressed() -> void:
+	_play_click()
+
+	await _fade_out_panel(settings_panel)
+	await _fade_out_panel(main_buttons)
+
+	title_label.hide()
+
+	await _fade_in_panel(save_slots_panel)
+
+
+func _on_slot_picked(slot: int) -> void:
+	SaveManager.current_slot = slot
+
+	await LoadingScreen.show_loading()
+
+	if SaveManager.has_save(slot):
+		await SaveManager.load_game(slot)
+	else:
+		GameState.reset_to_defaults()
+		GameState.prepare_new_game()
+
+		get_tree().change_scene_to_file(
+			\"res://src/game/game.tscn\"
+		)
+
+
+func _on_settings_pressed() -> void:
+	_play_click()
+
+	await _fade_out_panel(save_slots_panel)
+	await _fade_out_panel(main_buttons)
+
+	await _fade_in_panel(settings_panel)
+
+
+func _on_settings_back_pressed() -> void:
+	_play_click()
+
+	await _fade_out_panel(settings_panel)
+
+	title_label.show()
+
+	await _fade_in_panel(main_buttons)
+
+
+func _on_master_volume_changed(value: float) -> void:
+	SaveManager.set_bus_volume(SaveManager.BUS_MASTER, value)
+
+
+func _on_music_volume_changed(value: float) -> void:
+	SaveManager.set_bus_volume(SaveManager.BUS_MUSIC, value)
+
+
+func _on_sound_volume_changed(value: float) -> void:
+	SaveManager.set_bus_volume(SaveManager.BUS_SFX, value)
+
+
+func _on_quit_pressed() -> void:
+	_play_click()
+	get_tree().quit()
+"
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_0bsca"]
 texture = ExtResource("2_i52fv")
@@ -17,7 +187,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_j74n5")
+script = SubResource("GDScript_0hde8")
 
 [node name="Panel" type="Panel" parent="." unique_id=216618417]
 layout_mode = 1
@@ -144,17 +314,97 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -150.0
-offset_top = -20.0
-offset_right = 150.0
-offset_bottom = 20.0
+offset_left = -220.0
+offset_top = -170.0
+offset_right = 220.0
+offset_bottom = 170.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VolumeSlider" type="HSlider" parent="SettingsPanel" unique_id=417513509]
+[node name="Background" type="Panel" parent="SettingsPanel" unique_id=1335041900]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="Layout" type="VBoxContainer" parent="SettingsPanel" unique_id=1335041901]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 20.0
+offset_right = -24.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 14
+
+[node name="SettingsTitle" type="Label" parent="SettingsPanel/Layout" unique_id=1335041902]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_62cx4")
+theme_override_font_sizes/font_size = 32
+text = "SETTINGS"
+horizontal_alignment = 1
+
+[node name="MasterRow" type="VBoxContainer" parent="SettingsPanel/Layout" unique_id=1335041903]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="MasterLabel" type="Label" parent="SettingsPanel/Layout/MasterRow" unique_id=1335041904]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_62cx4")
+theme_override_font_sizes/font_size = 18
+text = "MASTER VOLUME"
+
+[node name="MasterSlider" type="HSlider" parent="SettingsPanel/Layout/MasterRow" unique_id=1335041905]
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+
+[node name="MusicRow" type="VBoxContainer" parent="SettingsPanel/Layout" unique_id=1335041906]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="MusicLabel" type="Label" parent="SettingsPanel/Layout/MusicRow" unique_id=1335041907]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_62cx4")
+theme_override_font_sizes/font_size = 18
+text = "MUSIC VOLUME"
+
+[node name="MusicSlider" type="HSlider" parent="SettingsPanel/Layout/MusicRow" unique_id=1335041908]
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+
+[node name="SoundRow" type="VBoxContainer" parent="SettingsPanel/Layout" unique_id=1335041909]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="SoundLabel" type="Label" parent="SettingsPanel/Layout/SoundRow" unique_id=1335041910]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_62cx4")
+theme_override_font_sizes/font_size = 18
+text = "SOUND VOLUME"
+
+[node name="SoundSlider" type="HSlider" parent="SettingsPanel/Layout/SoundRow" unique_id=1335041911]
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+
+[node name="BackSpacer" type="Control" parent="SettingsPanel/Layout" unique_id=1335041912]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
+[node name="Back" type="Button" parent="SettingsPanel/Layout" unique_id=1335041913]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_62cx4")
+theme_override_font_sizes/font_size = 28
+text = "BACK"

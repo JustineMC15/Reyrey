@@ -6,6 +6,9 @@ class_name InteractGate
 @export var target_gate_id: String = ""     # which gate_id to spawn at over there
 @export var prompt_panel: Panel             # drag this instance's own prompt panel in
 
+@export_category("Preloading")
+@export var preload_target: bool = true
+
 @export_category("Entry")
 @export var entry_type: TransitionGate.EntryType = TransitionGate.EntryType.WALK
 @export var entry_direction: Vector2 = Vector2.RIGHT

@@ -88,21 +88,21 @@ const CONTACT_DAMAGE: int = 1
 
 const FOLLOW_SPEED: float = 400.0
 const REPOSITION_SPEED: float = 500.0
-const LUNGE_SPEED: float = 1550.0
+const LUNGE_SPEED: float = 1600.0
 
 
 # -------------------------------------------------------------------
 # Wind-ups
 # -------------------------------------------------------------------
 
-const LUNGE_WINDUP: float = 0.75
+const LUNGE_WINDUP: float = 0.65
 const GROUND_SLAM_WINDUP: float = 0.8
 const CEILING_SLAM_WINDUP: float = 0.8
 const FOLLOW_SPIN_WINDUP: float = 0.55
 const REPOSITION_WINDUP: float = 0.3
 
 const LUNGE_RECOIL_START: float = 0.45
-const LUNGE_RECOIL_SPEED: float = 420.0
+const LUNGE_RECOIL_SPEED: float = 500.0
 
 
 # -------------------------------------------------------------------

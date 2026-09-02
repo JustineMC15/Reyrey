@@ -20,7 +20,10 @@
 [ext_resource type="Script" uid="uid://4o4jlsye1arb" path="res://src/nav/boss_encounter.gd" id="12_5e85k"]
 [ext_resource type="PackedScene" uid="uid://cvic7gvemw3bq" path="res://src/enemies/guiding_superstar.tscn" id="13_n2ggb"]
 [ext_resource type="AudioStream" uid="uid://b3n4d1ad587db" path="res://assets/sound/music/The_Old_Tower_Inn.mp3" id="14_tbqxn"]
+[ext_resource type="Script" uid="uid://bhyij58m500yh" path="res://src/nav/locked_door.gd" id="15_3731i"]
 [ext_resource type="Script" uid="uid://twmqytbf8u0p" path="res://src/enemies/killzoneinstant.gd" id="16_8ywx7"]
+[ext_resource type="Texture2D" uid="uid://cpttb0arkfmr5" path="res://assets/environment/free-game-objects/door4b(wooden).png" id="16_yq67m"]
+[ext_resource type="AudioStream" uid="uid://c6e7f50ib7mc3" path="res://assets/sound/sfx/door-01.mp3" id="17_v77af"]
 [ext_resource type="PackedScene" uid="uid://bn0hig7ndpdco" path="res://src/nav/chest.tscn" id="21_pfkeg"]
 [ext_resource type="Texture2D" uid="uid://cyt803nnvmcpu" path="res://assets/environment/parallax/wheat.png" id="22_7es58"]
 
@@ -341,6 +344,12 @@ size = Vector2(525, 1016.5)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vlew8"]
 size = Vector2(1865, 61)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_phkxj"]
+size = Vector2(65, 199.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_20wfv"]
+size = Vector2(330.75, 256)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_yy0h0"]
 size = Vector2(5492, 157)
 
@@ -457,13 +466,15 @@ tile_set = ExtResource("7_03ufi")
 position = Vector2(-4292, -319)
 movement_distance = 100.0
 
-[node name="BossEncounter" type="Node2D" parent="." unique_id=578853415 node_paths=PackedStringArray("trigger_area", "boss", "target_door", "rock_spawn_area")]
+[node name="BossEncounter" type="Node2D" parent="." unique_id=578853415 node_paths=PackedStringArray("trigger_area", "boss", "target_door", "shortcut_door", "rock_spawn_area")]
 position = Vector2(-9000, -404)
 script = ExtResource("12_5e85k")
 boss_id = "boss1"
 trigger_area = NodePath("TriggerArea")
 boss = NodePath("GuidingSuperstar")
 target_door = NodePath("SimpleDoor")
+shortcut_door = NodePath("LockedDoor")
+shortcut_id_on_clear = "boss1door"
 rock_spawn_area = NodePath("RockSpawnArea")
 battle_music = ExtResource("14_tbqxn")
 metadata/_custom_type_script = "uid://4o4jlsye1arb"
@@ -500,6 +511,34 @@ position = Vector2(-6, -460)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BossEncounter/RockSpawnArea" unique_id=1957938189]
 position = Vector2(-12.5, -60.5)
 shape = SubResource("RectangleShape2D_vlew8")
+
+[node name="LockedDoor" type="StaticBody2D" parent="BossEncounter" unique_id=794927462]
+position = Vector2(-904, 496)
+collision_mask = 0
+script = ExtResource("15_3731i")
+door_id = "boss1door"
+metadata/_custom_type_script = "uid://bhyij58m500yh"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BossEncounter/LockedDoor" unique_id=1038067161]
+position = Vector2(-114.5, -120.25)
+shape = SubResource("RectangleShape2D_phkxj")
+
+[node name="DetectionArea" type="Area2D" parent="BossEncounter/LockedDoor" unique_id=1618749540]
+collision_layer = 32
+collision_mask = 64
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BossEncounter/LockedDoor/DetectionArea" unique_id=1161710597]
+position = Vector2(-369, 96)
+shape = SubResource("RectangleShape2D_20wfv")
+
+[node name="Sprite2D" type="Sprite2D" parent="BossEncounter/LockedDoor" unique_id=1460129215]
+position = Vector2(-112.75013, -123.249985)
+scale = Vector2(1.0078077, 1.535156)
+texture = ExtResource("16_yq67m")
+
+[node name="UnlockSound" type="AudioStreamPlayer2D" parent="BossEncounter/LockedDoor" unique_id=1649730610]
+stream = ExtResource("17_v77af")
+pitch_scale = 0.7
 
 [node name="Interactables" type="Node2D" parent="." unique_id=243639149]
 
@@ -656,7 +695,7 @@ metadata/_edit_use_anchors_ = true
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=1768403832]
 position = Vector2(-9030, -552)
-amount = 1000
+amount = 1500
 texture = ExtResource("22_7es58")
 lifetime = 10.0
 preprocess = 8.0

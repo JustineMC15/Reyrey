@@ -251,6 +251,8 @@ shape = SubResource("RectangleShape2D_grhhy")
 
 [node name="EnterChapel" type="Area2D" parent="Gates" unique_id=1806948271 node_paths=PackedStringArray("prompt_panel")]
 position = Vector2(2979, -66)
+collision_layer = 32
+collision_mask = 64
 script = ExtResource("10_k8bjw")
 gate_id = "A2R1-chapel"
 target_scene_path = "res://src/rooms/A2R2.tscn"

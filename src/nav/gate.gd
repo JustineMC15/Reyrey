@@ -11,6 +11,9 @@ enum EntryType {
 @export_file("*.tscn") var target_scene_path: String = ""
 @export var target_gate_id: String = ""
 
+@export_category("Preloading")
+@export var preload_target: bool = true
+
 @export_category("Entry")
 @export var entry_type: EntryType = EntryType.WALK
 @export var entry_direction: Vector2 = Vector2.RIGHT

@@ -84,7 +84,7 @@ theme_override_constants/outline_size = 1
 theme_override_fonts/font = ExtResource("2_j121c")
 theme_override_font_sizes/font_size = 40
 text = "JUMP
-⬆ / SPACE"
+Z / SPACE"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -118,6 +118,6 @@ theme_override_constants/outline_size = 1
 theme_override_fonts/font = ExtResource("2_j121c")
 theme_override_font_sizes/font_size = 40
 text = "ATTACK
-MOUSE1 / F"
+MOUSE1 / F / X"
 horizontal_alignment = 1
 vertical_alignment = 1

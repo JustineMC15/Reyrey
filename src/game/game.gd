@@ -6,6 +6,13 @@ extends Node
 
 var current_room_scene_path: String = ""
 
+# Rooms whose PackedScene resources are already loaded.
+# The actual rooms are NOT instantiated until we enter them.
+var room_cache: Dictionary = {}
+
+# Rooms currently being loaded in the background.
+var room_loading: Dictionary = {}
+
 
 # Music assigned to each room.
 # null = no music assigned yet.
@@ -15,7 +22,7 @@ var current_room_scene_path: String = ""
 #
 # Example:
 # "res://src/rooms/room_02-valecourt-fields.tscn":
-#     preload("res://audio/music/valecourt.ogg"),
+#     preload("res://assets/sound/music/valecourt.ogg"),
 var room_music: Dictionary = {
 	"res://src/rooms/A0R1.tscn":
 		preload("res://assets/sound/music/Medieval Rondo.ogg"),
@@ -85,7 +92,11 @@ var room_area_names: Dictionary = {
 
 
 func _ready() -> void:
+	print("GAME.GD IS RUNNING")
+
 	add_to_group("game")
+
+	AudioRouter.route_to_sfx_bus(player)
 
 	var room_path: String = GameState.startup_room_path
 	var checkpoint_to_spawn: String = GameState.startup_checkpoint_id
@@ -115,6 +126,7 @@ func _ready() -> void:
 
 	LoadingScreen.hide_loading()
 
+
 func load_room(scene_path: String) -> void:
 	scene_path = ResourceUID.ensure_path(scene_path)
 
@@ -127,33 +139,31 @@ func load_room(scene_path: String) -> void:
 	GameState.is_room_unloading = true
 
 	# Remove the previous room.
+	var start_time := Time.get_ticks_usec()
+
 	for child in current_room.get_children():
 		child.queue_free()
 
 	await get_tree().process_frame
 
-	var err := ResourceLoader.load_threaded_request(scene_path)
+	print(
+		"Remove old room: ",
+		(Time.get_ticks_usec() - start_time) / 1000.0,
+		" ms"
+	)
 
-	if err != OK:
-		push_error("Game: Failed to start threaded load: " + scene_path)
-		GameState.is_room_unloading = false
-		return
+	# Get the room PackedScene.
+	#
+	# If it was already preloaded, this is effectively immediate.
+	start_time = Time.get_ticks_usec()
 
-	while true:
-		var status := ResourceLoader.load_threaded_get_status(scene_path)
+	var room_scene := await _get_room_scene(scene_path)
 
-		if status == ResourceLoader.THREAD_LOAD_LOADED:
-			break
-
-		if status == ResourceLoader.THREAD_LOAD_FAILED \
-		or status == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
-			push_error("Game: Failed to load room: " + scene_path)
-			GameState.is_room_unloading = false
-			return
-
-		await get_tree().process_frame
-
-	var room_scene := ResourceLoader.load_threaded_get(scene_path) as PackedScene
+	print(
+		"Get room scene: ",
+		(Time.get_ticks_usec() - start_time) / 1000.0,
+		" ms"
+	)
 
 	if room_scene == null:
 		push_error("Game: Failed to load room: " + scene_path)
@@ -164,20 +174,58 @@ func load_room(scene_path: String) -> void:
 	# Set the current room path BEFORE adding the room to the tree.
 	current_room_scene_path = scene_path
 
+	start_time = Time.get_ticks_usec()
+
 	var new_room := room_scene.instantiate()
+
+	print(
+		"Instantiate: ",
+		(Time.get_ticks_usec() - start_time) / 1000.0,
+		" ms"
+	)
 
 	current_room.add_child(new_room)
 
+	start_time = Time.get_ticks_usec()
+
+	print(
+		"Add child: ",
+		(Time.get_ticks_usec() - start_time) / 1000.0,
+		" ms"
+	)
+
+	# Start loading rooms connected to this room.
+	#
+	# This does NOT wait for them to finish.
+	_preload_adjacent_rooms(new_room)
+
+	start_time = Time.get_ticks_usec()
+
 	await get_tree().process_frame
+
+	print(
+		"Process frame wait: ",
+		(Time.get_ticks_usec() - start_time) / 1000.0,
+		" ms"
+	)
+
+	start_time = Time.get_ticks_usec()
 
 	GameState.is_room_unloading = false
 
 	_apply_camera_bounds(new_room)
+	AudioRouter.route_to_sfx_bus(new_room)
 
 	var music_track: AudioStream = room_music.get(scene_path)
 
 	if music_track != null:
 		Music.play_music(music_track)
+
+	print(
+		"Post-room setup: ",
+		(Time.get_ticks_usec() - start_time) / 1000.0,
+		" ms"
+	)
 
 	#var area_name: String = room_area_names.get(scene_path, "")
 
@@ -190,6 +238,183 @@ func load_room(scene_path: String) -> void:
 #
 		#if area_title != null:
 			#area_title.show_area(area_name)
+
+
+func _get_room_scene(scene_path: String) -> PackedScene:
+	# Already completely loaded.
+	if room_cache.has(scene_path):
+		print("ROOM CACHE HIT: ", scene_path)
+		return room_cache[scene_path] as PackedScene
+
+	# Another preload is already loading this room.
+	if room_loading.has(scene_path):
+		print("WAITING FOR PRELOAD: ", scene_path)
+
+		while true:
+			var status := ResourceLoader.load_threaded_get_status(scene_path)
+
+			if status == ResourceLoader.THREAD_LOAD_LOADED:
+				break
+
+			if status == ResourceLoader.THREAD_LOAD_FAILED \
+			or status == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
+				push_error("Game: Failed to load room: " + scene_path)
+				room_loading.erase(scene_path)
+				return null
+
+			await get_tree().process_frame
+
+		var loaded_scene := ResourceLoader.load_threaded_get(scene_path) as PackedScene
+
+		room_loading.erase(scene_path)
+
+		if loaded_scene == null:
+			push_error("Game: Failed to get room: " + scene_path)
+			return null
+
+		room_cache[scene_path] = loaded_scene
+
+		print("ROOM PRELOAD FINISHED: ", scene_path)
+
+		return loaded_scene
+
+	# Nothing is loading yet, so start it.
+	print("ROOM LOADING NOW: ", scene_path)
+
+	room_loading[scene_path] = true
+
+	var err := ResourceLoader.load_threaded_request(scene_path)
+
+	if err != OK:
+		push_error(
+			"Game: Failed to start threaded load: "
+			+ scene_path
+		)
+		room_loading.erase(scene_path)
+		return null
+
+	while true:
+		var status := ResourceLoader.load_threaded_get_status(scene_path)
+
+		if status == ResourceLoader.THREAD_LOAD_LOADED:
+			break
+
+		if status == ResourceLoader.THREAD_LOAD_FAILED \
+		or status == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
+			push_error("Game: Failed to load room: " + scene_path)
+			room_loading.erase(scene_path)
+			return null
+
+		await get_tree().process_frame
+
+	var room_scene := ResourceLoader.load_threaded_get(scene_path) as PackedScene
+
+	room_loading.erase(scene_path)
+
+	if room_scene == null:
+		push_error("Game: Failed to get room: " + scene_path)
+		return null
+
+	room_cache[scene_path] = room_scene
+
+	return room_scene
+
+
+func _preload_adjacent_rooms(room: Node) -> void:
+	var gates_container := room.get_node_or_null("Gates")
+
+	if gates_container == null:
+		return
+
+	var destinations: Dictionary = {}
+
+	for gate in gates_container.get_children():
+		if not is_instance_valid(gate):
+			continue
+
+		if not ("target_scene_path" in gate):
+			continue
+
+		if not ("preload_target" in gate):
+			continue
+
+		if not gate.preload_target:
+			continue
+
+		var target_scene_path: String = gate.target_scene_path
+
+		if target_scene_path == "":
+			continue
+
+		target_scene_path = ResourceUID.ensure_path(target_scene_path)
+
+		if target_scene_path == "":
+			continue
+
+		if target_scene_path == current_room_scene_path:
+			continue
+
+		destinations[target_scene_path] = true
+
+	for target_scene_path in destinations.keys():
+		_preload_room(target_scene_path)
+
+
+func _preload_room(scene_path: String) -> void:
+	if room_cache.has(scene_path):
+		print("ALREADY CACHED: ", scene_path)
+		return
+
+	if room_loading.has(scene_path):
+		print("ALREADY LOADING: ", scene_path)
+		return
+
+	room_loading[scene_path] = true
+
+	print("PRELOADING ROOM: ", scene_path)
+
+	var err := ResourceLoader.load_threaded_request(scene_path)
+
+	if err != OK:
+		push_error(
+			"Game: Failed to start preload: "
+			+ scene_path
+		)
+		room_loading.erase(scene_path)
+		return
+
+	while true:
+		var status := ResourceLoader.load_threaded_get_status(scene_path)
+
+		if status == ResourceLoader.THREAD_LOAD_LOADED:
+			break
+
+		if status == ResourceLoader.THREAD_LOAD_FAILED \
+		or status == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
+			push_error(
+				"Game: Failed to preload room: "
+				+ scene_path
+			)
+			room_loading.erase(scene_path)
+			return
+
+		await get_tree().process_frame
+
+	var room_scene := ResourceLoader.load_threaded_get(scene_path) as PackedScene
+
+	room_loading.erase(scene_path)
+
+	if room_scene == null:
+		push_error(
+			"Game: Failed to get preloaded room: "
+			+ scene_path
+		)
+		return
+
+	room_cache[scene_path] = room_scene
+
+	print("PRELOADED ROOM READY: ", scene_path)
+
 
 func get_current_room_scene_path() -> String:
 	return current_room_scene_path
@@ -270,6 +495,7 @@ func position_player_at_checkpoint(checkpoint_id: String) -> void:
 
 
 var current_room_camera_bounds: CameraBounds = null
+
 
 func _apply_camera_bounds(room: Node) -> void:
 	var camera := player.get_node_or_null("Camera2D") as Camera2D

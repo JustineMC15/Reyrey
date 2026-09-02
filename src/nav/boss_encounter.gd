@@ -14,21 +14,12 @@ class_name BossEncounter
 ## health, and setting is_dying = true when defeated.
 ##
 ## Scene setup:
+## ├── BossEncounter
+## │   ├── TriggerArea
+## │   └── Boss
 ##
-## BossEncounter
-## ├── TriggerArea
-## └── Boss
-##
-## TriggerArea:
-##   Area2D, collision_layer = 4, collision_mask = 5
-##
-## Boss:
-##   CharacterBody2D or another Node
-##   Must have an `is_dying` property.
-##   Should implement `reset_boss()` to restore its health/state.
-##
-## The target door is the door that should close when the encounter
-## begins and reopen after the boss is defeated.
+## The target door closes when the encounter begins.
+## The shortcut door opens when the boss is defeated.
 
 enum EntranceType {
 	AWAKEN,
@@ -40,6 +31,10 @@ enum EntranceType {
 @export var trigger_area: Area2D
 @export var boss: Node
 @export var target_door: Node
+
+## Door/object that should open when the boss is defeated.
+@export var shortcut_door: Node
+
 @export var shortcut_id_on_clear: String = ""
 
 @export_category("Entrance")
@@ -83,6 +78,11 @@ func _ready() -> void:
 
 		if target_door and target_door.has_method("open"):
 			target_door.open()
+
+		# Also make sure the shortcut door is open when
+		# returning to the room after the boss has been defeated.
+		if shortcut_door and shortcut_door.has_method("_open"):
+			shortcut_door._open(true)
 
 		if trigger_area:
 			trigger_area.set_deferred("monitoring", false)
@@ -262,9 +262,6 @@ func _activate_boss() -> void:
 	if boss.has_method("activate_boss"):
 		boss.activate_boss()
 	else:
-		# Default behavior:
-		# enable normal processing if the boss has not implemented
-		# a dedicated activation method yet.
 		boss.set_process(true)
 		boss.set_physics_process(true)
 
@@ -277,18 +274,20 @@ func _finish_encounter() -> void:
 	_started = false
 
 	# Remember that this boss has been defeated.
-	#
-	# This is ONLY reached when the boss itself reports is_dying.
 	if boss_id != "":
 		GameState.defeat_boss(boss_id)
 
-	# Open the arena after the boss dies.
+	# Open the arena door.
 	if target_door and target_door.has_method("open"):
 		target_door.open()
 
-	# Activate optional shortcut.
+	# Activate the shortcut in GameState.
 	if shortcut_id_on_clear != "":
 		GameState.activate_shortcut(shortcut_id_on_clear)
+
+	# Open the physical shortcut door/object.
+	if shortcut_door and shortcut_door.has_method("_open"):
+		shortcut_door._open(false)
 
 	# Return to the room's normal music.
 	_restore_room_music()
@@ -300,9 +299,6 @@ func _queue_reset_after_player_death() -> void:
 
 	_player_death_reset_pending = true
 
-	# Do not reset the boss immediately.
-	# The player is still performing the death animation and
-	# the screen transition has not necessarily completed.
 	call_deferred("_wait_for_player_death_transition")
 
 
@@ -314,19 +310,14 @@ func _wait_for_player_death_transition() -> void:
 			_player_death_reset_pending = false
 			return
 
-		# While the room is unloading, leave the boss exactly where it is.
 		if GameState.is_room_unloading:
 			continue
 
 		var player := get_tree().get_first_node_in_group("player")
 
-		# The player still exists and is still dead.
-		# Wait until the death/respawn process is complete.
 		if player and player.get("is_dead") == true:
 			continue
 
-		# The player is no longer dead, meaning the respawn transition
-		# has completed.
 		break
 
 	_reset_after_player_death()
@@ -340,14 +331,11 @@ func _reset_after_player_death() -> void:
 	_resetting = true
 	_player_death_reset_pending = false
 
-	# Stop considering this an active encounter.
 	_started = false
 
-	# Restore the room's normal music.
 	_restore_room_music()
 
 	if is_instance_valid(boss):
-		# Reset the boss's internal state first.
 		if boss.has_method("reset_boss"):
 			boss.reset_boss()
 		else:
@@ -356,17 +344,17 @@ func _reset_after_player_death() -> void:
 				+ "The boss may retain its previous state after player death."
 			)
 
-		# Restore the boss to its original position in the level.
 		boss.global_position = _boss_start_position
 
-		# Make sure the boss is visible/active again for the next attempt.
 		_set_boss_active(true)
 
-	# Reset the arena for the next attempt.
-	if target_door and target_door.has_method("close"):
+	# Reset arena door.
+	if target_door and target_door.has_method("open"):
 		target_door.close()
 
-	# Allow the player to trigger the encounter again.
+	# Shortcut should NOT be opened just because the player died.
+	# It remains locked until the boss is actually defeated.
+
 	if trigger_area:
 		trigger_area.set_deferred("monitoring", true)
 		trigger_area.set_deferred("monitorable", true)
@@ -448,7 +436,6 @@ func reset_boss_encounter() -> void:
 		if boss.has_method("reset_boss"):
 			boss.reset_boss()
 
-		# Restore position on a manual encounter reset too.
 		boss.global_position = _boss_start_position
 		_set_boss_active(true)
 

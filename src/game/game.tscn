@@ -1,34 +1,11 @@
-[gd_scene format=3 uid="uid://3pb35athpw1j"]
+[gd_scene format=3 uid="uid://d32ho7ub3ciix"]
 
-[ext_resource type="Script" uid="uid://dra0nfcycpu8k" path="res://src/game/game.gd" id="1_s6lek"]
+[ext_resource type="Script" uid="uid://dyx2xyci5okv8" path="res://src/game/game.gd" id="1_s6lek"]
 [ext_resource type="PackedScene" uid="uid://d265xwoeds0wg" path="res://src/player/player.tscn" id="2_s6lek"]
-[ext_resource type="Shader" uid="uid://debgfe2mt82ca" path="res://src/shader/grimdark.gdshader" id="3_kgj8g"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_s6lek"]
-shader = ExtResource("3_kgj8g")
-shader_parameter/darkness = 0.18
-shader_parameter/contrast = 1.15
-shader_parameter/saturation = 0.85
-shader_parameter/shadow_strength = 0.25
-shader_parameter/shadow_tint = Color(0.82, 0.86, 1, 1)
-shader_parameter/highlight_tint = Color(1, 0.96, 0.86, 1)
-shader_parameter/vignette_strength = 0.2
-shader_parameter/vignette_radius = 0.7
-
-[node name="Game" type="Node" unique_id=908065803]
+[node name="Game" type="Node" unique_id=1335068917]
 script = ExtResource("1_s6lek")
 
-[node name="CurrentRoom" type="Node" parent="." unique_id=226982134]
+[node name="CurrentRoom" type="Node" parent="." unique_id=76486972]
 
-[node name="Player" parent="." unique_id=647682657 groups=["player"] instance=ExtResource("2_s6lek")]
-
-[node name="GrimdarkShaderLayer" type="CanvasLayer" parent="." unique_id=881782508]
-visible = false
-
-[node name="ColorRect" type="ColorRect" parent="GrimdarkShaderLayer" unique_id=1215333705]
-material = SubResource("ShaderMaterial_s6lek")
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Player" parent="." unique_id=647682657 instance=ExtResource("2_s6lek")]
