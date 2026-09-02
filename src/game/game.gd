@@ -92,7 +92,6 @@ var room_area_names: Dictionary = {
 
 
 func _ready() -> void:
-	print("GAME.GD IS RUNNING")
 
 	add_to_group("game")
 
@@ -139,31 +138,20 @@ func load_room(scene_path: String) -> void:
 	GameState.is_room_unloading = true
 
 	# Remove the previous room.
-	var start_time := Time.get_ticks_usec()
 
 	for child in current_room.get_children():
 		child.queue_free()
 
 	await get_tree().process_frame
 
-	print(
-		"Remove old room: ",
-		(Time.get_ticks_usec() - start_time) / 1000.0,
-		" ms"
-	)
+
 
 	# Get the room PackedScene.
 	#
 	# If it was already preloaded, this is effectively immediate.
-	start_time = Time.get_ticks_usec()
 
 	var room_scene := await _get_room_scene(scene_path)
 
-	print(
-		"Get room scene: ",
-		(Time.get_ticks_usec() - start_time) / 1000.0,
-		" ms"
-	)
 
 	if room_scene == null:
 		push_error("Game: Failed to load room: " + scene_path)
@@ -174,42 +162,26 @@ func load_room(scene_path: String) -> void:
 	# Set the current room path BEFORE adding the room to the tree.
 	current_room_scene_path = scene_path
 
-	start_time = Time.get_ticks_usec()
 
 	var new_room := room_scene.instantiate()
 
-	print(
-		"Instantiate: ",
-		(Time.get_ticks_usec() - start_time) / 1000.0,
-		" ms"
-	)
+
 
 	current_room.add_child(new_room)
 
-	start_time = Time.get_ticks_usec()
 
-	print(
-		"Add child: ",
-		(Time.get_ticks_usec() - start_time) / 1000.0,
-		" ms"
-	)
+
 
 	# Start loading rooms connected to this room.
 	#
 	# This does NOT wait for them to finish.
 	_preload_adjacent_rooms(new_room)
 
-	start_time = Time.get_ticks_usec()
 
 	await get_tree().process_frame
 
-	print(
-		"Process frame wait: ",
-		(Time.get_ticks_usec() - start_time) / 1000.0,
-		" ms"
-	)
 
-	start_time = Time.get_ticks_usec()
+
 
 	GameState.is_room_unloading = false
 
@@ -221,11 +193,6 @@ func load_room(scene_path: String) -> void:
 	if music_track != null:
 		Music.play_music(music_track)
 
-	print(
-		"Post-room setup: ",
-		(Time.get_ticks_usec() - start_time) / 1000.0,
-		" ms"
-	)
 
 	#var area_name: String = room_area_names.get(scene_path, "")
 
@@ -243,12 +210,10 @@ func load_room(scene_path: String) -> void:
 func _get_room_scene(scene_path: String) -> PackedScene:
 	# Already completely loaded.
 	if room_cache.has(scene_path):
-		print("ROOM CACHE HIT: ", scene_path)
 		return room_cache[scene_path] as PackedScene
 
 	# Another preload is already loading this room.
 	if room_loading.has(scene_path):
-		print("WAITING FOR PRELOAD: ", scene_path)
 
 		while true:
 			var status := ResourceLoader.load_threaded_get_status(scene_path)
@@ -274,12 +239,10 @@ func _get_room_scene(scene_path: String) -> PackedScene:
 
 		room_cache[scene_path] = loaded_scene
 
-		print("ROOM PRELOAD FINISHED: ", scene_path)
 
 		return loaded_scene
 
 	# Nothing is loading yet, so start it.
-	print("ROOM LOADING NOW: ", scene_path)
 
 	room_loading[scene_path] = true
 
@@ -362,16 +325,13 @@ func _preload_adjacent_rooms(room: Node) -> void:
 
 func _preload_room(scene_path: String) -> void:
 	if room_cache.has(scene_path):
-		print("ALREADY CACHED: ", scene_path)
 		return
 
 	if room_loading.has(scene_path):
-		print("ALREADY LOADING: ", scene_path)
 		return
 
 	room_loading[scene_path] = true
 
-	print("PRELOADING ROOM: ", scene_path)
 
 	var err := ResourceLoader.load_threaded_request(scene_path)
 
@@ -412,8 +372,6 @@ func _preload_room(scene_path: String) -> void:
 		return
 
 	room_cache[scene_path] = room_scene
-
-	print("PRELOADED ROOM READY: ", scene_path)
 
 
 func get_current_room_scene_path() -> String:

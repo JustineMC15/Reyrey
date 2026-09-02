@@ -34,11 +34,16 @@ class_name LockedDoor
 
 var player_inside := false
 var glow_tween: Tween
+var shake_tween: Tween
+var original_visual_pos: Vector2
 
 
 func _ready() -> void:
 	detection_area.area_entered.connect(_on_area_entered)
 	detection_area.area_exited.connect(_on_area_exited)
+
+	if visual:
+		original_visual_pos = visual.position
 
 	if prompt_panel:
 		prompt_panel.modulate.a = 0.0
@@ -62,6 +67,7 @@ func _try_unlock() -> void:
 	if not GameState.has_key(required_key_id):
 		if denied_sound:
 			denied_sound.play()
+		_shake_visual()
 		return
 
 	if consume_key:
@@ -75,6 +81,29 @@ func _try_unlock() -> void:
 	_open(false)
 
 
+func _shake_visual() -> void:
+	if not visual:
+		return
+
+	# Cancel any currently playing shake to prevent the tween from breaking 
+	# if the player spams the interact button.
+	if shake_tween and shake_tween.is_valid():
+		shake_tween.kill()
+
+	# Reset to original position in case a previous shake was interrupted mid-way
+	visual.position = original_visual_pos
+	
+	shake_tween = create_tween()
+	var shake_time := 0.05
+	
+	# Tween left, right, left, right, then center
+	shake_tween.tween_property(visual, "position:x", original_visual_pos.x + 5.0, shake_time)
+	shake_tween.tween_property(visual, "position:x", original_visual_pos.x - 5.0, shake_time)
+	shake_tween.tween_property(visual, "position:x", original_visual_pos.x + 3.0, shake_time)
+	shake_tween.tween_property(visual, "position:x", original_visual_pos.x - 3.0, shake_time)
+	shake_tween.tween_property(visual, "position:x", original_visual_pos.x, shake_time)
+
+
 func _start_glow() -> void:
 	if not visual:
 		return
@@ -86,8 +115,6 @@ func _start_glow() -> void:
 	visual.self_modulate = Color.WHITE
 
 	# Slightly brighten the sprite and gently pulse it.
-	# Values above 1.0 can create a brighter appearance when
-	# HDR/glow is enabled in the project.
 	glow_tween = create_tween()
 	glow_tween.set_loops()
 
@@ -111,6 +138,9 @@ func _open(instant: bool) -> void:
 
 	if glow_tween and glow_tween.is_valid():
 		glow_tween.kill()
+		
+	if shake_tween and shake_tween.is_valid():
+		shake_tween.kill()
 
 	if prompt_panel:
 		var prompt_tween := create_tween()
@@ -129,8 +159,9 @@ func _open(instant: bool) -> void:
 		visual.modulate.a = 0.0
 		return
 
-	# Reset the brightness so the opening animation starts cleanly.
+	# Reset the brightness and position so the opening animation starts cleanly.
 	visual.self_modulate = Color.WHITE
+	visual.position.x = original_visual_pos.x
 
 	# Tween the door away while fading it out.
 	var tween := create_tween()

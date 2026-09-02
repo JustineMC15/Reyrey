@@ -8,7 +8,7 @@ class ShockwaveEffect extends Node2D:
 	var start_radius: float = 18.0
 	var end_radius: float = 240.0
 	var line_width: float = 8.0
-
+	
 	func setup(radius: float, life: float = 0.32) -> void:
 		end_radius = radius
 		duration = life
@@ -177,7 +177,11 @@ const CEILING_SLAM_SHAKE_DURATION: float = 0.2
 const DEATH_SHAKE_STRENGTH: float = 14.0
 const DEATH_SHAKE_DURATION: float = 0.3
 
+const INACTIVE_MODULATE := Color(0.5, 0.5, 0.5, 1.0)
+const DEFEATED_MODULATE := Color(0.3, 0.3, 0.3, 1.0)
 
+const DEATH_FALL_GRAVITY: float = 2200.0
+const DEATH_FALL_MAX_SPEED: float = 1600.0
 # -------------------------------------------------------------------
 # Procedural animation
 # -------------------------------------------------------------------
@@ -267,7 +271,7 @@ func _ready() -> void:
 	death_started = false
 
 	animated_sprite_2d.visible = true
-	animated_sprite_2d.modulate = Color.WHITE
+	animated_sprite_2d.modulate = INACTIVE_MODULATE
 	animated_sprite_2d.scale = base_sprite_scale
 	animated_sprite_2d.rotation = 0.0
 
@@ -360,12 +364,7 @@ func boss_entrance_awaken() -> void:
 	_stop_effect()
 
 	animated_sprite_2d.visible = true
-	animated_sprite_2d.modulate = Color(
-		0.55,
-		0.55,
-		0.55,
-		1.0
-	)
+	animated_sprite_2d.modulate = INACTIVE_MODULATE
 
 	animated_sprite_2d.scale = base_sprite_scale * 0.9
 	animated_sprite_2d.rotation = 0.0
@@ -470,7 +469,7 @@ func reset_boss() -> void:
 	_stop_effect()
 
 	animated_sprite_2d.visible = true
-	animated_sprite_2d.modulate = Color.WHITE
+	animated_sprite_2d.modulate = INACTIVE_MODULATE
 	animated_sprite_2d.scale = base_sprite_scale
 	animated_sprite_2d.rotation = 0.0
 
@@ -1444,6 +1443,12 @@ func die() -> void:
 	_stop_effect()
 	set_physics_process(false)
 
+	# Keep the body's physical collision shape active so it can
+	# land on the boss floor below — _set_combat_active(false)
+	# above disables it along with the hurtbox/hitboxes.
+	if collision_shape:
+		collision_shape.set_deferred("disabled", false)
+
 	_camera_shake(
 		DEATH_SHAKE_STRENGTH,
 		DEATH_SHAKE_DURATION
@@ -1465,12 +1470,7 @@ func die() -> void:
 	tween.parallel().tween_property(
 		animated_sprite_2d,
 		"modulate",
-		Color(
-			1.0,
-			1.0,
-			1.0,
-			0.0
-		),
+		DEFEATED_MODULATE,
 		0.4
 	).set_trans(
 		Tween.TRANS_QUAD
@@ -1480,12 +1480,37 @@ func die() -> void:
 
 	await tween.finished
 
-	animated_sprite_2d.visible = false
+	await _fall_to_boss_floor()
+
 	_stop_effect()
 
 	is_dying = true
 
+func _fall_to_boss_floor() -> void:
+	velocity = Vector2.ZERO
 
+	var elapsed := 0.0
+	var max_fall_time := 5.0
+
+	while elapsed < max_fall_time:
+		var delta := get_physics_process_delta_time()
+
+		velocity.y = min(
+			velocity.y + DEATH_FALL_GRAVITY * delta,
+			DEATH_FALL_MAX_SPEED
+		)
+
+		var collision := move_and_collide(velocity * delta)
+
+		if collision != null and collision.get_normal().y < -0.5:
+			velocity = Vector2.ZERO
+			return
+
+		elapsed += delta
+
+		await get_tree().physics_frame
+
+	velocity = Vector2.ZERO
 # -------------------------------------------------------------------
 # Collision / combat activation
 # -------------------------------------------------------------------

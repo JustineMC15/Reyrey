@@ -173,8 +173,13 @@ var recall_anchor_position := Vector2.ZERO
 var recall_anchor_marker: Node2D = null
 
 # Stamina
-var max_stamina := 100.0
-var stamina := max_stamina
+var max_stamina: float:
+	get:
+		return GameState.max_stamina
+	set(value):
+		GameState.max_stamina = value
+
+var stamina := 100.0
 var stamina_regen_timer := 0.0
 
 # Footsteps
@@ -951,6 +956,7 @@ func _ready() -> void:
 
 	max_health = GameState.max_health
 	health = max_health
+	stamina = max_stamina
 	floor_snap_length = 4.0
 
 	# CAMERA

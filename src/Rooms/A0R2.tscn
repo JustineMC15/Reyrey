@@ -181,9 +181,9 @@ texture = ExtResource("10_exo67")
 position = Vector2(3264, -2424)
 collision_mask = 0
 script = ExtResource("12_peoml")
-stand_time_to_crumble = 0.05
-shake_strength = 3.5
-respawn_delay = 0.0
+shake_strength = 4.0
+guaranteed_break_time = 2.0
+guaranteed_break_shake_duration = 2.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Interactables/GauntletEntry" unique_id=720714150]
 position = Vector2(159.5, 44)

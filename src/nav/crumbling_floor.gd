@@ -6,6 +6,12 @@ class_name CrumblingFloor
 ## the room visit; leave it positive to have it reform later so a
 ## careless second pass isn't punished forever.
 ##
+## guaranteed_break_time / guaranteed_break_shake_duration exist so
+## the floor still breaks even if the player never lingers long
+## enough for stand_time_to_crumble (jumping across, a pogo bounce,
+## etc.) — a single touch starts a countdown that fires regardless
+## of whether the player is still standing on it.
+##
 ## Scene children expected:
 ##   CollisionShape2D — collision_layer = 1
 ##   DetectionArea    — Area2D sitting just above the platform's
@@ -18,6 +24,14 @@ class_name CrumblingFloor
 @export var stand_time_to_crumble: float = 0.6
 @export var shake_strength: float = 3.0
 @export var respawn_delay: float = 4.0
+
+## Time after the player's FIRST touch before the floor is guaranteed
+## to crumble, even without continuous standing.
+@export var guaranteed_break_time: float = 1.0
+
+## How long the floor shakes once guaranteed_break_time runs out,
+## before it actually crumbles.
+@export var guaranteed_break_shake_duration: float = 0.3
 
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var visual: CanvasItem = (
@@ -33,6 +47,10 @@ var _player_on_top := false
 var _crumbled := false
 var _base_visual_position: Vector2
 
+var _touched := false
+var _guaranteed_timer := 0.0
+var _guaranteed_triggered := false
+
 
 func _ready() -> void:
 	detection_area.area_entered.connect(_on_area_entered)
@@ -43,7 +61,18 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	if _crumbled or not _player_on_top:
+	if _crumbled or _guaranteed_triggered:
+		return
+
+	if _touched:
+		_guaranteed_timer -= delta
+
+		if _guaranteed_timer <= 0.0:
+			_guaranteed_triggered = true
+			_forced_crumble()
+			return
+
+	if not _player_on_top:
 		return
 
 	_stand_timer += delta
@@ -64,6 +93,10 @@ func _on_area_entered(area: Area2D) -> void:
 
 	_player_on_top = true
 
+	if not _touched:
+		_touched = true
+		_guaranteed_timer = guaranteed_break_time
+
 
 func _on_area_exited(area: Area2D) -> void:
 	if not area.is_in_group("player_detection"):
@@ -74,6 +107,24 @@ func _on_area_exited(area: Area2D) -> void:
 
 	if visual:
 		visual.position = _base_visual_position
+
+
+func _forced_crumble() -> void:
+	if visual and guaranteed_break_shake_duration > 0.0:
+		var shake_elapsed := 0.0
+
+		while shake_elapsed < guaranteed_break_shake_duration:
+			visual.position = _base_visual_position + Vector2(
+				randf_range(-shake_strength, shake_strength),
+				randf_range(-shake_strength, shake_strength)
+			)
+
+			await get_tree().process_frame
+			shake_elapsed += get_process_delta_time()
+
+		visual.position = _base_visual_position
+
+	_crumble()
 
 
 func _crumble() -> void:
@@ -96,6 +147,11 @@ func _respawn() -> void:
 	_crumbled = false
 	_stand_timer = 0.0
 	_player_on_top = false
+
+	_touched = false
+	_guaranteed_triggered = false
+	_guaranteed_timer = 0.0
+
 	collision_shape.disabled = false
 
 	if visual:

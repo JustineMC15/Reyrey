@@ -18,7 +18,7 @@ var star_fragments: int = 0
 var max_health: int = 5
 var max_mp: int = 6
 var current_mp: int = 6
-
+var max_stamina: float = 100.0
 
 # --- Room / Gate transition state ---
 
@@ -61,7 +61,10 @@ const SHRINE_MP_GAINS: Array[int] = [
 	2, 2, 2, 2, 1, 1, 1, 1
 ]
 # LCM of 2 and 3, Maxes out to 42 mana with base 6 included
-
+const SHRINE_STAMINA_GAINS: Array[float] = [
+	15.0, 12.0, 12.0, 10.0, 10.0, 8.0, 8.0, 8.0, 8.0,
+	6.0, 6.0, 6.0, 6.0, 4.0, 4.0, 4.0, 4.0
+]
 # --- Armor ---
 
 var armor_tier: int = 0
@@ -584,11 +587,14 @@ func claim_shrine(
 		"order": shrine_count
 	}
 
-	var gain := SHRINE_MP_GAINS[shrine_count]
+	var mp_gain := SHRINE_MP_GAINS[shrine_count]
+	var stamina_gain := SHRINE_STAMINA_GAINS[shrine_count]
 	shrine_count += 1
 
-	max_mp += gain
+	max_mp += mp_gain
 	current_mp = max_mp
+
+	max_stamina += stamina_gain
 
 	if player:
 		player.max_mp = max_mp
@@ -598,6 +604,9 @@ func claim_shrine(
 			player.max_mp
 		)
 
+		if player.has_method("restore_full_stamina"):
+			player.restore_full_stamina()
+
 	_transition_lock = true
 
 	if player and player.has_method("lock_input"):
@@ -605,7 +614,8 @@ func claim_shrine(
 
 	await _run_shrine_claim_sequence(
 		player,
-		gain,
+		mp_gain,
+		stamina_gain,
 		abandonment_text
 	)
 
@@ -614,10 +624,10 @@ func claim_shrine(
 
 	_transition_lock = false
 
-
 func _run_shrine_claim_sequence(
 	player: Node,
-	gain: int,
+	mp_gain: int,
+	stamina_gain: float,
 	abandonment_text: String
 ) -> void:
 	var layer := CanvasLayer.new()
@@ -646,11 +656,17 @@ func _run_shrine_claim_sequence(
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(title)
 
-	var gain_text := Label.new()
-	gain_text.text = "Maximum MP increased by " + str(gain)
-	gain_text.add_theme_font_size_override("font_size", 24)
-	gain_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(gain_text)
+	var mp_gain_text := Label.new()
+	mp_gain_text.text = "Maximum MP increased by " + str(mp_gain)
+	mp_gain_text.add_theme_font_size_override("font_size", 24)
+	mp_gain_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(mp_gain_text)
+
+	var stamina_gain_text := Label.new()
+	stamina_gain_text.text = "Maximum Stamina increased by " + str(int(stamina_gain))
+	stamina_gain_text.add_theme_font_size_override("font_size", 24)
+	stamina_gain_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(stamina_gain_text)
 
 	var prompt := Label.new()
 	prompt.text = "Press Enter / Space to continue"
@@ -1652,6 +1668,7 @@ func get_save_data() -> Dictionary:
 		"abilities": abilities.duplicate(),
 		"max_mp": max_mp,
 		"max_health": max_health,
+		"max_stamina": max_stamina,
 		"shrine_count": shrine_count,
 		"claimed_anvils": claimed_anvils.duplicate(),
 		"claimed_shrines": claimed_shrines.duplicate(true),
@@ -1684,6 +1701,7 @@ func apply_save_data(data: Dictionary) -> void:
 	max_mp = data.get("max_mp", max_mp)
 	current_mp = max_mp
 	max_health = data.get("max_health", max_health)
+	max_stamina = data.get("max_stamina", max_stamina)
 	shrine_count = data.get("shrine_count", 0)
 	star_fragments = data.get("star_fragments", 0)
 	claimed_anvils = data.get("claimed_anvils", {})
@@ -1729,7 +1747,7 @@ func reset_to_defaults() -> void:
 	armor_tier = 0
 	shrine_count = 0
 	star_fragments = 0
-
+	max_stamina = 100.0
 	claimed_anvils.clear()
 	claimed_shrines.clear()
 	activated_checkpoints.clear()

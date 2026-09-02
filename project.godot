@@ -19,7 +19,7 @@ config/icon="res://icon.svg"
 
 GameState="*uid://cxacl2cfcn52x"
 Music="*uid://bw7uh54570frq"
-SaveManager="*uid://bya6audoc51nc"
+SaveManager="*uid://3wwp68bj4ys0"
 PauseMenu="*uid://chjitcrkdukgx"
 InventoryUI="*uid://bxifq5pgq8it"
 PotionUI="*uid://cg8pgmof7o3ti"

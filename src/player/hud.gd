@@ -1,7 +1,7 @@
 extends Control
 
-@onready var hp_bar: ProgressBar = $HPBar
-@onready var hp_damage_bar: ProgressBar = $HPDamageBar
+@onready var hp_bar: TextureProgressBar = $HPBar
+@onready var hp_damage_bar: TextureProgressBar = $HPDamageBar
 @onready var mp_bar: ProgressBar = $MPBar
 @onready var mp_damage_bar: ProgressBar = $MPDamageBar
 @onready var stamina_bar: ProgressBar = $STBar
