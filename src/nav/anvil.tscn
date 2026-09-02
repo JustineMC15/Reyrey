@@ -11,8 +11,8 @@ size = Vector2(157, 94)
 bg_color = Color(0.6, 0.6, 0.6, 0)
 
 [node name="Anvil" type="Area2D" unique_id=1578504986]
-collision_layer = 4
-collision_mask = 5
+collision_layer = 32
+collision_mask = 64
 script = ExtResource("1_gcdmh")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1770126550]
