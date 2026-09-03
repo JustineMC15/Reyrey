@@ -20,6 +20,7 @@
 [ext_resource type="TileSet" uid="uid://bh5re3fvbw1fu" path="res://assets/environment/tres/64x64.tres" id="11_whoin"]
 [ext_resource type="Texture2D" uid="uid://cyt803nnvmcpu" path="res://assets/environment/parallax/wheat.png" id="12_7123c"]
 [ext_resource type="PackedScene" uid="uid://65o0wpmgpsyw" path="res://src/nav/interact_gate.tscn" id="18_bgl6i"]
+[ext_resource type="PackedScene" uid="uid://dl2et3v1vfhlo" path="res://src/nav/anvil.tscn" id="18_t3qfa"]
 [ext_resource type="PackedScene" uid="uid://dynuhhpg4mbop" path="res://src/enemies/guiding_star_follow.tscn" id="19_a84nq"]
 [ext_resource type="PackedScene" uid="uid://n2l6ea87ytfa" path="res://src/nav/talkable_npc.tscn" id="21_wkf5l"]
 
@@ -356,6 +357,10 @@ metadata/_custom_type_script = "uid://d6mwrb2d16q5"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gates/ToArea2" unique_id=1936419134]
 position = Vector2(50, -75)
 shape = SubResource("RectangleShape2D_1gs0d")
+
+[node name="Anvil" parent="Gates" unique_id=1578504986 instance=ExtResource("18_t3qfa")]
+position = Vector2(1910, -39)
+anvil_id = "anviltest"
 
 [node name="Interactables" type="Node2D" parent="." unique_id=1024094196]
 

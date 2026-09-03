@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://bykthynehi0pd" path="res://assets/characters/player/glide.png" id="6_3vieb"]
 [ext_resource type="Texture2D" uid="uid://daox31bkvq5do" path="res://assets/ui/playerUI/hpempty.png" id="6_h0enb"]
 [ext_resource type="Shader" uid="uid://4rgh71qhyya7" path="res://src/shader/hp_element_glow.gdshader" id="6_phdu6"]
+[ext_resource type="Texture2D" uid="uid://cyt803nnvmcpu" path="res://assets/environment/parallax/wheat.png" id="7_8iif5"]
 [ext_resource type="Texture2D" uid="uid://cp4rk6l7agsoe" path="res://assets/characters/player/idle.png" id="7_imkep"]
 [ext_resource type="Texture2D" uid="uid://chp5rnn1srfak" path="res://assets/ui/playerUI/hpstar.png" id="7_xmpm3"]
 [ext_resource type="Texture2D" uid="uid://bsvmhkhxdnb1n" path="res://assets/characters/player/wallcling-ledgegrab.png" id="8_bngr8"]
@@ -29,6 +30,8 @@
 [ext_resource type="Texture2D" uid="uid://g6ouha5s31m1" path="res://assets/characters/player/upslash.png" id="14_dpt0q"]
 [ext_resource type="AudioStream" uid="uid://bf0pdsaqe0bbn" path="res://assets/sound/sfx/sword_sfx.wav" id="14_imkep"]
 [ext_resource type="AudioStream" uid="uid://d6gan3ldw81i" path="res://assets/sound/sfx/thud2.wav" id="15_bngr8"]
+[ext_resource type="Texture2D" uid="uid://i4mvhxvcmamu" path="res://assets/ui/playerUI/mana.png" id="15_fpqwn"]
+[ext_resource type="Texture2D" uid="uid://181e41pxkoh5" path="res://assets/ui/playerUI/stamina.png" id="16_8iif5"]
 [ext_resource type="AudioStream" uid="uid://c5dready3pc12" path="res://assets/sound/sfx/audiomass-output.mp3" id="16_ct55r"]
 [ext_resource type="AudioStream" uid="uid://bjmk088kx5b43" path="res://assets/sound/sfx/Magic Smite.wav" id="17_hkhu1"]
 [ext_resource type="AudioStream" uid="uid://lv1x0oxqxece" path="res://assets/sound/player_movement_samples/30_Jump_03.wav" id="18_2njrj"]
@@ -41,45 +44,10 @@
 [ext_resource type="Texture2D" uid="uid://j70ujplhxad5" path="res://assets/particles/VFX Free Pack/Effect_TheVortex/60fps/Spritesheets/Effect_TheVortex_1_429x429.png" id="23_dpt0q"]
 [ext_resource type="AudioStream" uid="uid://f30bc8ce3w1q" path="res://assets/sound/sfx/thud3.wav" id="23_flmxu"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_evlgt"]
-shader = ExtResource("4_4ptlo")
-shader_parameter/health_ratio = 1.0
-shader_parameter/color_high = Color(1, 1, 1, 0.35)
-shader_parameter/color_mid = Color(0.55, 0.55, 0.55, 0.35)
-shader_parameter/color_low = Color(0, 0, 0, 0.45)
-shader_parameter/mid_point = 0.5
-shader_parameter/low_point = 0.15
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_gsylq"]
-shader = ExtResource("6_phdu6")
-shader_parameter/health_ratio = 1.0
-shader_parameter/max_hue_shift_deg = -19.9999981
-shader_parameter/min_value_mult = 0.60000002524012
-shader_parameter/min_saturation_mult = 1.1
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_kpcs5"]
-shader = ExtResource("8_utg71")
-shader_parameter/intensity = 1.0
-shader_parameter/blur_radius = 0.07999999821186
-shader_parameter/glow_tint = Color(1, 0.91627353, 0.6262097, 1)
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_utg71"]
-shader = ExtResource("8_utg71")
-shader_parameter/intensity = 1.0
-shader_parameter/blur_radius = 0.02
-shader_parameter/glow_tint = Color(1, 0.85, 0.4, 1)
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_4ptlo"]
-shader = ExtResource("6_phdu6")
-shader_parameter/health_ratio = 1.0
-shader_parameter/max_hue_shift_deg = -11.999997720000003
-shader_parameter/min_value_mult = 0.75000003236512
-shader_parameter/min_saturation_mult = 1.1
-
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_axsi3"]
 shader = ExtResource("8_utg71")
 shader_parameter/intensity = 1.0
-shader_parameter/blur_radius = 0.02
+shader_parameter/blur_radius = 0.0400000019
 shader_parameter/glow_tint = Color(1, 0.95, 0.7, 1)
 
 [sub_resource type="Shader" id="Shader_rhq4p"]
@@ -139,20 +107,55 @@ shader = SubResource("Shader_rhq4p")
 shader_parameter/health_ratio = 1.0
 shader_parameter/high_health_color = Color(1, 0.98, 0.91, 1)
 shader_parameter/low_health_color = Color(0.82, 0.78, 0.68, 1)
-shader_parameter/high_health_brightness = 1.0
-shader_parameter/low_health_brightness = 0.72
+shader_parameter/high_health_brightness = 2.000000095
+shader_parameter/low_health_brightness = 1.0000000475
 shader_parameter/high_health_alpha = 0.72
 shader_parameter/low_health_alpha = 0.28
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_w37yh"]
 particle_flag_disable_z = true
+direction = Vector3(0, 0, 0)
 spread = 180.0
-initial_velocity_min = 15.0
+initial_velocity_min = 10.0
 initial_velocity_max = 40.0
-gravity = Vector3(0, 98, 0)
-scale_min = 0.049999997
-scale_max = 0.14999999
-color = Color(0.99215686, 0.8627451, 0.36078432, 1)
+gravity = Vector3(0, 0, 0)
+scale_min = 0.5
+color = Color(1.353256, 1.353256, 1.353256, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_evlgt"]
+shader = ExtResource("4_4ptlo")
+shader_parameter/health_ratio = 1.0
+shader_parameter/color_high = Color(1, 1, 1, 0.35)
+shader_parameter/color_mid = Color(0.55, 0.55, 0.55, 0.35)
+shader_parameter/color_low = Color(0, 0, 0, 0.45)
+shader_parameter/mid_point = 0.5
+shader_parameter/low_point = 0.15
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gsylq"]
+shader = ExtResource("6_phdu6")
+shader_parameter/health_ratio = 1.0
+shader_parameter/max_hue_shift_deg = -19.9999981
+shader_parameter/min_value_mult = 0.60000002524012
+shader_parameter/min_saturation_mult = 1.1
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kpcs5"]
+shader = ExtResource("8_utg71")
+shader_parameter/intensity = 1.0
+shader_parameter/blur_radius = 0.07999999821186
+shader_parameter/glow_tint = Color(1, 0.91627353, 0.6262097, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_utg71"]
+shader = ExtResource("8_utg71")
+shader_parameter/intensity = 1.0
+shader_parameter/blur_radius = 0.02
+shader_parameter/glow_tint = Color(1, 0.85, 0.4, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4ptlo"]
+shader = ExtResource("6_phdu6")
+shader_parameter/health_ratio = 1.0
+shader_parameter/max_hue_shift_deg = -11.999997720000003
+shader_parameter/min_value_mult = 0.75000003236512
+shader_parameter/min_saturation_mult = 1.1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_afsxn"]
 bg_color = Color(0.78431374, 0.45882353, 0.14117648, 1)
@@ -227,6 +230,20 @@ corner_radius_top_left = 2
 corner_radius_top_right = 2
 corner_radius_bottom_right = 2
 corner_radius_bottom_left = 2
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fpqwn"]
+shader = ExtResource("8_utg71")
+shader_parameter/intensity = 2.50000011875
+shader_parameter/blur_radius = 0.030000001425
+shader_parameter/glow_tint = Color(0.49995556, 0.8499613, 0.8411834, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rhq4p"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8iif5"]
+shader = ExtResource("8_utg71")
+shader_parameter/intensity = 1.0
+shader_parameter/blur_radius = 0.030000001425
+shader_parameter/glow_tint = Color(0.33361515, 0.8499613, 0.40018785, 1)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0yajc"]
 atlas = ExtResource("3_7wf8o")
@@ -2674,9 +2691,31 @@ grow_vertical = 2
 script = ExtResource("2_7wf8o")
 metadata/_edit_lock_ = true
 
+[node name="HpStarGlow" type="Sprite2D" parent="PlayerUI/HUD" unique_id=291054175]
+material = SubResource("ShaderMaterial_axsi3")
+position = Vector2(156, 69)
+texture = ExtResource("12_8iif5")
+
+[node name="HpStar" type="Sprite2D" parent="PlayerUI/HUD" unique_id=1044057411]
+material = SubResource("ShaderMaterial_phdu6")
+position = Vector2(155, 69)
+texture = ExtResource("7_xmpm3")
+
+[node name="HpStarFlicker" type="GPUParticles2D" parent="PlayerUI/HUD/HpStar" unique_id=268860609]
+show_behind_parent = true
+emitting = false
+amount = 80
+texture = ExtResource("7_8iif5")
+process_material = SubResource("ParticleProcessMaterial_w37yh")
+
 [node name="HpEmptyBar" type="NinePatchRect" parent="PlayerUI/HUD" unique_id=1800628312]
 material = SubResource("ShaderMaterial_evlgt")
-layout_mode = 0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.024305556
+anchor_top = 0.0030864256
+anchor_right = 0.024305556
+anchor_bottom = 0.0030864198
 offset_left = 135.0
 offset_top = 56.0
 offset_right = 385.0
@@ -2684,9 +2723,14 @@ offset_bottom = 81.0
 texture = ExtResource("6_h0enb")
 metadata/_edit_use_anchors_ = true
 
-[node name="HPBar" type="TextureProgressBar" parent="PlayerUI/HUD" unique_id=1043354761]
+[node name="HpBar" type="TextureProgressBar" parent="PlayerUI/HUD" unique_id=1043354761]
 material = SubResource("ShaderMaterial_gsylq")
-layout_mode = 0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.024305556
+anchor_top = 0.0030864256
+anchor_right = 0.024305556
+anchor_bottom = 0.0030864198
 offset_left = 135.0
 offset_top = 56.0
 offset_right = 385.0
@@ -2701,14 +2745,14 @@ stretch_margin_right = 40
 texture_progress = ExtResource("5_xmpm3")
 metadata/_edit_use_anchors_ = true
 
-[node name="HPBarGlow" type="TextureProgressBar" parent="PlayerUI/HUD" unique_id=1561480780]
+[node name="HpBarGlow" type="TextureProgressBar" parent="PlayerUI/HUD" unique_id=1561480780]
 material = SubResource("ShaderMaterial_kpcs5")
 layout_mode = 1
 anchors_preset = -1
-anchor_left = -0.004340278
-anchor_top = -0.057098765
-anchor_right = -0.004340278
-anchor_bottom = -0.057098765
+anchor_left = 0.013888889
+anchor_top = -0.05401234
+anchor_right = 0.013888889
+anchor_bottom = -0.054012347
 offset_left = 135.0
 offset_top = 56.0
 offset_right = 410.0
@@ -2717,8 +2761,14 @@ mouse_filter = 2
 texture_progress = ExtResource("9_f0c71")
 metadata/_edit_use_anchors_ = true
 
-[node name="HPDamageBar" type="TextureProgressBar" parent="PlayerUI/HUD" unique_id=1503377491]
-layout_mode = 0
+[node name="HpDamageBar" type="TextureProgressBar" parent="PlayerUI/HUD" unique_id=1503377491]
+self_modulate = Color(1.5999943, 1.5999943, 1.5999943, 0.5)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.024305556
+anchor_top = 0.0030864256
+anchor_right = 0.024305556
+anchor_bottom = 0.0030864198
 offset_left = 135.0
 offset_top = 56.0
 offset_right = 385.0
@@ -2729,18 +2779,17 @@ value = 5.0
 nine_patch_stretch = true
 stretch_margin_left = 100
 stretch_margin_right = 40
-texture_under = ExtResource("6_h0enb")
-texture_over = ExtResource("5_xmpm3")
+texture_progress = ExtResource("5_xmpm3")
 metadata/_edit_use_anchors_ = true
 
 [node name="HpFrameGlow" type="TextureRect" parent="PlayerUI/HUD" unique_id=1790750310]
 material = SubResource("ShaderMaterial_utg71")
 layout_mode = 1
 anchors_preset = -1
-anchor_left = -0.046006944
-anchor_top = -0.084876545
-anchor_right = -0.046006944
-anchor_bottom = -0.084876545
+anchor_left = -0.020833334
+anchor_top = -0.08179012
+anchor_right = -0.019097222
+anchor_bottom = -0.08179013
 offset_left = 135.0
 offset_top = 56.0
 offset_right = 514.0
@@ -2753,10 +2802,10 @@ metadata/_edit_use_anchors_ = true
 material = SubResource("ShaderMaterial_4ptlo")
 layout_mode = 1
 anchors_preset = -1
-anchor_left = -0.0069444445
-anchor_top = -0.016975308
-anchor_right = -0.0069444445
-anchor_bottom = -0.016975308
+anchor_left = 0.017361112
+anchor_top = -0.013888883
+anchor_right = 0.017361112
+anchor_bottom = -0.013888889
 offset_left = 135.0
 offset_top = 56.0
 offset_right = 420.0
@@ -2764,23 +2813,13 @@ offset_bottom = 105.0
 texture = ExtResource("4_e7e1q")
 metadata/_edit_use_anchors_ = true
 
-[node name="HpStarGlow" type="Sprite2D" parent="PlayerUI/HUD" unique_id=291054175]
-material = SubResource("ShaderMaterial_axsi3")
-position = Vector2(67, 68)
-texture = ExtResource("12_8iif5")
-
-[node name="HpStar" type="Sprite2D" parent="PlayerUI/HUD" unique_id=1044057411]
-material = SubResource("ShaderMaterial_phdu6")
-position = Vector2(66, 68)
-texture = ExtResource("7_xmpm3")
-
-[node name="HpStarFlicker" type="GPUParticles2D" parent="PlayerUI/HUD/HpStar" unique_id=268860609]
-emitting = false
-lifetime = 0.7
-process_material = SubResource("ParticleProcessMaterial_w37yh")
-
-[node name="MPBar" type="ProgressBar" parent="PlayerUI/HUD" unique_id=893350116]
-layout_mode = 0
+[node name="MpBar" type="ProgressBar" parent="PlayerUI/HUD" unique_id=893350116]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.038194444
+anchor_top = 0.52160496
+anchor_right = 0.038194444
+anchor_bottom = 0.52160496
 offset_left = 17.0
 offset_top = 139.0
 offset_right = 217.0
@@ -2791,8 +2830,13 @@ max_value = 3.0
 show_percentage = false
 metadata/_edit_use_anchors_ = true
 
-[node name="MPDamageBar" type="ProgressBar" parent="PlayerUI/HUD" unique_id=1364283927]
-layout_mode = 0
+[node name="MpDamageBar" type="ProgressBar" parent="PlayerUI/HUD" unique_id=1364283927]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.038194444
+anchor_top = 0.52160496
+anchor_right = 0.038194444
+anchor_bottom = 0.52160496
 offset_left = 17.0
 offset_top = 139.0
 offset_right = 217.0
@@ -2803,8 +2847,13 @@ max_value = 3.0
 show_percentage = false
 metadata/_edit_use_anchors_ = true
 
-[node name="STBar" type="ProgressBar" parent="PlayerUI/HUD" unique_id=661513962]
-layout_mode = 0
+[node name="StBar" type="ProgressBar" parent="PlayerUI/HUD" unique_id=661513962]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.038194444
+anchor_top = 0.52160496
+anchor_right = 0.038194444
+anchor_bottom = 0.521605
 offset_left = 17.0
 offset_top = 169.0
 offset_right = 217.0
@@ -2815,8 +2864,13 @@ max_value = 3.0
 show_percentage = false
 metadata/_edit_use_anchors_ = true
 
-[node name="STDamageBar" type="ProgressBar" parent="PlayerUI/HUD" unique_id=666804843]
-layout_mode = 0
+[node name="StDamageBar" type="ProgressBar" parent="PlayerUI/HUD" unique_id=666804843]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.038194444
+anchor_top = 0.52160496
+anchor_right = 0.038194444
+anchor_bottom = 0.52160496
 offset_left = 17.0
 offset_top = 169.0
 offset_right = 217.0
@@ -2839,6 +2893,27 @@ offset_bottom = -40.0
 grow_horizontal = 0
 grow_vertical = 0
 count_duration = 0.45
+
+[node name="MpCore" type="Sprite2D" parent="PlayerUI/HUD" unique_id=349050711]
+modulate = Color(1, 1, 1, 0.5)
+position = Vector2(324, 153)
+texture = ExtResource("15_fpqwn")
+
+[node name="MpCoreGlow" type="Sprite2D" parent="PlayerUI/HUD" unique_id=727156640]
+material = SubResource("ShaderMaterial_fpqwn")
+position = Vector2(324, 153)
+texture = ExtResource("15_fpqwn")
+
+[node name="StaminaCore" type="Sprite2D" parent="PlayerUI/HUD" unique_id=1813055903]
+modulate = Color(0.7509483, 1.8247963, 0.8901186, 0.6)
+material = SubResource("ShaderMaterial_rhq4p")
+position = Vector2(92, 104)
+texture = ExtResource("16_8iif5")
+
+[node name="StaminaCoreGlow" type="Sprite2D" parent="PlayerUI/HUD" unique_id=783046750]
+material = SubResource("ShaderMaterial_8iif5")
+position = Vector2(92, 104)
+texture = ExtResource("16_8iif5")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=202585379]
 position = Vector2(0, -101)
