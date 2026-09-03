@@ -5,7 +5,7 @@ class_name AreaPreviews
 const PREVIEWS := {
 	0: "res://assets/ui/save_previews/tutorial.png",
 	1: "res://assets/ui/save_previews/valecourt.png",
-	#2: "res://assets/ui/save_previews/cathedral.png",
+	2: "res://assets/ui/save_previews/cathedral_undercroft.png",
 	#3: "res://assets/ui/save_previews/coastal_road.png",
 	#4: "res://assets/ui/save_previews/elven_reach.png",
 	#5: "res://assets/ui/save_previews/thalassar.png",

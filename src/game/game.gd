@@ -42,8 +42,10 @@ var room_music: Dictionary = {
 	"res://src/rooms/A1R3.tscn":
 		preload("res://assets/sound/music/022815townbgm.ogg"),
 
-	"res://src/rooms/A2R1.tscn": null,
-	"res://src/rooms/A3R1.tscn": null,
+	"res://src/rooms/A2R1.tscn": 
+		preload("res://assets/sound/music/022815townbgm.ogg"),
+	"res://src/rooms/A3R1.tscn": 
+		preload("res://assets/sound/music/Send for the Horses.mp3"),
 	"res://src/rooms/A4R1.tscn": null,
 	"res://src/rooms/A5R1.tscn": null,
 	"res://src/rooms/A6R1.tscn": null,
@@ -51,8 +53,10 @@ var room_music: Dictionary = {
 	"res://src/rooms/A8R1.tscn": null,
 	"res://src/rooms/A9R1.tscn": null,
 
-	"res://src/rooms/S1.tscn": null,
-	"res://src/rooms/S2.tscn": null,
+	"res://src/rooms/S1.tscn": 
+		preload("res://assets/sound/music/Night Vigil.mp3"),
+	"res://src/rooms/S2.tscn": 
+		preload("res://assets/sound/music/Night Vigil.mp3"),
 	"res://src/rooms/S3.tscn": null,
 	"res://src/rooms/S4.tscn": null,
 	"res://src/rooms/S5.tscn": null,

@@ -10,13 +10,9 @@ extends Control
 @onready var hp_star_glow: Sprite2D = $HpStarGlow
 @onready var hp_star_particles: GPUParticles2D = $HpStar/HpStarFlicker
 
-@onready var mp_bar: ProgressBar = $MpBar
-@onready var mp_damage_bar: ProgressBar = $MpDamageBar
 @onready var mp_core: Sprite2D = $MpCore
 @onready var mp_core_glow: Sprite2D = $MpCoreGlow
 
-@onready var stamina_bar: ProgressBar = $StBar
-@onready var stamina_damage_bar: ProgressBar = $StDamageBar
 @onready var stamina_core: Sprite2D = $StaminaCore
 @onready var stamina_core_glow: Sprite2D = $StaminaCoreGlow
 
@@ -37,9 +33,12 @@ const HP_GLOW_OVERSHOOT := 20.0
 const HEALTH_TWEEN_DURATION := 0.4
 const HEALTH_LOW_THRESHOLD := 0.35
 
-# --- HP fill-value drain animation (the bar itself receding) ---
-# Separate from the color/glow tween above — this animates the actual
-# TextureProgressBar.value instead of snapping it.
+# --- HP fill-value drain / tick-down animation ---
+# This is the part that makes the bar visibly recede instead of
+# snapping to the new value — it animates TextureProgressBar.value
+# itself, completely separate from the shader color/glow tween above.
+# Main bar + its glow move together and fast; the damage overlay lags
+# behind slower, leaving a bright sliver that catches down after it.
 const HP_DRAIN_DURATION := 0.25       # main bar + its glow, drains fast
 const HP_DAMAGE_TRAIL_DURATION := 0.6 # damage overlay, catches up slower
 
@@ -56,7 +55,7 @@ const FRAME_GLOW_MAX_INTENSITY := 0.9
 
 # --- MP / Stamina core glow tuning ---
 # Fixed size icons — only the halo's intensity/scale reacts to the
-# current/max ratio, no resizing, ever.
+# current/max ratio, no resizing, ever, no separate plain bar anymore.
 const MP_GLOW_MIN_INTENSITY := 0.2
 const MP_GLOW_MAX_INTENSITY := 1.2
 const MP_GLOW_MIN_SCALE := 0.6
@@ -100,19 +99,6 @@ func _ready() -> void:
 
 	hp_damage_bar.max_value = player.max_health
 	hp_damage_bar.value = player.health
-
-	mp_bar.max_value = player.max_mp
-	mp_bar.value = player.mp
-
-	mp_damage_bar.max_value = player.max_mp
-	mp_damage_bar.value = player.mp
-
-	if stamina_bar and stamina_damage_bar:
-		stamina_bar.max_value = player.max_stamina
-		stamina_bar.value = player.stamina
-
-		stamina_damage_bar.max_value = player.max_stamina
-		stamina_damage_bar.value = player.stamina
 
 	_apply_health_visuals(player.health, player.max_health, true)
 	_apply_mp_visuals(player.mp, player.max_mp, true)
@@ -172,9 +158,10 @@ func _on_player_health_changed(
 		_update_bar_length(max_health)
 		_last_max_health = int(max_health)
 
-	# Drain animation: the fill itself recedes instead of snapping.
-	# Main bar + its glow move together and fast; the damage overlay
-	# lags behind slower, leaving a bright sliver that catches down.
+	# Drain / tick-down animation: the fill itself recedes instead of
+	# snapping. Main bar + its glow move together and fast; the damage
+	# overlay lags behind slower, leaving a bright sliver that catches
+	# down after it — this whole block is what makes it not instant.
 	if _hp_value_tween:
 		_hp_value_tween.kill()
 
@@ -295,20 +282,6 @@ func _on_player_mp_changed(
 	current_mp,
 	max_mp
 ) -> void:
-	mp_bar.max_value = max_mp
-	mp_bar.value = current_mp
-
-	mp_damage_bar.max_value = max_mp
-
-	var tween := create_tween()
-
-	tween.tween_property(
-		mp_damage_bar,
-		"value",
-		current_mp,
-		0.3
-	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-
 	_apply_mp_visuals(current_mp, max_mp)
 
 
@@ -363,23 +336,6 @@ func _on_player_stamina_changed(
 	current_stamina,
 	max_stamina
 ) -> void:
-	if not stamina_bar:
-		return
-
-	stamina_bar.max_value = max_stamina
-	stamina_bar.value = current_stamina
-
-	stamina_damage_bar.max_value = max_stamina
-
-	var tween := create_tween()
-
-	tween.tween_property(
-		stamina_damage_bar,
-		"value",
-		current_stamina,
-		0.3
-	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-
 	_apply_stamina_visuals(current_stamina, max_stamina)
 
 

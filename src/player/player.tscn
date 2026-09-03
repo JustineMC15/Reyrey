@@ -157,80 +157,6 @@ shader_parameter/max_hue_shift_deg = -11.999997720000003
 shader_parameter/min_value_mult = 0.75000003236512
 shader_parameter/min_saturation_mult = 1.1
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_afsxn"]
-bg_color = Color(0.78431374, 0.45882353, 0.14117648, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b1ckw"]
-content_margin_left = 0.0
-content_margin_top = 4.0
-content_margin_right = 0.0
-content_margin_bottom = 4.0
-bg_color = Color(0.78431374, 0.45882353, 0.14117648, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bngr8"]
-bg_color = Color(0.043137256, 0.039215688, 0.03137255, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.043137256, 0.039215688, 0.03137255, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ct55r"]
-bg_color = Color(0.35686275, 0.8156863, 0.9529412, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.043137256, 0.039215688, 0.03137255, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hkhu1"]
-bg_color = Color(0.043137256, 0.039215688, 0.03137255, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.043137256, 0.039215688, 0.03137255, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2njrj"]
-bg_color = Color(0.15294118, 0.38431373, 0.12941177, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.043137256, 0.039215688, 0.03137255, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
-
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_fpqwn"]
 shader = ExtResource("8_utg71")
 shader_parameter/intensity = 2.50000011875
@@ -2786,9 +2712,9 @@ metadata/_edit_use_anchors_ = true
 material = SubResource("ShaderMaterial_utg71")
 layout_mode = 1
 anchors_preset = -1
-anchor_left = -0.020833334
-anchor_top = -0.08179012
-anchor_right = -0.019097222
+anchor_left = -0.024305556
+anchor_top = -0.08179013
+anchor_right = -0.020833334
 anchor_bottom = -0.08179013
 offset_left = 135.0
 offset_top = 56.0
@@ -2813,87 +2739,6 @@ offset_bottom = 105.0
 texture = ExtResource("4_e7e1q")
 metadata/_edit_use_anchors_ = true
 
-[node name="MpBar" type="ProgressBar" parent="PlayerUI/HUD" unique_id=893350116]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.038194444
-anchor_top = 0.52160496
-anchor_right = 0.038194444
-anchor_bottom = 0.52160496
-offset_left = 17.0
-offset_top = 139.0
-offset_right = 217.0
-offset_bottom = 164.0
-theme_override_styles/background = SubResource("StyleBoxFlat_afsxn")
-theme_override_styles/fill = SubResource("StyleBoxFlat_b1ckw")
-max_value = 3.0
-show_percentage = false
-metadata/_edit_use_anchors_ = true
-
-[node name="MpDamageBar" type="ProgressBar" parent="PlayerUI/HUD" unique_id=1364283927]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.038194444
-anchor_top = 0.52160496
-anchor_right = 0.038194444
-anchor_bottom = 0.52160496
-offset_left = 17.0
-offset_top = 139.0
-offset_right = 217.0
-offset_bottom = 164.0
-theme_override_styles/background = SubResource("StyleBoxFlat_bngr8")
-theme_override_styles/fill = SubResource("StyleBoxFlat_ct55r")
-max_value = 3.0
-show_percentage = false
-metadata/_edit_use_anchors_ = true
-
-[node name="StBar" type="ProgressBar" parent="PlayerUI/HUD" unique_id=661513962]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.038194444
-anchor_top = 0.52160496
-anchor_right = 0.038194444
-anchor_bottom = 0.521605
-offset_left = 17.0
-offset_top = 169.0
-offset_right = 217.0
-offset_bottom = 194.00003
-theme_override_styles/background = SubResource("StyleBoxFlat_afsxn")
-theme_override_styles/fill = SubResource("StyleBoxFlat_b1ckw")
-max_value = 3.0
-show_percentage = false
-metadata/_edit_use_anchors_ = true
-
-[node name="StDamageBar" type="ProgressBar" parent="PlayerUI/HUD" unique_id=666804843]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.038194444
-anchor_top = 0.52160496
-anchor_right = 0.038194444
-anchor_bottom = 0.52160496
-offset_left = 17.0
-offset_top = 169.0
-offset_right = 217.0
-offset_bottom = 194.0
-theme_override_styles/background = SubResource("StyleBoxFlat_hkhu1")
-theme_override_styles/fill = SubResource("StyleBoxFlat_2njrj")
-max_value = 3.0
-show_percentage = false
-metadata/_edit_use_anchors_ = true
-
-[node name="StarFragmentReward" parent="PlayerUI/HUD" unique_id=2135562757 instance=ExtResource("3_a4vah")]
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-offset_left = -140.0
-offset_top = -90.0
-offset_right = -40.0
-offset_bottom = -40.0
-grow_horizontal = 0
-grow_vertical = 0
-count_duration = 0.45
-
 [node name="MpCore" type="Sprite2D" parent="PlayerUI/HUD" unique_id=349050711]
 modulate = Color(1, 1, 1, 0.5)
 position = Vector2(324, 153)
@@ -2914,6 +2759,19 @@ texture = ExtResource("16_8iif5")
 material = SubResource("ShaderMaterial_8iif5")
 position = Vector2(92, 104)
 texture = ExtResource("16_8iif5")
+
+[node name="StarFragmentReward" parent="PlayerUI/HUD" unique_id=2135562757 instance=ExtResource("3_a4vah")]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+offset_left = -140.0
+offset_top = -90.0
+offset_right = -40.0
+offset_bottom = -40.0
+grow_horizontal = 0
+grow_vertical = 0
+count_duration = 0.45
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=202585379]
 position = Vector2(0, -101)
