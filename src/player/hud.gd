@@ -39,7 +39,6 @@ const HEALTH_LOW_THRESHOLD := 0.35
 # itself, completely separate from the shader color/glow tween above.
 # Main bar + its glow move together and fast; the damage overlay lags
 # behind slower, leaving a bright sliver that catches down after it.
-const HP_DRAIN_DURATION := 0.25       # main bar + its glow, drains fast
 const HP_DAMAGE_TRAIL_DURATION := 0.6 # damage overlay, catches up slower
 
 const STAR_GLOW_MIN_SCALE := 0.55
@@ -117,9 +116,13 @@ func _ready() -> void:
 			_on_star_fragments_changed
 		)
 
-	player.health_changed.connect(_on_player_health_changed)
-	player.mp_changed.connect(_on_player_mp_changed)
-	player.stamina_changed.connect(_on_player_stamina_changed)
+# --- in _ready(), replace the three connect lines ---
+	if not player.health_changed.is_connected(_on_player_health_changed):
+		player.health_changed.connect(_on_player_health_changed)
+	if not player.mp_changed.is_connected(_on_player_mp_changed):
+		player.mp_changed.connect(_on_player_mp_changed)
+	if not player.stamina_changed.is_connected(_on_player_stamina_changed):
+		player.stamina_changed.connect(_on_player_stamina_changed)
 	potion_indicator = Label.new()
 	potion_indicator.text = "POTION READY"
 	potion_indicator.add_theme_font_size_override("font_size", 16)
@@ -158,29 +161,16 @@ func _on_player_health_changed(
 		_update_bar_length(max_health)
 		_last_max_health = int(max_health)
 
-	# Drain / tick-down animation: the fill itself recedes instead of
-	# snapping. Main bar + its glow move together and fast; the damage
-	# overlay lags behind slower, leaving a bright sliver that catches
-	# down after it — this whole block is what makes it not instant.
+	# Main bar + glow snap immediately — same as MpBar/StBar — so
+	# there's a fixed floor for the damage overlay to recede toward
+	# instead of two bars animating into each other.
+	hp_bar.value = current_health
+	hp_bar_glow.value = current_health
+
 	if _hp_value_tween:
 		_hp_value_tween.kill()
 
 	_hp_value_tween = create_tween()
-	_hp_value_tween.set_parallel(true)
-
-	_hp_value_tween.tween_property(
-		hp_bar,
-		"value",
-		current_health,
-		HP_DRAIN_DURATION
-	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-
-	_hp_value_tween.tween_property(
-		hp_bar_glow,
-		"value",
-		current_health,
-		HP_DRAIN_DURATION
-	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 	_hp_value_tween.tween_property(
 		hp_damage_bar,
@@ -190,7 +180,6 @@ func _on_player_health_changed(
 	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 	_apply_health_visuals(current_health, max_health)
-
 
 # Grows the bar/frame rightward from the star as max_health increases.
 # 50px per health point: 250px at 5 (base), 500px at 10 (max).

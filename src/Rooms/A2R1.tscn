@@ -240,9 +240,6 @@ position = Vector2(5855, -142)
 collision_layer = 32
 collision_mask = 64
 script = ExtResource("5_kufn4")
-gate_id = "A2R1-entry"
-target_scene_path = "res://src/rooms/A3R1.tscn"
-target_gate_id = "A3R1"
 metadata/_custom_type_script = "uid://d6mwrb2d16q5"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gates/To" unique_id=737343698]
