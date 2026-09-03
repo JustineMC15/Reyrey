@@ -1594,8 +1594,8 @@ stream = ExtResource("6_1fw6a")
 pitch_scale = 6.0
 
 [node name="AttackArea" type="Area2D" parent="." unique_id=341910715]
-collision_layer = 128
-collision_mask = 64
+collision_layer = 255
+collision_mask = 255
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea" unique_id=1833830442]
 shape = SubResource("CircleShape2D_bekt7")
@@ -1615,8 +1615,8 @@ frame_progress = 1.0
 stream = ExtResource("8_l8jeg")
 
 [node name="SlowField" type="Area2D" parent="AttackEffect" unique_id=1227891116]
-collision_layer = 16
-collision_mask = 2
+collision_layer = 80
+collision_mask = 66
 monitoring = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackEffect/SlowField" unique_id=870017170]

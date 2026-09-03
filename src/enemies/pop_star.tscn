@@ -180,7 +180,8 @@ animations = [{
 radius = 38.0
 
 [node name="PopStar" type="CharacterBody2D" unique_id=1450154183 groups=["enemies"]]
-collision_layer = 2
+collision_layer = 4
+collision_mask = 8
 script = ExtResource("1_3pi0l")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2066198239]

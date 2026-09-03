@@ -140,9 +140,9 @@ shader_parameter/min_saturation_mult = 1.1
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_kpcs5"]
 shader = ExtResource("8_utg71")
-shader_parameter/intensity = 1.0
-shader_parameter/blur_radius = 0.07999999821186
-shader_parameter/glow_tint = Color(1, 0.91627353, 0.6262097, 1)
+shader_parameter/intensity = 0.50000002375
+shader_parameter/blur_radius = 0.050000002375
+shader_parameter/glow_tint = Color(1, 0.91775256, 0.62782896, 0.3)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_utg71"]
 shader = ExtResource("8_utg71")
@@ -2619,12 +2619,12 @@ metadata/_edit_lock_ = true
 
 [node name="HpStarGlow" type="Sprite2D" parent="PlayerUI/HUD" unique_id=291054175]
 material = SubResource("ShaderMaterial_axsi3")
-position = Vector2(156, 69)
+position = Vector2(161, 79)
 texture = ExtResource("12_8iif5")
 
 [node name="HpStar" type="Sprite2D" parent="PlayerUI/HUD" unique_id=1044057411]
 material = SubResource("ShaderMaterial_phdu6")
-position = Vector2(155, 69)
+position = Vector2(160, 79)
 texture = ExtResource("7_xmpm3")
 
 [node name="HpStarFlicker" type="GPUParticles2D" parent="PlayerUI/HUD/HpStar" unique_id=268860609]
@@ -2635,13 +2635,14 @@ texture = ExtResource("7_8iif5")
 process_material = SubResource("ParticleProcessMaterial_w37yh")
 
 [node name="HpEmptyBar" type="NinePatchRect" parent="PlayerUI/HUD" unique_id=1800628312]
+process_mode = 3
 material = SubResource("ShaderMaterial_evlgt")
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.024305556
-anchor_top = 0.0030864256
-anchor_right = 0.024305556
-anchor_bottom = 0.0030864198
+anchor_left = 0.028645834
+anchor_top = 0.018518519
+anchor_right = 0.028645834
+anchor_bottom = 0.018518519
 offset_left = 135.0
 offset_top = 56.0
 offset_right = 385.0
@@ -2653,10 +2654,10 @@ metadata/_edit_use_anchors_ = true
 material = SubResource("ShaderMaterial_gsylq")
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.024305556
-anchor_top = 0.0030864256
-anchor_right = 0.024305556
-anchor_bottom = 0.0030864198
+anchor_left = 0.028645834
+anchor_top = 0.018518519
+anchor_right = 0.028645834
+anchor_bottom = 0.018518519
 offset_left = 135.0
 offset_top = 56.0
 offset_right = 385.0
@@ -2675,10 +2676,10 @@ metadata/_edit_use_anchors_ = true
 material = SubResource("ShaderMaterial_kpcs5")
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.013888889
-anchor_top = -0.05401234
-anchor_right = 0.013888889
-anchor_bottom = -0.054012347
+anchor_left = 0.018229166
+anchor_top = -0.038580246
+anchor_right = 0.018229166
+anchor_bottom = -0.038580246
 offset_left = 135.0
 offset_top = 56.0
 offset_right = 410.0
@@ -2691,10 +2692,10 @@ metadata/_edit_use_anchors_ = true
 self_modulate = Color(1.5999943, 1.5999943, 1.5999943, 0.5)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.024305556
-anchor_top = 0.0030864256
-anchor_right = 0.024305556
-anchor_bottom = 0.0030864198
+anchor_left = 0.028645834
+anchor_top = 0.018518519
+anchor_right = 0.028645834
+anchor_bottom = 0.018518519
 offset_left = 135.0
 offset_top = 56.0
 offset_right = 385.0
@@ -2709,13 +2710,14 @@ texture_progress = ExtResource("5_xmpm3")
 metadata/_edit_use_anchors_ = true
 
 [node name="HpFrameGlow" type="TextureRect" parent="PlayerUI/HUD" unique_id=1790750310]
+visible = false
 material = SubResource("ShaderMaterial_utg71")
 layout_mode = 1
 anchors_preset = -1
-anchor_left = -0.024305556
-anchor_top = -0.08179013
-anchor_right = -0.020833334
-anchor_bottom = -0.08179013
+anchor_left = -0.019965278
+anchor_top = -0.06481481
+anchor_right = -0.016493056
+anchor_bottom = -0.06481481
 offset_left = 135.0
 offset_top = 56.0
 offset_right = 514.0
@@ -2728,10 +2730,10 @@ metadata/_edit_use_anchors_ = true
 material = SubResource("ShaderMaterial_4ptlo")
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.017361112
-anchor_top = -0.013888883
-anchor_right = 0.017361112
-anchor_bottom = -0.013888889
+anchor_left = 0.021701388
+anchor_top = 0.0015432099
+anchor_right = 0.021701388
+anchor_bottom = 0.0015432099
 offset_left = 135.0
 offset_top = 56.0
 offset_right = 420.0
@@ -2741,23 +2743,23 @@ metadata/_edit_use_anchors_ = true
 
 [node name="MpCore" type="Sprite2D" parent="PlayerUI/HUD" unique_id=349050711]
 modulate = Color(1, 1, 1, 0.5)
-position = Vector2(324, 153)
+position = Vector2(280, 146)
 texture = ExtResource("15_fpqwn")
 
 [node name="MpCoreGlow" type="Sprite2D" parent="PlayerUI/HUD" unique_id=727156640]
 material = SubResource("ShaderMaterial_fpqwn")
-position = Vector2(324, 153)
+position = Vector2(280, 146)
 texture = ExtResource("15_fpqwn")
 
 [node name="StaminaCore" type="Sprite2D" parent="PlayerUI/HUD" unique_id=1813055903]
 modulate = Color(0.7509483, 1.8247963, 0.8901186, 0.6)
 material = SubResource("ShaderMaterial_rhq4p")
-position = Vector2(92, 104)
+position = Vector2(97, 114)
 texture = ExtResource("16_8iif5")
 
 [node name="StaminaCoreGlow" type="Sprite2D" parent="PlayerUI/HUD" unique_id=783046750]
 material = SubResource("ShaderMaterial_8iif5")
-position = Vector2(92, 104)
+position = Vector2(97, 114)
 texture = ExtResource("16_8iif5")
 
 [node name="StarFragmentReward" parent="PlayerUI/HUD" unique_id=2135562757 instance=ExtResource("3_a4vah")]
