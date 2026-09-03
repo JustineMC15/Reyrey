@@ -4,21 +4,26 @@
 [ext_resource type="Script" uid="uid://cp4ne7ggpfte0" path="res://src/player/hud.gd" id="2_7wf8o"]
 [ext_resource type="Texture2D" uid="uid://bkai2euw4fg6o" path="res://assets/characters/player/attack.png" id="3_7wf8o"]
 [ext_resource type="PackedScene" uid="uid://bqf7ng8cql6a5" path="res://src/nav/star_fragment_reward.tscn" id="3_a4vah"]
+[ext_resource type="Shader" uid="uid://cy4rg6v7oo0ji" path="res://src/shader/hp_empty_bar.gdshader" id="4_4ptlo"]
 [ext_resource type="Texture2D" uid="uid://bcd8xg1grriwu" path="res://assets/characters/player/dash.png" id="4_afsxn"]
 [ext_resource type="Texture2D" uid="uid://c7wjjor1f3pwc" path="res://assets/ui/playerUI/hpframe.png" id="4_e7e1q"]
 [ext_resource type="Texture2D" uid="uid://4infjg1tx008" path="res://assets/characters/player/jump-fall-loop-slam.png" id="5_b1ckw"]
 [ext_resource type="Texture2D" uid="uid://caqsf7b8npq2s" path="res://assets/ui/playerUI/hpbar.png" id="5_xmpm3"]
 [ext_resource type="Texture2D" uid="uid://bykthynehi0pd" path="res://assets/characters/player/glide.png" id="6_3vieb"]
 [ext_resource type="Texture2D" uid="uid://daox31bkvq5do" path="res://assets/ui/playerUI/hpempty.png" id="6_h0enb"]
+[ext_resource type="Shader" uid="uid://4rgh71qhyya7" path="res://src/shader/hp_element_glow.gdshader" id="6_phdu6"]
 [ext_resource type="Texture2D" uid="uid://cp4rk6l7agsoe" path="res://assets/characters/player/idle.png" id="7_imkep"]
 [ext_resource type="Texture2D" uid="uid://chp5rnn1srfak" path="res://assets/ui/playerUI/hpstar.png" id="7_xmpm3"]
 [ext_resource type="Texture2D" uid="uid://bsvmhkhxdnb1n" path="res://assets/characters/player/wallcling-ledgegrab.png" id="8_bngr8"]
+[ext_resource type="Shader" uid="uid://p8u73obpxmdx" path="res://src/shader/hp_halo_glow.gdshader" id="8_utg71"]
 [ext_resource type="Texture2D" uid="uid://b1o43gukuffhb" path="res://assets/characters/player/run.png" id="9_ct55r"]
+[ext_resource type="Texture2D" uid="uid://cuc5vnhjg4ffd" path="res://assets/ui/playerUI/hpbar_glow.png" id="9_f0c71"]
 [ext_resource type="Texture2D" uid="uid://ghmcxyguk81d" path="res://assets/particles/VFX Free Pack/Effect_Explosion2/60fps/Spritesheets/Effect_Explosion2_1_355x365.png" id="9_jj045"]
-[ext_resource type="Shader" uid="uid://ddyj1s6xrgusq" path="res://src/shader/starhpshader.gdshader" id="9_phdu6"]
 [ext_resource type="Texture2D" uid="uid://cr36hkh6tfafb" path="res://assets/particles/Fire_Circles/fire_circles_50x50px.png" id="10_7wf8o"]
+[ext_resource type="Texture2D" uid="uid://dwty5oqjk7a0d" path="res://assets/ui/playerUI/hpframe_glow.png" id="10_fpqwn"]
 [ext_resource type="Texture2D" uid="uid://d15ikiah2ovr6" path="res://assets/particles/Holy VFX/Holy VFX 02.png" id="11_afsxn"]
 [ext_resource type="Texture2D" uid="uid://bp1ij8fts1tbt" path="res://assets/characters/player/pogo.png" id="11_j2873"]
+[ext_resource type="Texture2D" uid="uid://dswnxihjk0gf3" path="res://assets/ui/playerUI/hpstar_glow.png" id="12_8iif5"]
 [ext_resource type="Texture2D" uid="uid://cwijr37w5o5jr" path="res://assets/particles/ApyrYoun - Visual Effects v01/wave slash 01.png" id="12_b1ckw"]
 [ext_resource type="Texture2D" uid="uid://dve1kbqaim0rn" path="res://assets/characters/player/sprint.png" id="12_vwi60"]
 [ext_resource type="Texture2D" uid="uid://g6ouha5s31m1" path="res://assets/characters/player/upslash.png" id="14_dpt0q"]
@@ -36,8 +41,101 @@
 [ext_resource type="Texture2D" uid="uid://j70ujplhxad5" path="res://assets/particles/VFX Free Pack/Effect_TheVortex/60fps/Spritesheets/Effect_TheVortex_1_429x429.png" id="23_dpt0q"]
 [ext_resource type="AudioStream" uid="uid://f30bc8ce3w1q" path="res://assets/sound/sfx/thud3.wav" id="23_flmxu"]
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_evlgt"]
+shader = ExtResource("4_4ptlo")
+shader_parameter/health_ratio = 1.0
+shader_parameter/color_high = Color(1, 1, 1, 0.35)
+shader_parameter/color_mid = Color(0.55, 0.55, 0.55, 0.35)
+shader_parameter/color_low = Color(0, 0, 0, 0.45)
+shader_parameter/mid_point = 0.5
+shader_parameter/low_point = 0.15
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gsylq"]
+shader = ExtResource("6_phdu6")
+shader_parameter/health_ratio = 1.0
+shader_parameter/max_hue_shift_deg = -19.9999981
+shader_parameter/min_value_mult = 0.60000002524012
+shader_parameter/min_saturation_mult = 1.1
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kpcs5"]
+shader = ExtResource("8_utg71")
+shader_parameter/intensity = 1.0
+shader_parameter/blur_radius = 0.07999999821186
+shader_parameter/glow_tint = Color(1, 0.91627353, 0.6262097, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_utg71"]
+shader = ExtResource("8_utg71")
+shader_parameter/intensity = 1.0
+shader_parameter/blur_radius = 0.02
+shader_parameter/glow_tint = Color(1, 0.85, 0.4, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4ptlo"]
+shader = ExtResource("6_phdu6")
+shader_parameter/health_ratio = 1.0
+shader_parameter/max_hue_shift_deg = -11.999997720000003
+shader_parameter/min_value_mult = 0.75000003236512
+shader_parameter/min_saturation_mult = 1.1
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_axsi3"]
+shader = ExtResource("8_utg71")
+shader_parameter/intensity = 1.0
+shader_parameter/blur_radius = 0.02
+shader_parameter/glow_tint = Color(1, 0.95, 0.7, 1)
+
+[sub_resource type="Shader" id="Shader_rhq4p"]
+code = "shader_type canvas_item;
+
+uniform float health_ratio : hint_range(0.0, 1.0) = 1.0;
+
+uniform vec4 high_health_color : source_color = vec4(1.0, 0.90, 0.50, 1.0);
+uniform vec4 low_health_color : source_color = vec4(1.0, 0.70, 0.30, 1.0);
+
+uniform float high_health_brightness : hint_range(0.0, 3.0) = 1.35;
+uniform float low_health_brightness : hint_range(0.0, 3.0) = 0.85;
+
+uniform float high_health_alpha : hint_range(0.0, 1.0) = 1.0;
+uniform float low_health_alpha : hint_range(0.0, 1.0) = 0.90;
+
+
+void fragment() {
+	vec4 texture_color = texture(TEXTURE, UV);
+
+	float ratio = clamp(
+		health_ratio,
+		0.0,
+		1.0
+	);
+
+	// High HP is the star's brightest state.
+	// Low HP remains clearly luminous, but weaker.
+	vec3 star_color = mix(
+		low_health_color.rgb,
+		high_health_color.rgb,
+		ratio
+	);
+
+	float brightness = mix(
+		low_health_brightness,
+		high_health_brightness,
+		ratio
+	);
+
+	float alpha = mix(
+		low_health_alpha,
+		high_health_alpha,
+		ratio
+	);
+
+	star_color *= brightness;
+
+	COLOR = vec4(
+		star_color,
+		texture_color.a * alpha
+	);
+}"
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_phdu6"]
-shader = ExtResource("9_phdu6")
+shader = SubResource("Shader_rhq4p")
 shader_parameter/health_ratio = 1.0
 shader_parameter/high_health_color = Color(1, 0.98, 0.91, 1)
 shader_parameter/low_health_color = Color(0.82, 0.78, 0.68, 1)
@@ -45,6 +143,16 @@ shader_parameter/high_health_brightness = 1.0
 shader_parameter/low_health_brightness = 0.72
 shader_parameter/high_health_alpha = 0.72
 shader_parameter/low_health_alpha = 0.28
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_w37yh"]
+particle_flag_disable_z = true
+spread = 180.0
+initial_velocity_min = 15.0
+initial_velocity_max = 40.0
+gravity = Vector3(0, 98, 0)
+scale_min = 0.049999997
+scale_max = 0.14999999
+color = Color(0.99215686, 0.8627451, 0.36078432, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_afsxn"]
 bg_color = Color(0.78431374, 0.45882353, 0.14117648, 1)
@@ -2564,20 +2672,50 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("2_7wf8o")
+metadata/_edit_lock_ = true
 
-[node name="HPBar" type="TextureProgressBar" parent="PlayerUI/HUD" unique_id=1043354761]
+[node name="HpEmptyBar" type="NinePatchRect" parent="PlayerUI/HUD" unique_id=1800628312]
+material = SubResource("ShaderMaterial_evlgt")
 layout_mode = 0
 offset_left = 135.0
 offset_top = 56.0
 offset_right = 385.0
 offset_bottom = 81.0
+texture = ExtResource("6_h0enb")
+metadata/_edit_use_anchors_ = true
+
+[node name="HPBar" type="TextureProgressBar" parent="PlayerUI/HUD" unique_id=1043354761]
+material = SubResource("ShaderMaterial_gsylq")
+layout_mode = 0
+offset_left = 135.0
+offset_top = 56.0
+offset_right = 385.0
+offset_bottom = 81.0
+offset_transform_enabled = true
+mouse_filter = 2
 max_value = 5.0
 value = 5.0
 nine_patch_stretch = true
 stretch_margin_left = 100
 stretch_margin_right = 40
-texture_under = ExtResource("6_h0enb")
 texture_progress = ExtResource("5_xmpm3")
+metadata/_edit_use_anchors_ = true
+
+[node name="HPBarGlow" type="TextureProgressBar" parent="PlayerUI/HUD" unique_id=1561480780]
+material = SubResource("ShaderMaterial_kpcs5")
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.004340278
+anchor_top = -0.057098765
+anchor_right = -0.004340278
+anchor_bottom = -0.057098765
+offset_left = 135.0
+offset_top = 56.0
+offset_right = 410.0
+offset_bottom = 156.0
+mouse_filter = 2
+texture_progress = ExtResource("9_f0c71")
+metadata/_edit_use_anchors_ = true
 
 [node name="HPDamageBar" type="TextureProgressBar" parent="PlayerUI/HUD" unique_id=1503377491]
 layout_mode = 0
@@ -2585,6 +2723,7 @@ offset_left = 135.0
 offset_top = 56.0
 offset_right = 385.0
 offset_bottom = 81.0
+mouse_filter = 2
 max_value = 5.0
 value = 5.0
 nine_patch_stretch = true
@@ -2592,20 +2731,53 @@ stretch_margin_left = 100
 stretch_margin_right = 40
 texture_under = ExtResource("6_h0enb")
 texture_over = ExtResource("5_xmpm3")
+metadata/_edit_use_anchors_ = true
 
-[node name="HpFrame" type="TextureRect" parent="PlayerUI/HUD" unique_id=1615822974]
-layout_mode = 0
-offset_left = 127.0
-offset_top = 45.0
-offset_right = 412.0
-offset_bottom = 94.0
+[node name="HpFrameGlow" type="TextureRect" parent="PlayerUI/HUD" unique_id=1790750310]
+material = SubResource("ShaderMaterial_utg71")
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.046006944
+anchor_top = -0.084876545
+anchor_right = -0.046006944
+anchor_bottom = -0.084876545
+offset_left = 135.0
+offset_top = 56.0
+offset_right = 514.0
+offset_bottom = 193.0
 mouse_filter = 2
+texture = ExtResource("10_fpqwn")
+metadata/_edit_use_anchors_ = true
+
+[node name="HpFrame" type="NinePatchRect" parent="PlayerUI/HUD" unique_id=111649856]
+material = SubResource("ShaderMaterial_4ptlo")
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.0069444445
+anchor_top = -0.016975308
+anchor_right = -0.0069444445
+anchor_bottom = -0.016975308
+offset_left = 135.0
+offset_top = 56.0
+offset_right = 420.0
+offset_bottom = 105.0
 texture = ExtResource("4_e7e1q")
+metadata/_edit_use_anchors_ = true
+
+[node name="HpStarGlow" type="Sprite2D" parent="PlayerUI/HUD" unique_id=291054175]
+material = SubResource("ShaderMaterial_axsi3")
+position = Vector2(67, 68)
+texture = ExtResource("12_8iif5")
 
 [node name="HpStar" type="Sprite2D" parent="PlayerUI/HUD" unique_id=1044057411]
 material = SubResource("ShaderMaterial_phdu6")
-position = Vector2(67, 67)
+position = Vector2(66, 68)
 texture = ExtResource("7_xmpm3")
+
+[node name="HpStarFlicker" type="GPUParticles2D" parent="PlayerUI/HUD/HpStar" unique_id=268860609]
+emitting = false
+lifetime = 0.7
+process_material = SubResource("ParticleProcessMaterial_w37yh")
 
 [node name="MPBar" type="ProgressBar" parent="PlayerUI/HUD" unique_id=893350116]
 layout_mode = 0
@@ -2617,6 +2789,7 @@ theme_override_styles/background = SubResource("StyleBoxFlat_afsxn")
 theme_override_styles/fill = SubResource("StyleBoxFlat_b1ckw")
 max_value = 3.0
 show_percentage = false
+metadata/_edit_use_anchors_ = true
 
 [node name="MPDamageBar" type="ProgressBar" parent="PlayerUI/HUD" unique_id=1364283927]
 layout_mode = 0
@@ -2628,6 +2801,7 @@ theme_override_styles/background = SubResource("StyleBoxFlat_bngr8")
 theme_override_styles/fill = SubResource("StyleBoxFlat_ct55r")
 max_value = 3.0
 show_percentage = false
+metadata/_edit_use_anchors_ = true
 
 [node name="STBar" type="ProgressBar" parent="PlayerUI/HUD" unique_id=661513962]
 layout_mode = 0
@@ -2639,6 +2813,7 @@ theme_override_styles/background = SubResource("StyleBoxFlat_afsxn")
 theme_override_styles/fill = SubResource("StyleBoxFlat_b1ckw")
 max_value = 3.0
 show_percentage = false
+metadata/_edit_use_anchors_ = true
 
 [node name="STDamageBar" type="ProgressBar" parent="PlayerUI/HUD" unique_id=666804843]
 layout_mode = 0
@@ -2650,6 +2825,7 @@ theme_override_styles/background = SubResource("StyleBoxFlat_hkhu1")
 theme_override_styles/fill = SubResource("StyleBoxFlat_2njrj")
 max_value = 3.0
 show_percentage = false
+metadata/_edit_use_anchors_ = true
 
 [node name="StarFragmentReward" parent="PlayerUI/HUD" unique_id=2135562757 instance=ExtResource("3_a4vah")]
 layout_mode = 1
