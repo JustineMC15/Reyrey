@@ -82,9 +82,10 @@ var room_music: Dictionary = {
 var room_area_names: Dictionary = {
 	"res://src/rooms/A0R1.tscn": "Valecourt Capital",
 	"res://src/rooms/A0R2.tscn": "Valecourt Capital",
-
+	"res://src/rooms/A0R3.tscn": "Valecourt Capital",
 	"res://src/rooms/A1R1.tscn": "Valecourt Fields",
 	"res://src/rooms/A2R1.tscn": "Cathedral Undercroft",
+	"res://src/rooms/A2R2.tscn": "Cathedral Undercroft",
 	"res://src/rooms/A3R1.tscn": "Coastal Road",
 	"res://src/rooms/A4R1.tscn": "Elven Reach",
 	"res://src/rooms/A5R1.tscn": "Thalassar Canal City",

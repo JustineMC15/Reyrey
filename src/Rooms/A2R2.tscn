@@ -78,6 +78,7 @@ chest_tier = 3
 [node name="Checkpoint" parent="Interactables" unique_id=1046499597 instance=ExtResource("6_1a5vg")]
 position = Vector2(1595, -177)
 checkpoint_id = "checkpoint_04"
+room_name = "A2R2"
 
 [node name="Gates" type="Node2D" parent="." unique_id=152760247]
 

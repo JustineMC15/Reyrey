@@ -28,7 +28,7 @@ const HP_BAR_BASE_OFFSET_LEFT := 135.0
 const HP_FRAME_BASE_OFFSET_LEFT := 127.0
 const HP_FRAME_RIGHT_PADDING := 35.0
 const HP_GLOW_OVERSHOOT := 20.0
-
+const HP_DRAIN_DURATION := 0.35   # main bar + its glow, the real drain
 # --- HP color/glow tuning (shader-driven, tweened by health_ratio) ---
 const HEALTH_TWEEN_DURATION := 0.4
 const HEALTH_LOW_THRESHOLD := 0.35
@@ -66,7 +66,7 @@ const STAMINA_GLOW_MIN_SCALE := 0.6
 const STAMINA_GLOW_MAX_SCALE := 1.0
 
 const RESOURCE_GLOW_TWEEN_DURATION := 0.4
-
+var _last_health_value: float = -1.0
 var _last_max_health := -1
 var _current_health_ratio := 1.0
 var _health_tween: Tween
@@ -98,7 +98,7 @@ func _ready() -> void:
 
 	hp_damage_bar.max_value = player.max_health
 	hp_damage_bar.value = player.health
-
+	_last_health_value = player.health
 	_apply_health_visuals(player.health, player.max_health, true)
 	_apply_mp_visuals(player.mp, player.max_mp, true)
 	_apply_stamina_visuals(player.stamina, player.max_stamina, true)
@@ -161,23 +161,41 @@ func _on_player_health_changed(
 		_update_bar_length(max_health)
 		_last_max_health = int(max_health)
 
-	# Main bar + glow snap immediately — same as MpBar/StBar — so
-	# there's a fixed floor for the damage overlay to recede toward
-	# instead of two bars animating into each other.
-	hp_bar.value = current_health
-	hp_bar_glow.value = current_health
+	# Freeze the flash overlay at the length the bar had a moment
+	# ago, fully bright, then fade its alpha out. A fade is obvious
+	# regardless of what's glowing underneath it — unlike a receding
+	# bar edge, which can get lost against HpBarGlow's own pulse.
+	hp_damage_bar.value = _last_health_value if _last_health_value >= 0.0 else current_health
+	hp_damage_bar.modulate.a = 1.0
 
 	if _hp_value_tween:
 		_hp_value_tween.kill()
 
 	_hp_value_tween = create_tween()
+	_hp_value_tween.set_parallel(true)
+
+	_hp_value_tween.tween_property(
+		hp_bar,
+		"value",
+		current_health,
+		HP_DRAIN_DURATION
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+	_hp_value_tween.tween_property(
+		hp_bar_glow,
+		"value",
+		current_health,
+		HP_DRAIN_DURATION
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 	_hp_value_tween.tween_property(
 		hp_damage_bar,
-		"value",
-		current_health,
+		"modulate:a",
+		0.0,
 		HP_DAMAGE_TRAIL_DURATION
-	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+
+	_last_health_value = current_health
 
 	_apply_health_visuals(current_health, max_health)
 
