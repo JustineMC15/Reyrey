@@ -20,7 +20,6 @@ class_name CameraLimitZone
 ##   RectHandle        — Control, drag THIS to resize the zone
 
 @export var tween_duration: float = 0.35
-
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var rect_handle: Control = $RectHandle
 

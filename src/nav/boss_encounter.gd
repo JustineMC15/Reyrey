@@ -350,7 +350,7 @@ func _reset_after_player_death() -> void:
 
 	# Reset arena door.
 	if target_door and target_door.has_method("open"):
-		target_door.close()
+		target_door.open()
 
 	# Shortcut should NOT be opened just because the player died.
 	# It remains locked until the boss is actually defeated.
@@ -429,7 +429,7 @@ func reset_boss_encounter() -> void:
 		trigger_area.set_deferred("monitoring", true)
 		trigger_area.set_deferred("monitorable", true)
 
-	if target_door and target_door.has_method("close"):
+	if target_door and target_door.has_method("open"):
 		target_door.close()
 
 	if is_instance_valid(boss):

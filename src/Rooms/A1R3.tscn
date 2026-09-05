@@ -26,6 +26,7 @@
 [ext_resource type="AudioStream" uid="uid://c6e7f50ib7mc3" path="res://assets/sound/sfx/door-01.mp3" id="17_v77af"]
 [ext_resource type="PackedScene" uid="uid://bn0hig7ndpdco" path="res://src/nav/chest.tscn" id="21_pfkeg"]
 [ext_resource type="Texture2D" uid="uid://cyt803nnvmcpu" path="res://assets/environment/parallax/wheat.png" id="22_7es58"]
+[ext_resource type="Script" uid="uid://bh2titexcdb57" path="res://src/nav/camera_limit_zone.gd" id="27_yq67m"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tbqxn"]
 texture = ExtResource("5_m685k")
@@ -332,6 +333,9 @@ animations = [{
 "speed": 2.0
 }]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bekt7"]
+size = Vector2(2295, 1367)
+
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_12oe3"]
 load_path = "res://.godot/imported/door4b(wooden).png-a224567dfee06fe2418ba2d86afdab1a.ctex"
 
@@ -479,6 +483,27 @@ shortcut_id_on_clear = "boss1door"
 rock_spawn_area = NodePath("RockSpawnArea")
 battle_music = ExtResource("14_tbqxn")
 metadata/_custom_type_script = "uid://4o4jlsye1arb"
+
+[node name="CameraLimitZone" type="Area2D" parent="BossEncounter" unique_id=788492690]
+position = Vector2(206, 1386)
+collision_layer = 32
+collision_mask = 64
+script = ExtResource("27_yq67m")
+tween_duration = 3.0
+metadata/_custom_type_script = "uid://bh2titexcdb57"
+
+[node name="RectHandle" type="Control" parent="BossEncounter/CameraLimitZone" unique_id=1810864176]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -1378.0
+offset_top = -2112.0
+offset_right = 917.0
+offset_bottom = -745.0
+mouse_filter = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BossEncounter/CameraLimitZone" unique_id=1267787581]
+position = Vector2(-230.5, -1428.5)
+shape = SubResource("RectangleShape2D_bekt7")
 
 [node name="SimpleDoor" type="StaticBody2D" parent="BossEncounter" unique_id=2018904749]
 position = Vector2(919, 809)

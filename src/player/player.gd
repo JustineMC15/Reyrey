@@ -80,6 +80,17 @@ const RECALL_MP_COST := 3
 const RECALL_LEASH_RANGE := 900.0
 
 const INVINCIBILITY_TIME := 0.5
+
+# Killzones
+var last_safe_position := Vector2.ZERO
+var last_safe_room_path := ""
+var _has_safe_ground := false
+var _ground_edge_ray_left: RayCast2D
+var _ground_edge_ray_right: RayCast2D
+var _game_ref: Node
+
+const SAFE_GROUND_CHECK_OFFSET := 30.0
+const SAFE_GROUND_CHECK_LENGTH := 30.0
 # Stamina
 
 const STAMINA_REGEN_RATE := 40.0
@@ -307,7 +318,7 @@ func reset_after_death() -> void:
 	input_locked = false
 	transition_walking = false
 	transition_walk_direction = 1.0
-
+	_has_safe_ground = false
 	velocity = Vector2.ZERO
 
 	health = max_health
@@ -559,12 +570,18 @@ func pogo_attack() -> void:
 	await get_tree().physics_frame
 
 	var hit_something := false
+	var hit_hazard := false
 
 	for body in pogo_hitbox.get_overlapping_bodies():
 		if body.is_in_group("enemies") or body.is_in_group("attackable"):
 			body.take_damage(sword_damage)
 			boost_mp_regen()
 			hit_something = true
+
+	for area in pogo_hitbox.get_overlapping_areas():
+		if area.is_in_group("pogoable_hazard"):
+			hit_something = true
+			hit_hazard = true
 
 	pogo_hitbox.monitoring = false
 
@@ -576,6 +593,8 @@ func pogo_attack() -> void:
 			else POGO_BOUNCE_VELOCITY_WEAK
 		)
 
+	if hit_hazard:
+		camera_shake(4.0, 0.1)
 
 func upslash_attack() -> void:
 	upslash_hitbox.monitoring = true
@@ -890,6 +909,29 @@ func take_hazard_damage(amount: int, respawn_position: Vector2, fade_duration: f
 		invincibility_after
 	)
 
+func get_hazard_respawn_position(fallback: Variant) -> Variant:
+	if not _has_safe_ground:
+		return fallback
+
+	if _game_ref and _game_ref.has_method("get_current_room_scene_path"):
+		if _game_ref.get_current_room_scene_path() != last_safe_room_path:
+			return fallback
+
+	return last_safe_position
+
+
+func is_pogo_bounce_active() -> bool:
+	return is_attacking and current_attack_type == AttackType.POGO
+
+
+func bounce_off_hazard() -> void:
+	jumps_used = 0
+	velocity.y = (
+		POGO_BOUNCE_VELOCITY
+		if pogo_empowered
+		else POGO_BOUNCE_VELOCITY_WEAK
+	)
+
 func grant_temporary_invincibility(duration: float) -> void:
 	invincible = true
 
@@ -987,6 +1029,7 @@ func play_footstep() -> void:
 
 func _ready() -> void:
 	add_to_group("player")
+	_game_ref = get_tree().get_first_node_in_group("game")
 	$DetectionArea.add_to_group("player_detection")
 
 	max_health = GameState.max_health
@@ -1043,7 +1086,17 @@ func _ready() -> void:
 	ledge_ray_above.position = Vector2(0, LEDGE_RAY_FRONT_Y - LEDGE_RAY_GAP)
 	ledge_ray_above.collision_mask = 1
 	add_child(ledge_ray_above)
+	_ground_edge_ray_left = RayCast2D.new()
+	_ground_edge_ray_left.position = Vector2(-SAFE_GROUND_CHECK_OFFSET, -10.0)
+	_ground_edge_ray_left.target_position = Vector2(0, SAFE_GROUND_CHECK_LENGTH)
+	_ground_edge_ray_left.collision_mask = 1
+	add_child(_ground_edge_ray_left)
 
+	_ground_edge_ray_right = RayCast2D.new()
+	_ground_edge_ray_right.position = Vector2(SAFE_GROUND_CHECK_OFFSET, -10.0)
+	_ground_edge_ray_right.target_position = Vector2(0, SAFE_GROUND_CHECK_LENGTH)
+	_ground_edge_ray_right.collision_mask = 1
+	add_child(_ground_edge_ray_right)
 	# CONNECT ANIMATION SIGNALS
 
 	animated_sprite_2d.animation_finished.connect(
@@ -1343,6 +1396,16 @@ func _physics_process(delta: float) -> void:
 	if is_on_floor():
 		coyote_timer = COYOTE_TIME
 		jumps_used = 0
+
+		_ground_edge_ray_left.force_raycast_update()
+		_ground_edge_ray_right.force_raycast_update()
+
+		if _ground_edge_ray_left.is_colliding() and _ground_edge_ray_right.is_colliding():
+			last_safe_position = global_position
+			_has_safe_ground = true
+
+			if _game_ref and _game_ref.has_method("get_current_room_scene_path"):
+				last_safe_room_path = _game_ref.get_current_room_scene_path()
 	else:
 		coyote_timer -= delta
 
