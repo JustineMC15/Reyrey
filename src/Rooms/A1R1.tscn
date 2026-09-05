@@ -23,6 +23,7 @@
 [ext_resource type="PackedScene" uid="uid://65o0wpmgpsyw" path="res://src/nav/interact_gate.tscn" id="18_bgl6i"]
 [ext_resource type="PackedScene" uid="uid://dynuhhpg4mbop" path="res://src/enemies/guiding_star_follow.tscn" id="19_a84nq"]
 [ext_resource type="PackedScene" uid="uid://n2l6ea87ytfa" path="res://src/nav/talkable_npc.tscn" id="21_wkf5l"]
+[ext_resource type="AudioStream" uid="uid://c47u0ainqwvry" path="res://assets/sound/sfx/crumble-rock.mp3" id="23_1gs0d"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bgl6i"]
 shader = ExtResource("5_7paa3")
@@ -406,6 +407,9 @@ shape = SubResource("RectangleShape2D_bekt7")
 tile_map_data = PackedByteArray("AAD5//7/AAAAAAwAAAD6//7/AAABAAwAAAD7//7/AAACAAwAAAA=")
 tile_set = ExtResource("11_whoin")
 
+[node name="CrumbleSound" type="AudioStreamPlayer2D" parent="Interactables/Crumbling Floors/CrumblingFloor" unique_id=513378848]
+stream = ExtResource("23_1gs0d")
+
 [node name="CrumblingFloor2" type="StaticBody2D" parent="Interactables/Crumbling Floors" unique_id=2099218616]
 position = Vector2(6656, -1151)
 collision_mask = 0
@@ -430,6 +434,9 @@ shape = SubResource("RectangleShape2D_1q313")
 [node name="TileMapLayer" type="TileMapLayer" parent="Interactables/Crumbling Floors/CrumblingFloor2" unique_id=628352597]
 tile_map_data = PackedByteArray("AAD6//z/AAAEAAAAAAD6//3/AAAEAAEAAAD7//z/AAAFAAAAAAD7//3/AAAFAAEAAAA=")
 tile_set = ExtResource("11_whoin")
+
+[node name="CrumbleSound" type="AudioStreamPlayer2D" parent="Interactables/Crumbling Floors/CrumblingFloor2" unique_id=567952522]
+stream = ExtResource("23_1gs0d")
 
 [node name="CrumblingFloor3" type="StaticBody2D" parent="Interactables/Crumbling Floors" unique_id=1639478853]
 position = Vector2(7040, -1151)
@@ -457,6 +464,9 @@ shape = SubResource("RectangleShape2D_4sr46")
 tile_map_data = PackedByteArray("AAD6//3/AAAAAA4AAAD7//3/AAABAA4AAAD8//3/AAACAA4AAAA=")
 tile_set = ExtResource("11_whoin")
 
+[node name="CrumbleSound" type="AudioStreamPlayer2D" parent="Interactables/Crumbling Floors/CrumblingFloor3" unique_id=706580270]
+stream = ExtResource("23_1gs0d")
+
 [node name="CrumblingFloor4" type="StaticBody2D" parent="Interactables/Crumbling Floors" unique_id=1930957174]
 position = Vector2(6144, -1535)
 collision_mask = 0
@@ -482,6 +492,9 @@ shape = SubResource("RectangleShape2D_wkf5l")
 [node name="TileMapLayer" type="TileMapLayer" parent="Interactables/Crumbling Floors/CrumblingFloor4" unique_id=223327668]
 tile_map_data = PackedByteArray("AAD5/wAAAAAMAAAAAAD5/wEAAAAMAAEAAAD6/wAAAAANAAAAAAD6/wEAAAANAAEAAAA=")
 tile_set = ExtResource("11_whoin")
+
+[node name="CrumbleSound" type="AudioStreamPlayer2D" parent="Interactables/Crumbling Floors/CrumblingFloor4" unique_id=1390916827]
+stream = ExtResource("23_1gs0d")
 
 [node name="CrumblingFloor5" type="StaticBody2D" parent="Interactables/Crumbling Floors" unique_id=306350023]
 position = Vector2(5696, -1599)
@@ -509,6 +522,9 @@ shape = SubResource("RectangleShape2D_t3qfa")
 tile_map_data = PackedByteArray("AAD3/wEAAAAAAAAAAAD3/wIAAAAAAAEAAAD3/wMAAAAAAAIAAAD4/wEAAAABAAAAAAD4/wIAAAABAAEAAAD4/wMAAAABAAIAAAD5/wEAAAACAAAAAAD5/wIAAAACAAEAAAD5/wMAAAACAAIAAAA=")
 tile_set = ExtResource("11_whoin")
 
+[node name="CrumbleSound" type="AudioStreamPlayer2D" parent="Interactables/Crumbling Floors/CrumblingFloor5" unique_id=259440152]
+stream = ExtResource("23_1gs0d")
+
 [node name="CrumblingFloor6" type="StaticBody2D" parent="Interactables/Crumbling Floors" unique_id=485044259]
 position = Vector2(5312, -1663)
 collision_mask = 0
@@ -534,6 +550,9 @@ shape = SubResource("RectangleShape2D_a84nq")
 [node name="TileMapLayer" type="TileMapLayer" parent="Interactables/Crumbling Floors/CrumblingFloor6" unique_id=1454094993]
 tile_map_data = PackedByteArray("AADz/wEAAAALAA8AABD0/wEAAAALAA0AAAD1/wEAAAAJAA8AAAD2/wEAAAALAA8AAAA=")
 tile_set = ExtResource("11_whoin")
+
+[node name="CrumbleSound" type="AudioStreamPlayer2D" parent="Interactables/Crumbling Floors/CrumblingFloor6" unique_id=1892401585]
+stream = ExtResource("23_1gs0d")
 
 [node name="Hazard" type="Area2D" parent="Interactables" unique_id=429890293 groups=["killzone"]]
 position = Vector2(16649, 224)

@@ -11,6 +11,7 @@
 [ext_resource type="TileSet" uid="uid://bh5re3fvbw1fu" path="res://assets/environment/tres/64x64.tres" id="7_sips3"]
 [ext_resource type="Script" uid="uid://b0stelnyyhd5f" path="res://src/nav/crumbling_floor.gd" id="10_vyt3a"]
 [ext_resource type="PackedScene" uid="uid://n2l6ea87ytfa" path="res://src/nav/talkable_npc.tscn" id="11_sips3"]
+[ext_resource type="AudioStream" uid="uid://c47u0ainqwvry" path="res://assets/sound/sfx/crumble-rock.mp3" id="11_sj4mt"]
 [ext_resource type="Texture2D" uid="uid://b7xo7ebfvckkk" path="res://assets/characters/npcs/lucien-sheet.png" id="12_gyt8m"]
 [ext_resource type="Script" uid="uid://twmqytbf8u0p" path="res://src/enemies/killzoneinstant.gd" id="13_kdopx"]
 
@@ -285,6 +286,10 @@ shape = SubResource("RectangleShape2D_gyt8m")
 tile_map_data = PackedByteArray("AAACAAAAAAAAAAwAAAADAAAAAAABAAwAAAAEAAAAAAACAAwAAAA=")
 tile_set = ExtResource("7_sips3")
 
+[node name="CrumbleSound" type="AudioStreamPlayer2D" parent="Interactables/CrumblingFloor" unique_id=1472916346]
+position = Vector2(260, -99)
+stream = ExtResource("11_sj4mt")
+
 [node name="CrumblingFloor2" type="StaticBody2D" parent="Interactables" unique_id=1911960727]
 position = Vector2(1216, -128)
 collision_mask = 0
@@ -310,6 +315,10 @@ shape = SubResource("RectangleShape2D_sj4mt")
 [node name="TileMapLayer" type="TileMapLayer" parent="Interactables/CrumblingFloor2" unique_id=1554668293]
 tile_map_data = PackedByteArray("AAAWAP//AAAEAAAAAAAWAAAAAAAEAAEAAAAXAP//AAAFAAAAAAAXAAAAAAAFAAEAAAA=")
 tile_set = ExtResource("7_sips3")
+
+[node name="CrumbleSound" type="AudioStreamPlayer2D" parent="Interactables/CrumblingFloor2" unique_id=2076012995]
+position = Vector2(1481, -126)
+stream = ExtResource("11_sj4mt")
 
 [node name="CrumblingFloor3" type="StaticBody2D" parent="Interactables" unique_id=562813834]
 position = Vector2(1600, -128)
@@ -338,6 +347,10 @@ shape = SubResource("RectangleShape2D_1w0s6")
 tile_map_data = PackedByteArray("AAAVAP//AAAAAA4AAAAWAP//AAABAA4AAAAXAP//AAACAA4AAAA=")
 tile_set = ExtResource("7_sips3")
 
+[node name="CrumbleSound" type="AudioStreamPlayer2D" parent="Interactables/CrumblingFloor3" unique_id=1984625712]
+position = Vector2(1449, -131)
+stream = ExtResource("11_sj4mt")
+
 [node name="CrumblingFloor4" type="StaticBody2D" parent="Interactables" unique_id=1761395805]
 position = Vector2(704, -512)
 collision_mask = 0
@@ -364,6 +377,10 @@ shape = SubResource("RectangleShape2D_h6xi7")
 [node name="TileMapLayer" type="TileMapLayer" parent="Interactables/CrumblingFloor4" unique_id=1865968852]
 tile_map_data = PackedByteArray("AAApAAYAAAANAAAAAAAoAAYAAAAMAAAAAAAoAAcAAAAMAAEAAAApAAcAAAANAAEAAAA=")
 tile_set = ExtResource("7_sips3")
+
+[node name="CrumbleSound" type="AudioStreamPlayer2D" parent="Interactables/CrumblingFloor4" unique_id=1747492846]
+position = Vector2(2614, 335)
+stream = ExtResource("11_sj4mt")
 
 [node name="CrumblingFloor5" type="StaticBody2D" parent="Interactables" unique_id=1159950092]
 position = Vector2(256, -576)
@@ -392,6 +409,10 @@ shape = SubResource("RectangleShape2D_osqqm")
 tile_map_data = PackedByteArray("AAA0AAYAAAAAAAAAAAA0AAcAAAAAAAEAAAA0AAgAAAAAAAIAAAA1AAYAAAABAAAAAAA1AAcAAAABAAEAAAA1AAgAAAABAAIAAAA2AAYAAAACAAAAAAA2AAcAAAACAAEAAAA2AAgAAAACAAIAAAA=")
 tile_set = ExtResource("7_sips3")
 
+[node name="CrumbleSound" type="AudioStreamPlayer2D" parent="Interactables/CrumblingFloor5" unique_id=1553005143]
+position = Vector2(3349, 331)
+stream = ExtResource("11_sj4mt")
+
 [node name="CrumblingFloor6" type="StaticBody2D" parent="Interactables" unique_id=1263098241]
 position = Vector2(-128, -640)
 collision_mask = 0
@@ -419,10 +440,12 @@ shape = SubResource("RectangleShape2D_o4682")
 tile_map_data = PackedByteArray("AAA/AAYAAAALAA8AABBAAAYAAAALAA0AAABBAAYAAAAJAA8AAABCAAYAAAALAA8AAAA=")
 tile_set = ExtResource("7_sips3")
 
+[node name="CrumbleSound" type="AudioStreamPlayer2D" parent="Interactables/CrumblingFloor6" unique_id=1136752556]
+position = Vector2(4208, 317)
+stream = ExtResource("11_sj4mt")
+
 [node name="Sign" parent="Interactables" unique_id=228051666 node_paths=PackedStringArray("dialogue_panel", "dialogue_label") instance=ExtResource("11_sips3")]
 position = Vector2(2113, -130)
-collision_layer = 32
-collision_mask = 64
 dialogue_lines = Array[String](["Beware, for the footing is unsteady.
 "])
 dialogue_panel = NodePath("DialoguePanel")
@@ -430,8 +453,6 @@ dialogue_label = NodePath("DialoguePanel/MarginContainer/VBoxContainer/DialogueL
 
 [node name="Lucien" parent="Interactables" unique_id=1872680800 node_paths=PackedStringArray("dialogue_panel", "speaker_label", "dialogue_label") instance=ExtResource("11_sips3")]
 position = Vector2(6127, -258)
-collision_layer = 32
-collision_mask = 64
 dialogue_lines = Array[String](["Did mother send you off?", "...", "W-why do you have Tidesplitter!?", "N-nevermind. Mother has already told you this, but I'll say it again: be sure to write back.", "Take care, Rey."])
 speaker_name = "Lucien"
 dialogue_panel = NodePath("DialoguePanel")

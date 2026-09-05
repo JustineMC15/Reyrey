@@ -16,10 +16,14 @@
 [ext_resource type="Script" uid="uid://b0stelnyyhd5f" path="res://src/nav/crumbling_floor.gd" id="12_peoml"]
 [ext_resource type="TileSet" uid="uid://bh5re3fvbw1fu" path="res://assets/environment/tres/64x64.tres" id="14_88xlm"]
 [ext_resource type="Script" uid="uid://32v1p1ot6a5m" path="res://src/nav/hidden_wall.gd" id="14_bqr63"]
+[ext_resource type="AudioStream" uid="uid://c47u0ainqwvry" path="res://assets/sound/sfx/crumble-rock.mp3" id="14_fyhba"]
 [ext_resource type="Script" uid="uid://twmqytbf8u0p" path="res://src/enemies/killzoneinstant.gd" id="16_8nbx2"]
 [ext_resource type="Script" uid="uid://b8hftrdaurelt" path="res://src/nav/enemy_gauntlet.gd" id="16_qqdsg"]
+[ext_resource type="AudioStream" uid="uid://b5igireasqjqj" path="res://assets/sound/sfx/menu.mp3" id="17_8nmgj"]
 [ext_resource type="AudioStream" uid="uid://b3n4d1ad587db" path="res://assets/sound/music/The_Old_Tower_Inn.mp3" id="17_qqdsg"]
 [ext_resource type="Script" uid="uid://ubj82f4sgt82" path="res://src/nav/breakable_wall.gd" id="19_gklib"]
+[ext_resource type="AudioStream" uid="uid://f30bc8ce3w1q" path="res://assets/sound/sfx/thud3.wav" id="22_wqhk2"]
+[ext_resource type="AudioStream" uid="uid://d6gan3ldw81i" path="res://assets/sound/sfx/thud2.wav" id="23_84232"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_8ksfu"]
 shader = ExtResource("6_q7sbb")
@@ -37,7 +41,7 @@ size = Vector2(85, 84)
 size = Vector2(437, 46)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8jhjc"]
-size = Vector2(379, 289)
+size = Vector2(421, 289)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3c02t"]
 size = Vector2(493, 393)
@@ -182,11 +186,10 @@ texture = ExtResource("10_exo67")
 position = Vector2(3264, -2424)
 collision_mask = 0
 script = ExtResource("12_peoml")
-stand_time_to_crumble = 0.03
+stand_time_to_crumble = 0.5
 shake_strength = 4.0
 respawn_delay = 0.0
-guaranteed_break_time = 0.0
-guaranteed_break_shake_duration = 0.5
+guaranteed_break_time = 0.5
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Interactables/GauntletEntry" unique_id=720714150]
 position = Vector2(159.5, 44)
@@ -198,12 +201,15 @@ collision_layer = 0
 collision_mask = 64
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Interactables/GauntletEntry/DetectionArea" unique_id=1342423993]
-position = Vector2(150.5, -59.5)
+position = Vector2(171.5, -59.5)
 shape = SubResource("RectangleShape2D_8jhjc")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="Interactables/GauntletEntry" unique_id=1481222084]
 tile_map_data = PackedByteArray("AAAAAAAAAAANAAsAAFADAAAAAAANAAsAAFABAAAAAAAPAAoAAGACAAAAAAAPAAYAAGAEAAAAAAANAAwAAGAFAAAAAAAPAAgAAGD//wAAAAAPAAgAAFA=")
 tile_set = ExtResource("14_88xlm")
+
+[node name="CrumbleSound" type="AudioStreamPlayer2D" parent="Interactables/GauntletEntry" unique_id=1750611591]
+stream = ExtResource("14_fyhba")
 
 [node name="Chest2" parent="Interactables" unique_id=120361229 instance=ExtResource("8_8ksfu")]
 position = Vector2(3833, -2430)
@@ -237,6 +243,9 @@ collision_mask = 64
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Interactables/HiddenArea/DetectionArea" unique_id=611188849]
 position = Vector2(-631.5, -137)
 shape = SubResource("RectangleShape2D_hdxto")
+
+[node name="RevealSound" type="AudioStreamPlayer2D" parent="Interactables/HiddenArea" unique_id=499460471]
+stream = ExtResource("17_8nmgj")
 
 [node name="HiddenArea2" type="StaticBody2D" parent="Interactables" unique_id=1874048145]
 position = Vector2(2816, -1600)
@@ -361,6 +370,14 @@ shape = SubResource("RectangleShape2D_nca3n")
 [node name="TileMapLayer" type="TileMapLayer" parent="Interactables/BreakableWall" unique_id=1979147888]
 tile_map_data = PackedByteArray("AAD//wAAAAANAAoAAAD//wEAAAANAAsAAAD//wIAAAANAAwAAAA=")
 tile_set = ExtResource("14_88xlm")
+
+[node name="HitSound" type="AudioStreamPlayer2D" parent="Interactables/BreakableWall" unique_id=43859387]
+stream = ExtResource("22_wqhk2")
+pitch_scale = 0.5
+
+[node name="BreakSound" type="AudioStreamPlayer2D" parent="Interactables/BreakableWall" unique_id=2049747072]
+stream = ExtResource("23_84232")
+pitch_scale = 0.5
 
 [node name="GauntletDoor" type="StaticBody2D" parent="Interactables" unique_id=1707237868]
 position = Vector2(4096, -1792)

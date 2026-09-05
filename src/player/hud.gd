@@ -84,7 +84,19 @@ var _hp_frame_glow_editor_left := 0.0
 var _hp_frame_glow_editor_right := 0.0
 var _hp_frame_base_width := 0.0
 
+var hit_flash_rect: ColorRect
+var vignette_rect: TextureRect
+var _vignette_pulse_tween: Tween
+var _low_hp_active := false
 
+const HIT_FLASH_ALPHA := 0.35
+const HIT_FLASH_IN_DURATION := 0.04
+const HIT_FLASH_OUT_DURATION := 0.18
+
+const LOW_HP_HEALTH_THRESHOLD := 1.0
+const LOW_HP_PULSE_MIN_ALPHA := 0.15
+const LOW_HP_PULSE_MAX_ALPHA := 0.55
+const LOW_HP_PULSE_PERIOD := 0.85
 func _ready() -> void:
 	await get_tree().process_frame
 
@@ -93,7 +105,8 @@ func _ready() -> void:
 	if player == null:
 		push_error("HUD: Could not find Player in the 'player' group.")
 		return
-
+	_build_hit_flash()
+	_build_low_hp_vignette()
 	hp_bar.step = 0.01
 	hp_bar.rounded = false
 
@@ -126,7 +139,9 @@ func _ready() -> void:
 	_apply_health_visuals(player.health, player.max_health, true)
 	_apply_mp_visuals(player.mp, player.max_mp, true)
 	_apply_stamina_visuals(player.stamina, player.max_stamina, true)
-
+	_update_low_hp_vignette(player.health)
+	if not player.hit_taken.is_connected(_on_player_hit_taken):
+		player.hit_taken.connect(_on_player_hit_taken)
 	# Initialize the Star Fragment display without showing it.
 	star_fragment_reward.initialize_amount(
 		GameState.star_fragments
@@ -223,7 +238,7 @@ func _on_player_health_changed(
 	_last_health_value = current_health
 
 	_apply_health_visuals(current_health, max_health)
-
+	_update_low_hp_vignette(current_health)
 
 # Grows the bar/frame rightward from the star as max_health increases.
 # 50px per health point: 250px at 5 (base), 500px at 10 (max).
@@ -423,3 +438,72 @@ func _set_stamina_glow_params(ratio: float) -> void:
 		"intensity",
 		lerp(STAMINA_GLOW_MIN_INTENSITY, STAMINA_GLOW_MAX_INTENSITY, ratio)
 	)
+func _build_hit_flash() -> void:
+	hit_flash_rect = ColorRect.new()
+	hit_flash_rect.color = Color(0, 0, 0, 0)
+	hit_flash_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	hit_flash_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(hit_flash_rect)
+
+
+func _build_low_hp_vignette() -> void:
+	var gradient := Gradient.new()
+	gradient.colors = PackedColorArray([
+		Color(0, 0, 0, 0),
+		Color(0, 0, 0, 0),
+		Color(0, 0, 0, 0.9),
+	])
+	gradient.offsets = PackedFloat32Array([0.0, 0.5, 1.0])
+
+	var gradient_texture := GradientTexture2D.new()
+	gradient_texture.gradient = gradient
+	gradient_texture.width = 512
+	gradient_texture.height = 512
+	gradient_texture.fill = GradientTexture2D.FILL_RADIAL
+	gradient_texture.fill_from = Vector2(0.5, 0.5)
+	gradient_texture.fill_to = Vector2(1.0, 0.5)
+
+	vignette_rect = TextureRect.new()
+	vignette_rect.texture = gradient_texture
+	vignette_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	vignette_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	vignette_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	vignette_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	vignette_rect.modulate.a = 0.0
+	add_child(vignette_rect)
+
+
+func _on_player_hit_taken() -> void:
+	var tween := create_tween()
+	tween.tween_property(hit_flash_rect, "color:a", HIT_FLASH_ALPHA, HIT_FLASH_IN_DURATION)
+	tween.tween_property(hit_flash_rect, "color:a", 0.0, HIT_FLASH_OUT_DURATION)
+
+
+func _update_low_hp_vignette(current_health: float) -> void:
+	var should_be_active := current_health > 0.0 and current_health <= LOW_HP_HEALTH_THRESHOLD
+
+	if should_be_active == _low_hp_active:
+		return
+
+	_low_hp_active = should_be_active
+
+	if _vignette_pulse_tween:
+		_vignette_pulse_tween.kill()
+
+	if not should_be_active:
+		var fade_tween := create_tween()
+		fade_tween.tween_property(vignette_rect, "modulate:a", 0.0, 0.3)
+		return
+
+	vignette_rect.modulate.a = LOW_HP_PULSE_MIN_ALPHA
+
+	_vignette_pulse_tween = create_tween()
+	_vignette_pulse_tween.set_loops()
+
+	_vignette_pulse_tween.tween_property(
+		vignette_rect, "modulate:a", LOW_HP_PULSE_MAX_ALPHA, LOW_HP_PULSE_PERIOD * 0.35
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+	_vignette_pulse_tween.tween_property(
+		vignette_rect, "modulate:a", LOW_HP_PULSE_MIN_ALPHA, LOW_HP_PULSE_PERIOD * 0.65
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)

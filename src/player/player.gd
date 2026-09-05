@@ -18,6 +18,7 @@ signal health_changed(current_health, max_health)
 signal mp_changed(current_mp, max_mp)
 signal stamina_changed(current_stamina, max_stamina)
 signal ability_used(ability_id: String)
+signal hit_taken
 
 enum AttackType { SWORD, POGO, UPSLASH }
 
@@ -88,9 +89,18 @@ const STAMINA_REGEN_DELAY := 0.4
 const MP_REGEN_RATE := 0.12            # MP/sec baseline
 const MP_REGEN_COMBAT_MULTIPLIER := 6.0
 const MP_REGEN_COMBAT_DURATION := 4.0
-
 var _mp_regen_accumulator := 0.0
 var _mp_combat_boost_timer := 0.0
+# Stagger
+
+const HIT_STAGGER_DURATION := 0.18
+const HIT_KNOCKBACK_SPEED := 440.0
+const HIT_KNOCKBACK_UP_SPEED := -400.0
+const HIT_SHAKE_STRENGTH := 8.0
+const HIT_SHAKE_DURATION := 0.15
+var hit_stagger_timer := 0.0
+
+
 
 var transition_jump_started := false
 var is_slowed := false
@@ -559,6 +569,7 @@ func pogo_attack() -> void:
 	pogo_hitbox.monitoring = false
 
 	if hit_something:
+		jumps_used = 0
 		velocity.y = (
 			POGO_BOUNCE_VELOCITY
 			if pogo_empowered
@@ -802,6 +813,32 @@ func flash_damage() -> void:
 	if not is_dead:
 		animated_sprite_2d.modulate = Color.WHITE
 
+func _apply_hit_reaction() -> void:
+	# Cancel any move that would otherwise fight the knockback.
+	is_wall_clinging = false
+	is_gliding = false
+	was_gliding = false
+
+	if is_ledge_grabbing:
+		_end_ledge_grab()
+
+	if is_ground_slamming:
+		is_ground_slamming = false
+
+	if is_dashing:
+		is_dashing = false
+		dash_hitbox.monitoring = false
+
+	var knockback_dir := -facing_direction
+
+	velocity.x = knockback_dir * HIT_KNOCKBACK_SPEED
+	velocity.y = HIT_KNOCKBACK_UP_SPEED
+
+	hit_stagger_timer = HIT_STAGGER_DURATION
+
+	cancel_attack()
+	_camera_shake(HIT_SHAKE_STRENGTH, HIT_SHAKE_DURATION)
+	hit_taken.emit()
 
 func take_damage(amount: int) -> void:
 	if invincible or is_dead:
@@ -817,6 +854,7 @@ func take_damage(amount: int) -> void:
 	health_changed.emit(health, max_health)
 
 	flash_damage()
+	_apply_hit_reaction()
 
 	if health <= 0:
 		die()
@@ -827,12 +865,8 @@ func take_damage(amount: int) -> void:
 	if not is_dead:
 		invincible = false
 
-func take_hazard_damage(
-	amount: int,
-	respawn_position: Vector2,
-	fade_duration: float = 0.25,
-	invincibility_after: float = HAZARD_INVINCIBILITY_TIME
-) -> void:
+
+func take_hazard_damage(amount: int, respawn_position: Vector2, fade_duration: float = 0.25, invincibility_after: float = HAZARD_INVINCIBILITY_TIME) -> void:
 	if is_dead:
 		return
 
@@ -842,6 +876,8 @@ func take_hazard_damage(
 	health_changed.emit(health, max_health)
 
 	flash_damage()
+	_camera_shake(HIT_SHAKE_STRENGTH, HIT_SHAKE_DURATION)
+	hit_taken.emit()
 
 	if health <= 0:
 		die()
@@ -853,7 +889,6 @@ func take_hazard_damage(
 		fade_duration,
 		invincibility_after
 	)
-
 
 func grant_temporary_invincibility(duration: float) -> void:
 	invincible = true
@@ -1574,6 +1609,15 @@ func _physics_process(delta: float) -> void:
 		"move_right"
 	)
 
+	# HIT STAGGER
+	#
+	# Briefly overrides input so the knockback set in
+	# _apply_hit_reaction() actually reads as a knockback instead of
+	# being cancelled out by ordinary run/friction the same frame.
+	if hit_stagger_timer > 0.0:
+		hit_stagger_timer -= delta
+		direction = 0.0
+
 	# FACING
 
 	if direction != 0.0:
@@ -1592,7 +1636,13 @@ func _physics_process(delta: float) -> void:
 	if litany_hold_active:
 		current_speed *= LITANY_STEP_SPEED_MULTIPLIER
 
-	if direction:
+	if hit_stagger_timer > 0.0:
+		velocity.x = move_toward(
+			velocity.x,
+			0.0,
+			(HIT_KNOCKBACK_SPEED / HIT_STAGGER_DURATION) * delta
+		)
+	elif direction:
 		velocity.x = direction * current_speed
 	else:
 		velocity.x = move_toward(
@@ -1605,7 +1655,7 @@ func _physics_process(delta: float) -> void:
 
 	# ATTACK
 
-	if Input.is_action_just_pressed("attack") and not is_attacking:
+	if Input.is_action_just_pressed("attack") and not is_attacking and hit_stagger_timer <= 0.0:
 
 		is_attacking = true
 		sword_has_hit = false

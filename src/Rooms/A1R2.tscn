@@ -17,6 +17,7 @@
 [ext_resource type="TileSet" uid="uid://bh5re3fvbw1fu" path="res://assets/environment/tres/64x64.tres" id="9_s2ba6"]
 [ext_resource type="Script" uid="uid://bhyij58m500yh" path="res://src/nav/locked_door.gd" id="11_s2ba6"]
 [ext_resource type="Texture2D" uid="uid://cpttb0arkfmr5" path="res://assets/environment/free-game-objects/door4b(wooden).png" id="12_em2d7"]
+[ext_resource type="AudioStream" uid="uid://c47u0ainqwvry" path="res://assets/sound/sfx/crumble-rock.mp3" id="14_4jeuu"]
 [ext_resource type="FontFile" uid="uid://dlinrvj4uxc6w" path="res://assets/fonts/Seshat.otf" id="15_d1cy0"]
 [ext_resource type="Script" uid="uid://twmqytbf8u0p" path="res://src/enemies/killzoneinstant.gd" id="17_p2tlc"]
 [ext_resource type="AudioStream" uid="uid://c6e7f50ib7mc3" path="res://assets/sound/sfx/door-01.mp3" id="17_rtfv1"]
@@ -26,6 +27,7 @@
 [ext_resource type="AudioStream" uid="uid://f30bc8ce3w1q" path="res://assets/sound/sfx/thud3.wav" id="21_da6rh"]
 [ext_resource type="Script" uid="uid://ubj82f4sgt82" path="res://src/nav/breakable_wall.gd" id="21_uqir6"]
 [ext_resource type="AudioStream" uid="uid://d6gan3ldw81i" path="res://assets/sound/sfx/thud2.wav" id="21_vnj02"]
+[ext_resource type="AudioStream" uid="uid://b5igireasqjqj" path="res://assets/sound/sfx/menu.mp3" id="24_1lj3s"]
 [ext_resource type="Script" uid="uid://b8hftrdaurelt" path="res://src/nav/enemy_gauntlet.gd" id="24_c0j42"]
 [ext_resource type="AudioStream" uid="uid://b3n4d1ad587db" path="res://assets/sound/music/The_Old_Tower_Inn.mp3" id="25_aa4mm"]
 [ext_resource type="Script" uid="uid://5vbw01sd268j" path="res://src/nav/simple_door.gd" id="26_aa4mm"]
@@ -175,7 +177,7 @@ size = Vector2(61, 183)
 size = Vector2(208.5, 285)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_d1cy0"]
-size = Vector2(105, 241)
+size = Vector2(105, 176.5)
 
 [node name="Area1-Room2" type="Node2D" unique_id=1602108746]
 
@@ -317,6 +319,9 @@ shape = SubResource("RectangleShape2D_0tfho")
 tile_map_data = PackedByteArray("AAD5////AAAAAA4AAAD6////AAABAA4AAAD7////AAACAA4AAAA=")
 tile_set = ExtResource("9_s2ba6")
 
+[node name="CrumbleSound" type="AudioStreamPlayer2D" parent="Interactables/CrumblingFloor" unique_id=1226198089]
+stream = ExtResource("14_4jeuu")
+
 [node name="CrumblingFloor2" type="StaticBody2D" parent="Interactables" unique_id=1853121855]
 position = Vector2(2240, 321)
 collision_mask = 0
@@ -340,6 +345,9 @@ shape = SubResource("RectangleShape2D_y34mf")
 [node name="TileMapLayer" type="TileMapLayer" parent="Interactables/CrumblingFloor2" unique_id=34500952]
 tile_map_data = PackedByteArray("AAAFAAAAAAAGAAgAAGADAAAAAAAGAAgAAGAEAAAAAAANAAsAAGAGAAAAAAAPAAsAAGACAAAAAAAPAAsAAFA=")
 tile_set = ExtResource("9_s2ba6")
+
+[node name="CrumbleSound" type="AudioStreamPlayer2D" parent="Interactables/CrumblingFloor2" unique_id=1681576136]
+stream = ExtResource("14_4jeuu")
 
 [node name="LockedDoor" type="StaticBody2D" parent="Interactables" unique_id=2067549375 node_paths=PackedStringArray("prompt_panel")]
 position = Vector2(-4292, 706)
@@ -544,6 +552,9 @@ collision_mask = 64
 position = Vector2(153, 97.5)
 shape = SubResource("RectangleShape2D_me7ko")
 
+[node name="RevealSound" type="AudioStreamPlayer2D" parent="Interactables/HiddenWall" unique_id=1379863706]
+stream = ExtResource("24_1lj3s")
+
 [node name="BreakableWall" type="StaticBody2D" parent="Interactables" unique_id=449752087]
 position = Vector2(1536, 1280)
 collision_layer = 5
@@ -693,5 +704,5 @@ entry_direction = Vector2(-1, 0)
 entry_distance = 200.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gates/ToRoom3" unique_id=177049655]
-position = Vector2(-49, -120)
+position = Vector2(-49, -87.75)
 shape = SubResource("RectangleShape2D_d1cy0")

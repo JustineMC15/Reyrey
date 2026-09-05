@@ -9,8 +9,6 @@
 [ext_resource type="Script" uid="uid://d6mwrb2d16q5" path="res://src/nav/gate.gd" id="6_41c7t"]
 [ext_resource type="PackedScene" uid="uid://bn0hig7ndpdco" path="res://src/nav/chest.tscn" id="6_cr3rl"]
 [ext_resource type="PackedScene" uid="uid://dwcjdt1vt6xl6" path="res://src/nav/area_title.tscn" id="8_tsct8"]
-[ext_resource type="Script" uid="uid://bbi1bq4v5uuny" path="res://src/nav/ending.gd" id="10_u0qmh"]
-[ext_resource type="PackedScene" uid="uid://c20o6wohk6hul" path="res://src/enemies/guiding_star.tscn" id="12_0nsxh"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_tx8te"]
 shader = ExtResource("3_tsct8")
@@ -23,9 +21,6 @@ size = Vector2(100, 150)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_grhhy"]
 size = Vector2(100, 150)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_bekt7"]
-size = Vector2(544, 2276)
 
 [node name="Area2-Room2" type="Node2D" unique_id=1602108746]
 
@@ -110,18 +105,3 @@ metadata/_custom_type_script = "uid://d6mwrb2d16q5"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gates/To" unique_id=737343698]
 position = Vector2(50, -75)
 shape = SubResource("RectangleShape2D_grhhy")
-
-[node name="EndingTrigger" type="Area2D" parent="." unique_id=1793770969]
-position = Vector2(3668, -155)
-collision_layer = 32
-collision_mask = 64
-script = ExtResource("10_u0qmh")
-metadata/_custom_type_script = "uid://bbi1bq4v5uuny"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="EndingTrigger" unique_id=2094134270]
-position = Vector2(760, -892)
-shape = SubResource("RectangleShape2D_bekt7")
-
-[node name="GuidingStar" parent="." unique_id=222027155 instance=ExtResource("12_0nsxh")]
-position = Vector2(2167, -211)
-star_fragment_reward = 8000
