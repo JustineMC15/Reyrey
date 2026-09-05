@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://dvesqnrjunxw5"]
 
+[ext_resource type="AudioStream" uid="uid://b5igireasqjqj" path="res://assets/sound/sfx/menu.mp3" id="1_i52fv"]
 [ext_resource type="Texture2D" uid="uid://pn6ms78tka3" path="res://assets/ui/titlescreen.jpg" id="2_i52fv"]
 [ext_resource type="PackedScene" uid="uid://c65e1wrlffqdl" path="res://src/nav/save_slot_card.tscn" id="2_j74n5"]
 [ext_resource type="Texture2D" uid="uid://0qf2c5313jvj" path="res://assets/environment/parallax/ash.png" id="3_j74n5"]
@@ -201,6 +202,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = SubResource("GDScript_0hde8")
+click_sound = ExtResource("1_i52fv")
 
 [node name="Panel" type="Panel" parent="." unique_id=216618417]
 layout_mode = 1

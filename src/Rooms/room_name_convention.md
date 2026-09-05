@@ -11,8 +11,8 @@ Use the format:
 
 - `A0R1` — Tutorial, Room 1
 - `A1R1` — Valecourt Fields, Room 1
+- `A4R3` — Elven Reach, Room 3
 
-## To be added routes and mappings
 
 # Areas
 
@@ -28,7 +28,3 @@ Use the format:
 | Area 7 | **Sahra-Kel Canyons**    |
 | Area 8 | **Icefields**            |
 | Area 9 | **The Tower**            |
-
-
-
-res://src/Rooms/room_02-valecourt-fields.tscn

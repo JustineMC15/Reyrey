@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b8vq0e4xxbv36"
-path="res://.godot/imported/MONTAGE_darkforest.png-dc4809a96dfc6db2a9576c10ea1263cd.ctex"
+uid="uid://bawa1r2q3fl10"
+path="res://.godot/imported/ATileset-Aureth.png-d6ba7190ec4ba58956a11238c72a714b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/environment/64x64/MONTAGE_darkforest.png"
-dest_files=["res://.godot/imported/MONTAGE_darkforest.png-dc4809a96dfc6db2a9576c10ea1263cd.ctex"]
+source_file="res://assets/environment/64x64/ATileset-Aureth.png"
+dest_files=["res://.godot/imported/ATileset-Aureth.png-d6ba7190ec4ba58956a11238c72a714b.ctex"]
 
 [params]
 

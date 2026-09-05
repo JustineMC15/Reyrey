@@ -78,6 +78,12 @@ var _mp_glow_tween: Tween
 var _current_stamina_ratio := 1.0
 var _stamina_glow_tween: Tween
 
+var _hp_frame_editor_left := 0.0
+var _hp_frame_editor_right := 0.0
+var _hp_frame_glow_editor_left := 0.0
+var _hp_frame_glow_editor_right := 0.0
+var _hp_frame_base_width := 0.0
+
 
 func _ready() -> void:
 	await get_tree().process_frame
@@ -87,6 +93,24 @@ func _ready() -> void:
 	if player == null:
 		push_error("HUD: Could not find Player in the 'player' group.")
 		return
+
+	hp_bar.step = 0.01
+	hp_bar.rounded = false
+
+	hp_bar_glow.step = 0.01
+	hp_bar_glow.rounded = false
+	hp_bar_glow.nine_patch_stretch = true
+	hp_bar_glow.set_stretch_margin(SIDE_LEFT, 100)
+	hp_bar_glow.set_stretch_margin(SIDE_RIGHT, 40)
+
+	hp_damage_bar.step = 0.01
+	hp_damage_bar.rounded = false
+
+	_hp_frame_editor_left = hp_frame.offset_left
+	_hp_frame_editor_right = hp_frame.offset_right
+	_hp_frame_glow_editor_left = hp_frame_glow.offset_left
+	_hp_frame_glow_editor_right = hp_frame_glow.offset_right
+	_hp_frame_base_width = _hp_frame_editor_right - _hp_frame_editor_left
 
 	_update_bar_length(player.max_health)
 	_last_max_health = player.max_health
@@ -138,6 +162,7 @@ func _ready() -> void:
 func _on_potion_state_changed() -> void:
 	if potion_indicator:
 		potion_indicator.visible = GameState.potion_charged
+
 
 func _on_star_fragments_changed(amount: int) -> void:
 	star_fragment_reward.show_new_total(amount)
@@ -199,6 +224,7 @@ func _on_player_health_changed(
 
 	_apply_health_visuals(current_health, max_health)
 
+
 # Grows the bar/frame rightward from the star as max_health increases.
 # 50px per health point: 250px at 5 (base), 500px at 10 (max).
 func _update_bar_length(max_health: float) -> void:
@@ -206,13 +232,21 @@ func _update_bar_length(max_health: float) -> void:
 	var bar_right := HP_BAR_BASE_OFFSET_LEFT + bar_width
 
 	hp_bar.offset_right = bar_right
+	hp_bar_glow.offset_left = hp_bar.offset_left
 	hp_bar_glow.offset_right = bar_right + HP_GLOW_OVERSHOOT
+	hp_damage_bar.offset_left = hp_bar.offset_left
 	hp_damage_bar.offset_right = bar_right
 	hp_empty_bar.offset_right = bar_right
 
-	var frame_right := HP_FRAME_BASE_OFFSET_LEFT + bar_width + HP_FRAME_RIGHT_PADDING
+	var health_width_difference := bar_width - (HP_BAR_WIDTH_PER_HEALTH * 5.0)
+	var frame_right := _hp_frame_editor_left + _hp_frame_base_width + health_width_difference
+
+	hp_frame.offset_left = _hp_frame_editor_left
 	hp_frame.offset_right = frame_right
-	hp_frame_glow.offset_right = frame_right + HP_GLOW_OVERSHOOT
+
+	var glow_right_difference := _hp_frame_glow_editor_right - _hp_frame_editor_right
+	hp_frame_glow.offset_left = _hp_frame_glow_editor_left
+	hp_frame_glow.offset_right = frame_right + glow_right_difference
 
 
 func _apply_health_visuals(

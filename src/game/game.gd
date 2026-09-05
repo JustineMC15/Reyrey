@@ -42,10 +42,12 @@ var room_music: Dictionary = {
 	"res://src/rooms/A1R3.tscn":
 		preload("res://assets/sound/music/022815townbgm.ogg"),
 
-	"res://src/rooms/A2R1.tscn": 
+	"res://src/rooms/A2R1.tscn":
 		preload("res://assets/sound/music/022815townbgm.ogg"),
-	"res://src/rooms/A3R1.tscn": 
+
+	"res://src/rooms/A3R1.tscn":
 		preload("res://assets/sound/music/Send for the Horses.mp3"),
+
 	"res://src/rooms/A4R1.tscn": null,
 	"res://src/rooms/A5R1.tscn": null,
 	"res://src/rooms/A6R1.tscn": null,
@@ -53,10 +55,12 @@ var room_music: Dictionary = {
 	"res://src/rooms/A8R1.tscn": null,
 	"res://src/rooms/A9R1.tscn": null,
 
-	"res://src/rooms/S1.tscn": 
+	"res://src/rooms/S1.tscn":
 		preload("res://assets/sound/music/Night Vigil.mp3"),
-	"res://src/rooms/S2.tscn": 
+
+	"res://src/rooms/S2.tscn":
 		preload("res://assets/sound/music/Night Vigil.mp3"),
+
 	"res://src/rooms/S3.tscn": null,
 	"res://src/rooms/S4.tscn": null,
 	"res://src/rooms/S5.tscn": null,
@@ -97,7 +101,6 @@ var room_area_names: Dictionary = {
 
 
 func _ready() -> void:
-
 	add_to_group("game")
 
 	AudioRouter.route_to_sfx_bus(player)
@@ -130,13 +133,12 @@ func _ready() -> void:
 
 	LoadingScreen.hide_loading()
 
-
-func load_room(scene_path: String) -> void:
+func load_room(scene_path: String, spawn_gate_id: String = "") -> bool:
 	scene_path = ResourceUID.ensure_path(scene_path)
 
 	if scene_path == "":
 		push_error("Game: Invalid room path.")
-		return
+		return false
 
 	player.disable_world_interaction()
 
@@ -149,44 +151,87 @@ func load_room(scene_path: String) -> void:
 
 	await get_tree().process_frame
 
-
-
 	# Get the room PackedScene.
 	#
 	# If it was already preloaded, this is effectively immediate.
 
 	var room_scene := await _get_room_scene(scene_path)
 
-
 	if room_scene == null:
 		push_error("Game: Failed to load room: " + scene_path)
 		GameState.is_room_unloading = false
-		return
+		return false
 
-	# IMPORTANT:
-	# Set the current room path BEFORE adding the room to the tree.
 	current_room_scene_path = scene_path
 
+	# Instantiate the destination room off-tree.
+	#
+	# This allows the destination gate to be found without allowing the
+	# new room's physics and interactables to become active yet.
 
 	var new_room := room_scene.instantiate()
 
+	if spawn_gate_id != "":
+		var gates_container := new_room.get_node_or_null("Gates")
 
+		if gates_container == null:
+			push_error(
+				"Game: Destination room has no Gates node: "
+				+ scene_path
+			)
+			new_room.free()
+			GameState.is_room_unloading = false
+			return false
+
+		var destination_gate: Node2D = null
+
+		for gate in gates_container.get_children():
+			if not is_instance_valid(gate):
+				continue
+
+			if not ("gate_id" in gate):
+				continue
+
+			if gate.gate_id == spawn_gate_id:
+				destination_gate = gate as Node2D
+				break
+
+		if destination_gate == null:
+			push_error(
+				"Game: Destination gate not found: "
+				+ spawn_gate_id
+			)
+			new_room.free()
+			GameState.is_room_unloading = false
+			return false
+
+		var camera := player.get_node_or_null("Camera2D") as Camera2D
+
+		if camera:
+			camera.position_smoothing_enabled = false
+
+		player.global_position = destination_gate.global_position
+		player.velocity = Vector2.ZERO
+		player.lock_input()
+
+		if camera:
+			camera.reset_smoothing()
+
+	# The player is now positioned at the destination before the room
+	# enters the SceneTree and begins physics processing.
 
 	current_room.add_child(new_room)
 
-
-
+	if spawn_gate_id != "":
+		player.enable_collision_only()
 
 	# Start loading rooms connected to this room.
 	#
 	# This does NOT wait for them to finish.
+
 	_preload_adjacent_rooms(new_room)
 
-
 	await get_tree().process_frame
-
-
-
 
 	GameState.is_room_unloading = false
 
@@ -198,19 +243,7 @@ func load_room(scene_path: String) -> void:
 	if music_track != null:
 		Music.play_music(music_track)
 
-
-	#var area_name: String = room_area_names.get(scene_path, "")
-
-	#if area_name != "" \
-	#and not GameState.area_names_seen.get(area_name, false):
-#
-		#GameState.area_names_seen[area_name] = true
-#
-		#var area_title := get_node_or_null("AreaTitle")
-#
-		#if area_title != null:
-			#area_title.show_area(area_name)
-
+	return true
 
 func _get_room_scene(scene_path: String) -> PackedScene:
 	# Already completely loaded.
@@ -243,7 +276,6 @@ func _get_room_scene(scene_path: String) -> PackedScene:
 			return null
 
 		room_cache[scene_path] = loaded_scene
-
 
 		return loaded_scene
 
@@ -336,7 +368,6 @@ func _preload_room(scene_path: String) -> void:
 		return
 
 	room_loading[scene_path] = true
-
 
 	var err := ResourceLoader.load_threaded_request(scene_path)
 

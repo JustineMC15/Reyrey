@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dtcrq5lk31sqh"
-path="res://.godot/imported/MONTAGE_ice.png-aa01c7f01516af073810997c05701206.ctex"
+uid="uid://bqpfv1mdbboof"
+path="res://.godot/imported/ATileset-Axiom.png-f35e689f3c4e4d684154265ddee20cbd.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/environment/64x64/MONTAGE_ice.png"
-dest_files=["res://.godot/imported/MONTAGE_ice.png-aa01c7f01516af073810997c05701206.ctex"]
+source_file="res://assets/environment/64x64/ATileset-Axiom.png"
+dest_files=["res://.godot/imported/ATileset-Axiom.png-f35e689f3c4e4d684154265ddee20cbd.ctex"]
 
 [params]
 

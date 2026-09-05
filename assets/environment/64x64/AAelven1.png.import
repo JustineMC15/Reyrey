@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d4mil3pb1alvr"
-path="res://.godot/imported/MONTAGE_water.png-df584afad0fb5561cfb4e3aab13e3722.ctex"
+uid="uid://dmqnf4o3pekq6"
+path="res://.godot/imported/AAelven1.png-ceb980807edbd7253f6355ad8fa3da03.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/environment/64x64/MONTAGE_water.png"
-dest_files=["res://.godot/imported/MONTAGE_water.png-df584afad0fb5561cfb4e3aab13e3722.ctex"]
+source_file="res://assets/environment/64x64/AAelven1.png"
+dest_files=["res://.godot/imported/AAelven1.png-ceb980807edbd7253f6355ad8fa3da03.ctex"]
 
 [params]
 

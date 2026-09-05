@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bawa1r2q3fl10"
-path="res://.godot/imported/MONTAGE_aureth_64.png-721ae055bc3c871d77173ada9f9f0159.ctex"
+uid="uid://ce31vicjmkt4n"
+path="res://.godot/imported/AAelven2.png-f31e8749d4b72927b93494c693b872f8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/environment/64x64/MONTAGE_aureth_64.png"
-dest_files=["res://.godot/imported/MONTAGE_aureth_64.png-721ae055bc3c871d77173ada9f9f0159.ctex"]
+source_file="res://assets/environment/64x64/AAelven2.png"
+dest_files=["res://.godot/imported/AAelven2.png-f31e8749d4b72927b93494c693b872f8.ctex"]
 
 [params]
 

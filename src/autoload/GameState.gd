@@ -1172,8 +1172,7 @@ func prepare_loaded_game() -> void:
 	if startup_room_path == "":
 		startup_room_path = "res://src/rooms/A0R1.tscn"
 		startup_checkpoint_id = ""
-# --- Room transition ---
-
+# Room transition 
 func can_trigger_gate() -> bool:
 	return not _transition_lock
 
@@ -1219,64 +1218,35 @@ func _fade_out_and_load(target_scene_path: String) -> void:
 		await _fade_in()
 		return
 
-	await game.load_room(target_scene_path)
+	var spawn_gate_id := pending_spawn_gate_id
+
+	var room_loaded: bool = await game.load_room(
+		target_scene_path,
+		spawn_gate_id
+	)
+
+	if not room_loaded:
+		pending_spawn_gate_id = ""
+		LoadingScreen.hide_loading()
+		await _fade_in()
+		return
+
+	pending_spawn_gate_id = ""
+
 	LoadingScreen.hide_loading()
 	await _on_new_room_ready()
 
 func _on_new_room_ready() -> void:
-	if pending_spawn_gate_id != "":
-		await _position_player_at_gate()
-		return
-
-	await _fade_in()
-
-
-func _position_player_at_gate() -> void:
-	if pending_spawn_gate_id == "":
-		return
-
 	var players := get_tree().get_nodes_in_group("player")
-	var gates := get_tree().get_nodes_in_group("gates")
 
 	if players.is_empty():
-		push_error("GameState: No player found during room transition.")
-		pending_spawn_gate_id = ""
+		push_error("GameState: No player found after loading room.")
 		await _fade_in()
 		return
 
-	var player = players[0]
-	var camera := player.get_node_or_null("Camera2D")
+	var player := players[0]
 
-	for gate in gates:
-		if gate.gate_id != pending_spawn_gate_id:
-			continue
-
-		if camera:
-			camera.position_smoothing_enabled = false
-
-		player.global_position = gate.global_position
-		player.velocity = Vector2.ZERO
-
-		if player.has_method("lock_input"):
-			player.lock_input()
-		if player.has_method("enable_collision_only"):
-			player.enable_collision_only()
-
-		await get_tree().physics_frame
-
-		pending_spawn_gate_id = ""
-		await _start_room_entry(player)
-
-		if camera:
-			camera.position_smoothing_enabled = true
-
-		return
-
-	push_error("GameState: Destination gate not found: " + pending_spawn_gate_id)
-
-	pending_spawn_gate_id = ""
-	await _fade_in()
-
+	await _start_room_entry(player)
 
 func _start_room_entry(player: Node) -> void:
 	var fade_tween := create_tween()
@@ -1304,12 +1274,19 @@ func _start_room_entry(player: Node) -> void:
 		TransitionGate.EntryType.INSTANT:
 			pass
 
-	if is_instance_valid(player):
-		if player.has_method("unlock_input"):
-			player.unlock_input()
+	if not is_instance_valid(player):
+		_transition_lock = false
+		return
+
+	var camera := player.get_node_or_null("Camera2D")
+
+	if camera:
+		camera.position_smoothing_enabled = true
+
+	if player.has_method("unlock_input"):
+		player.unlock_input()
 
 	_transition_lock = false
-
 
 func _walk_into_room(player: Node) -> void:
 	var start_position: Vector2 = player.global_position

@@ -1,0 +1,176 @@
+[gd_scene format=4 uid="uid://c7dr12cvuq3s3"]
+
+[ext_resource type="Script" uid="uid://8vr0pfeydo4w" path="res://src/nav/camera_bounds.gd" id="1_2mqru"]
+[ext_resource type="Texture2D" uid="uid://c6o8mvo08ci1r" path="res://assets/environment/parallax/Normal Background layers_layer 5.png" id="2_1t768"]
+[ext_resource type="TileSet" uid="uid://wdxl8wi6477l" path="res://assets/environment/tres/greybox.tres" id="2_ay7ye"]
+[ext_resource type="Texture2D" uid="uid://3ybw3h6pohdt" path="res://assets/environment/parallax/Normal Background layers_layer 4.png" id="3_5t642"]
+[ext_resource type="Shader" uid="uid://bnp4c3j8expyg" path="res://src/shader/foilage.gdshader" id="3_qeh2l"]
+[ext_resource type="Texture2D" uid="uid://c4kiyld4hf5e0" path="res://assets/environment/parallax/Normal Background layers_layer 3.png" id="4_bfiyj"]
+[ext_resource type="Texture2D" uid="uid://b24cj6ny453ws" path="res://assets/environment/parallax/Normal Background layers_layer 2.png" id="4_kmt02"]
+[ext_resource type="TileSet" uid="uid://c2b467m7053q3" path="res://assets/environment/tres/Design64x64.tres" id="4_sy663"]
+[ext_resource type="TileSet" uid="uid://bh5re3fvbw1fu" path="res://assets/environment/tres/64x64.tres" id="5_1t768"]
+[ext_resource type="Texture2D" uid="uid://btxc4t5h2d2x0" path="res://assets/environment/parallax/Normal Background layers_layer 1.png" id="5_bfiyj"]
+[ext_resource type="Script" uid="uid://d6mwrb2d16q5" path="res://src/nav/gate.gd" id="6_5t642"]
+[ext_resource type="PackedScene" uid="uid://d265xwoeds0wg" path="res://src/player/player.tscn" id="10_5t642"]
+[ext_resource type="Shader" uid="uid://mbpjc2emj33c" path="res://src/rooms/elven.gdshader" id="12_bfiyj"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tx8te"]
+shader = ExtResource("3_qeh2l")
+shader_parameter/wind_strength = 0.25
+shader_parameter/wind_speed = 1.3
+shader_parameter/wind_frequency = 4.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vlew8"]
+shader = ExtResource("12_bfiyj")
+shader_parameter/fog_color = Color(0.56078434, 0.8392157, 0.5803922, 1)
+shader_parameter/fog_strength = 1.200000057
+shader_parameter/fog_speed = 0.450000021375
+shader_parameter/fog_scale = 8.00000035625
+shader_parameter/fairy_color = Color(1, 0.84313726, 0, 1)
+shader_parameter/fairy_strength = 2.000000095
+shader_parameter/fairy_drift = 150.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vlew8"]
+size = Vector2(100, 150)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_grhhy"]
+size = Vector2(100, 150)
+
+[node name="Area#-Room#" type="Node2D" unique_id=1602108746]
+
+[node name="CameraBounds" type="Control" parent="." unique_id=582543241]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+script = ExtResource("1_2mqru")
+metadata/_custom_type_script = "uid://8vr0pfeydo4w"
+
+[node name="Environments" type="Node2D" parent="." unique_id=1833260432]
+
+[node name="Parallax2D" type="Parallax2D" parent="Environments" unique_id=1034031917]
+modulate = Color(0.735357, 0.735357, 0.735357, 1)
+scroll_scale = Vector2(0.05, 0.05)
+scroll_offset = Vector2(-730, -364)
+repeat_size = Vector2(3072, 0)
+repeat_times = 5
+
+[node name="Sprite2D" type="Sprite2D" parent="Environments/Parallax2D" unique_id=1189229803]
+scale = Vector2(3, 3)
+texture = ExtResource("2_1t768")
+centered = false
+
+[node name="Parallax2D2" type="Parallax2D" parent="Environments" unique_id=1675970037]
+modulate = Color(0.735357, 0.735357, 0.735357, 1)
+scroll_scale = Vector2(0.15, 0.15)
+scroll_offset = Vector2(-730, -364)
+repeat_size = Vector2(3072, 0)
+repeat_times = 5
+
+[node name="Sprite2D" type="Sprite2D" parent="Environments/Parallax2D2" unique_id=439813647]
+scale = Vector2(3, 3)
+texture = ExtResource("3_5t642")
+centered = false
+
+[node name="Parallax2D3" type="Parallax2D" parent="Environments" unique_id=1136827739]
+modulate = Color(0.735357, 0.735357, 0.735357, 1)
+scroll_scale = Vector2(0.25, 0.25)
+scroll_offset = Vector2(-730, -364)
+repeat_size = Vector2(3072, 0)
+repeat_times = 5
+
+[node name="Sprite2D" type="Sprite2D" parent="Environments/Parallax2D3" unique_id=435480381]
+scale = Vector2(3, 3)
+texture = ExtResource("4_bfiyj")
+centered = false
+
+[node name="Parallax2D4" type="Parallax2D" parent="Environments" unique_id=150673892]
+modulate = Color(0.735357, 0.735357, 0.735357, 1)
+scroll_scale = Vector2(0.375, 0.375)
+scroll_offset = Vector2(-730, -364)
+repeat_size = Vector2(3072, 0)
+repeat_times = 5
+
+[node name="Sprite2D" type="Sprite2D" parent="Environments/Parallax2D4" unique_id=257986169]
+scale = Vector2(3, 3)
+texture = ExtResource("4_kmt02")
+centered = false
+
+[node name="Parallax2D5" type="Parallax2D" parent="Environments" unique_id=1479675772]
+modulate = Color(0.735357, 0.735357, 0.735357, 1)
+scroll_scale = Vector2(0.5, 0.5)
+scroll_offset = Vector2(-730, -364)
+repeat_size = Vector2(3072, 0)
+repeat_times = 5
+
+[node name="Sprite2D" type="Sprite2D" parent="Environments/Parallax2D5" unique_id=1169945960]
+scale = Vector2(3, 3)
+texture = ExtResource("5_bfiyj")
+centered = false
+
+[node name="Greybox" type="TileMapLayer" parent="Environments" unique_id=1995920700]
+tile_map_data = PackedByteArray("AAD+/wAAAAAAAAAAAAD//wAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAACAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAFAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAHAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAJAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAALAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAANAAAAAAAAAAAAAAAOAAAAAAAAAAAAAAAPAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAARAAAAAAAAAAAAAAASAAAAAAAAAAAAAAATAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAAZAAAAAAAAAAAAAAAaAAAAAAAAAAAAAAAbAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAAdAAAAAAAAAAAAAAAeAAAAAAAAAAAAAAAfAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAhAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAAlAAAAAAAAAAAAAAAmAAAAAAAAAAAAAAAnAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAApAAAAAAAAAAAAAAAqAAAAAAAAAAAAAAArAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAAtAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAAxAAAAAAAAAAAAAAAyAAAAAAAAAAAAAAAzAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA1AAAAAAAAAAAAAAA2AAAAAAAAAAAAAAA3AAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA5AAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA9AAAAAAAAAAAAAAA+AAAAAAAAAAAAAAA/AAAAAAAAAAAAAABAAAAAAAAAAAAAAABBAAAAAAAAAAAAAABCAAAAAAAAAAAAAABDAAAAAAAAAAAAAABEAAAAAAAAAAAAAABFAAAAAAAAAAAAAAAVAAAAAAAAAAAAAAAWAAAAAAAAAAAAAAAXAAAAAAAAAAAAAAA=")
+tile_set = ExtResource("2_ay7ye")
+
+[node name="64x64Foilage" type="TileMapLayer" parent="Environments" unique_id=1197104403]
+material = SubResource("ShaderMaterial_tx8te")
+tile_set = ExtResource("4_sy663")
+
+[node name="64x64BG" type="TileMapLayer" parent="Environments" unique_id=94895237]
+tile_set = ExtResource("5_1t768")
+
+[node name="64x64Building" type="TileMapLayer" parent="Environments" unique_id=938845200]
+modulate = Color(0.7473163, 0.7473163, 0.7473163, 1)
+tile_set = ExtResource("5_1t768")
+
+[node name="64x64BuildingDark" type="TileMapLayer" parent="Environments" unique_id=796822105]
+modulate = Color(0.33150214, 0.33150214, 0.33150214, 1)
+tile_set = ExtResource("5_1t768")
+
+[node name="64x64Design" type="TileMapLayer" parent="Environments" unique_id=516647955]
+tile_set = ExtResource("4_sy663")
+
+[node name="64x64" type="TileMapLayer" parent="Environments" unique_id=1544044842]
+tile_map_data = PackedByteArray("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")
+tile_set = ExtResource("5_1t768")
+
+[node name="Player" parent="Environments" unique_id=647682657 instance=ExtResource("10_5t642")]
+position = Vector2(155, -23)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Environments" unique_id=1525508299]
+
+[node name="ColorRect" type="ColorRect" parent="Environments/CanvasLayer" unique_id=1422578390]
+material = SubResource("ShaderMaterial_vlew8")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Enemies" type="Node2D" parent="." unique_id=1366853970]
+
+[node name="Interactables" type="Node2D" parent="." unique_id=18155808]
+
+[node name="Gates" type="Node2D" parent="." unique_id=152760247]
+
+[node name="From" type="Area2D" parent="Gates" unique_id=26760289]
+collision_layer = 32
+collision_mask = 64
+script = ExtResource("6_5t642")
+metadata/_custom_type_script = "uid://d6mwrb2d16q5"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gates/From" unique_id=36066333]
+position = Vector2(-50, -75)
+shape = SubResource("RectangleShape2D_vlew8")
+
+[node name="To" type="Area2D" parent="Gates" unique_id=2107550537]
+position = Vector2(389, -1)
+collision_layer = 32
+collision_mask = 64
+script = ExtResource("6_5t642")
+metadata/_custom_type_script = "uid://d6mwrb2d16q5"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gates/To" unique_id=737343698]
+position = Vector2(50, -75)
+shape = SubResource("RectangleShape2D_grhhy")

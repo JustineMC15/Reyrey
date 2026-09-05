@@ -27,7 +27,7 @@ size = Vector2(100, 150)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bekt7"]
 size = Vector2(544, 2276)
 
-[node name="Area2-Room3" type="Node2D" unique_id=1602108746]
+[node name="Area2-Room2" type="Node2D" unique_id=1602108746]
 
 [node name="CameraBounds" type="Control" parent="." unique_id=582543241]
 layout_mode = 3
@@ -80,6 +80,10 @@ position = Vector2(1595, -177)
 checkpoint_id = "checkpoint_04"
 room_name = "A2R2"
 
+[node name="AreaTitle" parent="Interactables" unique_id=1421239322 instance=ExtResource("8_tsct8")]
+position = Vector2(2923, -175)
+area_id = 2
+
 [node name="Gates" type="Node2D" parent="." unique_id=152760247]
 
 [node name="From" type="Area2D" parent="Gates" unique_id=26760289]
@@ -106,10 +110,6 @@ metadata/_custom_type_script = "uid://d6mwrb2d16q5"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gates/To" unique_id=737343698]
 position = Vector2(50, -75)
 shape = SubResource("RectangleShape2D_grhhy")
-
-[node name="AreaTitle" parent="." unique_id=1421239322 instance=ExtResource("8_tsct8")]
-position = Vector2(2923, -175)
-area_id = 2
 
 [node name="EndingTrigger" type="Area2D" parent="." unique_id=1793770969]
 position = Vector2(3668, -155)

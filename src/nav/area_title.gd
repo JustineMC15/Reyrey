@@ -18,15 +18,15 @@ var has_triggered: bool = false
 
 
 func _ready() -> void:
-	body_entered.connect(_on_body_entered)
+	area_entered.connect(_on_area_entered)
 	label.modulate.a = 0.0
 
 
-func _on_body_entered(body: Node2D) -> void:
-	if has_triggered:
+func _on_area_entered(area: Area2D) -> void:
+	if not area.is_in_group("player_detection"):
 		return
 
-	if not body is CharacterBody2D:
+	if has_triggered:
 		return
 
 	if area_id < 0:
@@ -49,6 +49,18 @@ func _on_body_entered(body: Node2D) -> void:
 	tween.set_trans(Tween.TRANS_SINE)
 	tween.set_ease(Tween.EASE_IN_OUT)
 
-	tween.tween_property(label, "modulate:a", 1.0, fade_in_duration)
+	tween.tween_property(
+		label,
+		"modulate:a",
+		1.0,
+		fade_in_duration
+	)
+
 	tween.tween_interval(hold_duration)
-	tween.tween_property(label, "modulate:a", 0.0, fade_out_duration)
+
+	tween.tween_property(
+		label,
+		"modulate:a",
+		0.0,
+		fade_out_duration
+	)

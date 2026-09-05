@@ -19,6 +19,7 @@
 [ext_resource type="PackedScene" uid="uid://bn0hig7ndpdco" path="res://src/nav/chest.tscn" id="11_iw880"]
 [ext_resource type="TileSet" uid="uid://bh5re3fvbw1fu" path="res://assets/environment/tres/64x64.tres" id="11_whoin"]
 [ext_resource type="Texture2D" uid="uid://cyt803nnvmcpu" path="res://assets/environment/parallax/wheat.png" id="12_7123c"]
+[ext_resource type="PackedScene" uid="uid://dl2et3v1vfhlo" path="res://src/nav/anvil.tscn" id="13_t3qfa"]
 [ext_resource type="PackedScene" uid="uid://65o0wpmgpsyw" path="res://src/nav/interact_gate.tscn" id="18_bgl6i"]
 [ext_resource type="PackedScene" uid="uid://dynuhhpg4mbop" path="res://src/enemies/guiding_star_follow.tscn" id="19_a84nq"]
 [ext_resource type="PackedScene" uid="uid://n2l6ea87ytfa" path="res://src/nav/talkable_npc.tscn" id="21_wkf5l"]
@@ -260,6 +261,10 @@ speed_scale = 0.5
 visibility_rect = Rect2(-9000, -1500, 18000, 3000)
 local_coords = true
 process_material = SubResource("ParticleProcessMaterial_t3qfa")
+
+[node name="Anvil" parent="Environments" unique_id=1578504986 instance=ExtResource("13_t3qfa")]
+position = Vector2(864, -53)
+anvil_id = "123"
 
 [node name="Enemies" type="Node2D" parent="." unique_id=1234582300]
 
