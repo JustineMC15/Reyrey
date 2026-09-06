@@ -320,7 +320,8 @@ func _notification(what: int) -> void:
 
 
 # --- Keys ---
- 
+signal key_item_collected(display_name: String, icon: Texture2D)
+
 var collected_keys: Dictionary = {}
  
  

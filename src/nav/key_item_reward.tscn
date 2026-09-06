@@ -1,0 +1,32 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/nav/key_item_reward.gd" id="1_keyrw"]
+[ext_resource type="FontFile" uid="uid://dlinrvj4uxc6w" path="res://assets/fonts/Seshat.otf" id="2_keyrw"]
+
+[node name="KeyItemReward" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_keyrw")
+
+[node name="Icon" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 48.0
+offset_bottom = 48.0
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 56.0
+offset_top = 4.0
+offset_right = 240.0
+offset_bottom = 44.0
+theme_override_fonts/font = ExtResource("2_keyrw")
+theme_override_font_sizes/font_size = 24
+theme_override_constants/line_spacing = 2
+vertical_alignment = 1
+autowrap_mode = 3

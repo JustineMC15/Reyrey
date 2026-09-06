@@ -7,6 +7,7 @@
 [ext_resource type="Shader" uid="uid://cy4rg6v7oo0ji" path="res://src/shader/hp_empty_bar.gdshader" id="4_4ptlo"]
 [ext_resource type="Texture2D" uid="uid://bcd8xg1grriwu" path="res://assets/characters/player/dash.png" id="4_afsxn"]
 [ext_resource type="Texture2D" uid="uid://c7wjjor1f3pwc" path="res://assets/ui/playerUI/hpframe.png" id="4_e7e1q"]
+[ext_resource type="PackedScene" path="res://src/nav/key_item_reward.tscn" id="4_keyrw"]
 [ext_resource type="Texture2D" uid="uid://4infjg1tx008" path="res://assets/characters/player/jump-fall-loop-slam.png" id="5_b1ckw"]
 [ext_resource type="Texture2D" uid="uid://caqsf7b8npq2s" path="res://assets/ui/playerUI/hpbar.png" id="5_xmpm3"]
 [ext_resource type="Texture2D" uid="uid://bykthynehi0pd" path="res://assets/characters/player/glide.png" id="6_3vieb"]
@@ -2776,6 +2777,18 @@ offset_bottom = -40.0
 grow_horizontal = 0
 grow_vertical = 0
 count_duration = 0.45
+
+[node name="KeyItemReward" parent="PlayerUI/HUD" unique_id=617219757 instance=ExtResource("4_keyrw")]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+offset_left = -140.0
+offset_top = -90.0
+offset_right = -40.0
+offset_bottom = -40.0
+grow_horizontal = 0
+grow_vertical = 0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=202585379]
 position = Vector2(0, -101)

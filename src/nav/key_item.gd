@@ -19,6 +19,10 @@ class_name KeyItem
 @export var key_id: String = ""
 @export var prompt_panel: Panel
 
+## Shown in the corner popup when this key is collected.
+@export var display_name: String = ""
+@export var reward_icon: Texture2D
+
 @onready var visual: Sprite2D = $Sprite2D
 @onready var pickup_sound: AudioStreamPlayer2D = (
 	$PickupSound if has_node("PickupSound") else null
@@ -152,6 +156,7 @@ func _collect() -> void:
 		prompt_panel.hide()
 
 	GameState.collect_key(key_id)
+	GameState.key_item_collected.emit(display_name, reward_icon)
 
 	set_process(false)
 

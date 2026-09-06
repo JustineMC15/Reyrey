@@ -17,6 +17,7 @@ extends Control
 @onready var stamina_core_glow: Sprite2D = $StaminaCoreGlow
 
 @onready var star_fragment_reward: StarFragmentReward = $StarFragmentReward
+@onready var key_item_reward: KeyItemReward = $KeyItemReward
 var potion_indicator: Label
 
 # --- HP bar sizing ---
@@ -155,6 +156,14 @@ func _ready() -> void:
 			_on_star_fragments_changed
 		)
 
+	# Listen for key item pickups.
+	if not GameState.key_item_collected.is_connected(
+		_on_key_item_collected
+	):
+		GameState.key_item_collected.connect(
+			_on_key_item_collected
+		)
+
 # --- in _ready(), replace the three connect lines ---
 	if not player.health_changed.is_connected(_on_player_health_changed):
 		player.health_changed.connect(_on_player_health_changed)
@@ -182,6 +191,9 @@ func _on_potion_state_changed() -> void:
 func _on_star_fragments_changed(amount: int) -> void:
 	star_fragment_reward.show_new_total(amount)
 
+
+func _on_key_item_collected(display_name: String, icon: Texture2D) -> void:
+	key_item_reward.show_key(icon, display_name)
 
 func _safe_ratio(current: float, max_value: float) -> float:
 	return 0.0 if max_value <= 0 else clamp(current / max_value, 0.0, 1.0)

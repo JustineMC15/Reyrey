@@ -26,25 +26,18 @@ var room_loading: Dictionary = {}
 var room_music: Dictionary = {
 	"res://src/rooms/A0R1.tscn":
 		preload("res://assets/sound/music/Medieval Rondo.ogg"),
-
 	"res://src/rooms/A0R2.tscn":
 		preload("res://assets/sound/music/Medieval Rondo.ogg"),
-
 	"res://src/rooms/A0R3.tscn":
 		preload("res://assets/sound/music/Medieval Rondo.ogg"),
-
 	"res://src/rooms/A1R1.tscn":
 		preload("res://assets/sound/music/022815townbgm.ogg"),
-
 	"res://src/rooms/A1R2.tscn":
 		preload("res://assets/sound/music/022815townbgm.ogg"),
-
 	"res://src/rooms/A1R3.tscn":
 		preload("res://assets/sound/music/022815townbgm.ogg"),
-
 	"res://src/rooms/A2R1.tscn":
 		preload("res://assets/sound/music/022815townbgm.ogg"),
-
 	"res://src/rooms/A2R2.tscn":
 		preload("res://assets/sound/music/Send for the Horses.mp3"),
 	"res://src/rooms/A2R3.tscn":
