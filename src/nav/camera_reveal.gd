@@ -108,15 +108,13 @@ func _on_area_entered(area: Area2D) -> void:
 	if camera == null:
 		return
 
-	_triggered = true
 	if GameState.camera_offset_locked:
 		return
 
-	GameState.camera_offset_locked = true
 	_triggered = true
+	GameState.camera_offset_locked = true
 
 	_run_reveal(camera)
-
 
 func _run_reveal(camera: Camera2D) -> void:
 	_active = true
