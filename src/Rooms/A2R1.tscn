@@ -208,7 +208,7 @@ process_material = SubResource("ParticleProcessMaterial_k8bjw")
 
 [node name="Hazard" type="Area2D" parent="Interactables" unique_id=1314025806 groups=["killzone"]]
 position = Vector2(6030, 230)
-collision_layer = 16
+collision_layer = 0
 collision_mask = 2
 script = ExtResource("11_ja7dr")
 

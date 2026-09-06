@@ -17,11 +17,17 @@
 ## markers only matter if the player never touched solid ground in
 ## this room yet (e.g. dropped in mid-air and hit a hazard instantly).
 ##
-## Optional PogoBounceSound (AudioStreamPlayer2D child) plays when a
-## pogoable hazard is bounced off — either by falling onto it, or by
-## actively pogo-attacking it (player.gd calls play_bounce_sound()
-## directly in the latter case, since that hit never goes through
-## _on_body_entered below).
+## Optional PogoBounceSound (AudioStreamPlayer2D child) is really a
+## general "hit" sound: it plays via play_hit_sound() whenever this
+## hazard is struck by an attack hitbox — pogo, normal slash, or
+## upslash (player.gd calls it directly in each case, since those
+## hits never go through _on_body_entered below). It does NOT play
+## when the player's physical body merely touches the hazard while
+## pogo-bouncing off it (falling onto it, or brushing it mid-pogo) —
+## that passive-contact case plays the player's own sword sound
+## instead (see _bounce_off()), so pogoing never gets this hazard's
+## dedicated sound from body contact alone, only from an actual
+## attack connecting.
 extends Area2D
 class_name HazardZone
 
@@ -84,17 +90,20 @@ func _bounce_off(body: Node) -> void:
 	if body.has_method("bounce_off_hazard"):
 		body.bounce_off_hazard()
 
-	play_bounce_sound()
+	# Passive body contact is not a deliberate attack hit, so it never
+	# plays this hazard's own hit sound — only the player's ordinary
+	# sword sound plays here.
+	if body.has_method("play_sword_sound"):
+		body.play_sword_sound()
 
 	if body.has_method("camera_shake"):
 		body.camera_shake(POGO_BOUNCE_SHAKE_STRENGTH, POGO_BOUNCE_SHAKE_DURATION)
 
 
-## Lets anything that bounces off this hazard (falling onto it via
-## _bounce_off above, or actively pogo-attacking it via player.gd's
-## pogo_attack()) trigger the same sound, without either caller
-## needing to know this node's internal child structure.
-func play_bounce_sound() -> void:
+## Called by player.gd whenever an attack hitbox (pogo, sword, or
+## upslash) actually strikes this pogoable hazard. This is the only
+## path that plays this hazard's hit sound.
+func play_hit_sound() -> void:
 	if pogo_bounce_sound:
 		pogo_bounce_sound.play()
 

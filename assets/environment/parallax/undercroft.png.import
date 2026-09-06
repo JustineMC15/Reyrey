@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dx4bw0aqm5q4y"
-path="res://.godot/imported/unknown.png-dbccf2673ef9e8e877db042bc4addc27.ctex"
+uid="uid://yq01taot7u40"
+path="res://.godot/imported/undercroft.png-d60c9bf0f9253ab9774e231f9b73c188.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/save_previews/unknown.png"
-dest_files=["res://.godot/imported/unknown.png-dbccf2673ef9e8e877db042bc4addc27.ctex"]
+source_file="res://assets/environment/parallax/undercroft.png"
+dest_files=["res://.godot/imported/undercroft.png-d60c9bf0f9253ab9774e231f9b73c188.ctex"]
 
 [params]
 

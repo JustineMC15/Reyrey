@@ -164,6 +164,7 @@ var sword_has_hit := false
 var _sword_damage_base := 1
 var current_attack_type: AttackType = AttackType.SWORD
 var pogo_empowered := false
+var _pogo_hazard_bounce_used := false
 
 var damage_reduction_active := false
 var damage_reduction_multiplier := 0.5
@@ -372,6 +373,7 @@ func reset_after_death() -> void:
 	sword_damage = _sword_damage_base
 	current_attack_type = AttackType.SWORD
 	pogo_empowered = false
+	_pogo_hazard_bounce_used = false
 	damage_reduction_active = false
 	speed_boost_active = false
 	infinite_stamina_active = false
@@ -516,6 +518,7 @@ func unlock_input() -> void:
 func cancel_attack() -> void:
 	is_attacking = false
 	sword_has_hit = false
+	_pogo_hazard_bounce_used = false
 
 	slash_effect.stop()
 	slash_effect.visible = false
@@ -550,6 +553,7 @@ func _start_sword_attack() -> void:
 
 func _start_pogo_attack() -> void:
 	current_attack_type = AttackType.POGO
+	_pogo_hazard_bounce_used = false
 
 	animated_sprite_2d.visible = true
 	animated_sprite_2d.play("pogo")
@@ -558,7 +562,6 @@ func _start_pogo_attack() -> void:
 	pogo_effect.play("slash")
 
 	sword_sound.play()
-
 
 func _start_upslash_attack() -> void:
 	current_attack_type = AttackType.UPSLASH
@@ -572,13 +575,12 @@ func _start_upslash_attack() -> void:
 	sword_sound.play()
 
 
-# Shared "you actually landed a hit" feedback for sword / upslash /
-# pogo / dash — previously only ground slam had any impact feedback
-# at all, so every other attack felt weightless on a real hit.
 func _on_melee_hit() -> void:
 	_camera_shake(ATTACK_HIT_SHAKE_STRENGTH, ATTACK_HIT_SHAKE_DURATION)
 	sword_sound.play()
 
+func play_sword_sound() -> void:
+	sword_sound.play()
 
 func sword_attack() -> void:
 	sword_hitbox.monitoring = true
@@ -589,9 +591,12 @@ func sword_attack() -> void:
 		if body.is_in_group("enemies") or body.is_in_group("attackable"):
 			body.take_damage(sword_damage)
 			boost_mp_regen()
-			_on_melee_hit()
-	sword_hitbox.monitoring = false
 
+	for area in sword_hitbox.get_overlapping_areas():
+		if area.is_in_group("pogoable_hazard") and area.has_method("play_hit_sound"):
+			area.play_hit_sound()
+
+	sword_hitbox.monitoring = false
 
 func pogo_attack() -> void:
 	pogo_hitbox.monitoring = true
@@ -607,7 +612,12 @@ func pogo_attack() -> void:
 			body.take_damage(sword_damage)
 			boost_mp_regen()
 			hit_something = true
-			_on_melee_hit()
+
+			# Pogoing an enemy still confirms with a sound, but never
+			# shakes the screen — only a pogoable hazard does that
+			# (see the hit_hazard branch below). Deliberately not
+			# calling _on_melee_hit() here, since that also shakes.
+			sword_sound.play()
 
 	for area in pogo_hitbox.get_overlapping_areas():
 		if area.is_in_group("pogoable_hazard"):
@@ -621,8 +631,18 @@ func pogo_attack() -> void:
 		# Stamina (and whether the bounce is the strong or weak
 		# variant) is only ever spent once we know the pogo actually
 		# connected with something — a whiffed pogo used to burn
-		# stamina for nothing.
+		# stamina for nothing. This never grants invincibility —
+		# pogoing only changes vertical velocity, unlike an empowered
+		# dash, which does.
 		pogo_empowered = spend_stamina(POGO_STAMINA_COST)
+
+		# Once ANY pogo hit is confirmed this attack (enemy or
+		# hazard), the bounce is spent — any further hazard body
+		# contact during the same rise is ordinary contact and
+		# deals damage/teleport like normal. Fixes bouncing off a
+		# bottom spike, then bumping a ceiling spike on the way up
+		# and bouncing off THAT too instead of taking damage.
+		_pogo_hazard_bounce_used = true
 
 		jumps_used = 0
 		velocity.y = (
@@ -635,8 +655,8 @@ func pogo_attack() -> void:
 		camera_shake(4.0, 0.1)
 
 		for area in hazard_areas:
-			if area.has_method("play_bounce_sound"):
-				area.play_bounce_sound()
+			if area.has_method("play_hit_sound"):
+				area.play_hit_sound()
 
 func upslash_attack() -> void:
 	upslash_hitbox.monitoring = true
@@ -647,10 +667,12 @@ func upslash_attack() -> void:
 		if body.is_in_group("enemies") or body.is_in_group("attackable"):
 			body.take_damage(sword_damage)
 			boost_mp_regen()
-			_on_melee_hit()
+
+	for area in upslash_hitbox.get_overlapping_areas():
+		if area.is_in_group("pogoable_hazard") and area.has_method("play_hit_sound"):
+			area.play_hit_sound()
 
 	upslash_hitbox.monitoring = false
-
 
 func fire_attack(damage: int) -> void:
 	await get_tree().physics_frame
@@ -999,11 +1021,11 @@ func _record_safe_ground_history() -> void:
 
 
 func is_pogo_bounce_active() -> bool:
-	return is_attacking and current_attack_type == AttackType.POGO
-
+	return is_attacking and current_attack_type == AttackType.POGO and not _pogo_hazard_bounce_used
 
 func bounce_off_hazard() -> void:
 	jumps_used = 0
+	_pogo_hazard_bounce_used = true
 	velocity.y = (
 		POGO_BOUNCE_VELOCITY
 		if pogo_empowered

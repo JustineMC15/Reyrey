@@ -45,9 +45,13 @@ var room_music: Dictionary = {
 	"res://src/rooms/A2R1.tscn":
 		preload("res://assets/sound/music/022815townbgm.ogg"),
 
-	"res://src/rooms/A3R1.tscn":
+	"res://src/rooms/A2R2.tscn":
 		preload("res://assets/sound/music/Send for the Horses.mp3"),
-
+	"res://src/rooms/A2R3.tscn":
+		preload("res://assets/sound/music/Send for the Horses.mp3"),
+	"res://src/rooms/A2R4.tscn":
+		preload("res://assets/sound/music/Send for the Horses.mp3"),
+	"res://src/rooms/A3R1.tscn": null,
 	"res://src/rooms/A4R1.tscn": null,
 	"res://src/rooms/A5R1.tscn": null,
 	"res://src/rooms/A6R1.tscn": null,

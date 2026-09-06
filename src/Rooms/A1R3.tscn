@@ -573,41 +573,41 @@ position = Vector2(-6668, -411)
 checkpoint_id = "checkpoint_03"
 room_name = "A1R3"
 
-[node name="Hazard" type="Area2D" parent="Interactables" unique_id=260944891 groups=["killzone"]]
+[node name="HazardZone" type="Area2D" parent="Interactables" unique_id=260944891 groups=["killzone"]]
 position = Vector2(-15288, 311)
 collision_layer = 16
 collision_mask = 2
 script = ExtResource("16_8ywx7")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Interactables/Hazard" unique_id=1337744380]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interactables/HazardZone" unique_id=1337744380]
 position = Vector2(1568, 68.5)
 shape = SubResource("RectangleShape2D_yy0h0")
 
-[node name="Marker2D" type="Marker2D" parent="Interactables/Hazard" unique_id=2018864541]
+[node name="Marker2D" type="Marker2D" parent="Interactables/HazardZone" unique_id=2018864541]
 position = Vector2(4343, -248)
 
-[node name="Marker2D2" type="Marker2D" parent="Interactables/Hazard" unique_id=829280253]
+[node name="Marker2D2" type="Marker2D" parent="Interactables/HazardZone" unique_id=829280253]
 position = Vector2(4061, -249)
 
-[node name="Marker2D3" type="Marker2D" parent="Interactables/Hazard" unique_id=1662426545]
+[node name="Marker2D3" type="Marker2D" parent="Interactables/HazardZone" unique_id=1662426545]
 position = Vector2(3698, -249)
 
-[node name="Marker2D4" type="Marker2D" parent="Interactables/Hazard" unique_id=994369379]
+[node name="Marker2D4" type="Marker2D" parent="Interactables/HazardZone" unique_id=994369379]
 position = Vector2(3257, -251)
 
-[node name="Marker2D5" type="Marker2D" parent="Interactables/Hazard" unique_id=1276674181]
+[node name="Marker2D5" type="Marker2D" parent="Interactables/HazardZone" unique_id=1276674181]
 position = Vector2(2599, -313)
 
-[node name="Marker2D6" type="Marker2D" parent="Interactables/Hazard" unique_id=1408419519]
+[node name="Marker2D6" type="Marker2D" parent="Interactables/HazardZone" unique_id=1408419519]
 position = Vector2(1052, -377)
 
-[node name="Marker2D7" type="Marker2D" parent="Interactables/Hazard" unique_id=440577036]
+[node name="Marker2D7" type="Marker2D" parent="Interactables/HazardZone" unique_id=440577036]
 position = Vector2(662, -378)
 
-[node name="Marker2D8" type="Marker2D" parent="Interactables/Hazard" unique_id=33084919]
+[node name="Marker2D8" type="Marker2D" parent="Interactables/HazardZone" unique_id=33084919]
 position = Vector2(1, -313)
 
-[node name="Marker2D9" type="Marker2D" parent="Interactables/Hazard" unique_id=1364232020]
+[node name="Marker2D9" type="Marker2D" parent="Interactables/HazardZone" unique_id=1364232020]
 position = Vector2(-1355, -316)
 
 [node name="Dash" type="Area2D" parent="Interactables" unique_id=1839801428 node_paths=PackedStringArray("prompt_panel")]
