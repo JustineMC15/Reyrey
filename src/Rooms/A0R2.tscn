@@ -406,7 +406,7 @@ target_gate_id = "A0R1"
 entry_direction = Vector2(-1, 0)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gates/PreviousRoom" unique_id=1128700579]
-position = Vector2(-104, -674)
+position = Vector2(-121, -674)
 shape = SubResource("RectangleShape2D_4pxbc")
 
 [node name="NextRoom" type="Area2D" parent="Gates" unique_id=2056512218]
@@ -419,5 +419,5 @@ target_scene_path = "uid://dnt3hmej57uko"
 target_gate_id = "A0R3"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gates/NextRoom" unique_id=781845794]
-position = Vector2(98, -261)
+position = Vector2(137, -260)
 shape = SubResource("RectangleShape2D_wcx5n")

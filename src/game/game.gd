@@ -144,6 +144,11 @@ func load_room(scene_path: String, spawn_gate_id: String = "") -> bool:
 
 	GameState.is_room_unloading = true
 
+	# Any CameraLimitZone from the room we're leaving is about to be
+	# queue_free()'d without ever firing area_exited — clear our
+	# tracking of it now so nothing stale can apply to the next room.
+	_camera_limit_zone_stack.clear()
+
 	# Remove the previous room.
 
 	for child in current_room.get_children():
@@ -490,6 +495,92 @@ func position_player_at_checkpoint(checkpoint_id: String) -> void:
 
 var current_room_camera_bounds: CameraBounds = null
 
+# --- Camera limits: single owner ---
+#
+# Every camera-limit change in the game — the room's base
+# CameraBounds on load, and any CameraLimitZone override — goes
+# through set_camera_limits(). Only one tween can ever be driving
+# camera.limit_* at a time (a new call always kills the previous
+# one), so a leftover zone tween from a room you just left can never
+# bleed into the room you just entered, and overlapping zones can
+# never fight each other.
+#
+# _camera_limit_zone_stack tracks which CameraLimitZones the player
+# is currently standing inside, most-recently-entered last. Exiting a
+# zone falls back to whichever zone is still on top of the stack
+# (rather than always snapping straight to the room's default), so
+# two overlapping zones resolve sensibly instead of racing.
+
+var _camera_limit_tween: Tween
+var _camera_limit_zone_stack: Array = []  # each entry: {"zone": Node, "rect": Rect2i}
+
+
+func set_camera_limits(rect: Rect2i, duration: float) -> void:
+	var camera := player.get_node_or_null("Camera2D") as Camera2D
+
+	if camera == null:
+		return
+
+	if _camera_limit_tween and _camera_limit_tween.is_valid():
+		_camera_limit_tween.kill()
+
+	var target_left := rect.position.x
+	var target_top := rect.position.y
+	var target_right := rect.position.x + rect.size.x
+	var target_bottom := rect.position.y + rect.size.y
+
+	if duration <= 0.0:
+		camera.limit_left = target_left
+		camera.limit_top = target_top
+		camera.limit_right = target_right
+		camera.limit_bottom = target_bottom
+		return
+
+	var start_left := camera.limit_left
+	var start_top := camera.limit_top
+	var start_right := camera.limit_right
+	var start_bottom := camera.limit_bottom
+
+	_camera_limit_tween = camera.create_tween()
+	_camera_limit_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+	_camera_limit_tween.tween_method(
+		func(t: float):
+			camera.limit_left = int(lerp(start_left, target_left, t))
+			camera.limit_top = int(lerp(start_top, target_top, t))
+			camera.limit_right = int(lerp(start_right, target_right, t))
+			camera.limit_bottom = int(lerp(start_bottom, target_bottom, t)),
+		0.0,
+		1.0,
+		duration
+	)
+
+
+## Called by a CameraLimitZone when the player enters it.
+func enter_camera_limit_zone(zone: Node, rect: Rect2i, duration: float) -> void:
+	_camera_limit_zone_stack.append({"zone": zone, "rect": rect})
+	set_camera_limits(rect, duration)
+
+
+## Called by a CameraLimitZone when the player exits it. Falls back
+## to whichever zone (if any) is still active, rather than always
+## reverting straight to the room's default bounds.
+func exit_camera_limit_zone(zone: Node, duration: float) -> void:
+	for i in range(_camera_limit_zone_stack.size() - 1, -1, -1):
+		if _camera_limit_zone_stack[i]["zone"] == zone:
+			_camera_limit_zone_stack.remove_at(i)
+			break
+
+	if not _camera_limit_zone_stack.is_empty():
+		var still_active: Dictionary = _camera_limit_zone_stack[_camera_limit_zone_stack.size() - 1]
+		set_camera_limits(still_active["rect"], duration)
+		return
+
+	if current_room_camera_bounds:
+		set_camera_limits(current_room_camera_bounds.get_limits(), duration)
+	else:
+		set_camera_limits(Rect2i(-10000000, -10000000, 20000000, 20000000), duration)
+
 
 func _apply_camera_bounds(room: Node) -> void:
 	var camera := player.get_node_or_null("Camera2D") as Camera2D
@@ -498,39 +589,42 @@ func _apply_camera_bounds(room: Node) -> void:
 		push_error("Game: Player has no Camera2D.")
 		return
 
+	# A fresh room means any zone the player was standing in no
+	# longer exists — never carry that tracking (or its tween) over.
+	_camera_limit_zone_stack.clear()
+
 	var bounds := room.get_node_or_null("CameraBounds") as CameraBounds
 	current_room_camera_bounds = bounds
 
 	if bounds == null:
 		camera.limit_enabled = false
+		set_camera_limits(Rect2i(-10000000, -10000000, 20000000, 20000000), 0.0)
 		return
 
-	var limits: Rect2i = bounds.get_limits()
-
 	camera.limit_enabled = true
-	camera.limit_left = limits.position.x
-	camera.limit_top = limits.position.y
-	camera.limit_right = limits.end.x
-	camera.limit_bottom = limits.end.y
+	set_camera_limits(bounds.get_limits(), 0.0)
 
 	camera.enabled = true
 	camera.make_current()
 
 
+## Snaps the camera's limits back to the current room's default
+## CameraBounds, instantly, clearing any active zone override. Call
+## this whenever the player is repositioned within the SAME room
+## (e.g. a checkpoint respawn) — that path never physically walks
+## back out of a CameraLimitZone, so nothing else would otherwise
+## undo a zone's override (this used to leave a boss arena's
+## tightened camera stuck in place after death).
 func restore_room_camera_bounds() -> void:
 	var camera := player.get_node_or_null("Camera2D") as Camera2D
 
 	if camera == null:
 		return
 
+	_camera_limit_zone_stack.clear()
+
 	if current_room_camera_bounds == null:
 		camera.limit_enabled = false
 		return
 
-	var limits: Rect2i = current_room_camera_bounds.get_limits()
-
-	camera.limit_enabled = true
-	camera.limit_left = limits.position.x
-	camera.limit_top = limits.position.y
-	camera.limit_right = limits.end.x
-	camera.limit_bottom = limits.end.y
+	set_camera_limits(current_room_camera_bounds.get_limits(), 0.0)

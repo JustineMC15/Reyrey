@@ -694,7 +694,7 @@ target_scene_path = "uid://cckwh4qx4gprc"
 target_gate_id = "A1R2-farm"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gates/Transition" unique_id=1128700579]
-position = Vector2(108, -101)
+position = Vector2(115, -102)
 shape = SubResource("RectangleShape2D_4pxbc")
 
 [node name="Well" parent="Gates" unique_id=1013456222 instance=ExtResource("8_co0kr")]

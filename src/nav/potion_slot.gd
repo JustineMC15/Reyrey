@@ -10,6 +10,11 @@ class_name PotionSlot
 ## Picking this up only opens the category so an already-unlocked
 ## effect can be loaded into it at a checkpoint.
 ##
+## After the pickup flourish plays, GameState runs the same
+## darkened-screen claim ceremony as claiming a scripture (title,
+## description, keybind reminder, sequential reveal, press-enter
+## prompt) — once per category, three times total across the game.
+##
 ## Scene children expected:
 ##   Sprite2D
 ##   CollisionShape2D
@@ -31,6 +36,7 @@ class_name PotionSlot
 
 var activated: bool = false
 var player_inside: bool = false
+var player_ref: Node2D
 
 var pulse_time: float = 0.0
 var pulse_speed: float = 2.4
@@ -155,8 +161,6 @@ func _collect() -> void:
 	if prompt_panel:
 		prompt_panel.hide()
 
-	GameState.unlock_potion_slot(category)
-
 	set_process(false)
 
 	if pickup_sound:
@@ -267,6 +271,8 @@ func _collect() -> void:
 
 	await get_tree().create_timer(0.23).timeout
 
+	await GameState.claim_potion_slot(category, player_ref)
+
 	queue_free()
 
 
@@ -275,6 +281,7 @@ func _on_area_entered(area: Area2D) -> void:
 		return
 
 	player_inside = true
+	player_ref = area.get_parent()
 
 	if not prompt_panel:
 		return
@@ -296,6 +303,7 @@ func _on_area_exited(area: Area2D) -> void:
 		return
 
 	player_inside = false
+	player_ref = null
 
 	if not prompt_panel:
 		return

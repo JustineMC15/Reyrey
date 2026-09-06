@@ -2,11 +2,26 @@
 extends Area2D
 class_name CameraLimitZone
 
-## Overrides the room's CameraBounds while the player is inside this
-## zone — use it to stop the camera drifting into empty space around
-## an L-shaped room, an alcove, etc. Reverts to the room's default
-## CameraBounds on exit. Limits are tweened, not set instantly, so
-## the camera slides into place instead of snapping.
+## Temporarily tightens (or otherwise changes) the room's camera
+## limits while the player is standing inside this zone. Use this
+## when a "weird shaped" bit of a room — an L-shaped nook, a secret
+## side room, a boss arena — would otherwise be visible inside the
+## room's normal rectangular CameraBounds: draw this zone's rect
+## around the area the camera SHOULD be allowed to show while the
+## player is there, and anything outside it simply can't be framed.
+##
+## Reverts to the room's default CameraBounds when the player exits —
+## unless they're still standing inside another overlapping
+## CameraLimitZone, in which case that zone's rect takes over instead
+## of snapping straight back to the room default.
+##
+## Camera-limit ownership is fully centralized in Game
+## (enter_camera_limit_zone / exit_camera_limit_zone /
+## set_camera_limits) — this script only reports its own rect and
+## lets Game decide what the camera should actually do. That's what
+## guarantees only one tween is ever driving the camera's limits at
+## once, so a zone active when you leave a room can never bleed its
+## tween into the next one.
 ##
 ## Select the RectHandle CHILD (not this node) and drag its native
 ## resize handles to size the zone. This script keeps the
@@ -19,11 +34,10 @@ class_name CameraLimitZone
 ##   CollisionShape2D — RectangleShape2D, kept in sync by this script
 ##   RectHandle        — Control, drag THIS to resize the zone
 
-@export var tween_duration: float = 0.35
+@export var tween_duration: float = 0.18
+
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var rect_handle: Control = $RectHandle
-
-var _tween: Tween
 
 
 func _ready() -> void:
@@ -82,17 +96,23 @@ func _draw() -> void:
 	draw_rect(Rect2(collision_shape.position - half, shape.size), Color(0.3, 0.9, 1.0, 0.9), false, 3.0)
 
 
-func _get_limit_rect() -> Rect2:
+func _get_limit_rect() -> Rect2i:
 	var shape := collision_shape.shape as RectangleShape2D
 
 	if shape == null:
 		push_warning("CameraLimitZone '%s' needs a RectangleShape2D." % name)
-		return Rect2()
+		return Rect2i()
 
 	var center: Vector2 = collision_shape.global_position
 	var half_size: Vector2 = shape.size * 0.5 * collision_shape.global_scale.abs()
+	var top_left: Vector2 = center - half_size
 
-	return Rect2(center - half_size, half_size * 2.0)
+	return Rect2i(
+		int(top_left.x),
+		int(top_left.y),
+		int(half_size.x * 2.0),
+		int(half_size.y * 2.0)
+	)
 
 
 func _on_area_entered(area: Area2D) -> void:
@@ -100,20 +120,12 @@ func _on_area_entered(area: Area2D) -> void:
 		return
 
 	var player := area.get_parent()
-	var camera := player.get_node_or_null("Camera2D") as Camera2D
+	var game := player.get_tree().get_first_node_in_group("game")
 
-	if camera == null:
+	if game == null or not game.has_method("enter_camera_limit_zone"):
 		return
 
-	var rect := _get_limit_rect()
-
-	_tween_limits_to(
-		camera,
-		int(rect.position.x),
-		int(rect.position.y),
-		int(rect.position.x + rect.size.x),
-		int(rect.position.y + rect.size.y)
-	)
+	game.enter_camera_limit_zone(self, _get_limit_rect(), tween_duration)
 
 
 func _on_area_exited(area: Area2D) -> void:
@@ -121,52 +133,9 @@ func _on_area_exited(area: Area2D) -> void:
 		return
 
 	var player := area.get_parent()
-	var camera := player.get_node_or_null("Camera2D") as Camera2D
 	var game := player.get_tree().get_first_node_in_group("game")
 
-	if camera == null or game == null:
+	if game == null or not game.has_method("exit_camera_limit_zone"):
 		return
 
-	var bounds: CameraBounds = game.current_room_camera_bounds
-
-	if bounds == null:
-		_tween_limits_to(camera, -10000000, -10000000, 10000000, 10000000)
-	else:
-		var limit_rect := bounds.get_limits()
-		_tween_limits_to(
-			camera,
-			limit_rect.position.x,
-			limit_rect.position.y,
-			limit_rect.position.x + limit_rect.size.x,
-			limit_rect.position.y + limit_rect.size.y
-		)
-
-
-func _tween_limits_to(
-	camera: Camera2D,
-	target_left: int,
-	target_top: int,
-	target_right: int,
-	target_bottom: int
-) -> void:
-	if _tween and _tween.is_valid():
-		_tween.kill()
-
-	var start_left := camera.limit_left
-	var start_top := camera.limit_top
-	var start_right := camera.limit_right
-	var start_bottom := camera.limit_bottom
-
-	_tween = camera.create_tween()
-	_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-
-	_tween.tween_method(
-		func(t: float):
-			camera.limit_left = int(lerp(start_left, target_left, t))
-			camera.limit_top = int(lerp(start_top, target_top, t))
-			camera.limit_right = int(lerp(start_right, target_right, t))
-			camera.limit_bottom = int(lerp(start_bottom, target_bottom, t)),
-		0.0,
-		1.0,
-		tween_duration
-	)
+	game.exit_camera_limit_zone(self, tween_duration)

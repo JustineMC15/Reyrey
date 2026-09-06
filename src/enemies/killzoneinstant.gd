@@ -18,7 +18,10 @@
 ## this room yet (e.g. dropped in mid-air and hit a hazard instantly).
 ##
 ## Optional PogoBounceSound (AudioStreamPlayer2D child) plays when a
-## pogoable hazard is bounced off instead of hurting the player.
+## pogoable hazard is bounced off — either by falling onto it, or by
+## actively pogo-attacking it (player.gd calls play_bounce_sound()
+## directly in the latter case, since that hit never goes through
+## _on_body_entered below).
 extends Area2D
 class_name HazardZone
 
@@ -81,11 +84,19 @@ func _bounce_off(body: Node) -> void:
 	if body.has_method("bounce_off_hazard"):
 		body.bounce_off_hazard()
 
-	if pogo_bounce_sound:
-		pogo_bounce_sound.play()
+	play_bounce_sound()
 
 	if body.has_method("camera_shake"):
 		body.camera_shake(POGO_BOUNCE_SHAKE_STRENGTH, POGO_BOUNCE_SHAKE_DURATION)
+
+
+## Lets anything that bounces off this hazard (falling onto it via
+## _bounce_off above, or actively pogo-attacking it via player.gd's
+## pogo_attack()) trigger the same sound, without either caller
+## needing to know this node's internal child structure.
+func play_bounce_sound() -> void:
+	if pogo_bounce_sound:
+		pogo_bounce_sound.play()
 
 
 func _get_respawn_position(body: Node) -> Variant:

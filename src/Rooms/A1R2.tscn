@@ -704,5 +704,5 @@ entry_direction = Vector2(-1, 0)
 entry_distance = 200.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gates/ToRoom3" unique_id=177049655]
-position = Vector2(-49, -87.75)
+position = Vector2(-60, -88)
 shape = SubResource("RectangleShape2D_d1cy0")

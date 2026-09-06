@@ -81,6 +81,10 @@ const RECALL_LEASH_RANGE := 900.0
 
 const INVINCIBILITY_TIME := 0.5
 
+# Melee hit feedback (sword / upslash / pogo / dash landing on something)
+const ATTACK_HIT_SHAKE_STRENGTH := 5.0
+const ATTACK_HIT_SHAKE_DURATION := 0.08
+
 # Killzones
 var last_safe_position := Vector2.ZERO
 var last_safe_room_path := ""
@@ -91,6 +95,22 @@ var _game_ref: Node
 
 const SAFE_GROUND_CHECK_OFFSET := 30.0
 const SAFE_GROUND_CHECK_LENGTH := 30.0
+
+# "Safe ground" is recorded every grounded frame, which means it's
+# almost exactly where you're standing right now. Walking straight
+# into a hazard used to "teleport" you back to a spot a few pixels
+# behind where you got hit — invisible, and you'd still be touching
+# (or about to re-enter) the hazard, so it never re-triggered and you
+# could just walk straight through. Instead of using the newest safe
+# position, we keep a short rolling history and use one that's at
+# least SAFE_GROUND_HISTORY_LAG seconds old, guaranteeing real
+# distance between where you respawn and whatever just hurt you.
+# Falling into a hazard already had plenty of natural distance from
+# the takeoff ledge, so this doesn't change that case.
+const SAFE_GROUND_HISTORY_LAG := 0.2
+const SAFE_GROUND_HISTORY_MAX_AGE := 2.0
+var _safe_ground_history: Array = []
+
 # Stamina
 
 const STAMINA_REGEN_RATE := 40.0
@@ -319,6 +339,7 @@ func reset_after_death() -> void:
 	transition_walking = false
 	transition_walk_direction = 1.0
 	_has_safe_ground = false
+	_safe_ground_history.clear()
 	velocity = Vector2.ZERO
 
 	health = max_health
@@ -529,7 +550,6 @@ func _start_sword_attack() -> void:
 
 func _start_pogo_attack() -> void:
 	current_attack_type = AttackType.POGO
-	pogo_empowered = spend_stamina(POGO_STAMINA_COST)
 
 	animated_sprite_2d.visible = true
 	animated_sprite_2d.play("pogo")
@@ -552,6 +572,14 @@ func _start_upslash_attack() -> void:
 	sword_sound.play()
 
 
+# Shared "you actually landed a hit" feedback for sword / upslash /
+# pogo / dash — previously only ground slam had any impact feedback
+# at all, so every other attack felt weightless on a real hit.
+func _on_melee_hit() -> void:
+	_camera_shake(ATTACK_HIT_SHAKE_STRENGTH, ATTACK_HIT_SHAKE_DURATION)
+	sword_sound.play()
+
+
 func sword_attack() -> void:
 	sword_hitbox.monitoring = true
 
@@ -561,6 +589,7 @@ func sword_attack() -> void:
 		if body.is_in_group("enemies") or body.is_in_group("attackable"):
 			body.take_damage(sword_damage)
 			boost_mp_regen()
+			_on_melee_hit()
 	sword_hitbox.monitoring = false
 
 
@@ -571,21 +600,30 @@ func pogo_attack() -> void:
 
 	var hit_something := false
 	var hit_hazard := false
+	var hazard_areas: Array = []
 
 	for body in pogo_hitbox.get_overlapping_bodies():
 		if body.is_in_group("enemies") or body.is_in_group("attackable"):
 			body.take_damage(sword_damage)
 			boost_mp_regen()
 			hit_something = true
+			_on_melee_hit()
 
 	for area in pogo_hitbox.get_overlapping_areas():
 		if area.is_in_group("pogoable_hazard"):
 			hit_something = true
 			hit_hazard = true
+			hazard_areas.append(area)
 
 	pogo_hitbox.monitoring = false
 
 	if hit_something:
+		# Stamina (and whether the bounce is the strong or weak
+		# variant) is only ever spent once we know the pogo actually
+		# connected with something — a whiffed pogo used to burn
+		# stamina for nothing.
+		pogo_empowered = spend_stamina(POGO_STAMINA_COST)
+
 		jumps_used = 0
 		velocity.y = (
 			POGO_BOUNCE_VELOCITY
@@ -596,6 +634,10 @@ func pogo_attack() -> void:
 	if hit_hazard:
 		camera_shake(4.0, 0.1)
 
+		for area in hazard_areas:
+			if area.has_method("play_bounce_sound"):
+				area.play_bounce_sound()
+
 func upslash_attack() -> void:
 	upslash_hitbox.monitoring = true
 
@@ -605,6 +647,7 @@ func upslash_attack() -> void:
 		if body.is_in_group("enemies") or body.is_in_group("attackable"):
 			body.take_damage(sword_damage)
 			boost_mp_regen()
+			_on_melee_hit()
 
 	upslash_hitbox.monitoring = false
 
@@ -626,6 +669,7 @@ func dash_attack() -> void:
 			body.take_damage(damage)
 			dash_hit_enemies.append(body)
 			boost_mp_regen()
+			_on_melee_hit()
 # GROUND SLAM
 
 func ground_slam_impact() -> void:
@@ -920,6 +964,40 @@ func get_hazard_respawn_position(fallback: Variant) -> Variant:
 	return last_safe_position
 
 
+# Records the current grounded position into a short rolling history,
+# then sets last_safe_position/last_safe_room_path to an entry that's
+# at least SAFE_GROUND_HISTORY_LAG seconds old. See the const comment
+# above for why this lag exists.
+func _record_safe_ground_history() -> void:
+	var now := Time.get_ticks_msec() / 1000.0
+	var room_path := ""
+
+	if _game_ref and _game_ref.has_method("get_current_room_scene_path"):
+		room_path = _game_ref.get_current_room_scene_path()
+
+	_safe_ground_history.append({
+		"time": now,
+		"position": global_position,
+		"room": room_path,
+	})
+
+	while _safe_ground_history.size() > 0 \
+	and now - _safe_ground_history[0]["time"] > SAFE_GROUND_HISTORY_MAX_AGE:
+		_safe_ground_history.pop_front()
+
+	var chosen: Dictionary = _safe_ground_history[0]
+
+	for entry in _safe_ground_history:
+		if now - entry["time"] >= SAFE_GROUND_HISTORY_LAG:
+			chosen = entry
+		else:
+			break
+
+	last_safe_position = chosen["position"]
+	last_safe_room_path = chosen["room"]
+	_has_safe_ground = true
+
+
 func is_pogo_bounce_active() -> bool:
 	return is_attacking and current_attack_type == AttackType.POGO
 
@@ -1155,82 +1233,91 @@ func _physics_process(delta: float) -> void:
 		dash_chain_window_timer -= delta
 
 	# DASH START
+	#
+	# A dash is always allowed once dash_cooldown_timer has fully
+	# elapsed — that one is free. Pressing dash again inside the
+	# short chain window (before the cooldown ends) requires
+	# GameState's dash_chain ability AND enough stamina; if the
+	# stamina spend fails, the whole attempt is rejected outright —
+	# it used to fall through and dash for free anyway, just with the
+	# long cooldown afterward, which is how Litany Step ended up
+	# infinite regardless of stamina.
 
 	if Input.is_action_just_pressed("dash") \
 	and GameState.has_ability("dash") \
-	and not is_dashing \
-	and (
-		dash_cooldown_timer <= 0.0
-		or dash_chain_window_timer > 0.0
-	):
+	and not is_dashing:
 
-		var chaining := GameState.has_ability("dash_chain") \
+		var cooldown_ready := dash_cooldown_timer <= 0.0
+		var can_attempt_chain := GameState.has_ability("dash_chain") \
 			and dash_chain_window_timer > 0.0
 
 		var dash_chained := false
+		var can_dash := cooldown_ready
 
-		if chaining:
-			dash_chained = spend_stamina(DASH_CHAIN_STAMINA_COST)
-
-			if dash_chained:
+		if not cooldown_ready and can_attempt_chain:
+			if spend_stamina(DASH_CHAIN_STAMINA_COST):
+				dash_chained = true
+				can_dash = true
 				dash_chain_window_timer = 0.0
 
-		is_dashing = true
-		is_gliding = false
-		was_gliding = false
-		is_wall_clinging = false
-		_end_ledge_grab()
-		dash_timer = DASH_DURATION
+		if can_dash:
 
-		dash_cooldown_timer = (
-			DASH_CHAIN_COOLDOWN
-			if dash_chained
-			else DASH_COOLDOWN
-		)
+			is_dashing = true
+			is_gliding = false
+			was_gliding = false
+			is_wall_clinging = false
+			_end_ledge_grab()
+			dash_timer = DASH_DURATION
 
-		cancel_attack()
+			dash_cooldown_timer = (
+				DASH_CHAIN_COOLDOWN
+				if dash_chained
+				else DASH_COOLDOWN
+			)
 
-		# Determine dash direction from facing.
-		dash_direction = -1.0 if animated_sprite_2d.flip_h else 1.0
+			cancel_attack()
 
-		# Check if player has enough MP for empowered dash.
-		dash_empowered = mp >= DASH_MP_COST
+			# Determine dash direction from facing.
+			dash_direction = -1.0 if animated_sprite_2d.flip_h else 1.0
 
-		ability_used.emit("dash")
+			# Check if player has enough MP for empowered dash.
+			dash_empowered = mp >= DASH_MP_COST
 
-		if dash_chained:
-			ability_used.emit("dash_chain")
+			ability_used.emit("dash")
 
-		if dash_empowered:
-			mp -= DASH_MP_COST
+			if dash_chained:
+				ability_used.emit("dash_chain")
 
-			mp_changed.emit(mp, max_mp)
+			if dash_empowered:
+				mp -= DASH_MP_COST
 
-			invincible = true
-		else:
-			invincible = false
+				mp_changed.emit(mp, max_mp)
 
-		# Hitbox stays active either way.
-		dash_hitbox.monitoring = true
-		dash_hit_enemies.clear()
+				invincible = true
+			else:
+				invincible = false
 
-		# DASH ANIMATION
+			# Hitbox stays active either way.
+			dash_hitbox.monitoring = true
+			dash_hit_enemies.clear()
 
-		animated_sprite_2d.visible = true
-		animated_sprite_2d.play("dash")
+			# DASH ANIMATION
 
-		# DASH EFFECTS
+			animated_sprite_2d.visible = true
+			animated_sprite_2d.play("dash")
 
-		wind_effect.visible = true
-		wind_effect.play("wind")
+			# DASH EFFECTS
 
-		if dash_empowered:
-			holy_effect.visible = true
-			holy_effect.play("dash")
-		else:
-			holy_effect.visible = false
+			wind_effect.visible = true
+			wind_effect.play("wind")
 
-		dash_sound.play()
+			if dash_empowered:
+				holy_effect.visible = true
+				holy_effect.play("dash")
+			else:
+				holy_effect.visible = false
+
+			dash_sound.play()
 
 	# GROUND SLAM START
 
@@ -1401,11 +1488,7 @@ func _physics_process(delta: float) -> void:
 		_ground_edge_ray_right.force_raycast_update()
 
 		if _ground_edge_ray_left.is_colliding() and _ground_edge_ray_right.is_colliding():
-			last_safe_position = global_position
-			_has_safe_ground = true
-
-			if _game_ref and _game_ref.has_method("get_current_room_scene_path"):
-				last_safe_room_path = _game_ref.get_current_room_scene_path()
+			_record_safe_ground_history()
 	else:
 		coyote_timer -= delta
 

@@ -745,6 +745,51 @@ func _run_shrine_claim_sequence(
 	layer.queue_free()
 
 
+# --- Ceremony helpers (shared by ability + potion slot claim screens) ---
+#
+# Both screens are optional-sound / sequential-reveal modals: each
+# element fades in on its own, holds briefly, THEN the next one
+# appears — so mashing the confirm button can't skip past content
+# that hasn't been shown yet. The "press enter to continue" prompt is
+# always the LAST thing revealed, and input is only ever checked
+# after that point, so there's no way to dismiss the screen before
+# everything on it has actually been shown.
+
+@export var ability_claim_sound: AudioStream = null
+@export var potion_slot_claim_sound: AudioStream = null
+
+var _ceremony_audio_player: AudioStreamPlayer
+
+
+func _play_ceremony_sound(stream: AudioStream) -> void:
+	if stream == null:
+		return
+
+	if _ceremony_audio_player == null:
+		_ceremony_audio_player = AudioStreamPlayer.new()
+		_ceremony_audio_player.bus = "SFX"
+		add_child(_ceremony_audio_player)
+
+	_ceremony_audio_player.stream = stream
+	_ceremony_audio_player.play()
+
+
+## Fades a single ceremony element in, then optionally holds before
+## returning — the building block for revealing a ceremony's
+## title/image/description/keybind/prompt one at a time instead of
+## all at once.
+func _fade_in_ceremony_element(node: Control, fade_duration: float, hold_after: float) -> void:
+	if node == null:
+		return
+
+	var tween := create_tween()
+	tween.tween_property(node, "modulate:a", 1.0, fade_duration)
+	await tween.finished
+
+	if hold_after > 0.0:
+		await get_tree().create_timer(hold_after).timeout
+
+
 # --- Ability system ---
 
 func unlock_ability(ability_id: String) -> void:
@@ -792,9 +837,12 @@ func _run_claim_sequence(
 	layer.add_child(center)
 
 	var vbox := VBoxContainer.new()
-	vbox.modulate.a = 0.0
 	vbox.add_theme_constant_override("separation", 14)
 	center.add_child(vbox)
+
+	# Every reveal-able element starts fully transparent — the vbox
+	# itself is visible and already laid out at full size from frame
+	# one, so nothing jumps around as elements fade in one at a time.
 
 	var title := Label.new()
 	title.text = data.get(
@@ -808,6 +856,7 @@ func _run_claim_sequence(
 	)
 
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.modulate.a = 0.0
 	vbox.add_child(title)
 
 	# Picture — same "resize to fit, keep aspect, don't hand-resize the
@@ -815,36 +864,42 @@ func _run_claim_sequence(
 	# via custom_minimum_size + EXPAND_IGNORE_SIZE so the box size wins,
 	# STRETCH_KEEP_ASPECT_CENTERED so any resolution PNG fits inside it.
 	var picture: Texture2D = ABILITY_TUTORIAL_IMAGES.get(ability_id, icon)
+	var picture_rect: TextureRect = null
 
 	if picture:
-		var picture_rect := TextureRect.new()
+		picture_rect = TextureRect.new()
 		picture_rect.texture = picture
 		picture_rect.custom_minimum_size = Vector2(400, 240)
 		picture_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		picture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		picture_rect.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		picture_rect.modulate.a = 0.0
 		vbox.add_child(picture_rect)
 
+	var description_label: Label = null
+
 	if data.has("description"):
-		var description_label := Label.new()
+		description_label = Label.new()
 		description_label.text = data["description"]
 		description_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 		description_label.custom_minimum_size = Vector2(420, 0)
 		description_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		description_label.modulate.a = 0.0
 		vbox.add_child(description_label)
 
 	var keybind_text := get_keybind_text(ability_id)
+	var keybind_label: Label = null
 
 	if keybind_text != "":
-		var keybind_label := Label.new()
+		keybind_label = Label.new()
 		keybind_label.text = keybind_text
-		keybind_label.modulate.a = 0.8
+		keybind_label.modulate.a = 0.0
 		keybind_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		vbox.add_child(keybind_label)
 
 	var prompt := Label.new()
 	prompt.text = "Press Enter / Space to continue"
-	prompt.modulate.a = 0.6
+	prompt.modulate.a = 0.0
 	prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(prompt)
 
@@ -869,25 +924,35 @@ func _run_claim_sequence(
 			0.4
 		)
 
-	var fade_in := create_tween()
+	var dim_tween := create_tween()
 
-	fade_in.tween_property(
+	dim_tween.tween_property(
 		dim,
 		"color:a",
 		0.85,
-		0.4
+		0.3
 	)
 
-	fade_in.parallel().tween_property(
-		vbox,
-		"modulate:a",
-		1.0,
-		0.6
-	)
+	await dim_tween.finished
 
-	await fade_in.finished
+	_play_ceremony_sound(ability_claim_sound)
 
-	await get_tree().create_timer(0.2).timeout
+	# Reveal each element in order, holding briefly between each —
+	# this is what makes spamming the continue button harmless: there
+	# is nothing to press yet.
+	await _fade_in_ceremony_element(title, 0.3, 0.45)
+
+	if picture_rect:
+		await _fade_in_ceremony_element(picture_rect, 0.3, 0.3)
+
+	if description_label:
+		await _fade_in_ceremony_element(description_label, 0.3, 0.3)
+
+	if keybind_label:
+		await _fade_in_ceremony_element(keybind_label, 0.25, 0.2)
+
+	# Only now can the ceremony actually be dismissed.
+	await _fade_in_ceremony_element(prompt, 0.25, 0.0)
 
 	while not Input.is_action_just_pressed("ui_accept"):
 		await get_tree().process_frame
@@ -997,6 +1062,14 @@ func respawn_player() -> void:
 		LoadingScreen.hide_loading()
 	else:
 		soft_respawn_enemies()
+
+		# Dying inside a CameraLimitZone (e.g. a boss arena) never
+		# walks the player back out of it, so nothing else would ever
+		# put the camera's limits back to the room's default here —
+		# snap them back instantly instead of leaving the arena's
+		# tightened rect stuck in place after the respawn.
+		if game.has_method("restore_room_camera_bounds"):
+			game.restore_room_camera_bounds()
 
 	if target_checkpoint_id != "" \
 	and game.has_method("position_player_at_checkpoint"):
@@ -1470,6 +1543,169 @@ func unlock_potion_slot(category: String) -> void:
 	potion_slot_unlocked.emit(category)
 func has_any_potion_slot_unlocked() -> bool:
 	return not unlocked_potion_slots.is_empty()
+
+
+const POTION_SLOT_CEREMONY_TEXT := {
+	"survival": {
+		"title": "Survival Slot Unlocked",
+		"description": "A mixing slot for potions that protect and restore you — health, mana, and other survival effects.",
+	},
+	"combat": {
+		"title": "Combat Slot Unlocked",
+		"description": "A mixing slot for potions that empower you in a fight — extra damage, damage reduction, and other combat effects.",
+	},
+	"utility": {
+		"title": "Utility Slot Unlocked",
+		"description": "A mixing slot for potions that support your movement and exploration — speed, stamina, and other utility effects.",
+	},
+}
+
+
+## Same ceremony treatment as claim_ability(): a darkened screen, a
+## sequential reveal, and a "press enter to continue" prompt that's
+## always the last thing shown. Runs once per category (three times
+## total across the game — one per Wondrous Star Potion slot).
+func claim_potion_slot(category: String, player: Node) -> void:
+	if is_potion_slot_unlocked(category):
+		return
+
+	unlocked_potion_slots[category] = true
+
+	_transition_lock = true
+
+	if player and player.has_method("lock_input"):
+		player.lock_input()
+
+	await _run_potion_slot_claim_sequence(category, player)
+
+	# The signal (which drives both the potion menu grid and the
+	# small corner tutorial hint) only fires once the full-screen
+	# ceremony has finished, so the corner hint doesn't pop up on top
+	# of the modal that's still explaining the same thing.
+	potion_slot_unlocked.emit(category)
+
+	if player and player.has_method("unlock_input"):
+		player.unlock_input()
+
+	_transition_lock = false
+
+
+func _run_potion_slot_claim_sequence(category: String, player: Node) -> void:
+	var text_data: Dictionary = POTION_SLOT_CEREMONY_TEXT.get(category, {})
+
+	var layer := CanvasLayer.new()
+	layer.layer = 90
+	add_child(layer)
+
+	var dim := ColorRect.new()
+	dim.color = Color(0, 0, 0, 0)
+	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.add_child(dim)
+
+	var center := CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.add_child(center)
+
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 14)
+	center.add_child(vbox)
+
+	var title := Label.new()
+	title.text = text_data.get("title", category.capitalize() + " Slot Unlocked")
+	title.add_theme_font_size_override("font_size", 36)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.modulate.a = 0.0
+	vbox.add_child(title)
+
+	var description_label := Label.new()
+	description_label.text = text_data.get("description", "")
+	description_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	description_label.custom_minimum_size = Vector2(420, 0)
+	description_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	description_label.modulate.a = 0.0
+	vbox.add_child(description_label)
+
+	var keybind_label := Label.new()
+	keybind_label.text = "MIX POTIONS — P\nPOTION MAP — O"
+	keybind_label.modulate.a = 0.0
+	keybind_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(keybind_label)
+
+	var prompt := Label.new()
+	prompt.text = "Press Enter / Space to continue"
+	prompt.modulate.a = 0.0
+	prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(prompt)
+
+	var player_glow: Tween
+
+	if player and player.has_node("AnimatedSprite2D"):
+		var sprite = player.get_node("AnimatedSprite2D")
+
+		player_glow = create_tween().set_loops()
+
+		player_glow.tween_property(
+			sprite,
+			"modulate",
+			Color(2, 2, 1.4, 1),
+			0.4
+		)
+
+		player_glow.tween_property(
+			sprite,
+			"modulate",
+			Color.WHITE,
+			0.4
+		)
+
+	var dim_tween := create_tween()
+
+	dim_tween.tween_property(
+		dim,
+		"color:a",
+		0.85,
+		0.3
+	)
+
+	await dim_tween.finished
+
+	_play_ceremony_sound(potion_slot_claim_sound)
+
+	await _fade_in_ceremony_element(title, 0.3, 0.45)
+	await _fade_in_ceremony_element(description_label, 0.3, 0.3)
+	await _fade_in_ceremony_element(keybind_label, 0.25, 0.2)
+	await _fade_in_ceremony_element(prompt, 0.25, 0.0)
+
+	while not Input.is_action_just_pressed("ui_accept"):
+		await get_tree().process_frame
+
+	if player_glow:
+		player_glow.kill()
+
+		if player.has_node("AnimatedSprite2D"):
+			player.get_node("AnimatedSprite2D").modulate = Color.WHITE
+
+	var fade_out := create_tween()
+
+	fade_out.tween_property(
+		dim,
+		"color:a",
+		0.0,
+		0.3
+	)
+
+	fade_out.parallel().tween_property(
+		vbox,
+		"modulate:a",
+		0.0,
+		0.3
+	)
+
+	await fade_out.finished
+
+	layer.queue_free()
 
 
 # Returns effect_ids ordered by ascending fragment_cost — the order

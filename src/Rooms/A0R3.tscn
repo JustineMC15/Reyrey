@@ -238,7 +238,7 @@ target_gate_id = "A0R2-entry"
 entry_direction = Vector2(-1, 0)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gates/Transition" unique_id=1128700579]
-position = Vector2(-110, -188)
+position = Vector2(-131, -187)
 shape = SubResource("RectangleShape2D_4pxbc")
 
 [node name="ToArea1" type="Area2D" parent="Gates" unique_id=877673264]
@@ -252,7 +252,7 @@ target_gate_id = "A1R1"
 metadata/_custom_type_script = "uid://d6mwrb2d16q5"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gates/ToArea1" unique_id=2132685292]
-position = Vector2(96, -127)
+position = Vector2(117, -128)
 shape = SubResource("RectangleShape2D_vlew8")
 
 [node name="Interactables" type="Node2D" parent="." unique_id=561179839]
