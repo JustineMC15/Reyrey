@@ -30,6 +30,7 @@ AbilityTutorialUI="*uid://bmbxsx6hxbyp2"
 PotionMapUI="*uid://k5w5sq6c6two"
 PotionTutorialUI="*uid://bjjnlgbqcqo0k"
 AudioRouter="*uid://bta5o0ie2k2am"
+GameIntro="*uid://cdw0xd3yojner"
 
 [display]
 

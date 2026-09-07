@@ -2,9 +2,10 @@
 
 [ext_resource type="Script" uid="uid://8vr0pfeydo4w" path="res://src/nav/camera_bounds.gd" id="1_hie06"]
 [ext_resource type="Texture2D" uid="uid://dw56c5wv2b3xw" path="res://assets/environment/parallax/tutorialbgLAYER1.png" id="2_4x4sb"]
+[ext_resource type="Script" uid="uid://bh2titexcdb57" path="res://src/nav/camera_limit_zone.gd" id="2_m6plh"]
 [ext_resource type="TileSet" uid="uid://wdxl8wi6477l" path="res://assets/environment/tres/greybox.tres" id="2_rgrlh"]
+[ext_resource type="Texture2D" uid="uid://bsebvfrjtd1wu" path="res://assets/environment/parallax/valecourt.png" id="3_1gs0d"]
 [ext_resource type="PackedScene" uid="uid://c20o6wohk6hul" path="res://src/enemies/guiding_star.tscn" id="3_4x4sb"]
-[ext_resource type="Texture2D" uid="uid://dt8m3k5huc27j" path="res://assets/ui/save_previews/valecourt.png" id="3_5jn5y"]
 [ext_resource type="Script" uid="uid://d6mwrb2d16q5" path="res://src/nav/gate.gd" id="4_5jn5y"]
 [ext_resource type="Shader" uid="uid://bnp4c3j8expyg" path="res://src/shader/foilage.gdshader" id="5_7paa3"]
 [ext_resource type="TileSet" uid="uid://c2b467m7053q3" path="res://assets/environment/tres/Design64x64.tres" id="5_b1in2"]
@@ -19,11 +20,14 @@
 [ext_resource type="PackedScene" uid="uid://bn0hig7ndpdco" path="res://src/nav/chest.tscn" id="11_iw880"]
 [ext_resource type="TileSet" uid="uid://bh5re3fvbw1fu" path="res://assets/environment/tres/64x64.tres" id="11_whoin"]
 [ext_resource type="Texture2D" uid="uid://cyt803nnvmcpu" path="res://assets/environment/parallax/wheat.png" id="12_7123c"]
-[ext_resource type="PackedScene" uid="uid://dl2et3v1vfhlo" path="res://src/nav/anvil.tscn" id="13_t3qfa"]
 [ext_resource type="PackedScene" uid="uid://65o0wpmgpsyw" path="res://src/nav/interact_gate.tscn" id="18_bgl6i"]
 [ext_resource type="PackedScene" uid="uid://dynuhhpg4mbop" path="res://src/enemies/guiding_star_follow.tscn" id="19_a84nq"]
 [ext_resource type="PackedScene" uid="uid://n2l6ea87ytfa" path="res://src/nav/talkable_npc.tscn" id="21_wkf5l"]
 [ext_resource type="AudioStream" uid="uid://c47u0ainqwvry" path="res://assets/sound/sfx/crumble-rock.mp3" id="23_1gs0d"]
+[ext_resource type="AudioStream" uid="uid://d17oywoci4dns" path="res://assets/sound/sfx/spike.mp3" id="24_1gs0d"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_p4je6"]
+size = Vector2(1726, 1042)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bgl6i"]
 shader = ExtResource("5_7paa3")
@@ -172,6 +176,27 @@ mouse_filter = 2
 script = ExtResource("1_hie06")
 metadata/_custom_type_script = "uid://8vr0pfeydo4w"
 
+[node name="CameraLimitZone" type="Area2D" parent="." unique_id=1404679758]
+position = Vector2(206, 1386)
+collision_layer = 32
+collision_mask = 64
+script = ExtResource("2_m6plh")
+tween_duration = 3.0
+metadata/_custom_type_script = "uid://bh2titexcdb57"
+
+[node name="RectHandle" type="Control" parent="CameraLimitZone" unique_id=1727986566]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 15222.0
+offset_top = -2072.0
+offset_right = 16948.0
+offset_bottom = -1030.0
+mouse_filter = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CameraLimitZone" unique_id=499883628]
+position = Vector2(16085, -1551)
+shape = SubResource("RectangleShape2D_p4je6")
+
 [node name="Environments" type="Node2D" parent="." unique_id=1833260432]
 
 [node name="Parallax2D2" type="Parallax2D" parent="Environments" unique_id=279744974]
@@ -189,13 +214,12 @@ texture = ExtResource("2_4x4sb")
 [node name="Parallax2D" type="Parallax2D" parent="Environments" unique_id=139827178]
 scale = Vector2(1.5, 1.2)
 scroll_scale = Vector2(0.1, 0.8)
-scroll_offset = Vector2(0, 200)
 metadata/_edit_lock_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="Environments/Parallax2D" unique_id=149186415]
 position = Vector2(856, -90)
 scale = Vector2(2, 2)
-texture = ExtResource("3_5jn5y")
+texture = ExtResource("3_1gs0d")
 
 [node name="Greybox" type="TileMapLayer" parent="Environments" unique_id=1995920700]
 visible = false
@@ -263,10 +287,6 @@ visibility_rect = Rect2(-9000, -1500, 18000, 3000)
 local_coords = true
 process_material = SubResource("ParticleProcessMaterial_t3qfa")
 
-[node name="Anvil" parent="Environments" unique_id=1578504986 instance=ExtResource("13_t3qfa")]
-position = Vector2(864, -53)
-anvil_id = "123"
-
 [node name="Enemies" type="Node2D" parent="." unique_id=1234582300]
 
 [node name="GuidingStar" parent="Enemies" unique_id=1933994159 instance=ExtResource("3_4x4sb")]
@@ -327,7 +347,7 @@ position = Vector2(-2, -13)
 shape = SubResource("RectangleShape2D_aik4s")
 
 [node name="ShrineDoor" parent="Gates" unique_id=1013456222 instance=ExtResource("18_bgl6i")]
-position = Vector2(3707, -1701)
+position = Vector2(3710, -1663)
 gate_id = "A1R1-shrine"
 target_gate_id = "shrine02"
 entry_type = 2
@@ -586,6 +606,10 @@ position = Vector2(-661, -226)
 
 [node name="Marker2D6" type="Marker2D" parent="Interactables/Hazard" unique_id=1516179132]
 position = Vector2(1345, -31)
+
+[node name="PogoBounceSound" type="AudioStreamPlayer2D" parent="Interactables/Hazard" unique_id=878790102]
+position = Vector2(-7922, -592)
+stream = ExtResource("24_1gs0d")
 
 [node name="HazardZone" type="Area2D" parent="Interactables" unique_id=157740725]
 position = Vector2(16441, 435)

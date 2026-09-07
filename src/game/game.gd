@@ -111,7 +111,9 @@ func _ready() -> void:
 	if room_path == "":
 		room_path = "res://src/rooms/A0R1.tscn"
 
-	await load_room(room_path)
+	var is_new_game_intro: bool = not GameState.has_seen_story_beat("opening_cutscene")
+
+	await load_room(room_path, "", is_new_game_intro)
 
 	await get_tree().process_frame
 
@@ -122,15 +124,20 @@ func _ready() -> void:
 
 	GameState.is_loading_save = false
 
-	if not GameState.has_seen_story_beat("opening_cutscene"):
-		await Cutscene.play(StoryContent.OPENING_LINES)
+	if is_new_game_intro:
+		await GameIntro.play()
 		GameState.mark_story_beat_seen("opening_cutscene")
+
+		var music_track: AudioStream = room_music.get(current_room_scene_path)
+
+		if music_track != null:
+			Music.play_music(music_track)
 
 	player.enable_world_interaction()
 
 	LoadingScreen.hide_loading()
 
-func load_room(scene_path: String, spawn_gate_id: String = "") -> bool:
+func load_room(scene_path: String, spawn_gate_id: String = "", suppress_music: bool = false) -> bool:
 	scene_path = ResourceUID.ensure_path(scene_path)
 
 	if scene_path == "":
@@ -242,7 +249,7 @@ func load_room(scene_path: String, spawn_gate_id: String = "") -> bool:
 
 	var music_track: AudioStream = room_music.get(scene_path)
 
-	if music_track != null:
+	if music_track != null and not suppress_music:
 		Music.play_music(music_track)
 
 	return true
