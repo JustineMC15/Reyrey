@@ -519,6 +519,14 @@ horizontal_alignment = 1
 vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
+[node name="UnlockSound" type="AudioStreamPlayer2D" parent="Interactables/LockedDoorDungeon" unique_id=1045036446]
+stream = ExtResource("17_rtfv1")
+pitch_scale = 0.7
+
+[node name="DeniedSound" type="AudioStreamPlayer2D" parent="Interactables/LockedDoorDungeon" unique_id=969082335]
+stream = ExtResource("18_07wdg")
+pitch_scale = 0.7
+
 [node name="FarmKey" parent="Interactables" unique_id=865693171 instance=ExtResource("17_vtjdt")]
 position = Vector2(5541, 716)
 key_id = "farm_key"

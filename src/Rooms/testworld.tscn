@@ -1,5 +1,6 @@
 [gd_scene format=4 uid="uid://byrj2s6ycquc2"]
 
+[ext_resource type="Texture2D" uid="uid://diwmqox7qwm8b" path="res://assets/environment/interactables/scripture.png" id="2_jsmq8"]
 [ext_resource type="Script" uid="uid://xeo4tykcck1q" path="res://src/nav/scripture_panel.gd" id="3_c8igj"]
 [ext_resource type="PackedScene" uid="uid://d265xwoeds0wg" path="res://src/player/player.tscn" id="3_e0b4p"]
 [ext_resource type="TileSet" uid="uid://wdxl8wi6477l" path="res://assets/environment/tres/greybox.tres" id="3_i7sh5"]
@@ -14,9 +15,6 @@
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y52uh"]
 size = Vector2(216, 314.1875)
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_0q2lx"]
-load_path = "res://.godot/imported/scripture.png-b43b5f516bfc444fd6353960782d182a.ctex"
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_m15qw"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -37,7 +35,7 @@ shape = SubResource("RectangleShape2D_y52uh")
 [node name="Sprite2D" type="Sprite2D" parent="Dash" unique_id=1755545899]
 position = Vector2(418.4004, -90.60004)
 scale = Vector2(0.2, 0.2)
-texture = SubResource("CompressedTexture2D_0q2lx")
+texture = ExtResource("2_jsmq8")
 
 [node name="ScripturePanel" type="Panel" parent="Dash" unique_id=1876361391]
 anchors_preset = 15
@@ -83,7 +81,7 @@ shape = SubResource("RectangleShape2D_y52uh")
 [node name="Sprite2D" type="Sprite2D" parent="DoubleJump" unique_id=1251790842]
 position = Vector2(418.4004, -90.60004)
 scale = Vector2(0.2, 0.2)
-texture = SubResource("CompressedTexture2D_0q2lx")
+texture = ExtResource("2_jsmq8")
 
 [node name="ScripturePanel" type="Panel" parent="DoubleJump" unique_id=652411688]
 anchors_preset = 15
@@ -129,7 +127,7 @@ shape = SubResource("RectangleShape2D_y52uh")
 [node name="Sprite2D" type="Sprite2D" parent="GroundSlam" unique_id=1005933797]
 position = Vector2(418.4004, -90.60004)
 scale = Vector2(0.2, 0.2)
-texture = SubResource("CompressedTexture2D_0q2lx")
+texture = ExtResource("2_jsmq8")
 
 [node name="ScripturePanel" type="Panel" parent="GroundSlam" unique_id=995107]
 anchors_preset = 15
@@ -175,7 +173,7 @@ shape = SubResource("RectangleShape2D_y52uh")
 [node name="Sprite2D" type="Sprite2D" parent="Glide" unique_id=485913931]
 position = Vector2(418.4004, -90.60004)
 scale = Vector2(0.2, 0.2)
-texture = SubResource("CompressedTexture2D_0q2lx")
+texture = ExtResource("2_jsmq8")
 
 [node name="ScripturePanel" type="Panel" parent="Glide" unique_id=1856633655]
 anchors_preset = 15
@@ -221,7 +219,7 @@ shape = SubResource("RectangleShape2D_y52uh")
 [node name="Sprite2D" type="Sprite2D" parent="WallJump" unique_id=205176368]
 position = Vector2(418.4004, -90.60004)
 scale = Vector2(0.2, 0.2)
-texture = SubResource("CompressedTexture2D_0q2lx")
+texture = ExtResource("2_jsmq8")
 
 [node name="ScripturePanel" type="Panel" parent="WallJump" unique_id=1944201866]
 anchors_preset = 15
@@ -267,7 +265,7 @@ shape = SubResource("RectangleShape2D_y52uh")
 [node name="Sprite2D" type="Sprite2D" parent="DashChain" unique_id=1256515373]
 position = Vector2(418.4004, -90.60004)
 scale = Vector2(0.2, 0.2)
-texture = SubResource("CompressedTexture2D_0q2lx")
+texture = ExtResource("2_jsmq8")
 
 [node name="ScripturePanel" type="Panel" parent="DashChain" unique_id=1237108340]
 anchors_preset = 15
@@ -313,7 +311,7 @@ shape = SubResource("RectangleShape2D_y52uh")
 [node name="Sprite2D" type="Sprite2D" parent="Recall" unique_id=1773284063]
 position = Vector2(418.4004, -90.60004)
 scale = Vector2(0.2, 0.2)
-texture = SubResource("CompressedTexture2D_0q2lx")
+texture = ExtResource("2_jsmq8")
 
 [node name="ScripturePanel" type="Panel" parent="Recall" unique_id=1775151965]
 anchors_preset = 15
@@ -359,7 +357,7 @@ shape = SubResource("RectangleShape2D_y52uh")
 [node name="Sprite2D" type="Sprite2D" parent="LedgeGrab" unique_id=2013084257]
 position = Vector2(418.4004, -90.60004)
 scale = Vector2(0.2, 0.2)
-texture = SubResource("CompressedTexture2D_0q2lx")
+texture = ExtResource("2_jsmq8")
 
 [node name="ScripturePanel" type="Panel" parent="LedgeGrab" unique_id=634529292]
 anchors_preset = 15

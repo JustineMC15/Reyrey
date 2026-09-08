@@ -22,23 +22,39 @@ signal hit_taken
 
 enum AttackType { SWORD, POGO, UPSLASH }
 
-const SPEED := 430.0
+const SPEED := 450.0
 const HAZARD_INVINCIBILITY_TIME := 1.0
-const JUMP_VELOCITY := -1200.0
-const DOUBLE_JUMP_VELOCITY := -1000.0
+const JUMP_VELOCITY := -1300.0
 const GRAVITY_RISE := 3429.0
 const GRAVITY_FALL := GRAVITY_RISE * 1.2
-const SHORT_HOP_CUT := 0.6	
+const SHORT_HOP_CUT := 0.55
 const GRAVITY_GLIDE := GRAVITY_FALL * 0.17
 const GLIDE_MAX_FALL_SPEED := 200.0
+const GLIDE_MOMENTUM_STEER_ACCEL := 900.0
 const COYOTE_TIME := 0.1
 const JUMP_BUFFER_TIME := 0.12
 
+# Ground / Air Momentum
+const GROUND_ACCELERATION := 4000.0
+const GROUND_FRICTION := 3200.0
+const SKID_DECELERATION := 6000.0
+const SKID_SPEED_THRESHOLD := 150.0
+
 const DOUBLE_JUMP_MP_COST := 2
+
+# Spark Flame (double jump) — propulsion
+
+const SPARK_PROPULSION_BURST_VELOCITY := -1000.0
+const SPARK_PROPULSION_HOLD_ACCEL := -2800.0
+const SPARK_PROPULSION_MAX_RISE_SPEED := -700.0
+const SPARK_PROPULSION_MAX_DURATION := 0.4
+const SPARK_PROPULSION_HORIZONTAL_ACCEL := 3000.0
+const SPARK_PROPULSION_MAX_HORIZONTAL_SPEED := 900.0
 
 # Dash
 const DASH_SPEED := 1600.0
 const DASH_DURATION := 0.19
+const DASH_ANIMATION_LINGER := 0.1
 const DASH_COOLDOWN := 0.6
 const DASH_CHAIN_COOLDOWN := 0.15
 const DASH_CHAIN_STAMINA_COST := 25.0
@@ -95,18 +111,6 @@ var _game_ref: Node
 
 const SAFE_GROUND_CHECK_OFFSET := 30.0
 const SAFE_GROUND_CHECK_LENGTH := 30.0
-
-# "Safe ground" is recorded every grounded frame, which means it's
-# almost exactly where you're standing right now. Walking straight
-# into a hazard used to "teleport" you back to a spot a few pixels
-# behind where you got hit — invisible, and you'd still be touching
-# (or about to re-enter) the hazard, so it never re-triggered and you
-# could just walk straight through. Instead of using the newest safe
-# position, we keep a short rolling history and use one that's at
-# least SAFE_GROUND_HISTORY_LAG seconds old, guaranteeing real
-# distance between where you respawn and whatever just hurt you.
-# Falling into a hazard already had plenty of natural distance from
-# the takeoff ledge, so this doesn't change that case.
 const SAFE_GROUND_HISTORY_LAG := 0.2
 const SAFE_GROUND_HISTORY_MAX_AGE := 2.0
 var _safe_ground_history: Array = []
@@ -177,9 +181,17 @@ var fire_damage := 3
 var smoke_damage := 1
 var jumps_used := 0
 
+var is_spark_propelling := false
+var spark_propulsion_timer := 0.0
+
+var is_skidding := false
+var is_walk_stopping := false
+var walkstop_played := false
+
 # Dash
 var dash_timer := 0.0
 var dash_cooldown_timer := 0.0
+var dash_animation_linger_timer := 0.0
 var is_dashing := false
 var dash_direction := 1.0
 var dash_damage := 3
@@ -360,6 +372,10 @@ func reset_after_death() -> void:
 	is_ledge_grabbing = false
 	is_attacking = false
 	litany_hold_active = false
+	is_spark_propelling = false
+	spark_propulsion_timer = 0.0
+	is_skidding = false
+	is_walk_stopping = false
 	jumps_used = 0
 	coyote_timer = 0.0
 	jump_buffer_timer = 0.0
@@ -612,11 +628,6 @@ func pogo_attack() -> void:
 			body.take_damage(sword_damage)
 			boost_mp_regen()
 			hit_something = true
-
-			# Pogoing an enemy still confirms with a sound, but never
-			# shakes the screen — only a pogoable hazard does that
-			# (see the hit_hazard branch below). Deliberately not
-			# calling _on_melee_hit() here, since that also shakes.
 			sword_sound.play()
 
 	for area in pogo_hitbox.get_overlapping_areas():
@@ -628,20 +639,7 @@ func pogo_attack() -> void:
 	pogo_hitbox.monitoring = false
 
 	if hit_something:
-		# Stamina (and whether the bounce is the strong or weak
-		# variant) is only ever spent once we know the pogo actually
-		# connected with something — a whiffed pogo used to burn
-		# stamina for nothing. This never grants invincibility —
-		# pogoing only changes vertical velocity, unlike an empowered
-		# dash, which does.
 		pogo_empowered = spend_stamina(POGO_STAMINA_COST)
-
-		# Once ANY pogo hit is confirmed this attack (enemy or
-		# hazard), the bounce is spent — any further hazard body
-		# contact during the same rise is ordinary contact and
-		# deals damage/teleport like normal. Fixes bouncing off a
-		# bottom spike, then bumping a ceiling spike on the way up
-		# and bouncing off THAT too instead of taking damage.
 		_pogo_hazard_bounce_used = true
 
 		jumps_used = 0
@@ -804,7 +802,8 @@ func _trigger_recall() -> void:
 	mp_changed.emit(mp, max_mp)
 
 	global_position = recall_anchor_position
-	velocity = Vector2.ZERO
+	if not GameState.has_ability("dash"):
+		velocity = Vector2.ZERO
 
 	recall_effect.visible = true
 	recall_effect.stop()
@@ -903,6 +902,7 @@ func _apply_hit_reaction() -> void:
 	is_wall_clinging = false
 	is_gliding = false
 	was_gliding = false
+	is_spark_propelling = false
 
 	if is_ledge_grabbing:
 		_end_ledge_grab()
@@ -985,11 +985,6 @@ func get_hazard_respawn_position(fallback: Variant) -> Variant:
 
 	return last_safe_position
 
-
-# Records the current grounded position into a short rolling history,
-# then sets last_safe_position/last_safe_room_path to an entry that's
-# at least SAFE_GROUND_HISTORY_LAG seconds old. See the const comment
-# above for why this lag exists.
 func _record_safe_ground_history() -> void:
 	var now := Time.get_ticks_msec() / 1000.0
 	var room_path := ""
@@ -1114,6 +1109,12 @@ func _on_animation_finished() -> void:
 	or animated_sprite_2d.animation == "upslash":
 		cancel_attack()
 
+	elif animated_sprite_2d.animation == "walkstop":
+		is_walk_stopping = false
+
+		if is_on_floor() \
+		and Input.get_axis("move_left", "move_right") == 0:
+			animated_sprite_2d.play("idle")
 
 # FOOTSTEPS
 
@@ -1254,16 +1255,12 @@ func _physics_process(delta: float) -> void:
 	if dash_chain_window_timer > 0.0:
 		dash_chain_window_timer -= delta
 
+	# DASH ANIMATION LINGER TIMER
+
+	if dash_animation_linger_timer > 0.0:
+		dash_animation_linger_timer -= delta
+
 	# DASH START
-	#
-	# A dash is always allowed once dash_cooldown_timer has fully
-	# elapsed — that one is free. Pressing dash again inside the
-	# short chain window (before the cooldown ends) requires
-	# GameState's dash_chain ability AND enough stamina; if the
-	# stamina spend fails, the whole attempt is rejected outright —
-	# it used to fall through and dash for free anyway, just with the
-	# long cooldown afterward, which is how Litany Step ended up
-	# infinite regardless of stamina.
 
 	if Input.is_action_just_pressed("dash") \
 	and GameState.has_ability("dash") \
@@ -1288,8 +1285,13 @@ func _physics_process(delta: float) -> void:
 			is_gliding = false
 			was_gliding = false
 			is_wall_clinging = false
+			is_spark_propelling = false
 			_end_ledge_grab()
 			dash_timer = DASH_DURATION
+			dash_animation_linger_timer = 0.0
+
+			is_walk_stopping = false
+			walkstop_played = false
 
 			dash_cooldown_timer = (
 				DASH_CHAIN_COOLDOWN
@@ -1354,6 +1356,7 @@ func _physics_process(delta: float) -> void:
 		is_gliding = false
 		was_gliding = false
 		is_wall_clinging = false
+		is_spark_propelling = false
 		_end_ledge_grab()
 		cancel_attack()
 
@@ -1378,6 +1381,7 @@ func _physics_process(delta: float) -> void:
 
 		if dash_timer <= 0.0:
 			is_dashing = false
+			dash_animation_linger_timer = DASH_ANIMATION_LINGER
 
 			# Open the chain window after every dash.
 			if GameState.has_ability("dash_chain"):
@@ -1388,17 +1392,14 @@ func _physics_process(delta: float) -> void:
 			dash_hitbox.monitoring = false
 			dash_empowered = false
 
-			animated_sprite_2d.play(
-				"falling" if not is_on_floor() else "idle"
-			)
-
 			holy_effect.stop()
 			wind_effect.stop()
 
 			holy_effect.visible = false
 			wind_effect.visible = false
 
-		return
+		else:
+			return
 
 	# LITANY STEP HOLD
 
@@ -1490,7 +1491,6 @@ func _physics_process(delta: float) -> void:
 		if not has_recall_anchor:
 			_place_recall_anchor()
 		else:
-
 			_trigger_recall()
 
 	# POTION INPUT
@@ -1505,6 +1505,7 @@ func _physics_process(delta: float) -> void:
 	if is_on_floor():
 		coyote_timer = COYOTE_TIME
 		jumps_used = 0
+		is_spark_propelling = false
 
 		_ground_edge_ray_left.force_raycast_update()
 		_ground_edge_ray_right.force_raycast_update()
@@ -1598,7 +1599,7 @@ func _physics_process(delta: float) -> void:
 
 	# SHORT HOP
 
-	if Input.is_action_just_released("jump") and velocity.y < 0:
+	if Input.is_action_just_released("jump") and velocity.y < 0 and not is_spark_propelling:
 		velocity.y *= SHORT_HOP_CUT
 
 	# WALL JUMP
@@ -1641,7 +1642,7 @@ func _physics_process(delta: float) -> void:
 		jump_effect.visible = true
 		jump_effect.play("jumpwind")
 
-	# AIR JUMP / DOUBLE JUMP
+	# AIR JUMP / DOUBLE JUMP (Spark Flame propulsion)
 
 	elif jump_buffer_timer > 0.0 \
 	and jumps_used < 2 \
@@ -1654,7 +1655,10 @@ func _physics_process(delta: float) -> void:
 
 		animated_sprite_2d.visible = true
 
-		velocity.y = DOUBLE_JUMP_VELOCITY
+		# SPARK FLAME PROPULSION
+		velocity.y = SPARK_PROPULSION_BURST_VELOCITY
+		is_spark_propelling = true
+		spark_propulsion_timer = 0.0
 
 		jump_buffer_timer = 0.0
 		jumps_used = 2
@@ -1726,7 +1730,48 @@ func _physics_process(delta: float) -> void:
 
 	if not is_on_floor():
 
-		if is_wall_clinging:
+		if is_spark_propelling:
+
+			# SPARK FLAME PROPULSION — sustain phase
+			#
+			# While the button stays held (and the burn hasn't timed
+			# out), this replaces normal gravity with continued
+			# upward thrust, plus horizontal acceleration if a
+			# direction is held. Letting go — or running out of fuel
+			# — ends the burn; a quick tap only gets the burst above
+			# plus a short-hop-style cut here.
+			spark_propulsion_timer += delta
+
+			var still_thrusting := Input.is_action_pressed("jump") \
+				and spark_propulsion_timer < SPARK_PROPULSION_MAX_DURATION
+
+			if still_thrusting:
+
+				velocity.y += SPARK_PROPULSION_HOLD_ACCEL * delta
+				velocity.y = max(velocity.y, SPARK_PROPULSION_MAX_RISE_SPEED)
+
+				var propel_direction := Input.get_axis(
+					"move_left",
+					"move_right"
+				)
+
+				# No horizontal input means Spark Flame simply
+				# propels upward — no sideways acceleration is added.
+				if propel_direction != 0.0:
+					velocity.x = move_toward(
+						velocity.x,
+						propel_direction * SPARK_PROPULSION_MAX_HORIZONTAL_SPEED,
+						SPARK_PROPULSION_HORIZONTAL_ACCEL * delta
+					)
+
+			else:
+
+				if velocity.y < 0.0:
+					velocity.y *= SHORT_HOP_CUT
+
+				is_spark_propelling = false
+
+		elif is_wall_clinging:
 
 			velocity.y = move_toward(
 				velocity.y,
@@ -1769,6 +1814,7 @@ func _physics_process(delta: float) -> void:
 
 		is_gliding = false
 		is_wall_clinging = false
+		is_spark_propelling = false
 
 	# INPUT DIRECTION
 
@@ -1810,13 +1856,59 @@ func _physics_process(delta: float) -> void:
 			0.0,
 			(HIT_KNOCKBACK_SPEED / HIT_STAGGER_DURATION) * delta
 		)
-	elif direction:
-		velocity.x = direction * current_speed
-	else:
+		is_skidding = false
+		is_walk_stopping = false
+		walkstop_played = false
+
+	elif is_spark_propelling:
+		is_skidding = false
+		is_walk_stopping = false
+		walkstop_played = false
+
+	elif is_gliding and GameState.has_ability("dash"):
+		if direction != 0.0:
+			velocity.x = move_toward(
+				velocity.x,
+				direction * current_speed,
+				GLIDE_MOMENTUM_STEER_ACCEL * delta
+			)
+
+		is_skidding = false
+		is_walk_stopping = false
+		walkstop_played = false
+
+	elif direction != 0.0:
+		var reversing: bool = is_on_floor() \
+			and sign(velocity.x) != 0.0 \
+			and sign(velocity.x) != sign(direction) \
+			and abs(velocity.x) > SKID_SPEED_THRESHOLD
+
+		is_skidding = reversing
+		is_walk_stopping = false
+		walkstop_played = false
+
+		var accel := SKID_DECELERATION if reversing else GROUND_ACCELERATION
+
 		velocity.x = move_toward(
 			velocity.x,
-			0,
-			current_speed
+			direction * current_speed,
+			accel * delta
+		)
+
+	else:
+		is_skidding = false
+
+		if is_on_floor() \
+		and abs(velocity.x) > 1.0 \
+		and not walkstop_played:
+
+			is_walk_stopping = true
+			walkstop_played = true
+
+		velocity.x = move_toward(
+			velocity.x,
+			0.0,
+			GROUND_FRICTION * delta
 		)
 
 	move_and_slide()
@@ -1869,9 +1961,26 @@ func _physics_process(delta: float) -> void:
 
 	if not is_attacking:
 
+		# DASH ANIMATION LINGER
+
+		if dash_animation_linger_timer > 0.0:
+			animated_sprite_2d.visible = true
+
+			if animated_sprite_2d.animation != "dash":
+				animated_sprite_2d.play("dash")
+
+		# WALK STOP
+
+		elif is_walk_stopping:
+
+			animated_sprite_2d.visible = true
+
+			if animated_sprite_2d.animation != "walkstop":
+				animated_sprite_2d.play("walkstop")
+
 		# ON FLOOR
 
-		if is_on_floor():
+		elif is_on_floor():
 
 			was_gliding = false
 			animated_sprite_2d.visible = true
@@ -1960,15 +2069,8 @@ func _physics_process(delta: float) -> void:
 				was_gliding = false
 				animated_sprite_2d.visible = true
 
-				if animated_sprite_2d.animation != "fall" \
-				and animated_sprite_2d.animation != "falling":
-
-					animated_sprite_2d.play("fall")
-
-				if animated_sprite_2d.animation == "fall" \
-				and animated_sprite_2d.frame >= 4:
-
-					animated_sprite_2d.play("falling")
+				if animated_sprite_2d.animation != "jump":
+					animated_sprite_2d.play("jump")
 
 # JUMP EFFECT
 
