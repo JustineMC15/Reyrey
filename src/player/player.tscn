@@ -846,16 +846,16 @@ size = Vector2(52.5, 130)
 size = Vector2(140, 129)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2q4xc"]
-size = Vector2(158, 185.5)
+size = Vector2(158, 142.75)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0qr2r"]
 size = Vector2(176.25, 156.5)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_j2873"]
-size = Vector2(142, 239.75)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_axsi3"]
+size = Vector2(158, 144)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_dpt0q"]
-size = Vector2(117, 240.75)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_j2873"]
+size = Vector2(158, 144)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pf23h"]
 atlas = ExtResource("9_jj045")
@@ -2725,9 +2725,9 @@ metadata/_edit_use_anchors_ = true
 material = SubResource("ShaderMaterial_kpcs5")
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.024305556
+anchor_left = 0.0034722222
 anchor_top = -0.060185187
-anchor_right = 0.06336805
+anchor_right = 0.042534724
 anchor_bottom = -0.060185187
 offset_left = 135.0
 offset_top = 56.0
@@ -2842,7 +2842,7 @@ grow_vertical = 0
 position = Vector2(0, -101)
 scale = Vector2(0.47, 0.47)
 sprite_frames = SubResource("SpriteFrames_vlew8")
-animation = &"run"
+animation = &"idle"
 autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=443081615]
@@ -2873,6 +2873,7 @@ drag_bottom_margin = 0.05
 [node name="Collision" type="Node2D" parent="." unique_id=485835211]
 
 [node name="DashHitbox" type="Area2D" parent="Collision" unique_id=1143569417]
+visible = false
 collision_layer = 8
 collision_mask = 4
 monitoring = false
@@ -2886,10 +2887,12 @@ collision_layer = 8
 collision_mask = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/SwordHitbox" unique_id=1229042169]
-position = Vector2(69, -86.25)
+position = Vector2(64, -71)
 shape = SubResource("RectangleShape2D_2q4xc")
+metadata/_edit_lock_ = true
 
 [node name="DoubleJumpHitbox" type="Area2D" parent="Collision" unique_id=874541815]
+visible = false
 collision_layer = 8
 collision_mask = 4
 
@@ -2901,16 +2904,18 @@ collision_layer = 8
 collision_mask = 4
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="Collision/Pogo" unique_id=903299424]
-position = Vector2(17, -21.125)
-shape = SubResource("RectangleShape2D_j2873")
+position = Vector2(45, 30)
+shape = SubResource("RectangleShape2D_axsi3")
+metadata/_edit_lock_ = true
 
 [node name="UpSlash" type="Area2D" parent="Collision" unique_id=625210239]
 collision_layer = 8
 collision_mask = 4
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Collision/UpSlash" unique_id=1066314198]
-position = Vector2(4.5, -121.625)
-shape = SubResource("RectangleShape2D_dpt0q")
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Collision/UpSlash" unique_id=382975510]
+position = Vector2(45, -126)
+shape = SubResource("RectangleShape2D_j2873")
+metadata/_edit_lock_ = true
 
 [node name="AnimationEffects" type="Node2D" parent="." unique_id=1283324219]
 

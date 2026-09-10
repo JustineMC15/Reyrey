@@ -177,7 +177,7 @@ func get_area_name_from_room_code(room_code: String) -> String:
 	return get_area_name(area_id)
 
 
-# --- Settings / Audio buses ---
+#  Settings / Audio buses 
 
 ## Sets a bus's volume (0.0-1.0 linear) and persists all three bus
 ## volumes to disk. Silently does nothing if the named bus doesn't

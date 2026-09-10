@@ -12,6 +12,8 @@
 [ext_resource type="PackedScene" uid="uid://bf67ac7a0j7m3" path="res://src/enemies/gummy_star.tscn" id="9_hhhuh"]
 [ext_resource type="PackedScene" uid="uid://dynuhhpg4mbop" path="res://src/enemies/guiding_star_follow.tscn" id="10_vc3xy"]
 [ext_resource type="PackedScene" uid="uid://c20o6wohk6hul" path="res://src/enemies/guiding_star.tscn" id="11_pueap"]
+[ext_resource type="PackedScene" uid="uid://deakhov6xdl5c" path="res://src/nav/checkpoint.tscn" id="13_tkbjt"]
+[ext_resource type="PackedScene" uid="uid://de43303jf72ob" path="res://src/nav/potion_slot.tscn" id="14_hhhuh"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y52uh"]
 size = Vector2(216, 314.1875)
@@ -57,7 +59,9 @@ offset_right = 525.0
 offset_bottom = -200.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0.49803922, 0.5019608, 0.50980395, 1)
+theme_override_colors/font_outline_color = Color(0.14509805, 0.16470589, 0.2, 1)
+theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("4_8xvjb")
 theme_override_font_sizes/font_size = 32
 text = "CLAIM
@@ -103,7 +107,9 @@ offset_right = 525.0
 offset_bottom = -200.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0.49803922, 0.5019608, 0.50980395, 1)
+theme_override_colors/font_outline_color = Color(0.14509805, 0.16470589, 0.2, 1)
+theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("4_8xvjb")
 theme_override_font_sizes/font_size = 32
 text = "CLAIM
@@ -113,7 +119,7 @@ vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="GroundSlam" type="Area2D" parent="." unique_id=1787065704 node_paths=PackedStringArray("prompt_panel")]
-position = Vector2(794, -16)
+position = Vector2(575, -13)
 collision_layer = 32
 collision_mask = 64
 script = ExtResource("3_c8igj")
@@ -149,7 +155,9 @@ offset_right = 525.0
 offset_bottom = -200.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0.49803922, 0.5019608, 0.50980395, 1)
+theme_override_colors/font_outline_color = Color(0.14509805, 0.16470589, 0.2, 1)
+theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("4_8xvjb")
 theme_override_font_sizes/font_size = 32
 text = "CLAIM
@@ -159,7 +167,7 @@ vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="Glide" type="Area2D" parent="." unique_id=741500134 node_paths=PackedStringArray("prompt_panel")]
-position = Vector2(1376, -3)
+position = Vector2(814, -12)
 collision_layer = 32
 collision_mask = 64
 script = ExtResource("3_c8igj")
@@ -195,7 +203,9 @@ offset_right = 525.0
 offset_bottom = -200.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0.49803922, 0.5019608, 0.50980395, 1)
+theme_override_colors/font_outline_color = Color(0.14509805, 0.16470589, 0.2, 1)
+theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("4_8xvjb")
 theme_override_font_sizes/font_size = 32
 text = "CLAIM
@@ -205,7 +215,7 @@ vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="WallJump" type="Area2D" parent="." unique_id=1951107650 node_paths=PackedStringArray("prompt_panel")]
-position = Vector2(1847, -6)
+position = Vector2(1285, -15)
 collision_layer = 32
 collision_mask = 64
 script = ExtResource("3_c8igj")
@@ -213,11 +223,11 @@ ability_id = "wall_cling"
 prompt_panel = NodePath("ScripturePanel")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="WallJump" unique_id=1197931957]
-position = Vector2(417.39893, -154.59998)
+position = Vector2(196.39893, -157.59995)
 shape = SubResource("RectangleShape2D_y52uh")
 
 [node name="Sprite2D" type="Sprite2D" parent="WallJump" unique_id=205176368]
-position = Vector2(418.4004, -90.60004)
+position = Vector2(197.4004, -93.600006)
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("2_jsmq8")
 
@@ -225,6 +235,10 @@ texture = ExtResource("2_jsmq8")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -221.0
+offset_top = -2.9999695
+offset_right = -221.0
+offset_bottom = -2.9999695
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_m15qw")
@@ -241,7 +255,9 @@ offset_right = 525.0
 offset_bottom = -200.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0.49803922, 0.5019608, 0.50980395, 1)
+theme_override_colors/font_outline_color = Color(0.14509805, 0.16470589, 0.2, 1)
+theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("4_8xvjb")
 theme_override_font_sizes/font_size = 32
 text = "CLAIM
@@ -251,7 +267,7 @@ vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="DashChain" type="Area2D" parent="." unique_id=666938940 node_paths=PackedStringArray("prompt_panel")]
-position = Vector2(2305, -3)
+position = Vector2(1309, -15)
 collision_layer = 32
 collision_mask = 64
 script = ExtResource("3_c8igj")
@@ -287,7 +303,9 @@ offset_right = 525.0
 offset_bottom = -200.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0.49803922, 0.5019608, 0.50980395, 1)
+theme_override_colors/font_outline_color = Color(0.14509805, 0.16470589, 0.2, 1)
+theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("4_8xvjb")
 theme_override_font_sizes/font_size = 32
 text = "CLAIM
@@ -297,7 +315,7 @@ vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="Recall" type="Area2D" parent="." unique_id=2078594736 node_paths=PackedStringArray("prompt_panel")]
-position = Vector2(2734, -8)
+position = Vector2(1569, -20)
 collision_layer = 32
 collision_mask = 64
 script = ExtResource("3_c8igj")
@@ -333,7 +351,9 @@ offset_right = 525.0
 offset_bottom = -200.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0.49803922, 0.5019608, 0.50980395, 1)
+theme_override_colors/font_outline_color = Color(0.14509805, 0.16470589, 0.2, 1)
+theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("4_8xvjb")
 theme_override_font_sizes/font_size = 32
 text = "CLAIM
@@ -343,7 +363,7 @@ vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="LedgeGrab" type="Area2D" parent="." unique_id=1948609648 node_paths=PackedStringArray("prompt_panel")]
-position = Vector2(3046, 0)
+position = Vector2(1881, -12)
 collision_layer = 32
 collision_mask = 64
 script = ExtResource("3_c8igj")
@@ -379,7 +399,9 @@ offset_right = 525.0
 offset_bottom = -200.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0.49803922, 0.5019608, 0.50980395, 1)
+theme_override_colors/font_outline_color = Color(0.14509805, 0.16470589, 0.2, 1)
+theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("4_8xvjb")
 theme_override_font_sizes/font_size = 32
 text = "CLAIM
@@ -416,3 +438,25 @@ position = Vector2(10227, -359)
 
 [node name="GuidingStar2" parent="." unique_id=1005792439 instance=ExtResource("11_pueap")]
 position = Vector2(11495, -289)
+
+[node name="GuidingStar3" parent="." unique_id=2130160056 instance=ExtResource("11_pueap")]
+position = Vector2(2616, -125)
+star_fragment_reward = 9999
+spin_speed = 0.0
+movement_distance = 0.0
+
+[node name="Checkpoint" parent="." unique_id=1046499597 instance=ExtResource("13_tkbjt")]
+position = Vector2(2833, -52)
+checkpoint_id = "checkpoint_05"
+room_name = "testworld"
+
+[node name="PotionSlot" parent="." unique_id=936763216 instance=ExtResource("14_hhhuh")]
+position = Vector2(3079, -65)
+
+[node name="PotionSlot2" parent="." unique_id=1955703081 instance=ExtResource("14_hhhuh")]
+position = Vector2(3303, -68)
+category = "utility"
+
+[node name="PotionSlot3" parent="." unique_id=1950864871 instance=ExtResource("14_hhhuh")]
+position = Vector2(3509, -72)
+category = "combat"

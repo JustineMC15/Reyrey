@@ -489,12 +489,14 @@ shape = SubResource("RectangleShape2D_bekt7")
 
 [node name="RestPrompt" type="Label" parent="." unique_id=87160796]
 offset_left = -35.0
-offset_top = -150.0
-offset_right = 35.0
-offset_bottom = -60.0
-theme_override_colors/font_color = Color(0.011764706, 0.011764706, 0.011764706, 1)
+offset_top = -182.0
+offset_right = 51.0
+offset_bottom = -81.0
+theme_override_colors/font_color = Color(0.49803922, 0.5019608, 0.50980395, 1)
+theme_override_colors/font_outline_color = Color(0.14509805, 0.16470589, 0.2, 1)
+theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("3_vsimk")
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 40
 text = "REST
 E"
 horizontal_alignment = 1

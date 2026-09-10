@@ -17,13 +17,13 @@ extends CanvasLayer
 const BODY_FONT := preload("res://assets/fonts/Seshat.otf")
 const ASH_TEXTURE := preload("res://assets/environment/parallax/ash.png")
 
-const LINE_FADE_DURATION := 0.6
-const LINE_HOLD_AFTER := 1.1
-const CITATION_HOLD_BEFORE := 1.6
+const LINE_FADE_DURATION := 0.7
+const LINE_HOLD_AFTER := 1.6
+const CITATION_HOLD_BEFORE := 1.3
 const CITATION_FADE_DURATION := 0.8
-const FULL_HOLD_DURATION := 3.5
-const CONTENT_FADE_OUT_DURATION := 1.0
-const BLACK_HOLD_DURATION := 0.5
+const FULL_HOLD_DURATION := 3.0
+const CONTENT_FADE_OUT_DURATION := 1.2
+const BLACK_HOLD_DURATION := 0.6
 const FINAL_FADE_DURATION := 1.0
 
 const POEM_LINES := [
@@ -105,7 +105,7 @@ func _build_ui() -> void:
 	# Wider left margin than right — reads as a set-apart, indented
 	# attribution line rather than another line of verse.
 	_citation_wrapper = MarginContainer.new()
-	_citation_wrapper.add_theme_constant_override("margin_left", 110)
+	_citation_wrapper.add_theme_constant_override("margin_left", 170)
 	_citation_wrapper.add_theme_constant_override("margin_right", 10)
 	_citation_wrapper.modulate.a = 0.0
 	_citation_wrapper.add_child(citation_label)

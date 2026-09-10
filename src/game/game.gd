@@ -499,7 +499,7 @@ func position_player_at_checkpoint(checkpoint_id: String) -> void:
 
 var current_room_camera_bounds: CameraBounds = null
 
-# --- Camera limits: single owner ---
+#  Camera limits: single owner 
 #
 # Every camera-limit change in the game — the room's base
 # CameraBounds on load, and any CameraLimitZone override — goes

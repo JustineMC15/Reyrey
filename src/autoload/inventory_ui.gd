@@ -52,7 +52,7 @@ const SWORD_KEYBIND := "Mouse1 / F — Swing"
 const SHARD_FLAVOR_HEADER := "Upon this shrine, the remnants of a star remain"
 
 const POTION_FLASK_SUBTITLES := {
-	"000": "Sealed",
+	"000": "Unkindled",
 	"100": "Starhearth",
 	"010": "Starbriar",
 	"001": "Stargleam",
@@ -63,14 +63,14 @@ const POTION_FLASK_SUBTITLES := {
 }
 
 const POTION_FLASK_DESCRIPTIONS := {
-	"000": "An empty flask. It waits for something worth keeping.",
-	"100": "Warmth bottled against the dark. What heals lingers here, patient.",
-	"010": "A thorn steeped in old defiance. Strength for when the blade isn't enough.",
-	"001": "A shimmer that never quite settles. Borrowed speed, borrowed breath.",
-	"110": "Warmth and thorn, mingled close. What mends you, and what lets you mend the fight.",
-	"101": "Warmth and shimmer, entwined. What restores you also carries you faster.",
-	"011": "Thorn and shimmer, bound together. What strikes harder also outlasts.",
-	"111": "Warmth, thorn, and shimmer — the flask holds all three, waiting to be chosen.",
+	"000": "A quiet cloud of old nebula, left before any star was born. It waits in the dark for something to give it shape.",
+	"100": "Solar amber, warm as a star's last light. It carries a little of that warmth back into what has been spent.",
+	"010": "Cerulean stardust, gathered from the cold between the stars. Restless and sharp, it lends strength when the road turns cruel.",
+	"001": "Aquamarine flakes, drifting like light across a newborn sky. They never seem to settle, and neither do they who carry them.",
+	"110": "Solar amber and cerulean stardust, bound together. Warmth gives the body life; the old blue dust gives it the strength to endure.",
+	"101": "Solar amber threaded with aquamarine light. What restores your fire also leaves your feet lighter upon the road.",
+	"011": "Cerulean stardust mingled with aquamarine flakes. One lends force to the hand, the other refuses to let the body falter.",
+	"111": "Solar amber, cerulean stardust, and aquamarine light. Three remnants of the endless expanse, brought together as one. Warmth to give it life, strength to give it form, and light to give it purpose.",
 }
 
 const PRAYERBOOK_DESCRIPTION := "Every knight is taught to trust the stars. I was no different. I keep this book beside me still, though I find it harder each day to believe what it asks of me."
@@ -143,11 +143,6 @@ func _unhandled_input(event: InputEvent) -> void:
 
 	toggle()
 
-
-# Handles the prayerbook's own open/close interaction. Everything
-# else in this UI is pure hover — the prayerbook is the one entry
-# that needs a real "press E to read" action, so it gets a _process
-# check instead of a signal.
 func _process(_delta: float) -> void:
 	if not is_open:
 		return
@@ -240,13 +235,6 @@ func _clear_grid(grid: GridContainer) -> void:
 	for child in grid.get_children():
 		child.queue_free()
 
-
-# Godot's automatic geometric focus-neighbor detection breaks down
-# across very different container types (freeform LeftColumn vs.
-# scrolled grids) — this wires the important cross-boundary links by
-# hand so arrow-key navigation is deterministic. Navigation *within*
-# a single grid still relies on Godot's automatic system, since that
-# works fine on a uniform grid.
 func _wire_focus_neighbors() -> void:
 	sword_button.focus_neighbor_bottom = sword_button.get_path_to(armor_button)
 	armor_button.focus_neighbor_top = armor_button.get_path_to(sword_button)
@@ -273,8 +261,7 @@ func _wire_focus_neighbors() -> void:
 		first_middle_button.focus_neighbor_left = first_middle_button.get_path_to(prayerbook_button)
 
 
-# --- Prayerbook overlay ---
-#
+# Prayerbook overlay 
 # The prayerbook doesn't float above the middle column — it swaps
 # into the same space. Hiding KeyItemsSection/MiddleSeparator/
 # ShardsSection removes them from the VBoxContainer's layout, so

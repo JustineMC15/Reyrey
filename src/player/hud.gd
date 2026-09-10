@@ -20,7 +20,7 @@ extends Control
 @onready var key_item_reward: KeyItemReward = $KeyItemReward
 var potion_indicator: Label
 
-# --- HP bar sizing ---
+#  HP bar sizing 
 # 9-patch stretch on HPBar/HPBarGlow/HPDamageBar/HpEmptyBar is 100px
 # left / 40px right margin (set in the editor). Only the right offset
 # grows here; left offset stays anchored at the star.
@@ -30,11 +30,11 @@ const HP_FRAME_BASE_OFFSET_LEFT := 127.0
 const HP_FRAME_RIGHT_PADDING := 35.0
 const HP_GLOW_OVERSHOOT := 20.0
 const HP_DRAIN_DURATION := 0.35   # main bar + its glow, the real drain
-# --- HP color/glow tuning (shader-driven, tweened by health_ratio) ---
+#  HP color/glow tuning (shader-driven, tweened by health_ratio) 
 const HEALTH_TWEEN_DURATION := 0.4
 const HEALTH_LOW_THRESHOLD := 0.35
 
-# --- HP fill-value drain / tick-down animation ---
+#  HP fill-value drain / tick-down animation 
 # This is the part that makes the bar visibly recede instead of
 # snapping to the new value — it animates TextureProgressBar.value
 # itself, completely separate from the shader color/glow tween above.
@@ -53,7 +53,7 @@ const BAR_GLOW_MAX_INTENSITY := 1.2
 const FRAME_GLOW_MIN_INTENSITY := 0.3
 const FRAME_GLOW_MAX_INTENSITY := 0.9
 
-# --- MP / Stamina core glow tuning ---
+#  MP / Stamina core glow tuning 
 # Fixed size icons — only the halo's intensity/scale reacts to the
 # current/max ratio, no resizing, ever, no separate plain bar anymore.
 const MP_GLOW_MIN_INTENSITY := 0.2
@@ -164,7 +164,7 @@ func _ready() -> void:
 			_on_key_item_collected
 		)
 
-# --- in _ready(), replace the three connect lines ---
+#  in _ready(), replace the three connect lines 
 	if not player.health_changed.is_connected(_on_player_health_changed):
 		player.health_changed.connect(_on_player_health_changed)
 	if not player.mp_changed.is_connected(_on_player_mp_changed):
@@ -199,7 +199,7 @@ func _safe_ratio(current: float, max_value: float) -> float:
 	return 0.0 if max_value <= 0 else clamp(current / max_value, 0.0, 1.0)
 
 
-# --- HP ---
+#  HP 
 
 func _on_player_health_changed(
 	current_health,
@@ -344,7 +344,7 @@ func _set_glow_params(ratio: float) -> void:
 	)
 
 
-# --- MP ---
+#  MP 
 
 func _on_player_mp_changed(
 	current_mp,
@@ -398,7 +398,7 @@ func _set_mp_glow_params(ratio: float) -> void:
 	)
 
 
-# --- Stamina ---
+#  Stamina 
 
 func _on_player_stamina_changed(
 	current_stamina,

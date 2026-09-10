@@ -6,7 +6,7 @@
 [ext_resource type="AudioStream" uid="uid://b3kadw5jyac6a" path="res://assets/sound/sfx/bing1.wav" id="4_w48m4"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bekt7"]
-size = Vector2(296, 261.4375)
+size = Vector2(230, 198.4375)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_u35kk"]
 atlas = ExtResource("2_cepi4")
@@ -283,7 +283,7 @@ prompt_panel = NodePath("Panel")
 opening_sound = NodePath("AudioStreamPlayer")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=262223436]
-position = Vector2(0, -136.28125)
+position = Vector2(0, -104.781)
 shape = SubResource("RectangleShape2D_bekt7")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1299394733]
@@ -302,14 +302,14 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -71.0
-offset_top = -150.0
+offset_top = -174.0
 offset_right = 71.0
-offset_bottom = -29.0
+offset_bottom = -53.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 1
+theme_override_colors/font_color = Color(0.49803922, 0.5019608, 0.50980395, 1)
+theme_override_colors/font_outline_color = Color(0.14509805, 0.16470589, 0.2, 1)
+theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("3_k35q3")
 theme_override_font_sizes/font_size = 48
 text = "CLAIM

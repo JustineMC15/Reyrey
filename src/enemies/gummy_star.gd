@@ -127,9 +127,9 @@ func attack() -> void:
 	can_attack = false
 
 
-	# --------------------------------
+	# --
 	# CHARGE
-	# --------------------------------
+	# --
 
 	attack_effect.visible = true
 	attack_effect.play("charge")
@@ -152,9 +152,9 @@ func attack() -> void:
 		return
 
 
-	# --------------------------------
+	# --
 	# ACTIVATE SLOW FIELD
-	# --------------------------------
+	# --
 
 	attack_effect.play("explosion")
 
@@ -170,16 +170,16 @@ func attack() -> void:
 		return
 
 
-	# --------------------------------
+	# --
 	# DEACTIVATE SLOW FIELD
-	# --------------------------------
+	# --
 
 	slow_field.monitoring = false
 
 
-	# --------------------------------
+	# --
 	# REMOVE GLOW
-	# --------------------------------
+	# --
 
 	var fade_tween := create_tween()
 
@@ -198,9 +198,9 @@ func attack() -> void:
 	is_attacking = false
 
 
-	# --------------------------------
+	# --
 	# COOLDOWN
-	# --------------------------------
+	# --
 
 	await get_tree().create_timer(attack_cooldown).timeout
 

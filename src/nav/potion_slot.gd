@@ -115,10 +115,10 @@ func _create_glow() -> void:
 	var gradient: Gradient = Gradient.new()
 
 	gradient.colors = PackedColorArray([
-		Color(1.0, 1.0, 1.0, 0.57),
-		Color(1.0, 1.0, 1.0, 0.39),
-		Color(1.0, 1.0, 1.0, 0.15),
-		Color(1.0, 1.0, 1.0, 0.0)
+		Color(1.0, 0.78, 0.20, 0.57),
+		Color(1.0, 0.64, 0.08, 0.39),
+		Color(1.0, 0.45, 0.02, 0.15),
+		Color(1.0, 0.25, 0.0, 0.0)
 	])
 
 	gradient.offsets = PackedFloat32Array([
@@ -140,7 +140,7 @@ func _create_glow() -> void:
 	glow.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	glow.centered = true
 
-	glow.scale = Vector2(0.45, 0.45)
+	glow.scale = Vector2(0.85, 0.85)
 	glow_base_scale = glow.scale
 
 	var material: CanvasItemMaterial = CanvasItemMaterial.new()

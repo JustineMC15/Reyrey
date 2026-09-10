@@ -1,7 +1,7 @@
 extends Node
 
 
-# --- Persistent Player Stats ---
+#  Persistent Player Stats 
 
 var abilities: Dictionary = {
 	"double_jump": false,
@@ -20,7 +20,7 @@ var max_mp: int = 6
 var current_mp: int = 6
 var max_stamina: float = 100.0
 
-# --- Room / Gate transition state ---
+#  Room / Gate transition state 
 
 var pending_spawn_gate_id: String = ""
 var _transition_lock: bool = false
@@ -37,7 +37,7 @@ var pending_entry_distance: float = 180.0
 var pending_jump_velocity: Vector2 = Vector2(400.0, -800.0)
 
 
-# --- Fade overlay ---
+#  Fade overlay 
 
 var _fade_layer: CanvasLayer
 var _fade_rect: ColorRect
@@ -45,13 +45,13 @@ var _fade_rect: ColorRect
 const FADE_DURATION := 0.25
 
 
-# --- Game startup ---
+#  Game startup 
 var is_loading_save: bool = false
 var startup_room_path: String = ""
 var startup_checkpoint_id: String = ""
 
 
-# --- Star Shrines ---
+#  Star Shrines 
 
 var shrine_count: int = 0
 var claimed_shrines: Dictionary = {}
@@ -65,7 +65,7 @@ const SHRINE_STAMINA_GAINS: Array[float] = [
 	15.0, 12.0, 12.0, 10.0, 10.0, 8.0, 8.0, 8.0, 8.0,
 	6.0, 6.0, 6.0, 6.0, 4.0, 4.0, 4.0, 4.0
 ]
-# --- Armor ---
+#  Armor 
 
 var armor_tier: int = 0
 
@@ -104,7 +104,7 @@ func get_armor_data() -> Dictionary:
 	return armor_data.get(armor_tier, armor_data[0])
 
 
-# --- Ability system ---
+#  Ability system 
 
 var keybind_display: Dictionary = {
 	"jump": "Space / Z",
@@ -236,7 +236,7 @@ func _ready() -> void:
 	_build_fade_overlay()
 	star_fragments_changed.connect(_on_star_fragments_changed)
 
-# --- Modal UI panels ---
+#  Modal UI panels 
 #
 # Each full-screen modal registers itself here on open/close instead
 # of every panel's toggle handler manually enumerating every other
@@ -262,7 +262,7 @@ func is_other_modal_open(panel_name: String) -> bool:
 			return true
 	return false
 
-# --- Story beats (one-time cutscenes) ---
+#  Story beats (one-time cutscenes) 
 
 var story_beats_seen: Dictionary = {}
 
@@ -274,7 +274,7 @@ func has_seen_story_beat(beat_id: String) -> bool:
 func mark_story_beat_seen(beat_id: String) -> void:
 	story_beats_seen[beat_id] = true
 
-# --- Helpers ---
+#  Helpers 
 
 func _get_game() -> Node:
 	var game := get_tree().current_scene
@@ -309,7 +309,7 @@ func open_chest(chest_id: String) -> void:
 		return
 
 	opened_chests[chest_id] = true
-# --- Window close ---
+#  Window close 
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
@@ -319,7 +319,7 @@ func _notification(what: int) -> void:
 		get_tree().quit()
 
 
-# --- Keys ---
+#  Keys 
 signal key_item_collected(display_name: String, icon: Texture2D)
 
 var collected_keys: Dictionary = {}
@@ -339,7 +339,7 @@ func consume_key(key_id: String) -> void:
 	collected_keys.erase(key_id)
  
  
-# --- Doors (locked doors, attack-switch doors, gauntlet doors) ---
+#  Doors (locked doors, attack-switch doors, gauntlet doors) 
  
 var opened_doors: Dictionary = {}
  
@@ -352,7 +352,7 @@ func open_door_permanently(door_id: String) -> void:
 	opened_doors[door_id] = true
  
  
-# --- Broken obstacles (breakable walls / breakable floors) ---
+#  Broken obstacles (breakable walls / breakable floors) 
  
 var broken_obstacles: Dictionary = {}
  
@@ -365,7 +365,7 @@ func break_obstacle(obstacle_id: String) -> void:
 	broken_obstacles[obstacle_id] = true
  
  
-# --- Revealed secrets (hidden walls) ---
+#  Revealed secrets (hidden walls) 
  
 var revealed_secrets: Dictionary = {}
  
@@ -378,7 +378,7 @@ func reveal_secret(secret_id: String) -> void:
 	revealed_secrets[secret_id] = true
  
  
-# --- One-way shortcuts (levers unlocking doors/bridges/ladders/walls) ---
+#  One-way shortcuts (levers unlocking doors/bridges/ladders/walls) 
  
 signal shortcut_activated(shortcut_id)
  
@@ -397,7 +397,7 @@ func activate_shortcut(shortcut_id: String) -> void:
 	shortcut_activated.emit(shortcut_id)
  
  
-# --- Enemy gauntlets ---
+#  Enemy gauntlets 
 var is_room_unloading: bool = false
 var cleared_gauntlets: Dictionary = {}
  
@@ -423,7 +423,7 @@ func defeat_boss(boss_id: String) -> void:
 
 	defeated_bosses[boss_id] = true
 
-# --- Anvils ---
+#  Anvils 
 
 const ANVIL_HP_GAIN := 1
 
@@ -566,7 +566,7 @@ func _run_anvil_claim_sequence(player: Node) -> void:
 	layer.queue_free()
 
 
-# --- Star Shrines ---
+#  Star Shrines 
 
 func is_shrine_claimed(shrine_id: String) -> bool:
 	return claimed_shrines.has(shrine_id)
@@ -746,7 +746,7 @@ func _run_shrine_claim_sequence(
 	layer.queue_free()
 
 
-# --- Ceremony helpers (shared by ability + potion slot claim screens) ---
+#  Ceremony helpers (shared by ability + potion slot claim screens) 
 #
 # Both screens are optional-sound / sequential-reveal modals: each
 # element fades in on its own, holds briefly, THEN the next one
@@ -791,7 +791,7 @@ func _fade_in_ceremony_element(node: Control, fade_duration: float, hold_after: 
 		await get_tree().create_timer(hold_after).timeout
 
 
-# --- Ability system ---
+#  Ability system 
 
 func unlock_ability(ability_id: String) -> void:
 	abilities[ability_id] = true
@@ -992,7 +992,7 @@ func _run_claim_sequence(
 	_transition_lock = false
 	ability_claimed.emit(ability_id)
 
-# --- Checkpoints ---
+#  Checkpoints 
 func soft_respawn_enemies() -> void:
 	for enemy in get_tree().get_nodes_in_group("enemies"):
 		if is_instance_valid(enemy) and enemy.has_method("respawn"):
@@ -1449,7 +1449,7 @@ func _fade_in() -> void:
 	_transition_lock = false
 
 
-# --- Fade overlay ---
+#  Fade overlay 
 
 func _build_fade_overlay() -> void:
 	_fade_layer = CanvasLayer.new()
@@ -1461,7 +1461,7 @@ func _build_fade_overlay() -> void:
 	_fade_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_fade_layer.add_child(_fade_rect)
-# --- Primeval Star Potion ---
+#  Primeval Star Potion 
 
 const POTION_CATEGORIES := ["survival", "combat", "utility"]
 
@@ -1530,7 +1530,7 @@ signal potion_mix_changed()
 signal potion_used()
 
 
-# --- Slots (world pickups) ---
+#  Slots (world pickups) 
 
 func is_potion_slot_unlocked(category: String) -> bool:
 	return unlocked_potion_slots.has(category)
@@ -1549,15 +1549,15 @@ func has_any_potion_slot_unlocked() -> bool:
 const POTION_SLOT_CEREMONY_TEXT := {
 	"survival": {
 		"title": "Starhearth Draught Unlocked",
-		"description": "A hearth kept lit against the worst of it. This slot mixes draughts that mend what's broken and refill what's spent.",
+		"description": "A shard of the sun, kept warm within the flask. This draught gathers the faintest light back into you when your strength begins to fail.",
 	},
 	"combat": {
 		"title": "Starbriar Draught Unlocked",
-		"description": "A thorn grown sharp with intent. This slot mixes draughts that turn the tide of a fight.",
+		"description": "Cerulean stardust, cold and sharp as a thorn beneath the skin. This draught lends its strength to the hand when steel alone is not enough.",
 	},
 	"utility": {
 		"title": "Stargleam Draught Unlocked",
-		"description": "A shimmer that never sits still. This slot mixes draughts that carry you farther, faster, longer.",
+		"description": "Aquamarine dust from the light between the stars. This draught leaves the body unburdened, carrying you farther before the light within you fades.",
 	},
 }
 
@@ -1730,7 +1730,7 @@ func get_potion_effects_by_progression() -> Array:
 
 	return ids
 
-# --- Effects (fragment-gated, never picked up in the world) ---
+#  Effects (fragment-gated, never picked up in the world) 
 
 func is_potion_effect_unlocked(effect_id: String) -> bool:
 	return unlocked_potion_effects.has(effect_id)
@@ -1766,7 +1766,7 @@ func _check_potion_effect_unlocks() -> void:
 			potion_effect_unlocked.emit(effect_id)
 
 
-# --- Mixing ---
+#  Mixing 
 
 func set_selected_potion_effect(category: String, effect_id: String) -> void:
 	if not POTION_CATEGORIES.has(category):
@@ -1858,7 +1858,7 @@ func _apply_potion_effect(effect_id: String, player: Node) -> void:
 				player.apply_infinite_stamina(duration)
 
 
-# --- Checkpoint proximity (gates mixing only, not drinking) ---
+#  Checkpoint proximity (gates mixing only, not drinking) 
 
 func enter_checkpoint_range() -> void:
 	_checkpoint_range_count += 1
@@ -1874,7 +1874,7 @@ func is_near_checkpoint() -> bool:
 
 func can_mix_potion() -> bool:
 	return is_near_checkpoint()
-# --- Save system ---
+#  Save system 
 
 func get_save_data() -> Dictionary:
 	return {
