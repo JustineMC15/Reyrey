@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cp4rk6l7agsoe"
-path="res://.godot/imported/idle.png-efdbe92024cfcb22d287a59ab0c5292b.ctex"
+uid="uid://q1be4lagvijh"
+path="res://.godot/imported/PSP-101.png-51fba1af74013c517f81f2880390365b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/characters/player/idle.png"
-dest_files=["res://.godot/imported/idle.png-efdbe92024cfcb22d287a59ab0c5292b.ctex"]
+source_file="res://assets/ui/potionbottle/PSP-101.png"
+dest_files=["res://.godot/imported/PSP-101.png-51fba1af74013c517f81f2880390365b.ctex"]
 
 [params]
 

@@ -136,7 +136,7 @@ func _build_ui() -> void:
 	frame.add_child(background)
 
 	var title := Label.new()
-	title.text = "WONDROUS STAR POTION"
+	title.text = "Primeval STAR POTION"
 	title.add_theme_font_override("font", HEADER_FONT)
 	title.add_theme_font_size_override("font_size", 28)
 	title.set_anchors_preset(Control.PRESET_TOP_WIDE)

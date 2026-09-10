@@ -1,7 +1,7 @@
 extends Area2D
 class_name PotionSlot
 
-## One-time pickup unlocking a single Wondrous Star Potion mixing
+## One-time pickup unlocking a single Primeval Star Potion mixing
 ## slot (Survival / Combat / Utility). Exactly three of these exist
 ## in the world — set `category` per instance in the Inspector.
 ##

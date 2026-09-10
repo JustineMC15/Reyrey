@@ -12,6 +12,8 @@ size = Vector2(161, 121)
 bg_color = Color(0.6, 0.6, 0.6, 0)
 
 [node name="PotionSlot" type="Area2D" unique_id=936763216 node_paths=PackedStringArray("prompt_panel")]
+collision_layer = 32
+collision_mask = 64
 script = ExtResource("1_miiyl")
 prompt_panel = NodePath("PromptPanel")
 

@@ -6,7 +6,7 @@ extends CanvasLayer
 # AbilityTutorialUI dismisses its prompts — by the player actually
 # doing the thing, not by a timer.
 #
-# "potion_menu" — appears the first time a Wondrous Star Potion slot
+# "potion_menu" — appears the first time a Primeval Star Potion slot
 # is unlocked (the world pickup), pointing at the mixing menu (P)
 # and the potion map (O). Dismissed the first time either menu opens.
 #

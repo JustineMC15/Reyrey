@@ -9,7 +9,7 @@ extends CanvasLayer
 #
 # Deliberately a straight line for now — the categorized tree
 # version is a later pass (see backlog). Opens only once the player
-# has found at least one Wondrous Star Potion slot; otherwise there
+# has found at least one Primeval Star Potion slot; otherwise there
 # is nothing meaningful on the map yet.
 
 const HEADER_FONT := preload("res://assets/fonts/Junicode.ttf")

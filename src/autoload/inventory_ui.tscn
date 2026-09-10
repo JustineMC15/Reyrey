@@ -100,6 +100,22 @@ offset_top = 140.0
 offset_right = 240.0
 offset_bottom = 240.0
 
+[node name="PotionFlaskButton" parent="RootPanel/MainFrame/Layout/LeftColumn" unique_id=1600000001 instance=ExtResource("2_aua8c")]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 1
+offset_left = 140.0
+offset_top = 260.0
+offset_right = 240.0
+offset_bottom = 360.0
+
+[node name="PrayerbookButton" parent="RootPanel/MainFrame/Layout/LeftColumn" unique_id=1600000002 instance=ExtResource("2_aua8c")]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 1
+offset_left = 140.0
+offset_top = 380.0
+offset_right = 240.0
+offset_bottom = 480.0
+
 [node name="Divider1" type="Control" parent="RootPanel/MainFrame/Layout" unique_id=880376409]
 custom_minimum_size = Vector2(10, 0)
 layout_mode = 2
@@ -115,26 +131,26 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 3.0
 theme_override_constants/separation = 10
 
-[node name="ScripturesSection" type="VBoxContainer" parent="RootPanel/MainFrame/Layout/MiddleColumn" unique_id=1028268515]
+[node name="KeyItemsSection" type="VBoxContainer" parent="RootPanel/MainFrame/Layout/MiddleColumn" unique_id=1028268515]
 layout_mode = 2
 size_flags_vertical = 3
 offset_transform_enabled = true
 offset_transform_position = Vector2(0, 10)
 theme_override_constants/separation = 6
 
-[node name="ScripturesLabel" type="Label" parent="RootPanel/MainFrame/Layout/MiddleColumn/ScripturesSection" unique_id=2106003946]
+[node name="KeyItemsLabel" type="Label" parent="RootPanel/MainFrame/Layout/MiddleColumn/KeyItemsSection" unique_id=2106003946]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_egeyv")
 theme_override_font_sizes/font_size = 22
-text = "SCRIPTURES"
+text = "KEY ITEMS"
 vertical_alignment = 1
 
-[node name="ScriptureScroll" type="ScrollContainer" parent="RootPanel/MainFrame/Layout/MiddleColumn/ScripturesSection" unique_id=1329078435]
+[node name="KeyItemScroll" type="ScrollContainer" parent="RootPanel/MainFrame/Layout/MiddleColumn/KeyItemsSection" unique_id=1329078435]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="ScriptureGrid" type="GridContainer" parent="RootPanel/MainFrame/Layout/MiddleColumn/ScripturesSection/ScriptureScroll" unique_id=2010729445]
+[node name="KeyItemGrid" type="GridContainer" parent="RootPanel/MainFrame/Layout/MiddleColumn/KeyItemsSection/KeyItemScroll" unique_id=2010729445]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/h_separation = 10
@@ -172,6 +188,41 @@ size_flags_horizontal = 3
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 columns = 4
+
+[node name="PrayerbookOverlay" type="VBoxContainer" parent="RootPanel/MainFrame/Layout/MiddleColumn" unique_id=1600000010]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 6
+
+[node name="PrayerbookLabel" type="Label" parent="RootPanel/MainFrame/Layout/MiddleColumn/PrayerbookOverlay" unique_id=1600000011]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_egeyv")
+theme_override_font_sizes/font_size = 22
+text = "
+Axiom Knight's
+Prayerbook"
+
+[node name="PrayerbookScroll" type="ScrollContainer" parent="RootPanel/MainFrame/Layout/MiddleColumn/PrayerbookOverlay" unique_id=1600000012]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="PrayerbookGrid" type="GridContainer" parent="RootPanel/MainFrame/Layout/MiddleColumn/PrayerbookOverlay/PrayerbookScroll" unique_id=1600000013]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 3
+
+[node name="PrayerbookHint" type="Label" parent="RootPanel/MainFrame/Layout/MiddleColumn/PrayerbookOverlay" unique_id=1600000014]
+modulate = Color(1, 1, 1, 0.5)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_vfflu")
+theme_override_font_sizes/font_size = 14
+text = "ESC — CLOSE
+"
+horizontal_alignment = 1
 
 [node name="Divider2" type="Control" parent="RootPanel/MainFrame/Layout" unique_id=974437703]
 custom_minimum_size = Vector2(10, 0)

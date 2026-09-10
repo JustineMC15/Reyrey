@@ -1461,7 +1461,7 @@ func _build_fade_overlay() -> void:
 	_fade_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_fade_layer.add_child(_fade_rect)
-# --- Wondrous Star Potion ---
+# --- Primeval Star Potion ---
 
 const POTION_CATEGORIES := ["survival", "combat", "utility"]
 
@@ -1548,27 +1548,25 @@ func has_any_potion_slot_unlocked() -> bool:
 
 const POTION_SLOT_CEREMONY_TEXT := {
 	"survival": {
-		"title": "Survival Slot Unlocked",
-		"description": "A mixing slot for potions that protect and restore you — health, mana, and other survival effects.",
+		"title": "Starhearth Draught Unlocked",
+		"description": "A hearth kept lit against the worst of it. This slot mixes draughts that mend what's broken and refill what's spent.",
 	},
 	"combat": {
-		"title": "Combat Slot Unlocked",
-		"description": "A mixing slot for potions that empower you in a fight — extra damage, damage reduction, and other combat effects.",
+		"title": "Starbriar Draught Unlocked",
+		"description": "A thorn grown sharp with intent. This slot mixes draughts that turn the tide of a fight.",
 	},
 	"utility": {
-		"title": "Utility Slot Unlocked",
-		"description": "A mixing slot for potions that support your movement and exploration — speed, stamina, and other utility effects.",
+		"title": "Stargleam Draught Unlocked",
+		"description": "A shimmer that never sits still. This slot mixes draughts that carry you farther, faster, longer.",
 	},
 }
 
 
-## Same ceremony treatment as claim_ability(): a darkened screen, a
-## sequential reveal, and a "press enter to continue" prompt that's
-## always the last thing shown. Runs once per category (three times
-## total across the game — one per Wondrous Star Potion slot).
 func claim_potion_slot(category: String, player: Node) -> void:
 	if is_potion_slot_unlocked(category):
 		return
+
+	var is_first_slot := unlocked_potion_slots.is_empty()
 
 	unlocked_potion_slots[category] = true
 
@@ -1577,12 +1575,8 @@ func claim_potion_slot(category: String, player: Node) -> void:
 	if player and player.has_method("lock_input"):
 		player.lock_input()
 
-	await _run_potion_slot_claim_sequence(category, player)
+	await _run_potion_slot_claim_sequence(category, player, is_first_slot)
 
-	# The signal (which drives both the potion menu grid and the
-	# small corner tutorial hint) only fires once the full-screen
-	# ceremony has finished, so the corner hint doesn't pop up on top
-	# of the modal that's still explaining the same thing.
 	potion_slot_unlocked.emit(category)
 
 	if player and player.has_method("unlock_input"):
@@ -1591,7 +1585,7 @@ func claim_potion_slot(category: String, player: Node) -> void:
 	_transition_lock = false
 
 
-func _run_potion_slot_claim_sequence(category: String, player: Node) -> void:
+func _run_potion_slot_claim_sequence(category: String, player: Node, show_keybind_reminder: bool) -> void:
 	var text_data: Dictionary = POTION_SLOT_CEREMONY_TEXT.get(category, {})
 
 	var layer := CanvasLayer.new()
@@ -1614,7 +1608,7 @@ func _run_potion_slot_claim_sequence(category: String, player: Node) -> void:
 	center.add_child(vbox)
 
 	var title := Label.new()
-	title.text = text_data.get("title", category.capitalize() + " Slot Unlocked")
+	title.text = text_data.get("title", category.capitalize() + " Unlocked")
 	title.add_theme_font_size_override("font_size", 36)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.modulate.a = 0.0
@@ -1628,11 +1622,17 @@ func _run_potion_slot_claim_sequence(category: String, player: Node) -> void:
 	description_label.modulate.a = 0.0
 	vbox.add_child(description_label)
 
-	var keybind_label := Label.new()
-	keybind_label.text = "MIX POTIONS — P\nPOTION MAP — O"
-	keybind_label.modulate.a = 0.0
-	keybind_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(keybind_label)
+	# Only the first slot the player ever unlocks needs to explain
+	# where to actually go mix a potion — by the second and third
+	# slot, they already know.
+	var keybind_label: Label = null
+
+	if show_keybind_reminder:
+		keybind_label = Label.new()
+		keybind_label.text = "MIX POTIONS — P\nPOTION MAP — O"
+		keybind_label.modulate.a = 0.0
+		keybind_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		vbox.add_child(keybind_label)
 
 	var prompt := Label.new()
 	prompt.text = "Press Enter / Space to continue"
@@ -1676,7 +1676,10 @@ func _run_potion_slot_claim_sequence(category: String, player: Node) -> void:
 
 	await _fade_in_ceremony_element(title, 0.3, 0.45)
 	await _fade_in_ceremony_element(description_label, 0.3, 0.3)
-	await _fade_in_ceremony_element(keybind_label, 0.25, 0.2)
+
+	if keybind_label:
+		await _fade_in_ceremony_element(keybind_label, 0.25, 0.2)
+
 	await _fade_in_ceremony_element(prompt, 0.25, 0.0)
 
 	while not Input.is_action_just_pressed("ui_accept"):
@@ -1708,10 +1711,6 @@ func _run_potion_slot_claim_sequence(category: String, player: Node) -> void:
 
 	layer.queue_free()
 
-
-# Returns effect_ids ordered by ascending fragment_cost — the order
-# the linear Potion Unlock Map chains them in. Ties keep their
-# original potion_effect_data declaration order.
 func get_potion_effects_by_progression() -> Array:
 	var ids := potion_effect_data.keys()
 	var original_order := {}

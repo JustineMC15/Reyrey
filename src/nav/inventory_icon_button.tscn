@@ -9,15 +9,15 @@ corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slot_hover"]
-bg_color = Color(0.14, 0.12, 0.08, 0.7)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slot_pressed"]
+bg_color = Color(0.04, 0.035, 0.02, 0.8)
 corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slot_pressed"]
-bg_color = Color(0.04, 0.035, 0.02, 0.8)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slot_hover"]
+bg_color = Color(0.14, 0.12, 0.08, 0.7)
 corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
@@ -35,17 +35,16 @@ corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
-[node name="IconButton" type="Button"]
+[node name="IconButton" type="Button" unique_id=691126434]
 custom_minimum_size = Vector2(72, 72)
 clip_contents = true
-focus_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_slot_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_slot_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_slot_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_slot_hover")
 theme_override_styles/focus = SubResource("StyleBoxFlat_slot_focus")
 script = ExtResource("1_nlupq")
 
-[node name="Icon" type="TextureRect" parent="."]
+[node name="Icon" type="TextureRect" parent="." unique_id=212700881]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -56,20 +55,21 @@ mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="CountLabel" type="Label" parent="."]
+[node name="CountLabel" type="Label" parent="." unique_id=875335282]
 visible = false
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
 offset_left = -36.0
 offset_top = -24.0
 grow_horizontal = 0
 grow_vertical = 0
-mouse_filter = 2
-theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 2
-horizontal_alignment = 2
+theme_override_font_sizes/font_size = 16
 text = "0"
+horizontal_alignment = 2
