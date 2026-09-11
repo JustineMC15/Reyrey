@@ -55,7 +55,7 @@ const OPENING_LINES := [
 	#{"speaker": "???", "text": "Before the world halts its eternal dance."},
 #]
 
-const ENDING_BASE_LINES := [
+const ENDING_BAD_LINES := [
 	{"speaker": "Justine Taroy", "text": "Thank you for playing Reyrey's demo!", "image": preload("res://assets/ui/storyscenes/ending-placeholder-resized.png")},
 	{"speaker": "Justine Taroy", "text": "You completed 0 shrines. That's fine."},
 	{"speaker": "Justine Taroy", "text": "Unfortunately, this is as far as I was able to get for this demo."},
@@ -65,7 +65,7 @@ const ENDING_BASE_LINES := [
 	{"speaker": "Justine Taroy", "text": "That I haven't implemented yet but is fully working"},
 ]
 
-const ENDING_TRUE_LINES := [
+const ENDING_BASE_LINES := [
 	{"speaker": "Justine Taroy", "text": "Thank you for playing Reyrey's demo!", "image": preload("res://assets/ui/storyscenes/ending-placeholder-resized.png")},
 	{"speaker": "Justine Taroy", "text": "You completed 1 shrine. Nice!"},
 	{"speaker": "Justine Taroy", "text": "Unfortunately, this is as far as I was able to get for this demo."},
@@ -75,7 +75,7 @@ const ENDING_TRUE_LINES := [
 	{"speaker": "Justine Taroy", "text": "That I haven't implemented yet but is fully working"},
 ]
 
-const ENDING_BAD_LINES := [
+const ENDING_TRUE_LINES := [
 	{"speaker": "Justine Taroy", "text": "Thank you for playing Reyrey's demo!", "image": preload("res://assets/ui/storyscenes/ending-placeholder-resized.png")},
 	{"speaker": "Justine Taroy", "text": "You completed 2 shrines. Nice one!"},
 	{"speaker": "Justine Taroy", "text": "Unfortunately, this is as far as I was able to get for this demo."},
