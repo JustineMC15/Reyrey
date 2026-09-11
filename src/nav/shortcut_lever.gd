@@ -8,7 +8,7 @@ class_name ShortcutLever
 ## id if pulling it should open more than one blocker at once.
 ##
 ## Scene: this node IS the Area2D (collision_layer = 4,
-## collision_mask = 5). Drag your prompt Panel into `prompt_panel`.
+## collision_mask = 5). Drag prompt Panel into `prompt_panel`.
 ##
 ## Visual can be either TileMapLayer or Sprite2D. Optional PullSound
 ## (AudioStreamPlayer2D) plays the moment it's pulled.

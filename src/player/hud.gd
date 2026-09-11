@@ -1,5 +1,106 @@
 extends Control
 
+class PotionReadyIndicator extends Control:
+	const GLOW_COLOR := Color(0.55, 0.85, 1.0, 1.0)  # icy star-blue — swap if you'd rather match a specific slot color
+	const ARC_START_DEG := 200.0
+	const ARC_END_DEG := 340.0
+	const RADIUS_X := 90.0
+	const RADIUS_Y := 30.0
+	const CORE_WIDTH := 3.0
+	const OUTER_GLOW_WIDTH := 12.0
+	const PULSE_MIN := 0.5
+	const PULSE_MAX := 1.0
+	const PULSE_HALF_PERIOD := 0.6
+	const FADE_DURATION := 0.35
+
+	var _pulse_alpha := 1.0
+	var _pulse_tween: Tween
+	var _fade_tween: Tween
+	var _is_active := false
+
+	func _ready() -> void:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+		modulate.a = 0.0
+		visible = false
+
+	func set_active(active: bool, instant: bool = false) -> void:
+		if active == _is_active and not instant:
+			return
+
+		_is_active = active
+
+		if _fade_tween:
+			_fade_tween.kill()
+			_fade_tween = null
+
+		if instant:
+			visible = active
+			modulate.a = 1.0 if active else 0.0
+
+			if active:
+				_start_pulse()
+			else:
+				_stop_pulse()
+
+			return
+
+		if active:
+			visible = true
+			_start_pulse()
+
+			_fade_tween = create_tween()
+			_fade_tween.tween_property(self, "modulate:a", 1.0, FADE_DURATION)
+		else:
+			_fade_tween = create_tween()
+			_fade_tween.tween_property(self, "modulate:a", 0.0, FADE_DURATION)
+			_fade_tween.tween_callback(_stop_pulse)
+			_fade_tween.tween_callback(func(): visible = false)
+
+	func _start_pulse() -> void:
+		if _pulse_tween:
+			_pulse_tween.kill()
+
+		_pulse_alpha = PULSE_MIN
+
+		_pulse_tween = create_tween()
+		_pulse_tween.set_loops()
+		_pulse_tween.tween_method(
+			_set_pulse_alpha, PULSE_MIN, PULSE_MAX, PULSE_HALF_PERIOD
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		_pulse_tween.tween_method(
+			_set_pulse_alpha, PULSE_MAX, PULSE_MIN, PULSE_HALF_PERIOD
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+	func _stop_pulse() -> void:
+		if _pulse_tween:
+			_pulse_tween.kill()
+			_pulse_tween = null
+
+	func _set_pulse_alpha(value: float) -> void:
+		_pulse_alpha = value
+		queue_redraw()
+
+	func _draw() -> void:
+		var points := PackedVector2Array()
+		var segments := 32
+		var start_rad := deg_to_rad(ARC_START_DEG)
+		var end_rad := deg_to_rad(ARC_END_DEG)
+
+		for i in range(segments + 1):
+			var t: float = float(i) / float(segments)
+			var angle: float = lerp(start_rad, end_rad, t)
+			points.append(Vector2(cos(angle) * RADIUS_X, sin(angle) * RADIUS_Y))
+
+		var glow_color := Color(
+			GLOW_COLOR.r, GLOW_COLOR.g, GLOW_COLOR.b, GLOW_COLOR.a * _pulse_alpha * 0.35
+		)
+		draw_polyline(points, glow_color, OUTER_GLOW_WIDTH, true)
+
+		var core_color := Color(
+			GLOW_COLOR.r, GLOW_COLOR.g, GLOW_COLOR.b, GLOW_COLOR.a * _pulse_alpha
+		)
+		draw_polyline(points, core_color, CORE_WIDTH, true)
+
 @onready var hp_bar: TextureProgressBar = $HpBar
 @onready var hp_bar_glow: TextureProgressBar = $HpBarGlow
 @onready var hp_damage_bar: TextureProgressBar = $HpDamageBar
@@ -18,7 +119,8 @@ extends Control
 
 @onready var star_fragment_reward: StarFragmentReward = $StarFragmentReward
 @onready var key_item_reward: KeyItemReward = $KeyItemReward
-var potion_indicator: Label
+
+var potion_indicator: PotionReadyIndicator
 
 #  HP bar sizing 
 # 9-patch stretch on HPBar/HPBarGlow/HPDamageBar/HpEmptyBar is 100px
@@ -170,13 +272,10 @@ func _ready() -> void:
 		player.mp_changed.connect(_on_player_mp_changed)
 	if not player.stamina_changed.is_connected(_on_player_stamina_changed):
 		player.stamina_changed.connect(_on_player_stamina_changed)
-	potion_indicator = Label.new()
-	potion_indicator.text = "POTION READY"
-	potion_indicator.add_theme_font_size_override("font_size", 16)
-	potion_indicator.add_theme_color_override("font_color", Color(0.7, 0.9, 1.0, 1.0))
-	potion_indicator.position = Vector2(120, 212)
-	potion_indicator.visible = GameState.potion_charged
+	potion_indicator = PotionReadyIndicator.new()
+	potion_indicator.position = Vector2(270, 165)
 	add_child(potion_indicator)
+	potion_indicator.set_active(GameState.potion_charged, true)
 
 	GameState.potion_mix_changed.connect(_on_potion_state_changed)
 	GameState.potion_used.connect(_on_potion_state_changed)
@@ -184,8 +283,7 @@ func _ready() -> void:
 
 func _on_potion_state_changed() -> void:
 	if potion_indicator:
-		potion_indicator.visible = GameState.potion_charged
-
+		potion_indicator.set_active(GameState.potion_charged)
 
 func _on_star_fragments_changed(amount: int) -> void:
 	star_fragment_reward.show_new_total(amount)

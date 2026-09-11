@@ -335,7 +335,7 @@ func _populate_prayerbook_grid() -> void:
 		)
 		button.custom_minimum_size = Vector2(110, 110)
 		button.hovered.connect(_show_scripture)
-# --- Potion flask state ---
+#  Potion flask state
 
 func _get_potion_state_code() -> String:
 	var code := ""

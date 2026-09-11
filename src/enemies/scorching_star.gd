@@ -17,9 +17,9 @@ enum MovementType {
 @export var movement_distance: float = 50.0
 @export var movement_speed: float = 2.0
 
-# =========================
+
 # ATTACK SETTINGS
-# =========================
+
 
 @export var attack_damage: int = 1
 @export var attack_radius: float = 100.0

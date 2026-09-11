@@ -108,9 +108,9 @@ func trigger() -> void:
 	telegraph_time = fall_delay
 
 
-# -
+
 # Rock generation
-# -
+
 
 func _generate_rock_properties() -> void:
 	var shape_index: int = randi_range(
@@ -157,9 +157,9 @@ func _generate_rock_properties() -> void:
 			fall_speed *= 0.9
 
 
-# -
+
 # Collision
-# -
+
 
 func _setup_collision() -> void:
 	var rock_shape: CircleShape2D = CircleShape2D.new()
@@ -190,9 +190,9 @@ func _setup_collision() -> void:
 	damage_collision.shape = damage_shape
 
 
-# -
+
 # Main physics
-# -
+
 
 func _physics_process(delta: float) -> void:
 	if is_breaking:
@@ -206,9 +206,9 @@ func _physics_process(delta: float) -> void:
 	_process_falling(delta)
 
 
-# -
+
 # Telegraph
-# -
+
 
 func _process_telegraph(delta: float) -> void:
 	telegraph_time -= delta
@@ -239,9 +239,9 @@ func _begin_falling() -> void:
 	queue_redraw()
 
 
-# -
+
 # Falling
-# -
+
 
 func _process_falling(delta: float) -> void:
 	if is_breaking:
@@ -287,9 +287,9 @@ func _check_arena_collision() -> void:
 	if collision_count > 0:
 		_break()
 
-# -
+
 # Player damage
-# -
+
 
 func _check_player_hit() -> void:
 	if has_hit_player:
@@ -310,9 +310,9 @@ func _check_player_hit() -> void:
 			break
 
 
-# -
+
 # Break
-# -
+
 func _break() -> void:
 	if is_breaking:
 		return
@@ -364,9 +364,9 @@ func _process_breaking(delta: float) -> void:
 	queue_redraw()
 
 
-# -
+
 # Drawing
-# -
+
 
 func _draw() -> void:
 	if is_breaking:

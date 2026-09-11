@@ -1,10 +1,6 @@
 extends Area2D
 class_name EndingTrigger
 
-## Place in the telescope room at the top of the Tower. Picks which
-## of the three endings to play based on shrine_count, then returns
-## to the main menu.
-
 var _triggered := false
 
 

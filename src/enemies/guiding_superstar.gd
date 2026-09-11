@@ -79,9 +79,9 @@ enum State {
 }
 
 
-# -
+
 # Boss stats
-# -
+
 
 const MAX_HEALTH: int = 20
 const CONTACT_DAMAGE: int = 1
@@ -91,9 +91,9 @@ const REPOSITION_SPEED: float = 500.0
 const LUNGE_SPEED: float = 1600.0
 
 
-# -
+
 # Wind-ups
-# -
+
 
 const LUNGE_WINDUP: float = 0.65
 const GROUND_SLAM_WINDUP: float = 0.8
@@ -105,18 +105,18 @@ const LUNGE_RECOIL_START: float = 0.45
 const LUNGE_RECOIL_SPEED: float = 500.0
 
 
-# -
+
 # Attack durations
-# -
+
 
 const LUNGE_DURATION: float = 0.35
 const REPOSITION_DURATION: float = 0.55
 const FOLLOW_SPIN_DURATION: float = 2.6
 
 
-# -
+
 # Slam movement
-# -
+
 
 const GROUND_SLAM_RISE_SPEED: float = 220.0
 const GROUND_SLAM_FALL_SPEED: float = 1700.0
@@ -125,9 +125,9 @@ const CEILING_SLAM_DESCEND_SPEED: float = 220.0
 const CEILING_SLAM_RISE_SPEED: float = 1700.0
 
 
-# -
+
 # Recovery / behavior
-# -
+
 
 const REST_MIN_DURATION: float = 1.0
 const REST_MAX_DURATION: float = 1.55
@@ -140,18 +140,18 @@ const CLOSE_RANGE: float = 500.0
 const FAR_RANGE: float = 800.0
 
 
-# -
+
 # Ground slam
-# -
+
 
 const GROUND_SLAM_RADIUS: float = 240.0
 const GROUND_SLAM_VERTICAL_RANGE: float = 135.0
 const GROUND_SLAM_DAMAGE: int = 1
 
 
-# -
+
 # Ceiling slam
-# -
+
 
 const CEILING_SLAM_DAMAGE: int = 1
 
@@ -164,9 +164,9 @@ const ROCK_MIN_DELAY: float = 2.2
 const ROCK_MAX_DELAY: float = 3.0
 
 
-# -
+
 # Screen shake
-# -
+
 
 const GROUND_SLAM_SHAKE_STRENGTH: float = 9.0
 const GROUND_SLAM_SHAKE_DURATION: float = 0.18
@@ -182,9 +182,9 @@ const DEFEATED_MODULATE := Color(0.3, 0.3, 0.3, 1.0)
 
 const DEATH_FALL_GRAVITY: float = 2200.0
 const DEATH_FALL_MAX_SPEED: float = 1600.0
-# -
+
 # Procedural animation
-# -
+
 
 const BASE_SPIN_SPEED: float = 1.2
 
@@ -205,9 +205,9 @@ const FOLLOW_SCALE_Y: float = 0.98
 const MOVEMENT_SCALE_SMOOTHING: float = 14.0
 
 
-# -
+
 # State
-# -
+
 
 var state: State = State.INACTIVE
 var state_time: float = 0.0
@@ -291,9 +291,9 @@ func _ready() -> void:
 	set_physics_process(false)
 
 
-# -
+
 # Effect animation
-# -
+
 
 func _play_effect(animation_name: String) -> void:
 	if effect_sprite_2d == null:
@@ -345,9 +345,9 @@ func _play_charge_sound() -> void:
 	charge_sound.play()
 
 
-# -
+
 # BossEncounter interface
-# -
+
 
 func set_rock_spawn_area(area: Area2D) -> void:
 	rock_spawn_area = area
@@ -478,9 +478,9 @@ func reset_boss() -> void:
 	set_physics_process(false)
 
 
-# -
+
 # Main physics
-# -
+
 
 func _physics_process(delta: float) -> void:
 	if not active or death_started:
@@ -520,9 +520,9 @@ func _physics_process(delta: float) -> void:
 			pass
 
 
-# -
+
 # Player analysis
-# -
+
 
 func _update_player() -> void:
 	var player_node: Node = get_tree().get_first_node_in_group(
@@ -568,9 +568,9 @@ func _player_vertical_difference() -> float:
 	return player.global_position.y - global_position.y
 
 
-# -
+
 # FSM
-# -
+
 
 func _change_state(new_state: State) -> void:
 	state = new_state
@@ -649,9 +649,9 @@ func _change_state(new_state: State) -> void:
 			pass
 
 
-# -
+
 # REST
-# -
+
 
 func _state_rest() -> void:
 	velocity = Vector2.ZERO
@@ -660,9 +660,9 @@ func _state_rest() -> void:
 		_change_state(State.DECIDE)
 
 
-# -
+
 # DECIDE
-# -
+
 
 func _state_decide() -> void:
 	_choose_next_attack()
@@ -805,9 +805,9 @@ func _weighted_random_choice(choices: Array) -> State:
 	return fallback_state
 
 
-# -
+
 # LUNGE
-# -
+
 
 func _state_lunge(delta: float) -> void:
 	if state_time < LUNGE_RECOIL_START:
@@ -875,9 +875,9 @@ func _state_lunge(delta: float) -> void:
 	_change_state(State.REST)
 
 
-# -
+
 # GROUND SLAM
-# -
+
 
 func _state_ground_slam(delta: float) -> void:
 	if state_time < GROUND_SLAM_WINDUP:
@@ -1017,9 +1017,9 @@ func _ground_slam_impact() -> void:
 	)
 
 
-# -
+
 # CEILING SLAM
-# -
+
 
 func _state_ceiling_slam(delta: float) -> void:
 	if state_time < CEILING_SLAM_WINDUP:
@@ -1210,9 +1210,9 @@ func _spawn_falling_rocks() -> void:
 		)
 
 
-# -
+
 # REPOSITION
-# -
+
 
 func _state_reposition(delta: float) -> void:
 	if state_time < REPOSITION_WINDUP:
@@ -1245,9 +1245,9 @@ func _state_reposition(delta: float) -> void:
 	_change_state(State.REST)
 
 
-# -
+
 # FOLLOW SPIN
-# -
+
 
 func _state_follow_spin(delta: float) -> void:
 	if state_time < FOLLOW_SPIN_WINDUP:
@@ -1303,9 +1303,9 @@ func _state_follow_spin(delta: float) -> void:
 	_change_state(State.REST)
 
 
-# -
+
 # Visual animation
-# -
+
 
 func _update_visual_animation(delta: float) -> void:
 	if slam_impact_timer > 0.0:
@@ -1374,9 +1374,9 @@ func _set_visual_scale(
 	)
 
 
-# -
+
 # Damage / death
-# -
+
 
 func take_damage(amount: int) -> void:
 	if not active:
@@ -1400,9 +1400,9 @@ func take_damage(amount: int) -> void:
 		die()
 
 
-# -
+
 # FallingRock cleanup
-# -
+
 
 func _cleanup_spawned_rocks() -> void:
 	for rock: Node in spawned_rocks:
@@ -1412,9 +1412,9 @@ func _cleanup_spawned_rocks() -> void:
 	spawned_rocks.clear()
 
 
-# -
+
 # Death
-# -
+
 
 func die() -> void:
 	if death_started:
@@ -1511,9 +1511,9 @@ func _fall_to_boss_floor() -> void:
 		await get_tree().physics_frame
 
 	velocity = Vector2.ZERO
-# -
+
 # Collision / combat activation
-# -
+
 
 func _set_combat_active(enabled: bool) -> void:
 	if collision_shape:
@@ -1556,9 +1556,9 @@ func _set_combat_active(enabled: bool) -> void:
 		)
 
 
-# -
+
 # Camera
-# -
+
 
 func _camera_shake(
 	strength: float,

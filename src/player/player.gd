@@ -13,6 +13,77 @@ class RecallAnchorMarker extends Node2D:
 		draw_circle(Vector2.ZERO, 10.0 * pulse, Color(1.3, 1.5, 2.2, 0.9))
 		draw_arc(Vector2.ZERO, 20.0, 0.0, TAU, 32, Color(1.3, 1.5, 2.2, 0.5), 3.0)
 
+class PotionBurstEffect extends Node2D:
+	enum BurstShape { STAR_4, CIRCLE, DIAMOND }
+
+	var shape: int = BurstShape.CIRCLE
+	var burst_color: Color = Color.WHITE
+	var duration: float = 0.5
+	var max_radius: float = 80.0
+
+	var _elapsed := 0.0
+	const _BURST_PORTION := 0.5  # fraction of duration spent expanding before it contracts
+
+	func _process(delta: float) -> void:
+		_elapsed += delta
+		queue_redraw()
+
+		if _elapsed >= duration:
+			queue_free()
+
+	func _draw() -> void:
+		var progress: float = clamp(_elapsed / duration, 0.0, 1.0)
+
+		var radius: float
+		var alpha: float
+
+		if progress < _BURST_PORTION:
+			var t: float = progress / _BURST_PORTION
+			radius = lerp(0.0, max_radius, ease(t, 0.4))
+			alpha = lerp(0.0, 1.0, t)
+		else:
+			var t: float = (progress - _BURST_PORTION) / (1.0 - _BURST_PORTION)
+			radius = lerp(max_radius, max_radius * 0.1, ease(t, 2.0))
+			alpha = lerp(1.0, 0.0, t)
+
+		var fill_color := Color(burst_color.r, burst_color.g, burst_color.b, burst_color.a * alpha * 0.55)
+		var shine_color := Color(burst_color.r, burst_color.g, burst_color.b, burst_color.a * alpha)
+
+		match shape:
+			BurstShape.STAR_4:
+				_draw_star(radius, fill_color, shine_color)
+			BurstShape.CIRCLE:
+				draw_circle(Vector2.ZERO, radius, fill_color)
+				draw_arc(Vector2.ZERO, radius, 0.0, TAU, 40, shine_color, 3.0)
+			BurstShape.DIAMOND:
+				_draw_diamond(radius, fill_color, shine_color)
+
+	func _draw_star(radius: float, fill_color: Color, shine_color: Color) -> void:
+		var points := PackedVector2Array()
+		var inner_radius := radius * 0.32
+
+		for i in range(8):
+			var angle: float = i * PI / 4.0
+			var r: float = radius if i % 2 == 0 else inner_radius
+			points.append(Vector2(cos(angle), sin(angle)) * r)
+
+		draw_colored_polygon(points, fill_color)
+
+		for i in range(4):
+			var angle: float = i * PI / 2.0
+			var ray_end: Vector2 = Vector2(cos(angle), sin(angle)) * radius * 1.5
+			draw_line(Vector2.ZERO, ray_end, shine_color, 2.0)
+
+	func _draw_diamond(radius: float, fill_color: Color, shine_color: Color) -> void:
+		var points := PackedVector2Array([
+			Vector2(0, -radius),
+			Vector2(radius * 0.65, 0),
+			Vector2(0, radius),
+			Vector2(-radius * 0.65, 0),
+		])
+
+		draw_colored_polygon(points, fill_color)
+		draw_polyline(points + PackedVector2Array([points[0]]), shine_color, 2.0, true)
 
 signal health_changed(current_health, max_health)
 signal mp_changed(current_mp, max_mp)
@@ -94,8 +165,12 @@ const POGO_BOUNCE_VELOCITY_WEAK := -550.0
 # Recall
 const RECALL_MP_COST := 3
 const RECALL_LEASH_RANGE := 900.0
-
-const INVINCIBILITY_TIME := 0.5
+const POTION_EFFECT_VISUALS := {
+	"survival": {"shape": PotionBurstEffect.BurstShape.STAR_4, "color": Color(1.0, 0.78, 0.2, 1.0)},   # Starhearth — amber
+	"combat": {"shape": PotionBurstEffect.BurstShape.CIRCLE, "color": Color(0.25, 0.65, 1.0, 1.0)},    # Starbriar — cerulean
+	"utility": {"shape": PotionBurstEffect.BurstShape.DIAMOND, "color": Color(0.35, 0.95, 0.85, 1.0)}, # Stargleam — aquamarine
+}
+const INVINCIBILITY_TIME := 0.6
 
 # Melee hit feedback (sword / upslash / pogo / dash landing on something)
 const ATTACK_HIT_SHAKE_STRENGTH := 5.0
@@ -298,11 +373,9 @@ var facing_direction := 1.0
 @onready var fire_sound: AudioStreamPlayer2D = $Sound/FireJumpSound
 @onready var footstep_sound: AudioStreamPlayer2D = $Sound/FootstepSound
 @onready var ground_slam_sound: AudioStreamPlayer2D = $Sound/SlamSound
+@onready var potion_use_sound: AudioStreamPlayer2D = $Sound/PotionUseSound
+@onready var potion_use_fail_sound: AudioStreamPlayer2D = $Sound/PotionUseFail
 
-
-# FACING
-# All player animations are authored facing RIGHT.
-# This is the only function that changes player-facing direction.
 # FACING
 # All player animations are authored facing RIGHT.
 # This is the only function that changes player-facing direction.
@@ -1539,10 +1612,13 @@ func _physics_process(delta: float) -> void:
 
 	# POTION INPUT
 
-	if Input.is_action_just_pressed("use_potion") \
-	and GameState.potion_charged:
-
-		GameState.use_potion(self)
+	if Input.is_action_just_pressed("use_potion"):
+		if GameState.potion_charged:
+			potion_use_sound.play()
+			GameState.use_potion(self)
+			_play_potion_effects()
+		elif GameState.has_any_potion_slot_unlocked():
+			potion_use_fail_sound.play()
 
 	# COYOTE TIMER
 
@@ -2203,6 +2279,21 @@ func restore_full_stamina() -> void:
 	stamina_regen_timer = 0.0
 	stamina_changed.emit(stamina, max_stamina)
 
+func _play_potion_effects() -> void:
+	for category in GameState.POTION_CATEGORIES:
+		if not GameState.is_potion_slot_unlocked(category):
+			continue
+
+		var visual_data: Dictionary = POTION_EFFECT_VISUALS.get(category, {})
+
+		var effect := PotionBurstEffect.new()
+		effect.shape = visual_data.get("shape", PotionBurstEffect.BurstShape.CIRCLE)
+		effect.burst_color = visual_data.get("color", Color.WHITE)
+		effect.duration = 0.5
+		effect.position = Vector2(0, -80)
+		effect.z_index = 5
+
+		add_child(effect)
 
 func _process_stamina_regen(delta: float) -> void:
 	if not is_on_floor():

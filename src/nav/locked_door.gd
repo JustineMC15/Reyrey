@@ -13,7 +13,7 @@ class_name LockedDoor
 ##   UnlockSound       — optional AudioStreamPlayer2D, plays on unlock
 ##   DeniedSound       — optional AudioStreamPlayer2D, plays when the
 ##                       player interacts without the right key
-## Drag your prompt Panel into `prompt_panel`.
+## Drag prompt Panel into `prompt_panel`.
 ##
 ## If using TileMapLayer, it should contain only this door's tiles.
 

@@ -2,8 +2,6 @@ extends Control
 
 const PANEL_FADE_DURATION := 0.2
 
-## Drop your button-press SFX here once you have it — every menu
-## navigation button plays it before tweening to the next panel.
 @export var click_sound: AudioStream
 
 @onready var title_label: Label = $Title

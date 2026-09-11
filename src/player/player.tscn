@@ -47,6 +47,8 @@
 [ext_resource type="Texture2D" uid="uid://b2g51i3pmvj3r" path="res://assets/characters/player/walkstop.png" id="29_axsi3"]
 [ext_resource type="Texture2D" uid="uid://ds6r82psf6m12" path="res://assets/characters/player/upslasheffect.png" id="35_rhq4p"]
 [ext_resource type="Texture2D" uid="uid://dle3y4jer03s6" path="res://assets/characters/player/pogoeffect.png" id="36_bgxyk"]
+[ext_resource type="AudioStream" uid="uid://cj4131vpvxldm" path="res://assets/sound/sfx/potiondrink.mp3" id="48_u3ern"]
+[ext_resource type="AudioStream" uid="uid://ctm5xn5fwoudp" path="res://assets/sound/sfx/potionopenfail.mp3" id="49_vhlnr"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_axsi3"]
 shader = ExtResource("8_utg71")
@@ -3238,3 +3240,11 @@ volume_db = 3.0
 stream = ExtResource("23_flmxu")
 volume_db = 8.0
 pitch_scale = 0.3
+
+[node name="PotionUseSound" type="AudioStreamPlayer2D" parent="Sound" unique_id=1387532731]
+stream = ExtResource("48_u3ern")
+volume_db = 3.0
+pitch_scale = 4.0
+
+[node name="PotionUseFail" type="AudioStreamPlayer2D" parent="Sound" unique_id=1954762719]
+stream = ExtResource("49_vhlnr")

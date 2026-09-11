@@ -4,17 +4,6 @@ class_name PotionSlot
 ## One-time pickup unlocking a single Primeval Star Potion mixing
 ## slot (Survival / Combat / Utility). Exactly three of these exist
 ## in the world — set `category` per instance in the Inspector.
-##
-## This does NOT grant an effect. Effects unlock separately through
-## lifetime star fragment totals (see GameState.potion_effect_data).
-## Picking this up only opens the category so an already-unlocked
-## effect can be loaded into it at a checkpoint.
-##
-## After the pickup flourish plays, GameState runs the same
-## darkened-screen claim ceremony as claiming a scripture (title,
-## description, keybind reminder, sequential reveal, press-enter
-## prompt) — once per category, three times total across the game.
-##
 ## Scene children expected:
 ##   Sprite2D
 ##   CollisionShape2D

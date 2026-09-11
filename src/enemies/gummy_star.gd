@@ -19,9 +19,9 @@ enum MovementType {
 @export var movement_speed: float = 2.0
 
 
-# =========================
+
 # ATTACK SETTINGS
-# =========================
+
 
 @export var attack_cooldown: float = 2.0
 @export var charge_time: float = 0.6
@@ -31,18 +31,18 @@ var can_attack := true
 var is_attacking := false
 
 
-# =========================
+
 # VARIABLES
-# =========================
+
 
 var start_position: Vector2
 var movement_time: float = 0.0
 var is_dying := false
 
 
-# =========================
+
 # NODES
-# =========================
+
 
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 
@@ -73,16 +73,16 @@ func _physics_process(delta: float) -> void:
 	if is_dying:
 		return
 
-	# =========================
+	
 	# SPIN
-	# =========================
+	
 
 	rotation += spin_speed * delta
 	attack_effect.global_rotation = deg_to_rad(90)
 
-	# =========================
+	
 	# FLOATING MOVEMENT
-	# =========================
+	
 
 	movement_time += delta * movement_speed
 	var offset := sin(movement_time) * movement_distance
@@ -98,17 +98,15 @@ func _physics_process(delta: float) -> void:
 			position = start_position + Vector2(-offset, offset)
 
 
-	# =========================
+	
 	# CHECK FOR PLAYER
-	# =========================
+	
 
 	if can_attack and not is_attacking:
 		check_for_player()
 
 
-# ============================================================
 # ATTACK
-# ============================================================
 
 func check_for_player() -> void:
 	var bodies := attack_area.get_overlapping_bodies()
@@ -127,9 +125,9 @@ func attack() -> void:
 	can_attack = false
 
 
-	# --
+	
 	# CHARGE
-	# --
+	
 
 	attack_effect.visible = true
 	attack_effect.play("charge")
@@ -152,9 +150,9 @@ func attack() -> void:
 		return
 
 
-	# --
+	
 	# ACTIVATE SLOW FIELD
-	# --
+	
 
 	attack_effect.play("explosion")
 
@@ -170,16 +168,16 @@ func attack() -> void:
 		return
 
 
-	# --
+	
 	# DEACTIVATE SLOW FIELD
-	# --
+	
 
 	slow_field.monitoring = false
 
 
-	# --
+	
 	# REMOVE GLOW
-	# --
+	
 
 	var fade_tween := create_tween()
 
@@ -198,9 +196,9 @@ func attack() -> void:
 	is_attacking = false
 
 
-	# --
+	
 	# COOLDOWN
-	# --
+	
 
 	await get_tree().create_timer(attack_cooldown).timeout
 
@@ -208,9 +206,7 @@ func attack() -> void:
 		can_attack = true
 
 
-# ============================================================
 # DAMAGE
-# ============================================================
 
 func take_damage(amount: int) -> void:
 	if is_dying:
@@ -237,9 +233,7 @@ func flash_damage() -> void:
 		animated_sprite_2d.modulate = Color.WHITE
 
 
-# ============================================================
 # DEATH
-# ============================================================
 
 func die() -> void:
 	if is_dying:

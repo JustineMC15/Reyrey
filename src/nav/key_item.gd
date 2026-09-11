@@ -4,7 +4,6 @@ class_name KeyItem
 ## A pickup that unlocks any LockedDoor sharing its key_id. Press E
 ## while standing in it to collect. Won't respawn once collected —
 ## GameState remembers it across saves.
-##
 ## Scene children expected:
 ##   Sprite2D
 ##   CollisionShape2D

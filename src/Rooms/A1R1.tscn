@@ -27,7 +27,7 @@
 [ext_resource type="AudioStream" uid="uid://d17oywoci4dns" path="res://assets/sound/sfx/spike.mp3" id="24_1gs0d"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p4je6"]
-size = Vector2(1968, 1042)
+size = Vector2(1811, 1042)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bgl6i"]
 shader = ExtResource("5_7paa3")
@@ -189,12 +189,12 @@ layout_mode = 3
 anchors_preset = 0
 offset_left = 15341.0
 offset_top = -2072.0
-offset_right = 17309.0
+offset_right = 17152.0
 offset_bottom = -1030.0
 mouse_filter = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CameraLimitZone" unique_id=499883628]
-position = Vector2(16325, -1551)
+position = Vector2(16246.5, -1551)
 shape = SubResource("RectangleShape2D_p4je6")
 
 [node name="Environments" type="Node2D" parent="." unique_id=1833260432]

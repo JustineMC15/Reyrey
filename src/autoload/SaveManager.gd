@@ -3,21 +3,12 @@ extends Node
 const SAVE_DIR := "user://saves/"
 const SETTINGS_PATH := "user://settings.json"
 
-# Audio bus names. "Music" and "SFX" must exist as child buses of
-# "Master" in the project's Audio panel (Godot editor, bottom dock)
-# for these to have any effect — this is a one-time manual setup
-# step, not something a script can create. Until those buses exist,
-# set_bus_volume() silently no-ops for them (same as if the slider
-# weren't there at all), so nothing breaks in the meantime.
+
 const BUS_MASTER := "Master"
 const BUS_MUSIC := "Music"
 const BUS_SFX := "SFX"
 
 var current_slot: int = 1
-
-# Prevents _load_settings_and_apply() from triggering three redundant
-# file writes (one per bus) while it is still applying the values it
-# just read from disk.
 var _is_loading_settings := false
 
 

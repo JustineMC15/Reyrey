@@ -2,16 +2,6 @@
 extends Control
 class_name CameraBounds
 
-## Defines the room's camera limits. Select this node directly and
-## drag its native resize handles in the 2D viewport — same
-## mechanism as any Panel/ColorRect in this project. Position and
-## size ARE the limit rect. No CollisionShape2D, no manual limit_*
-## numbers, no ruler math.
-##
-## Leave Layout on its default (position + size, no anchors) —
-## that's automatic since this node's parent is a plain Node2D room
-## root, not a Control container.
-
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 

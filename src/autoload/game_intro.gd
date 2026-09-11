@@ -1,18 +1,4 @@
 extends CanvasLayer
-# game_intro.gd — autoload singleton "GameIntro"
-#
-# One-time poem intro for a brand new save. Deliberately separate
-# from Cutscene (which still handles every other story beat) — this
-# has its own black backdrop, its own drifting-ash atmosphere
-# (borrowed from main_menu.tscn's GPUParticles2D setup), and its own
-# line-by-line fade pacing suited to a short verse rather than
-# dialogue.
-#
-# Usage:
-#   await GameIntro.play()
-#
-# game.gd is responsible for keeping room music silent until this
-# returns — see the suppress_music param on Game.load_room().
 
 const BODY_FONT := preload("res://assets/fonts/Seshat.otf")
 const ASH_TEXTURE := preload("res://assets/environment/parallax/ash.png")
@@ -102,10 +88,8 @@ func _build_ui() -> void:
 	citation_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	citation_label.custom_minimum_size = Vector2(640, 0)
 
-	# Wider left margin than right — reads as a set-apart, indented
-	# attribution line rather than another line of verse.
 	_citation_wrapper = MarginContainer.new()
-	_citation_wrapper.add_theme_constant_override("margin_left", 170)
+	_citation_wrapper.add_theme_constant_override("margin_left", 200)
 	_citation_wrapper.add_theme_constant_override("margin_right", 10)
 	_citation_wrapper.modulate.a = 0.0
 	_citation_wrapper.add_child(citation_label)

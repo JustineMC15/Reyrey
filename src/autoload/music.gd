@@ -10,7 +10,7 @@ var current_music: AudioStream = null
 
 
 # The music that belongs to the current room.
-#
+
 # This is kept separate from current_music because current_music may
 # temporarily contain the battle music during an enemy gauntlet.
 var room_music: AudioStream = null

@@ -1,6 +1,5 @@
 extends CanvasLayer
-# potion_ui.gd — autoload singleton "PotionUI"
-#
+
 # Left column: three sections, Survival / Combat / Utility, top to
 # bottom. Locked slot -> placeholder. Unlocked slot -> every effect
 # in that category, unlocked ones clickable, locked ones shown dim

@@ -3,10 +3,7 @@ class_name ShortcutObject
 
 ## Any blocking piece — door, bridge, ladder, or breakable wall —
 ## that permanently opens once its shortcut_id has been activated by
-## a ShortcutLever elsewhere in the world. Mechanically these are all
-## the same thing (a blocker that becomes passable); only the visual
-## and CollisionShape2D you author differ per use.
-##
+## a ShortcutLever elsewhere in the world. 
 ## Scene:
 ##   CollisionShape2D — collision_layer = 1
 ##   TileMapLayer     — optional visual

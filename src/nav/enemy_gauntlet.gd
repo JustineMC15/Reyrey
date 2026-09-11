@@ -3,13 +3,7 @@ class_name EnemyGauntlet
 
 ## Walking into trigger_area closes target_door and spawns wave 1.
 ## Each wave is a Node2D full of enemy scenes, already placed in the
-## editor but hidden until its turn. When the last enemy in a wave is
-## freed (i.e. dies — every enemy in this project is expected to
-## queue_free() itself on death), the next wave shows itself. Once the
-## final wave is cleared, target_door opens and, optionally, a shortcut
-## is activated — so a gauntlet can double as the thing that unlocks a
-## shortcut back to an earlier area.
-##
+## editor but hidden until its turn. 
 ## Clearing it once is remembered in GameState, so revisiting the
 ## room never re-locks the door or re-spawns the fight.
 ##

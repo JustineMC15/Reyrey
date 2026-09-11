@@ -57,14 +57,20 @@ var shrine_count: int = 0
 var claimed_shrines: Dictionary = {}
 
 const SHRINE_MP_GAINS: Array[int] = [
-	4, 3, 3, 3, 3, 2, 2, 2, 2,
-	2, 2, 2, 2, 1, 1, 1, 1
+	4, 3, 3, 3, 2,
+	2, 2, 2, 1, 1,
+	1, 1, 1, 1, 1,
+	1, 1
 ]
-# LCM of 2 and 3, Maxes out to 42 mana with base 6 included
+# LCM of 2 and 3, Maxes out to 36 mana with base 6 included
 const SHRINE_STAMINA_GAINS: Array[float] = [
-	15.0, 12.0, 12.0, 10.0, 10.0, 8.0, 8.0, 8.0, 8.0,
-	6.0, 6.0, 6.0, 6.0, 4.0, 4.0, 4.0, 4.0
+	20.0, 15.0, 12.0, 10.0, 9.0,
+	8.0, 7.0, 7.0, 6.0, 6.0,
+	5.0, 4.0, 4.0, 3.0, 3.0,
+	3.0, 3.0
 ]
+# Maxes out to 225 stamina, 2.25x of the base 100
+
 #  Armor 
 
 var armor_tier: int = 0

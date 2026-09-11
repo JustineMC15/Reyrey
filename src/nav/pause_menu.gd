@@ -2,8 +2,6 @@ extends CanvasLayer
 
 const FADE_DURATION := 0.2
 
-## Drop your button-press SFX here once you have it — every menu
-## navigation button plays it before tweening to the next panel.
 @export var click_sound: AudioStream
 
 @onready var root_panel: Control = $RootPanel

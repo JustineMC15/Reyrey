@@ -6,22 +6,9 @@ class_name InventoryIconButton
 ## mouse hover just grabs keyboard focus under the hood, so both
 ## input methods share one highlight (this node's "Focus" style
 ## override in the Inspector) and one signal.
-##
-## Resize/reposition this button freely in the 2D viewport — its
-## parent is a plain Control, not a layout container, so nothing
-## snaps it back. The icon auto-shrinks to fit whatever box you draw,
-## because Icon's Expand Mode is "Ignore Size": the source image's
-## own resolution never forces this button bigger than you want it.
-##
-## Border look lives entirely in Theme Overrides -> Styles on this
-## node (Normal / Hover / Focus / Pressed). Swap any of them for a
-## StyleBoxTexture pointing at hand-drawn border art later — no
-## script changes needed.
 
 signal hovered(id: String)
 
-## Set on the currency slot only. Appended after the number shown by
-## set_count(), e.g. " Fragments".
 @export var count_suffix: String = ""
 
 var item_id: String = ""

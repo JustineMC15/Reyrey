@@ -171,6 +171,7 @@ This game uses assets from the following creators. Thank you to all of them.
 - **Pimen** — Holy Spell Effect. Free for personal/commercial use; no resale/redistribution as standalone assets. [pimen.itch.io](https://pimen.itch.io/holy-spell-effect)
 - **Cainos** — Pixel Art Platformer - Village Props. Free for personal/commercial use; no resale/redistribution as standalone assets. [cainos.itch.io](https://cainos.itch.io/pixel-art-platformer-village-props)
 - **ApyrYon** — Free Visual Effects. Free for personal/commercial use; no resale/redistribution as standalone assets, no NFTs. [apyryon.itch.io](https://apyryon.itch.io/visual-effects)
+- **Luis Zuno (Ansimuz)** — GothicVania Church. Assets are licensed under Creative Commons Zero (CC0) and may be used, modified, and redistributed freely for personal or commercial projects. [ansimuz.itch.io]/gothicvania-church-pack
 
 ### Music
 - "Night Vigil" — Kevin MacLeod (incompetech.com), CC BY 4.0

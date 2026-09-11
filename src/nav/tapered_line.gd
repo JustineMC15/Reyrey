@@ -5,13 +5,6 @@ class_name TaperedLine
 ## Decorative separator: thin at both ends, thickest in the middle,
 ## instead of a plain full-width bar. Works as a vertical or
 ## horizontal divider depending on `orientation`.
-##
-## Everything is Inspector-editable and updates live in the 2D
-## viewport (this script runs @tool): color, max thickness, and how
-## sharply it pinches at the ends (taper_power — higher pinches
-## thinner, closer to 1.0 spreads thickness more evenly along
-## the line). Resize the node itself to change the line's length.
-
 enum LineOrientation {
 	VERTICAL,
 	HORIZONTAL

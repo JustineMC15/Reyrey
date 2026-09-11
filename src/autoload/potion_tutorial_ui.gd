@@ -1,21 +1,4 @@
 extends CanvasLayer
-# potion_tutorial_ui.gd — autoload singleton "PotionTutorialUI"
-#
-# Two one-shot prompts, styled like the movement/jump/attack
-# tutorials in tutorial_ui.tscn, dismissed the same way
-# AbilityTutorialUI dismisses its prompts — by the player actually
-# doing the thing, not by a timer.
-#
-# "potion_menu" — appears the first time a Primeval Star Potion slot
-# is unlocked (the world pickup), pointing at the mixing menu (P)
-# and the potion map (O). Dismissed the first time either menu opens.
-#
-# "use_potion" — appears the first time the player has a charged
-# mix, pointing at the drink keybind (G). Dismissed the first time a
-# potion is actually drunk.
-#
-# Both tracked through GameState's existing tutorials_seen
-# dictionary, so nothing new is needed in the save format.
 
 const TUTORIAL_FONT := preload("res://assets/fonts/Seshat.otf")
 const FADE_IN_DURATION := 0.25

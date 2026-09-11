@@ -1,9 +1,6 @@
 extends Button
 class_name SaveSlotCard
 
-## Layout lives in the "Layout" VBoxContainer. Resize the card via
-## SlotCard's Custom Minimum Size; rebalance preview vs. label space
-## via Size Flags → Stretch Ratio on Preview/Label in the Inspector.
 
 signal picked(slot: int)
 

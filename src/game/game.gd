@@ -16,13 +16,7 @@ var room_loading: Dictionary = {}
 
 # Music assigned to each room.
 # null = no music assigned yet.
-#
-# When you find a song, replace null with:
-# preload("res://audio/music/your_song.ogg")
-#
-# Example:
-# "res://src/rooms/room_02-valecourt-fields.tscn":
-#     preload("res://assets/sound/music/valecourt.ogg"),
+
 var room_music: Dictionary = {
 	"res://src/rooms/A0R1.tscn":
 		preload("res://assets/sound/music/Medieval Rondo.ogg"),
@@ -498,22 +492,6 @@ func position_player_at_checkpoint(checkpoint_id: String) -> void:
 
 
 var current_room_camera_bounds: CameraBounds = null
-
-#  Camera limits: single owner 
-#
-# Every camera-limit change in the game — the room's base
-# CameraBounds on load, and any CameraLimitZone override — goes
-# through set_camera_limits(). Only one tween can ever be driving
-# camera.limit_* at a time (a new call always kills the previous
-# one), so a leftover zone tween from a room you just left can never
-# bleed into the room you just entered, and overlapping zones can
-# never fight each other.
-#
-# _camera_limit_zone_stack tracks which CameraLimitZones the player
-# is currently standing inside, most-recently-entered last. Exiting a
-# zone falls back to whichever zone is still on top of the stack
-# (rather than always snapping straight to the room's default), so
-# two overlapping zones resolve sensibly instead of racing.
 
 var _camera_limit_tween: Tween
 var _camera_limit_zone_stack: Array = []  # each entry: {"zone": Node, "rect": Rect2i}
