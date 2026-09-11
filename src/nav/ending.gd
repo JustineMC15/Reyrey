@@ -15,13 +15,18 @@ func _on_area_entered(area: Area2D) -> void:
 	_triggered = true
 
 	var lines: Array
-
-	if GameState.shrine_count <= 0:
+	if GameState.shrine_count <= 0: # Working ending for now
 		lines = StoryContent.ENDING_BAD_LINES
-	elif GameState.shrine_count >= 17:
+	elif GameState.shrine_count >= 2:
 		lines = StoryContent.ENDING_TRUE_LINES
 	else:
 		lines = StoryContent.ENDING_BASE_LINES
+	#if GameState.shrine_count <= 0:
+		#lines = StoryContent.ENDING_BAD_LINES
+	#elif GameState.shrine_count >= 17:
+		#lines = StoryContent.ENDING_TRUE_LINES
+	#else:
+		#lines = StoryContent.ENDING_BASE_LINES
 
 	await Cutscene.play(lines)
 

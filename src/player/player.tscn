@@ -4,7 +4,9 @@
 [ext_resource type="Script" uid="uid://cp4ne7ggpfte0" path="res://src/player/hud.gd" id="2_7wf8o"]
 [ext_resource type="Texture2D" uid="uid://bkai2euw4fg6o" path="res://assets/characters/player/attack.png" id="3_7wf8o"]
 [ext_resource type="PackedScene" uid="uid://bqf7ng8cql6a5" path="res://src/nav/star_fragment_reward.tscn" id="3_a4vah"]
+[ext_resource type="AudioStream" uid="uid://bgmhd4xfw8bpe" path="res://assets/sound/player_movement_samples/08_Step_rock_02.wav" id="3_rvvlk"]
 [ext_resource type="Shader" uid="uid://cy4rg6v7oo0ji" path="res://src/shader/hp_empty_bar.gdshader" id="4_4ptlo"]
+[ext_resource type="AudioStream" uid="uid://dke2rk3ulubfi" path="res://assets/sound/player_movement_samples/12_Step_wood_03.wav" id="4_7anmh"]
 [ext_resource type="Texture2D" uid="uid://bcd8xg1grriwu" path="res://assets/characters/player/dash.png" id="4_afsxn"]
 [ext_resource type="Texture2D" uid="uid://c7wjjor1f3pwc" path="res://assets/ui/playerUI/hpframe.png" id="4_e7e1q"]
 [ext_resource type="PackedScene" uid="uid://bgycmhqr6esc2" path="res://src/nav/key_item_reward.tscn" id="4_keyrw"]
@@ -2842,7 +2844,7 @@ animations = [{
 [node name="Player" type="CharacterBody2D" unique_id=647682657]
 collision_layer = 2
 script = ExtResource("1_jtmj1")
-footstep_sounds = Array[AudioStream]([ExtResource("20_74hqa")])
+footstep_sounds = Array[AudioStream]([ExtResource("20_74hqa"), ExtResource("3_rvvlk"), ExtResource("4_7anmh")])
 
 [node name="PlayerUI" type="CanvasLayer" parent="." unique_id=965729947]
 
@@ -3032,7 +3034,7 @@ grow_vertical = 0
 position = Vector2(0, -101)
 scale = Vector2(0.47, 0.47)
 sprite_frames = SubResource("SpriteFrames_vlew8")
-animation = &"idle"
+animation = &"run"
 autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=443081615]
@@ -3056,10 +3058,10 @@ limit_enabled = false
 position_smoothing_enabled = true
 drag_horizontal_enabled = true
 drag_vertical_enabled = true
-drag_left_margin = 0.08
-drag_top_margin = 0.05
-drag_right_margin = 0.08
-drag_bottom_margin = 0.05
+drag_left_margin = 0.04
+drag_top_margin = 0.02
+drag_right_margin = 0.04
+drag_bottom_margin = 0.02
 
 [node name="Collision" type="Node2D" parent="." unique_id=485835211]
 

@@ -105,7 +105,6 @@ var armor_data: Dictionary = {
 func increase_armor_tier() -> void:
 	armor_tier = clamp(armor_tier + 1, 0, 5)
 
-
 func get_armor_data() -> Dictionary:
 	return armor_data.get(armor_tier, armor_data[0])
 
@@ -447,6 +446,7 @@ func claim_anvil(anvil_id: String, player: Node) -> void:
 	claimed_anvils[anvil_id] = true
 
 	max_health += ANVIL_HP_GAIN
+	armor_tier = clamp(armor_tier + 1, 0, 5)
 
 	if player:
 		player.max_health = max_health
@@ -467,7 +467,6 @@ func claim_anvil(anvil_id: String, player: Node) -> void:
 		player.unlock_input()
 
 	_transition_lock = false
-
 
 func _run_anvil_claim_sequence(player: Node) -> void:
 	var layer := CanvasLayer.new()

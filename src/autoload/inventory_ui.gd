@@ -227,9 +227,7 @@ func _populate() -> void:
 	potion_flask_button.icon_rect.texture = _get_potion_flask_icon()
 
 	_reset_prayerbook_view()
-
 	_wire_focus_neighbors()
-
 	_show_sword()
 
 func _spawn_icon(

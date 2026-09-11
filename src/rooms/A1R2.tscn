@@ -35,6 +35,7 @@
 [ext_resource type="AudioStream" uid="uid://b3n4d1ad587db" path="res://assets/sound/music/The_Old_Tower_Inn.mp3" id="25_aa4mm"]
 [ext_resource type="Script" uid="uid://5vbw01sd268j" path="res://src/nav/simple_door.gd" id="26_aa4mm"]
 [ext_resource type="Script" uid="uid://c7018je3jyd5p" path="res://src/nav/shortcut_object.gd" id="27_vtjdt"]
+[ext_resource type="PackedScene" uid="uid://dl2et3v1vfhlo" path="res://src/nav/anvil.tscn" id="35_810mc"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dcm3l"]
 size = Vector2(4943, 931)
@@ -751,6 +752,10 @@ metadata/_custom_type_script = "uid://twmqytbf8u0p"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Interactables/HazardZone2" unique_id=1527795554]
 position = Vector2(-13100, 1272.25)
 shape = SubResource("RectangleShape2D_1lj3s")
+
+[node name="Anvil" parent="Interactables" unique_id=1578504986 instance=ExtResource("35_810mc")]
+position = Vector2(-3129, 1752)
+anvil_id = "ANVIL_1"
 
 [node name="Gates" type="Node2D" parent="." unique_id=268251979]
 

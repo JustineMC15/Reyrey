@@ -334,8 +334,8 @@ func reset_gauntlet() -> void:
 	_current_wave = -1
 	_current_wave_alive.clear()
 
-	if target_door and target_door.has_method("close"):
-		target_door.close()
+	if target_door and target_door.has_method("open"):
+		target_door.open()
 
 	for wave in waves:
 		if is_instance_valid(wave):

@@ -472,6 +472,7 @@ func reset_after_death() -> void:
 	damage_reduction_active = false
 	speed_boost_active = false
 	infinite_stamina_active = false
+	is_slowed = false
 	# Restore player interaction.
 	detection_area.monitoring = true
 	sword_hitbox.monitoring = false
@@ -1985,7 +1986,7 @@ func _physics_process(delta: float) -> void:
 		is_walk_stopping = false
 		walkstop_played = false
 
-	elif is_gliding and GameState.has_ability("dash"):
+	elif is_gliding:
 		if direction != 0.0:
 			velocity.x = move_toward(
 				velocity.x,
@@ -2110,7 +2111,7 @@ func _physics_process(delta: float) -> void:
 
 				animated_sprite_2d.play("sprint" if litany_hold_active else "run")
 
-				if animated_sprite_2d.frame in [5, 13, 22]:
+				if animated_sprite_2d.frame in [1,4]:
 
 					if last_footstep_frame != animated_sprite_2d.frame:
 
@@ -2281,7 +2282,7 @@ func restore_full_stamina() -> void:
 
 func _play_potion_effects() -> void:
 	for category in GameState.POTION_CATEGORIES:
-		if not GameState.is_potion_slot_unlocked(category):
+		if GameState.selected_potion_effects.get(category, "") == "":
 			continue
 
 		var visual_data: Dictionary = POTION_EFFECT_VISUALS.get(category, {})
