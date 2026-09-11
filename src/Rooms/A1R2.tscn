@@ -28,7 +28,7 @@
 [ext_resource type="AudioStream" uid="uid://f30bc8ce3w1q" path="res://assets/sound/sfx/thud3.wav" id="21_da6rh"]
 [ext_resource type="Script" uid="uid://ubj82f4sgt82" path="res://src/nav/breakable_wall.gd" id="21_uqir6"]
 [ext_resource type="AudioStream" uid="uid://d6gan3ldw81i" path="res://assets/sound/sfx/thud2.wav" id="21_vnj02"]
-[ext_resource type="Texture2D" uid="uid://dpdir4ii64mgf" path="res://assets/ui/key_items/KEY_ICON6-Farmkey.png" id="22_dcm3l"]
+[ext_resource type="Texture2D" uid="uid://dpdir4ii64mgf" path="res://assets/ui/key_items/farm_key.png" id="22_dcm3l"]
 [ext_resource type="AudioStream" uid="uid://d17oywoci4dns" path="res://assets/sound/sfx/spike.mp3" id="23_ggu20"]
 [ext_resource type="AudioStream" uid="uid://b5igireasqjqj" path="res://assets/sound/sfx/menu.mp3" id="24_1lj3s"]
 [ext_resource type="Script" uid="uid://b8hftrdaurelt" path="res://src/nav/enemy_gauntlet.gd" id="24_c0j42"]

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dpdir4ii64mgf"
-path="res://.godot/imported/KEY_ICON6-Farmkey.png-8210368b1628cf5e2782264c50e96765.ctex"
+uid="uid://dle3y4jer03s6"
+path="res://.godot/imported/pogoeffect.png-c827a9ea1f83155fac4924ae9384a285.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/key_items/KEY_ICON6-Farmkey.png"
-dest_files=["res://.godot/imported/KEY_ICON6-Farmkey.png-8210368b1628cf5e2782264c50e96765.ctex"]
+source_file="res://assets/characters/player/pogoeffect.png"
+dest_files=["res://.godot/imported/pogoeffect.png-c827a9ea1f83155fac4924ae9384a285.ctex"]
 
 [params]
 
