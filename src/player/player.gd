@@ -162,7 +162,7 @@ var mp: int:
 		GameState.current_mp = value
 
 var invincible := false
-
+var attack_facing_direction := 1.0
 var sword_damage := 1
 var sword_has_hit := false
 var _sword_damage_base := 1
@@ -303,6 +303,9 @@ var facing_direction := 1.0
 # FACING
 # All player animations are authored facing RIGHT.
 # This is the only function that changes player-facing direction.
+# FACING
+# All player animations are authored facing RIGHT.
+# This is the only function that changes player-facing direction.
 func _apply_direction_to_effects(direction: float) -> void:
 	var sign_x := -1.0 if direction < 0.0 else 1.0
 
@@ -318,31 +321,34 @@ func _apply_direction_to_effects(direction: float) -> void:
 	wind_effect.scale.x = abs(_wind_effect_base_scale.x) * sign_x
 	wind_effect.position.x = _wind_effect_base_position.x * sign_x
 
-	upslash_effect.scale.x = abs(_upslash_effect_base_scale.x) * sign_x
-	upslash_effect.position.x = _upslash_effect_base_position.x * sign_x
-	upslash_effect.flip_h = sign_x < 0.0
+	pogo_effect.flip_h = direction < 0.0
+	upslash_effect.flip_h = direction < 0.0
 
-	pogo_effect.scale.x = abs(_pogo_effect_base_scale.x) * sign_x
-	pogo_effect.position.x = _pogo_effect_base_position.x * sign_x
-	pogo_effect.flip_h = sign_x < 0.0
+
 func _set_facing(direction: float) -> void:
 	if direction > 0.0:
 		facing_direction = 1.0
 		animated_sprite_2d.flip_h = false
-		sword_hitbox.scale.x = 1.0
 		dash_hitbox.scale.x = 1.0
-		pogo_hitbox.scale.x = 1.0
-		upslash_hitbox.scale.x = 1.0
+
+		if not is_attacking:
+			sword_hitbox.scale.x = 1.0
+			pogo_hitbox.scale.x = 1.0
+			upslash_hitbox.scale.x = 1.0
 
 	elif direction < 0.0:
 		facing_direction = -1.0
 		animated_sprite_2d.flip_h = true
-		sword_hitbox.scale.x = -1.0
 		dash_hitbox.scale.x = -1.0
-		pogo_hitbox.scale.x = -1.0
-		upslash_hitbox.scale.x = -1.0
 
-	_apply_direction_to_effects(facing_direction)
+		if not is_attacking:
+			sword_hitbox.scale.x = -1.0
+			pogo_hitbox.scale.x = -1.0
+			upslash_hitbox.scale.x = -1.0
+
+	if not is_attacking:
+		_apply_direction_to_effects(facing_direction)
+
 # DEATH RESET
 
 func reset_after_death() -> void:
@@ -548,48 +554,86 @@ func cancel_attack() -> void:
 	upslash_effect.visible = false
 	upslash_hitbox.monitoring = false
 
+	# Resync attack hitboxes with the player's current facing
+	# after the attack has ended.
+	if facing_direction > 0.0:
+		sword_hitbox.scale.x = 1.0
+		pogo_hitbox.scale.x = 1.0
+		upslash_hitbox.scale.x = 1.0
+	else:
+		sword_hitbox.scale.x = -1.0
+		pogo_hitbox.scale.x = -1.0
+		upslash_hitbox.scale.x = -1.0
+
+	_apply_direction_to_effects(facing_direction)
+
 	if animated_sprite_2d.animation == "attack" \
 	or animated_sprite_2d.animation == "pogo" \
 	or animated_sprite_2d.animation == "upslash":
 		animated_sprite_2d.play("idle")
 
-
 func _start_sword_attack() -> void:
 	current_attack_type = AttackType.SWORD
+
+	# Capture the direction at the moment the attack begins.
+	attack_facing_direction = facing_direction
+
+	if attack_facing_direction > 0.0:
+		sword_hitbox.scale.x = 1.0
+	else:
+		sword_hitbox.scale.x = -1.0
 
 	animated_sprite_2d.visible = true
 	animated_sprite_2d.play("attack")
 
 	slash_effect.visible = true
-	slash_effect.flip_h = animated_sprite_2d.flip_h
+	slash_effect.flip_h = attack_facing_direction < 0.0
 	slash_effect.play("slash")
 
 	sword_sound.play()
-
 
 func _start_pogo_attack() -> void:
 	current_attack_type = AttackType.POGO
 	_pogo_hazard_bounce_used = false
 
+	# Capture the direction at the moment the attack begins.
+	attack_facing_direction = facing_direction
+
+	if attack_facing_direction > 0.0:
+		pogo_hitbox.scale.x = 1.0
+	else:
+		pogo_hitbox.scale.x = -1.0
+
 	animated_sprite_2d.visible = true
 	animated_sprite_2d.play("pogo")
 
 	pogo_effect.visible = true
+	pogo_effect.flip_h = attack_facing_direction < 0.0
 	pogo_effect.play("slash")
 
 	sword_sound.play()
 
+	pogo_hitbox.monitoring = true
+
 func _start_upslash_attack() -> void:
 	current_attack_type = AttackType.UPSLASH
+
+	# Capture the direction at the moment the attack begins.
+	attack_facing_direction = facing_direction
+
+	if attack_facing_direction > 0.0:
+		upslash_hitbox.scale.x = 1.0
+	else:
+		upslash_hitbox.scale.x = -1.0
 
 	animated_sprite_2d.visible = true
 	animated_sprite_2d.play("upslash")
 
 	upslash_effect.visible = true
+	upslash_effect.flip_h = attack_facing_direction < 0.0
 	upslash_effect.play("slash")
 
 	sword_sound.play()
-
 
 func _on_melee_hit() -> void:
 	_camera_shake(ATTACK_HIT_SHAKE_STRENGTH, ATTACK_HIT_SHAKE_DURATION)
@@ -614,14 +658,10 @@ func sword_attack() -> void:
 
 	sword_hitbox.monitoring = false
 
-func pogo_attack() -> void:
-	pogo_hitbox.monitoring = true
-
-	await get_tree().physics_frame
-
+func _check_pogo_hit() -> void:
 	var hit_something := false
 	var hit_hazard := false
-	var hazard_areas: Array = []
+	var hazard_areas: Array = []	
 
 	for body in pogo_hitbox.get_overlapping_bodies():
 		if body.is_in_group("enemies") or body.is_in_group("attackable"):
@@ -636,18 +676,20 @@ func pogo_attack() -> void:
 			hit_hazard = true
 			hazard_areas.append(area)
 
-	pogo_hitbox.monitoring = false
+	if not hit_something:
+		return
 
-	if hit_something:
-		pogo_empowered = spend_stamina(POGO_STAMINA_COST)
-		_pogo_hazard_bounce_used = true
+	sword_has_hit = true
 
-		jumps_used = 0
-		velocity.y = (
-			POGO_BOUNCE_VELOCITY
-			if pogo_empowered
-			else POGO_BOUNCE_VELOCITY_WEAK
-		)
+	pogo_empowered = spend_stamina(POGO_STAMINA_COST)
+	_pogo_hazard_bounce_used = true
+
+	jumps_used = 0
+	velocity.y = (
+		POGO_BOUNCE_VELOCITY
+		if pogo_empowered
+		else POGO_BOUNCE_VELOCITY_WEAK
+	)
 
 	if hit_hazard:
 		camera_shake(4.0, 0.1)
@@ -1092,6 +1134,8 @@ func die() -> void:
 	# Fully complete the respawn before die() finishes.
 	await GameState.respawn_player()
 
+	# Recharge the existing potion mix after death.
+	GameState.refill_potion_at_checkpoint()
 
 # FIRE ANIMATION
 
@@ -1936,10 +1980,7 @@ func _physics_process(delta: float) -> void:
 
 	# SWORD / POGO / UPSLASH HIT DETECTION
 
-	if is_attacking \
-	and not sword_has_hit \
-	and animated_sprite_2d.frame >= 1 \
-	and animated_sprite_2d.frame <= 7:
+	if is_attacking and not sword_has_hit:
 
 		match current_attack_type:
 			AttackType.SWORD:
@@ -1949,8 +1990,7 @@ func _physics_process(delta: float) -> void:
 
 			AttackType.POGO:
 				if animated_sprite_2d.animation == "pogo":
-					sword_has_hit = true
-					pogo_attack()
+					_check_pogo_hit()
 
 			AttackType.UPSLASH:
 				if animated_sprite_2d.animation == "upslash":

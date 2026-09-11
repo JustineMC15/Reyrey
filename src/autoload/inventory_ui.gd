@@ -107,6 +107,10 @@ const PRAYERBOOK_DESCRIPTION := "Every knight is taught to trust the stars. I wa
 var is_open := false
 var prayerbook_open := false
 
+const KEY_ITEM_ICON_PATH_FORMAT := "res://assets/ui/key_items/%s.png"
+const KEY_ITEM_DESCRIPTION := "Opens a matching lock somewhere along the road."
+
+var _key_item_icon_cache: Dictionary = {}
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -193,6 +197,17 @@ func _populate() -> void:
 	_clear_grid(key_item_grid)
 	_clear_grid(shard_grid)
 
+	var key_ids := GameState.collected_keys.keys()
+	key_ids.sort()
+
+	for key_id in key_ids:
+		var key_button := _spawn_icon(
+			key_item_grid,
+			key_id,
+			_get_key_item_icon(key_id)
+		)
+		key_button.hovered.connect(_show_key_item)
+
 	var shard_ids := GameState.claimed_shrines.keys()
 
 	shard_ids.sort_custom(func(a, b):
@@ -216,7 +231,6 @@ func _populate() -> void:
 	_wire_focus_neighbors()
 
 	_show_sword()
-
 
 func _spawn_icon(
 	grid: GridContainer,
@@ -245,12 +259,15 @@ func _wire_focus_neighbors() -> void:
 	potion_flask_button.focus_neighbor_bottom = potion_flask_button.get_path_to(prayerbook_button)
 	prayerbook_button.focus_neighbor_top = prayerbook_button.get_path_to(potion_flask_button)
 
-	var shard_buttons := shard_grid.get_children()
+	var middle_buttons: Array = key_item_grid.get_children()
+
+	if middle_buttons.is_empty():
+		middle_buttons = shard_grid.get_children()
 
 	var first_middle_button: Control = null
 
-	if not shard_buttons.is_empty():
-		first_middle_button = shard_buttons[0]
+	if not middle_buttons.is_empty():
+		first_middle_button = middle_buttons[0]
 
 	if first_middle_button:
 		sword_button.focus_neighbor_right = sword_button.get_path_to(first_middle_button)
@@ -259,7 +276,6 @@ func _wire_focus_neighbors() -> void:
 		potion_flask_button.focus_neighbor_right = potion_flask_button.get_path_to(first_middle_button)
 		prayerbook_button.focus_neighbor_right = prayerbook_button.get_path_to(first_middle_button)
 		first_middle_button.focus_neighbor_left = first_middle_button.get_path_to(prayerbook_button)
-
 
 # Prayerbook overlay 
 # The prayerbook doesn't float above the middle column — it swaps
@@ -477,4 +493,36 @@ func _show_shard(shrine_id: String) -> void:
 	detail_shard_header.show()
 
 	detail_description.text = shard_data.get("text", "")
+	detail_description.show()
+
+func _get_key_item_icon(key_id: String) -> Texture2D:
+	if _key_item_icon_cache.has(key_id):
+		return _key_item_icon_cache[key_id]
+
+	var path := KEY_ITEM_ICON_PATH_FORMAT % key_id
+	var texture: Texture2D = null
+
+	if ResourceLoader.exists(path):
+		texture = load(path)
+	else:
+		push_warning("InventoryUI: no key item icon at " + path)
+
+	_key_item_icon_cache[key_id] = texture
+
+	return texture
+
+
+func _show_key_item(key_id: String) -> void:
+	_clear_detail()
+
+	detail_name_top.text = "Key"
+	detail_name_top.show()
+
+	detail_name_bottom.text = key_id.capitalize()
+	detail_name_bottom.show()
+
+	detail_icon.texture = _get_key_item_icon(key_id)
+	detail_icon.show()
+
+	detail_description.text = KEY_ITEM_DESCRIPTION
 	detail_description.show()

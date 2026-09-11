@@ -29,7 +29,7 @@ Built solo — programming, systems, and level design — in **Godot 4 / GDScrip
 | Jump / Double Jump *(Spark Flame)* | `Space`, `Z` | Bottom Face Button (Cross / A / B) |
 | Glide *(Vigil Wind)* — hold while falling | `Space`, `Z` | Bottom Face Button (Cross / A / B) |
 | Dash *(Holy Lance)* / Dash Chain & Sprint *(Litany Step)* | `Shift`, `C` | Right Shoulder (R1 / RB) |
-| Attack | `F`, `X`, Left Mouse | Left Face Button (Square / X / Y) |
+| Attack | `J`, `X`, Left Mouse | Left Face Button (Square / X / Y) |
 | Upslash | `W`, Up Arrow | Left Stick Up |
 | Pogo | `S`, Down Arrow | Left Stick Down |
 | Ground Slam *(Martyr's Drop)* | `V`, `Ctrl` | Right Face Button (Circle / B / A) |
@@ -38,7 +38,7 @@ Built solo — programming, systems, and level design — in **Godot 4 / GDScrip
 | Inventory | `I` | — |
 | Mix Potions | `P` | — |
 | Potion Unlock Map | `O` | — |
-| Use Potion | `G` | — |
+| Use Potion | `F` | — |
 | Pause | `Escape` | Start / Menu / + |
 
 Wall Cling *(Wick Ember)* and Ledge Grab *(Censer Swing)* have no dedicated bind — they trigger contextually: hold toward a wall while airborne, or approach a ledge while falling.

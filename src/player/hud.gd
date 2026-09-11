@@ -164,7 +164,6 @@ func _ready() -> void:
 			_on_key_item_collected
 		)
 
-#  in _ready(), replace the three connect lines 
 	if not player.health_changed.is_connected(_on_player_health_changed):
 		player.health_changed.connect(_on_player_health_changed)
 	if not player.mp_changed.is_connected(_on_player_mp_changed):
@@ -175,7 +174,7 @@ func _ready() -> void:
 	potion_indicator.text = "POTION READY"
 	potion_indicator.add_theme_font_size_override("font_size", 16)
 	potion_indicator.add_theme_color_override("font_color", Color(0.7, 0.9, 1.0, 1.0))
-	potion_indicator.position = Vector2(20, 112)
+	potion_indicator.position = Vector2(120, 212)
 	potion_indicator.visible = GameState.potion_charged
 	add_child(potion_indicator)
 

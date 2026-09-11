@@ -95,7 +95,7 @@ func _on_potion_mix_changed() -> void:
 	if GameState.has_seen_tutorial("use_potion"):
 		return
 
-	_show_prompt("DRINK POTION\nG", "use_potion")
+	_show_prompt("DRINK POTION\nF", "use_potion")
 
 
 func _on_potion_used() -> void:
