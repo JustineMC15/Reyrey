@@ -17,9 +17,9 @@ const HEADER_FONT := preload("res://assets/fonts/Junicode.ttf")
 const BODY_FONT := preload("res://assets/fonts/Seshat.otf")
 
 const CATEGORY_LABELS := {
-	"survival": "SURVIVAL",
-	"combat": "COMBAT",
-	"utility": "UTILITY",
+	"survival": "Starhearth",
+	"combat": "Starbriar",
+	"utility": "Stargleam",
 }
 
 const SELECTED_MODULATE := Color(1.3, 1.1, 0.6, 1.0)

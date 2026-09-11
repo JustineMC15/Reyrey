@@ -430,7 +430,7 @@ func reset_boss_encounter() -> void:
 		trigger_area.set_deferred("monitorable", true)
 
 	if target_door and target_door.has_method("open"):
-		target_door.close()
+		target_door.open()
 
 	if is_instance_valid(boss):
 		if boss.has_method("reset_boss"):
