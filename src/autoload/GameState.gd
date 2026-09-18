@@ -1497,86 +1497,61 @@ var potion_effect_data: Dictionary = {
 	"survival_full_heal": {
 		"name": "Vital Draught",
 		"category": "survival",
-		"description": "Restores your HP to full the moment it's drunk.",
+		"description": "Some wounds are not meant to be remembered.\n\nRestores your HP to full the moment it's drunk.",
 		"fragment_cost": 300,
 		"action": "restore_full_health",
 	},
 	"survival_full_mana": {
 		"name": "Mnemonic Draught",
 		"category": "survival",
-		"description": "Restores your MP to full the moment it's drunk.",
+		"description": "Even in a world that forgets, some things refuse to leave the mind.\n\nRestores your MP to full the moment it's drunk.",
 		"fragment_cost": 300,
 		"action": "restore_full_mp",
 	},
-	"combat_double_sword": {
-		"name": "Ember Edge",
-		"category": "combat",
-		"description": "Doubles your sword damage for a short time.",
-		"fragment_cost": 600,
-		"duration": 15.0,
-		"modifiers": [
-			{"stat": "sword_damage", "type": "multiply", "value": 2.0}
-		],
-	},
-	"combat_damage_reduction": {
-		"name": "Aegis Draught",
-		"category": "combat",
-		"description": "Halves incoming combat damage for a short time.",
-		"fragment_cost": 600,
-		"duration": 15.0,
-		"modifiers": [
-			{"stat": "damage_taken", "type": "multiply", "value": 0.5}
-		],
-	},
-	"utility_speed": {
-		"name": "Fleetfoot Draught",
-		"category": "utility",
-		"description": "Increases movement speed for a short time.",
-		"fragment_cost": 450,
-		"duration": 15.0,
-		"modifiers": [
-			{"stat": "move_speed", "type": "multiply", "value": 1.5}
-		],
-	},
-	"utility_infinite_stamina": {
-		"name": "Tireless Draught",
-		"category": "utility",
-		"description": "Grants unlimited stamina for a short time.",
-		"fragment_cost": 450,
-		"duration": 15.0,
-		"modifiers": [
-			{"stat": "stamina_cost", "type": "multiply", "value": 0.0}
-		],
-	},
-		"survival_regen_heal": {
+
+	"survival_regen_heal": {
 		"name": "Sunmote Draught",
 		"category": "survival",
-		"description": "A mote of captured sunlight nests beneath the skin, mending small wounds again and again as it slowly burns down to nothing.",
-		"fragment_cost": 400,
+		"description": "A little captured daylight, kept burning long after the star that made it has gone from sight.\n\nGradually restores HP over time.",
+		"fragment_cost": 500,
 		"action": "regen_heal",
 		"action_params": {"amount_per_tick": 1, "tick_interval": 2.0, "total_duration": 20.0},
 	},
 	"survival_regen_mana": {
 		"name": "Cinderlight Draught",
 		"category": "survival",
-		"description": "Embers long banked stir back to life, feeding a slow returning warmth into whatever well of power has run dry.",
-		"fragment_cost": 400,
+		"description": "What sleeps beneath ash is not always dead. Sometimes it only waits to be remembered.\n\nGradually restores MP over time.",
+		"fragment_cost": 500,
 		"action": "regen_mana",
-		"action_params": {"amount_per_tick": 2, "tick_interval": 1.0, "total_duration": 18.0},
+		"action_params": {"amount_per_tick": 3, "tick_interval": 1.0, "total_duration": 12.0},
 	},
-	"survival_invincibility": {
-		"name": "Sanctum Draught",
-		"category": "survival",
-		"description": "For a breath, the world simply cannot reach you — blade, flame, and falling stone alike pass through the air where you used to be.",
-		"fragment_cost": 750,
-		"action": "invincibility",
-		"duration": 5.0,
+	"combat_attack_speed": {
+		"name": "Quickthorn Draught",
+		"category": "combat",
+		"description": "The hand remembers the motion before the mind has finished giving the command.\n\nIncreases attack speed for a time.",
+		"fragment_cost": 500,
+		"duration": 25.0,
+		"modifiers": [
+			{"stat": "attack_speed", "type": "multiply", "value": 1.6}
+		],
 	},
+	"combat_mp_regen_boost": {
+		"name": "Bloomthorn Draught",
+		"category": "combat",
+		"description": "There are battles that take strength, and battles that somehow give it back.\n\nImproves MP regeneration during combat for a time.",
+		"fragment_cost": 500,
+		"duration": 45.0,
+		"modifiers": [
+			{"stat": "mp_regen_combat_duration", "type": "multiply", "value": 3.0},
+			{"stat": "mp_regen_combat_multiplier", "type": "multiply", "value": 3.0}
+		],
+	},
+
 	"survival_hazard_resist": {
 		"name": "Ashguard Draught",
 		"category": "survival",
-		"description": "A film of ash-grey warmth settles over the skin, dulling the bite of scalding ground and hungry flame alike.",
-		"fragment_cost": 350,
+		"description": "The old ash of forgotten fires clings to the skin, as though unwilling to be consumed again.\n\nReduces damage taken from environmental hazards for a time.",
+		"fragment_cost": 800,
 		"duration": 30.0,
 		"modifiers": [
 			{"stat": "hazard_damage_taken", "type": "multiply", "value": 0.5}
@@ -1585,144 +1560,176 @@ var potion_effect_data: Dictionary = {
 	"survival_status_immunity": {
 		"name": "Steadfast Draught",
 		"category": "survival",
-		"description": "The feet remember how to stand even when the world insists otherwise — no chill, no binding, no dragging weight takes hold while its warmth lasts.",
-		"fragment_cost": 350,
-		"duration": 30.0,
+		"description": "A body that has endured long enough learns that the earth does not always get to decide where it stands.\n\nPrevents slow effects from taking hold for a time.",
+		"fragment_cost": 800,
+		"duration": 60.0,
 		"modifiers": [
 			{"stat": "slow_immunity", "type": "add", "value": 1.0}
-		],
-	},
-	"survival_extended_iframes": {
-		"name": "Afterglow Draught",
-		"category": "survival",
-		"description": "The glow that follows a wound lingers longer than it should, standing guard a while after the pain has already passed.",
-		"fragment_cost": 450,
-		"duration": 30.0,
-		"modifiers": [
-			{"stat": "invincibility_duration", "type": "multiply", "value": 1.5}
 		],
 	},
 	"combat_ability_damage": {
 		"name": "Thornlight Draught",
 		"category": "combat",
-		"description": "Cerulean dust settles along blade and flame alike, sharpening whatever the bearer's power reaches out to strike.",
-		"fragment_cost": 650,
+		"description": "Some powers burn brighter when fed a little more starlight.\n\nGreatly increases ability damage for a short time.",
+		"fragment_cost": 800,
 		"duration": 15.0,
 		"modifiers": [
 			{"stat": "ability_damage", "type": "multiply", "value": 1.5}
 		],
 	},
-	"combat_attack_speed": {
-		"name": "Quickthorn Draught",
-		"category": "combat",
-		"description": "The arm forgets its own hesitation; steel answers the moment it is asked, faster than thought can second-guess it.",
-		"fragment_cost": 500,
-		"duration": 25.0,
-		"modifiers": [
-			{"stat": "attack_speed", "type": "multiply", "value": 1.6}
-		],
-	},
-	"combat_zero_ability_cost": {
-		"name": "Hollowthorn Draught",
-		"category": "combat",
-		"description": "For a while the old toll goes uncollected — every gift the bearer carries may be spent freely, as if the cost were never truly there.",
-		"fragment_cost": 600,
-		"duration": 10.0,
-		"modifiers": [
-			{"stat": "ability_mp_cost", "type": "multiply", "value": 0.0}
-		],
-	},
 	"combat_ground_slam_boost": {
 		"name": "Shatterbriar Draught",
 		"category": "combat",
-		"description": "The ground remembers this blow long after it lands, cracking wider and deeper than the weight of a single body should allow.",
-		"fragment_cost": 550,
+		"description": "Everything that rises must return. A heavier return leaves a deeper scar.\n\nMakes ground slam attacks strike harder and cover a wider area for a short time.",
+		"fragment_cost": 800,
 		"duration": 20.0,
 		"modifiers": [
 			{"stat": "ground_slam_radius", "type": "multiply", "value": 1.5},
 			{"stat": "ground_slam_damage", "type": "multiply", "value": 2.0}
 		],
 	},
-	"combat_mp_regen_boost": {
-		"name": "Bloomthorn Draught",
-		"category": "combat",
-		"description": "Battle feeds the well instead of draining it — each exchange of blows coaxes the old strength back faster, and for longer than it has any right to.",
-		"fragment_cost": 500,
-		"duration": 45.0,
+	"utility_speed": {
+		"name": "Fleetfoot Draught",
+		"category": "utility",
+		"description": "Distance is a law only until something finds a way around it.\n\nIncreases movement speed for a short time.",
+		"fragment_cost": 800,
+		"duration": 15.0,
 		"modifiers": [
-			{"stat": "mp_regen_combat_duration", "type": "multiply", "value": 3.0},
-			{"stat": "mp_regen_combat_multiplier", "type": "multiply", "value": 2.0}
-		],
-	},
-	"combat_weak_ability_boost": {
-		"name": "Fullbloom Draught",
-		"category": "combat",
-		"description": "Even the half-formed strike now lands with its full weight, as though the bearer had never learned to hold anything back.",
-		"fragment_cost": 600,
-		"duration": 20.0,
-		"modifiers": [
-			{"stat": "weak_ability_damage_boost", "type": "multiply", "value": 3.0}
+			{"stat": "move_speed", "type": "multiply", "value": 1.5}
 		],
 	},
 	"utility_jump_height": {
 		"name": "Skylight Draught",
 		"category": "utility",
-		"description": "The ground lets go a little more gently than it used to, and the air a little more willingly takes the weight.",
-		"fragment_cost": 400,
+		"description": "The stars have always looked close enough to touch, provided the ground is willing to let you go.\n\nIncreases jump height for a short time.",
+		"fragment_cost": 800,
 		"duration": 20.0,
 		"modifiers": [
 			{"stat": "jump_height", "type": "multiply", "value": 1.3}
 		],
 	},
-	"utility_dash_boost": {
-		"name": "Streaking Draught",
-		"category": "utility",
-		"description": "The thrust that once ended at arm's reach now carries past it, streaking the distance in aquamarine light before the momentum fades.",
-		"fragment_cost": 450,
-		"duration": 20.0,
-		"modifiers": [
-			{"stat": "dash_speed", "type": "multiply", "value": 1.3},
-			{"stat": "dash_duration", "type": "multiply", "value": 1.3}
-		],
-	},
-	"utility_glide_gravity": {
-		"name": "Driftlight Draught",
-		"category": "utility",
-		"description": "The wind beneath Vigil Wind forgets to let go, cradling the fall into something closer to floating.",
-		"fragment_cost": 400,
-		"duration": 20.0,
-		"modifiers": [
-			{"stat": "glide_gravity", "type": "multiply", "value": 0.5}
-		],
-	},
-	"utility_pogo_boost": {
-		"name": "Rebound Draught",
-		"category": "utility",
-		"description": "Whatever is struck from above gives back more than it took, throwing the bearer skyward with borrowed force.",
-		"fragment_cost": 400,
-		"duration": 20.0,
-		"modifiers": [
-			{"stat": "pogo_bounce", "type": "multiply", "value": 1.4}
-		],
-	},
-	"utility_recall_range": {
-		"name": "Farreach Draught",
-		"category": "utility",
-		"description": "The mark left behind stretches its leash further than it should, refusing to let go until the distance grows truly vast.",
-		"fragment_cost": 350,
+
+	"survival_extended_iframes": {
+		"name": "Afterglow Draught",
+		"category": "survival",
+		"description": "The light left behind by a wound can linger, even when the wound itself has passed.\n\nExtends the protection granted after taking damage for a time.",
+		"fragment_cost": 1200,
 		"duration": 30.0,
 		"modifiers": [
-			{"stat": "recall_leash_range", "type": "multiply", "value": 1.5}
+			{"stat": "invincibility_duration", "type": "multiply", "value": 1.5}
+		],
+	},
+	"combat_zero_ability_cost": {
+		"name": "Hollowthorn Draught",
+		"category": "combat",
+		"description": "A gift without a price is a dangerous thing in a world built on laws.\n\nAbilities consume no MP for a short time.",
+		"fragment_cost": 1200,
+		"duration": 10.0,
+		"modifiers": [
+			{"stat": "ability_mp_cost", "type": "multiply", "value": 0.0}
+		],
+	},
+	"utility_infinite_stamina": {
+		"name": "Tireless Draught",
+		"category": "utility",
+		"description": "Some burdens are only unbearable because you were taught they must be.\n\nRemoves stamina costs for a short time.",
+		"fragment_cost": 1200,
+		"duration": 15.0,
+		"modifiers": [
+			{"stat": "stamina_cost", "type": "multiply", "value": 0.0}
 		],
 	},
 	"utility_glide_steering": {
 		"name": "Windward Draught",
 		"category": "utility",
-		"description": "Turning against the wind while gliding costs far less than it used to — the body answers the air's suggestion rather than fighting it.",
-		"fragment_cost": 350,
+		"description": "The wind cannot decide where you go. It can only offer an opinion.\n\nImproves control while gliding for a time.",
+		"fragment_cost": 1200,
 		"duration": 30.0,
 		"modifiers": [
 			{"stat": "glide_steering", "type": "multiply", "value": 2.0}
+		],
+	},
+
+	"survival_invincibility": {
+		"name": "Sanctum Draught",
+		"category": "survival",
+		"description": "For one brief moment, the laws that govern the world are denied their claim upon you.\n\nMakes you invulnerable for a short time.",
+		"fragment_cost": 1500,
+		"action": "invincibility",
+		"duration": 5.0,
+	},
+	"combat_weak_ability_boost": {
+		"name": "Fullbloom Draught",
+		"category": "combat",
+		"description": "Even a half-spoken prayer may carry the weight of a full one.\n\nGreatly increases the damage of weak abilities for a short time.",
+		"fragment_cost": 1500,
+		"duration": 20.0,
+		"modifiers": [
+			{"stat": "weak_ability_damage_boost", "type": "multiply", "value": 3.0}
+		],
+	},
+	"utility_dash_boost": {
+		"name": "Streaking Draught",
+		"category": "utility",
+		"description": "Some who chase the light learn that it is easier to become part of its motion.\n\nMakes your dash faster and carry farther for a short time.",
+		"fragment_cost": 1500,
+		"duration": 20.0,
+		"modifiers": [
+			{"stat": "dash_speed", "type": "multiply", "value": 1.2},
+			{"stat": "dash_duration", "type": "multiply", "value": 1.2}
+		],
+	},
+	"utility_pogo_boost": {
+		"name": "Rebound Draught",
+		"category": "utility",
+		"description": "What strikes the earth is not always finished with it.\n\nIncreases the height gained when pogoing for a short time.",
+		"fragment_cost": 1500,
+		"duration": 20.0,
+		"modifiers": [
+			{"stat": "pogo_bounce", "type": "multiply", "value": 1.4}
+		],
+	},
+
+	"combat_double_sword": {
+		"name": "Ember Edge",
+		"category": "combat",
+		"description": "Flame does not ask the blade to become stronger. It simply reminds it what it was made to do.\n\nGreatly increases sword damage for a short time.",
+		"fragment_cost": 2000,
+		"duration": 15.0,
+		"modifiers": [
+			{"stat": "sword_damage", "type": "multiply", "value": 2.0}
+		],
+	},
+	"utility_glide_gravity": {
+		"name": "Driftlight Draught",
+		"category": "utility",
+		"description": "Vigil Wind asks only that you keep believing the fall will wait.\n\nReduces the pull of gravity while gliding for a short time.",
+		"fragment_cost": 2000,
+		"duration": 20.0,
+		"modifiers": [
+			{"stat": "glide_gravity", "type": "multiply", "value": 0.5},
+			{"stat": "glide_max_fall_speed", "type": "multiply", "value": 0.75}
+		],
+	},
+
+	"combat_damage_reduction": {
+		"name": "Aegis Draught",
+		"category": "combat",
+		"description": "Even the hardiest armor eventually learns that nothing lasts forever. Some things merely last longer.\n\nGreatly reduces damage taken for a short time.",
+		"fragment_cost": 2500,
+		"duration": 15.0,
+		"modifiers": [
+			{"stat": "damage_taken", "type": "multiply", "value": 0.5}
+		],
+	},
+	"utility_recall_range": {
+		"name": "Farreach Draught",
+		"category": "utility",
+		"description": "A place once marked can remain yours, even when the distance between you grows cruel.\n\nIncreases the range of your recall for a time.",
+		"fragment_cost": 2500,
+		"duration": 30.0,
+		"modifiers": [
+			{"stat": "recall_leash_range", "type": "multiply", "value": 1.5}
 		],
 	},
 }

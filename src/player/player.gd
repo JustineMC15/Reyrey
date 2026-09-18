@@ -1974,9 +1974,13 @@ func _physics_process(delta: float) -> void:
 			is_gliding = true
 
 			velocity.y += GRAVITY_GLIDE * get_stat_multiplier("glide_gravity") * delta
+
+			var glide_max_fall_speed := \
+				GLIDE_MAX_FALL_SPEED * get_stat_multiplier("glide_max_fall_speed")
+
 			velocity.y = min(
 				velocity.y,
-				GLIDE_MAX_FALL_SPEED
+				glide_max_fall_speed
 			)
 
 		else:
