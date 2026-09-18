@@ -259,6 +259,7 @@ var walkstop_played := false
 var dash_timer := 0.0
 var dash_cooldown_timer := 0.0
 var dash_animation_linger_timer := 0.0
+var _dash_granted_invincibility := false
 var is_dashing := false
 var dash_direction := 1.0
 var dash_damage := 3
@@ -457,6 +458,8 @@ func clear_stat_modifiers() -> void:
 func reset_after_death() -> void:
 	is_dead = false
 	invincible = false
+	_invincibility_stack = 0
+	_dash_granted_invincibility = false
 	input_locked = false
 	transition_walking = false
 	transition_walk_direction = 1.0
@@ -643,6 +646,7 @@ func cancel_attack() -> void:
 	sword_has_hit = false
 	_pogo_hazard_bounce_used = false
 
+	animated_sprite_2d.speed_scale = 1.0
 	slash_effect.stop()
 	slash_effect.visible = false
 	sword_hitbox.monitoring = false
@@ -685,6 +689,7 @@ func _start_sword_attack() -> void:
 		sword_hitbox.scale.x = -1.0
 
 	animated_sprite_2d.visible = true
+	animated_sprite_2d.speed_scale = get_stat_multiplier("attack_speed")
 	animated_sprite_2d.play("attack")
 
 	slash_effect.visible = true
@@ -810,10 +815,9 @@ func _check_pogo_hit() -> void:
 
 	jumps_used = 0
 	velocity.y = (
-		POGO_BOUNCE_VELOCITY
-		if pogo_empowered
-		else POGO_BOUNCE_VELOCITY_WEAK
-	)
+		POGO_BOUNCE_VELOCITY if pogo_empowered else POGO_BOUNCE_VELOCITY_WEAK
+	) * get_stat_multiplier("pogo_bounce")
+
 
 	if hit_hazard:
 		camera_shake(4.0, 0.1)
@@ -824,15 +828,20 @@ func _check_pogo_hit() -> void:
 
 func fire_attack(damage: int) -> void:
 	await get_tree().physics_frame
-
+ 
+	var final_damage := int(ceil(damage * get_stat_multiplier("ability_damage")))
+ 
 	for body in fire_hitbox.get_overlapping_bodies():
 		if body.is_in_group("enemies") or body.is_in_group("attackable"):
-			body.take_damage(damage)
+			body.take_damage(final_damage)
 			boost_mp_regen()
 
 func dash_attack() -> void:
-	var damage := dash_damage if dash_empowered else dash_damage_weak
-
+	var base_damage := dash_damage if dash_empowered \
+		else int(ceil(dash_damage_weak * get_stat_multiplier("weak_ability_damage_boost")))
+ 
+	var damage := int(ceil(base_damage * get_stat_multiplier("ability_damage")))
+ 
 	for body in dash_hitbox.get_overlapping_bodies():
 		if (body.is_in_group("enemies") or body.is_in_group("attackable")) \
 		and not body in dash_hit_enemies:
@@ -840,6 +849,7 @@ func dash_attack() -> void:
 			dash_hit_enemies.append(body)
 			boost_mp_regen()
 			_on_melee_hit()
+
 # GROUND SLAM
 
 func ground_slam_impact() -> void:
@@ -864,24 +874,27 @@ func ground_slam_impact() -> void:
 
 
 func deal_ground_slam_damage() -> void:
+	var radius := GROUND_SLAM_IMPACT_RADIUS * get_stat_multiplier("ground_slam_radius")
+	var damage := int(round(GROUND_SLAM_DAMAGE * get_stat_multiplier("ground_slam_damage")))
+ 
 	for body in get_tree().get_nodes_in_group("enemies"):
 		if not is_instance_valid(body):
 			continue
-		if global_position.distance_to(body.global_position) <= GROUND_SLAM_IMPACT_RADIUS:
+		if global_position.distance_to(body.global_position) <= radius:
 			if body.has_method("take_damage"):
-				body.take_damage(GROUND_SLAM_DAMAGE)
-
+				body.take_damage(damage)
+ 
 	for body in get_tree().get_nodes_in_group("attackable"):
 		if not is_instance_valid(body):
 			continue
-		if global_position.distance_to(body.global_position) <= GROUND_SLAM_IMPACT_RADIUS:
+		if global_position.distance_to(body.global_position) <= radius:
 			if body.has_method("take_damage"):
-				body.take_damage(GROUND_SLAM_DAMAGE)
-
+				body.take_damage(damage)
+ 
 	for body in get_tree().get_nodes_in_group("slam_breakable"):
 		if not is_instance_valid(body):
 			continue
-		if global_position.distance_to(body.global_position) <= GROUND_SLAM_IMPACT_RADIUS:
+		if global_position.distance_to(body.global_position) <= radius:
 			if body.has_method("slam_break"):
 				body.slam_break()
 
@@ -944,27 +957,29 @@ func _place_recall_anchor() -> void:
 
 
 func _trigger_recall() -> void:
-	if mp < RECALL_MP_COST:
+	var recall_cost := int(round(RECALL_MP_COST * get_stat_multiplier("ability_mp_cost")))
+ 
+	if mp < recall_cost:
 		_flash_recall(Color(2.2, 1.3, 1.3, 1))
 		return
-
-	mp -= RECALL_MP_COST
+ 
+	mp -= recall_cost
 	mp_changed.emit(mp, max_mp)
-
+ 
 	global_position = recall_anchor_position
 	if not GameState.has_ability("dash"):
 		velocity = Vector2.ZERO
-
+ 
 	recall_effect.visible = true
 	recall_effect.stop()
 	recall_effect.frame = 0
 	recall_effect.play("recall")
-
+ 
 	_camera_shake(6.0, 0.15)
 	_flash_recall(Color(1.3, 1.5, 2.2, 1))
-
+ 
 	_clear_recall_anchor()
-	
+
 func _on_recall_effect_finished() -> void:
 	if recall_effect.animation == "recall":
 		recall_effect.visible = false
@@ -1078,32 +1093,32 @@ func _apply_hit_reaction() -> void:
 func take_damage(amount: int) -> void:
 	if invincible or is_dead:
 		return
+ 
 	amount = max(0, int(round(amount * get_stat_multiplier("damage_taken"))))
-	invincible = true
+	_push_invincibility()
 	damage_sound.play()
-
+ 
 	health -= amount
 	health_changed.emit(health, max_health)
-
+ 
 	flash_damage()
 	_apply_hit_reaction()
-
+ 
 	if health <= 0:
 		die()
 		return
-
-	await get_tree().create_timer(INVINCIBILITY_TIME).timeout
-
+ 
+	await get_tree().create_timer(INVINCIBILITY_TIME * get_stat_multiplier("invincibility_duration")).timeout
+ 
 	if not is_dead:
-		invincible = false
+		_pop_invincibility()
 
 
 func take_hazard_damage(amount: int, respawn_position: Vector2, fade_duration: float = 0.25, invincibility_after: float = HAZARD_INVINCIBILITY_TIME) -> void:
 	if is_dead:
 		return
-
+	amount = max(0, int(round(amount * get_stat_multiplier("hazard_damage_taken"))))
 	damage_sound.play()
-
 	health -= amount
 	health_changed.emit(health, max_health)
 
@@ -1169,18 +1184,29 @@ func bounce_off_hazard() -> void:
 	jumps_used = 0
 	_pogo_hazard_bounce_used = true
 	velocity.y = (
-		POGO_BOUNCE_VELOCITY
-		if pogo_empowered
-		else POGO_BOUNCE_VELOCITY_WEAK
-	)
+		POGO_BOUNCE_VELOCITY if pogo_empowered else POGO_BOUNCE_VELOCITY_WEAK
+	) * get_stat_multiplier("pogo_bounce")
+
+var _invincibility_stack: int = 0
+ 
+func _push_invincibility() -> void:
+	_invincibility_stack += 1
+	invincible = true
+ 
+func _pop_invincibility() -> void:
+	_invincibility_stack = max(0, _invincibility_stack - 1)
+ 
+	if _invincibility_stack <= 0 and not is_dead:
+		invincible = false
 
 func grant_temporary_invincibility(duration: float) -> void:
-	invincible = true
-
+	_push_invincibility()
+ 
 	await get_tree().create_timer(duration).timeout
-
+ 
 	if not is_dead:
-		invincible = false
+		_pop_invincibility()
+
 # DEATH
 
 func die() -> void:
@@ -1436,7 +1462,7 @@ func _physics_process(delta: float) -> void:
 			is_wall_clinging = false
 			is_spark_propelling = false
 			_end_ledge_grab()
-			dash_timer = DASH_DURATION
+			dash_timer = DASH_DURATION * get_stat_multiplier("dash_duration")
 			dash_animation_linger_timer = 0.0
 
 			is_walk_stopping = false
@@ -1454,21 +1480,20 @@ func _physics_process(delta: float) -> void:
 			dash_direction = -1.0 if animated_sprite_2d.flip_h else 1.0
 
 			# Check if player has enough MP for empowered dash.
-			dash_empowered = mp >= DASH_MP_COST
-
+			var dash_cost := int(round(DASH_MP_COST * get_stat_multiplier("ability_mp_cost")))
+			dash_empowered = mp >= dash_cost
 			ability_used.emit("dash")
 
 			if dash_chained:
 				ability_used.emit("dash_chain")
 
 			if dash_empowered:
-				mp -= DASH_MP_COST
-
+				mp -= dash_cost
 				mp_changed.emit(mp, max_mp)
-
 				invincible = true
 			else:
 				invincible = false
+
 
 			# Hitbox stays active either way.
 			dash_hitbox.monitoring = true
@@ -1520,7 +1545,7 @@ func _physics_process(delta: float) -> void:
 		dash_timer -= delta
 
 		velocity = Vector2(
-			dash_direction * DASH_SPEED,
+			dash_direction * DASH_SPEED * get_stat_multiplier("dash_speed"),
 			0
 		)
 
@@ -1536,7 +1561,10 @@ func _physics_process(delta: float) -> void:
 			if GameState.has_ability("dash_chain"):
 				dash_chain_window_timer = DASH_CHAIN_WINDOW
 
-			invincible = false
+			if _dash_granted_invincibility:
+				_dash_granted_invincibility = false
+				_pop_invincibility()
+
 
 			dash_hitbox.monitoring = false
 			dash_empowered = false
@@ -1623,8 +1651,7 @@ func _physics_process(delta: float) -> void:
 	# RECALL LEASH CHECK
 
 	if has_recall_anchor \
-	and global_position.distance_to(recall_anchor_position) > RECALL_LEASH_RANGE:
-
+	and global_position.distance_to(recall_anchor_position) > RECALL_LEASH_RANGE * get_stat_multiplier("recall_leash_range"):
 		_flash_recall(Color(2.2, 1.3, 1.3, 1))
 		_clear_recall_anchor()
 
@@ -1783,7 +1810,7 @@ func _physics_process(delta: float) -> void:
 
 		animated_sprite_2d.visible = true
 
-		velocity.y = JUMP_VELOCITY
+		velocity.y = JUMP_VELOCITY * get_stat_multiplier("jump_height")
 
 		jump_buffer_timer = 0.0
 		coyote_timer = 0.0
@@ -1819,13 +1846,13 @@ func _physics_process(delta: float) -> void:
 		jump_effect.visible = true
 		jump_effect.play("jumpwind")
 
-		if mp >= DOUBLE_JUMP_MP_COST:
-
+		var double_jump_cost := int(round(DOUBLE_JUMP_MP_COST * get_stat_multiplier("ability_mp_cost")))
+ 
+		if mp >= double_jump_cost:
 			# ENHANCED DOUBLE JUMP
-
-			mp -= DOUBLE_JUMP_MP_COST
-
+			mp -= double_jump_cost
 			mp_changed.emit(mp, max_mp)
+
 
 			double_jump_fire_1.visible = true
 			double_jump_fire_2.visible = true
@@ -1876,7 +1903,7 @@ func _physics_process(delta: float) -> void:
 			fire_sound.play()
 
 			fire_hitbox.monitoring = true
-			fire_attack(smoke_damage)
+			fire_attack(int(ceil(smoke_damage * get_stat_multiplier("weak_ability_damage_boost"))))
 
 	# GRAVITY / GLIDE
 
@@ -1946,7 +1973,7 @@ func _physics_process(delta: float) -> void:
 
 			is_gliding = true
 
-			velocity.y += GRAVITY_GLIDE * delta
+			velocity.y += GRAVITY_GLIDE * get_stat_multiplier("glide_gravity") * delta
 			velocity.y = min(
 				velocity.y,
 				GLIDE_MAX_FALL_SPEED
@@ -2019,7 +2046,7 @@ func _physics_process(delta: float) -> void:
 			velocity.x = move_toward(
 				velocity.x,
 				direction * current_speed,
-				GLIDE_MOMENTUM_STEER_ACCEL * delta
+				GLIDE_MOMENTUM_STEER_ACCEL * get_stat_multiplier("glide_steering") * delta
 			)
 
 		is_skidding = false
@@ -2235,6 +2262,41 @@ func restore_full_mp() -> void:
 	mp = max_mp
 	mp_changed.emit(mp, max_mp)
 
+func heal(amount: int) -> void:
+	if is_dead:
+		return
+ 
+	health = min(health + amount, max_health)
+	health_changed.emit(health, max_health)
+ 
+ 
+func gain_mp(amount: int) -> void:
+	mp = min(mp + amount, max_mp)
+	mp_changed.emit(mp, max_mp)
+ 
+ 
+func start_heal_over_time(amount_per_tick: int, tick_interval: float, total_duration: float) -> void:
+	var ticks := int(round(total_duration / tick_interval))
+ 
+	for i in ticks:
+		await get_tree().create_timer(tick_interval).timeout
+ 
+		if not is_instance_valid(self) or is_dead:
+			return
+ 
+		heal(amount_per_tick)
+ 
+ 
+func start_mp_regen_burst(amount_per_tick: int, tick_interval: float, total_duration: float) -> void:
+	var ticks := int(round(total_duration / tick_interval))
+ 
+	for i in ticks:
+		await get_tree().create_timer(tick_interval).timeout
+ 
+		if not is_instance_valid(self) or is_dead:
+			return
+ 
+		gain_mp(amount_per_tick)
 
 # STAMINA
 
@@ -2303,7 +2365,7 @@ func _process_mp_regen(delta: float) -> void:
 	var rate := MP_REGEN_RATE
 
 	if _mp_combat_boost_timer > 0.0:
-		rate *= MP_REGEN_COMBAT_MULTIPLIER
+		rate *= MP_REGEN_COMBAT_MULTIPLIER * get_stat_multiplier("mp_regen_combat_multiplier")
 
 	_mp_regen_accumulator += rate * delta
 
@@ -2314,8 +2376,14 @@ func _process_mp_regen(delta: float) -> void:
 		mp_changed.emit(mp, max_mp)
 
 func boost_mp_regen() -> void:
-	_mp_combat_boost_timer = MP_REGEN_COMBAT_DURATION
+	_mp_combat_boost_timer = MP_REGEN_COMBAT_DURATION * get_stat_multiplier("mp_regen_combat_duration")
+
 # SLOW EFFECT
+func is_slow_immune() -> bool:
+	return get_stat_addend("slow_immunity") > 0.0
 
 func set_slowed(slowed: bool) -> void:
+	if slowed and is_slow_immune():
+		return
+ 
 	is_slowed = slowed

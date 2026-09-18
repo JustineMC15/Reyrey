@@ -382,7 +382,30 @@ func is_secret_revealed(secret_id: String) -> bool:
 func reveal_secret(secret_id: String) -> void:
 	revealed_secrets[secret_id] = true
  
- 
+# Persistent world activations
+
+signal activation_changed(activation_id: String)
+
+var persistent_activations: Dictionary = {}
+
+
+func is_activation_active(activation_id: String) -> bool:
+	if activation_id == "":
+		return false
+
+	return persistent_activations.get(activation_id, false)
+
+
+func activate_persistent_object(activation_id: String) -> void:
+	if activation_id == "":
+		return
+
+	if is_activation_active(activation_id):
+		return
+
+	persistent_activations[activation_id] = true
+	activation_changed.emit(activation_id)
+
 #  One-way shortcuts (levers unlocking doors/bridges/ladders/walls) 
  
 signal shortcut_activated(shortcut_id)
@@ -1525,6 +1548,183 @@ var potion_effect_data: Dictionary = {
 			{"stat": "stamina_cost", "type": "multiply", "value": 0.0}
 		],
 	},
+		"survival_regen_heal": {
+		"name": "Sunmote Draught",
+		"category": "survival",
+		"description": "A mote of captured sunlight nests beneath the skin, mending small wounds again and again as it slowly burns down to nothing.",
+		"fragment_cost": 400,
+		"action": "regen_heal",
+		"action_params": {"amount_per_tick": 1, "tick_interval": 2.0, "total_duration": 20.0},
+	},
+	"survival_regen_mana": {
+		"name": "Cinderlight Draught",
+		"category": "survival",
+		"description": "Embers long banked stir back to life, feeding a slow returning warmth into whatever well of power has run dry.",
+		"fragment_cost": 400,
+		"action": "regen_mana",
+		"action_params": {"amount_per_tick": 2, "tick_interval": 1.0, "total_duration": 18.0},
+	},
+	"survival_invincibility": {
+		"name": "Sanctum Draught",
+		"category": "survival",
+		"description": "For a breath, the world simply cannot reach you — blade, flame, and falling stone alike pass through the air where you used to be.",
+		"fragment_cost": 750,
+		"action": "invincibility",
+		"duration": 5.0,
+	},
+	"survival_hazard_resist": {
+		"name": "Ashguard Draught",
+		"category": "survival",
+		"description": "A film of ash-grey warmth settles over the skin, dulling the bite of scalding ground and hungry flame alike.",
+		"fragment_cost": 350,
+		"duration": 30.0,
+		"modifiers": [
+			{"stat": "hazard_damage_taken", "type": "multiply", "value": 0.5}
+		],
+	},
+	"survival_status_immunity": {
+		"name": "Steadfast Draught",
+		"category": "survival",
+		"description": "The feet remember how to stand even when the world insists otherwise — no chill, no binding, no dragging weight takes hold while its warmth lasts.",
+		"fragment_cost": 350,
+		"duration": 30.0,
+		"modifiers": [
+			{"stat": "slow_immunity", "type": "add", "value": 1.0}
+		],
+	},
+	"survival_extended_iframes": {
+		"name": "Afterglow Draught",
+		"category": "survival",
+		"description": "The glow that follows a wound lingers longer than it should, standing guard a while after the pain has already passed.",
+		"fragment_cost": 450,
+		"duration": 30.0,
+		"modifiers": [
+			{"stat": "invincibility_duration", "type": "multiply", "value": 1.5}
+		],
+	},
+	"combat_ability_damage": {
+		"name": "Thornlight Draught",
+		"category": "combat",
+		"description": "Cerulean dust settles along blade and flame alike, sharpening whatever the bearer's power reaches out to strike.",
+		"fragment_cost": 650,
+		"duration": 15.0,
+		"modifiers": [
+			{"stat": "ability_damage", "type": "multiply", "value": 1.5}
+		],
+	},
+	"combat_attack_speed": {
+		"name": "Quickthorn Draught",
+		"category": "combat",
+		"description": "The arm forgets its own hesitation; steel answers the moment it is asked, faster than thought can second-guess it.",
+		"fragment_cost": 500,
+		"duration": 25.0,
+		"modifiers": [
+			{"stat": "attack_speed", "type": "multiply", "value": 1.6}
+		],
+	},
+	"combat_zero_ability_cost": {
+		"name": "Hollowthorn Draught",
+		"category": "combat",
+		"description": "For a while the old toll goes uncollected — every gift the bearer carries may be spent freely, as if the cost were never truly there.",
+		"fragment_cost": 600,
+		"duration": 10.0,
+		"modifiers": [
+			{"stat": "ability_mp_cost", "type": "multiply", "value": 0.0}
+		],
+	},
+	"combat_ground_slam_boost": {
+		"name": "Shatterbriar Draught",
+		"category": "combat",
+		"description": "The ground remembers this blow long after it lands, cracking wider and deeper than the weight of a single body should allow.",
+		"fragment_cost": 550,
+		"duration": 20.0,
+		"modifiers": [
+			{"stat": "ground_slam_radius", "type": "multiply", "value": 1.5},
+			{"stat": "ground_slam_damage", "type": "multiply", "value": 2.0}
+		],
+	},
+	"combat_mp_regen_boost": {
+		"name": "Bloomthorn Draught",
+		"category": "combat",
+		"description": "Battle feeds the well instead of draining it — each exchange of blows coaxes the old strength back faster, and for longer than it has any right to.",
+		"fragment_cost": 500,
+		"duration": 45.0,
+		"modifiers": [
+			{"stat": "mp_regen_combat_duration", "type": "multiply", "value": 3.0},
+			{"stat": "mp_regen_combat_multiplier", "type": "multiply", "value": 2.0}
+		],
+	},
+	"combat_weak_ability_boost": {
+		"name": "Fullbloom Draught",
+		"category": "combat",
+		"description": "Even the half-formed strike now lands with its full weight, as though the bearer had never learned to hold anything back.",
+		"fragment_cost": 600,
+		"duration": 20.0,
+		"modifiers": [
+			{"stat": "weak_ability_damage_boost", "type": "multiply", "value": 3.0}
+		],
+	},
+	"utility_jump_height": {
+		"name": "Skylight Draught",
+		"category": "utility",
+		"description": "The ground lets go a little more gently than it used to, and the air a little more willingly takes the weight.",
+		"fragment_cost": 400,
+		"duration": 20.0,
+		"modifiers": [
+			{"stat": "jump_height", "type": "multiply", "value": 1.3}
+		],
+	},
+	"utility_dash_boost": {
+		"name": "Streaking Draught",
+		"category": "utility",
+		"description": "The thrust that once ended at arm's reach now carries past it, streaking the distance in aquamarine light before the momentum fades.",
+		"fragment_cost": 450,
+		"duration": 20.0,
+		"modifiers": [
+			{"stat": "dash_speed", "type": "multiply", "value": 1.3},
+			{"stat": "dash_duration", "type": "multiply", "value": 1.3}
+		],
+	},
+	"utility_glide_gravity": {
+		"name": "Driftlight Draught",
+		"category": "utility",
+		"description": "The wind beneath Vigil Wind forgets to let go, cradling the fall into something closer to floating.",
+		"fragment_cost": 400,
+		"duration": 20.0,
+		"modifiers": [
+			{"stat": "glide_gravity", "type": "multiply", "value": 0.5}
+		],
+	},
+	"utility_pogo_boost": {
+		"name": "Rebound Draught",
+		"category": "utility",
+		"description": "Whatever is struck from above gives back more than it took, throwing the bearer skyward with borrowed force.",
+		"fragment_cost": 400,
+		"duration": 20.0,
+		"modifiers": [
+			{"stat": "pogo_bounce", "type": "multiply", "value": 1.4}
+		],
+	},
+	"utility_recall_range": {
+		"name": "Farreach Draught",
+		"category": "utility",
+		"description": "The mark left behind stretches its leash further than it should, refusing to let go until the distance grows truly vast.",
+		"fragment_cost": 350,
+		"duration": 30.0,
+		"modifiers": [
+			{"stat": "recall_leash_range", "type": "multiply", "value": 1.5}
+		],
+	},
+	"utility_glide_steering": {
+		"name": "Windward Draught",
+		"category": "utility",
+		"description": "Turning against the wind while gliding costs far less than it used to — the body answers the air's suggestion rather than fighting it.",
+		"fragment_cost": 350,
+		"duration": 30.0,
+		"modifiers": [
+			{"stat": "glide_steering", "type": "multiply", "value": 2.0}
+		],
+	},
 }
 
 var unlocked_potion_slots: Dictionary = {}     # category -> true
@@ -1847,7 +2047,7 @@ func use_potion(player: Node) -> void:
 func _apply_potion_effect(effect_id: String, player: Node) -> void:
 	var data: Dictionary = potion_effect_data.get(effect_id, {})
 	var duration: float = data.get("duration", 0.0)
-
+ 
 	match data.get("action", ""):
 		"restore_full_health":
 			if player.has_method("restore_full_health"):
@@ -1857,10 +2057,32 @@ func _apply_potion_effect(effect_id: String, player: Node) -> void:
 			if player.has_method("restore_full_mp"):
 				player.restore_full_mp()
 			return
-
+		"regen_heal":
+			if player.has_method("start_heal_over_time"):
+				var params: Dictionary = data.get("action_params", {})
+				player.start_heal_over_time(
+					params.get("amount_per_tick", 1),
+					params.get("tick_interval", 1.0),
+					params.get("total_duration", duration)
+				)
+			return
+		"regen_mana":
+			if player.has_method("start_mp_regen_burst"):
+				var params: Dictionary = data.get("action_params", {})
+				player.start_mp_regen_burst(
+					params.get("amount_per_tick", 1),
+					params.get("tick_interval", 1.0),
+					params.get("total_duration", duration)
+				)
+			return
+		"invincibility":
+			if player.has_method("grant_temporary_invincibility"):
+				player.grant_temporary_invincibility(duration)
+			return
+ 
 	if not player.has_method("apply_stat_modifier"):
 		return
-
+ 
 	for modifier in data.get("modifiers", []):
 		player.apply_stat_modifier(
 			modifier.get("stat", ""),
@@ -1909,6 +2131,7 @@ func get_save_data() -> Dictionary:
 		"broken_obstacles": broken_obstacles.duplicate(),
 		"revealed_secrets": revealed_secrets.duplicate(),
 		"activated_shortcuts": activated_shortcuts.duplicate(),
+		"persistent_activations": persistent_activations.duplicate(),
 		"cleared_gauntlets": cleared_gauntlets.duplicate(),
 		"defeated_bosses": defeated_bosses.duplicate(),
 		"area_names_seen": area_names_seen.duplicate(),
@@ -1918,7 +2141,6 @@ func get_save_data() -> Dictionary:
 		"selected_potion_effects": selected_potion_effects.duplicate(),
 		"potion_charged": potion_charged,
 	}
-
 
 func apply_save_data(data: Dictionary) -> void:
 	abilities = data.get("abilities", abilities)
@@ -1941,6 +2163,7 @@ func apply_save_data(data: Dictionary) -> void:
 	broken_obstacles = data.get("broken_obstacles", {})
 	revealed_secrets = data.get("revealed_secrets", {})
 	activated_shortcuts = data.get("activated_shortcuts", {})
+	persistent_activations = data.get("persistent_activations", {})
 	cleared_gauntlets = data.get("cleared_gauntlets", {})
 	defeated_bosses = data.get("defeated_bosses", {})
 	area_names_seen = data.get("area_names_seen", {})
@@ -1959,7 +2182,6 @@ func apply_save_data(data: Dictionary) -> void:
 	})
 	potion_charged = data.get("potion_charged", false)
 	_check_potion_effect_unlocks()
-
 
 func reset_to_defaults() -> void:
 	for key in abilities.keys():
@@ -1992,6 +2214,7 @@ func reset_to_defaults() -> void:
 	broken_obstacles.clear()
 	revealed_secrets.clear()
 	activated_shortcuts.clear()
+	persistent_activations.clear()
 	cleared_gauntlets.clear()
 	defeated_bosses.clear()
 	area_names_seen.clear()
@@ -2000,7 +2223,6 @@ func reset_to_defaults() -> void:
 	unlocked_potion_effects.clear()
 	_clear_potion_selection()
 	potion_charged = false
-
 
 func load_from_save(scene_path: String) -> void:
 	if scene_path == "":
