@@ -135,7 +135,7 @@ func _build_ui() -> void:
 	frame.add_child(background)
 
 	var title := Label.new()
-	title.text = "Primeval STAR POTION"
+	title.text = "Primeval Star Potion"
 	title.add_theme_font_override("font", HEADER_FONT)
 	title.add_theme_font_size_override("font_size", 28)
 	title.set_anchors_preset(Control.PRESET_TOP_WIDE)
@@ -196,7 +196,7 @@ func _build_ui() -> void:
 	clear_button.pressed.connect(_on_clear_pressed)
 	middle_column.add_child(clear_button)
 
-	# RIGHT COLUMN — detail panel (icon / name / description)
+	# RIGHT COLUMN — detail panel
 	var right_column := VBoxContainer.new()
 	right_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	right_column.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -211,12 +211,18 @@ func _build_ui() -> void:
 	detail_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	right_column.add_child(detail_title)
 
+	# Dedicated image area so VBoxContainer cannot collapse the TextureRect
+	var detail_image_container := CenterContainer.new()
+	detail_image_container.custom_minimum_size = Vector2(0, 140)
+	detail_image_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	right_column.add_child(detail_image_container)
+
 	detail_icon = TextureRect.new()
-	detail_icon.custom_minimum_size = Vector2(0, 120)
+	detail_icon.custom_minimum_size = Vector2(180, 180)
 	detail_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	detail_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	detail_icon.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	right_column.add_child(detail_icon)
+	detail_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	detail_image_container.add_child(detail_icon)
 
 	detail_name = Label.new()
 	detail_name.add_theme_font_override("font", HEADER_FONT)
@@ -231,19 +237,27 @@ func _build_ui() -> void:
 	description_label.text = "Hover an effect to read what it does."
 	right_column.add_child(description_label)
 
-
 func _build_category_section(category: String) -> VBoxContainer:
 	var section := VBoxContainer.new()
 	section.add_theme_constant_override("separation", 6)
+
+	var header_container := MarginContainer.new()
+	header_container.add_theme_constant_override("margin_top", 6)
+	header_container.add_theme_constant_override("margin_bottom", 4)
+	header_container.add_theme_constant_override("margin_left", 4)
+	header_container.add_theme_constant_override("margin_right", 4)
 
 	var header := Label.new()
 	header.text = CATEGORY_LABELS[category]
 	header.add_theme_font_override("font", HEADER_FONT)
 	header.add_theme_font_size_override("font_size", 20)
-	section.add_child(header)
+	header.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+
+	header_container.add_child(header)
+	section.add_child(header_container)
 
 	var grid := GridContainer.new()
-	grid.columns = 4
+	grid.columns = 5
 	grid.add_theme_constant_override("h_separation", 10)
 	grid.add_theme_constant_override("v_separation", 10)
 	section.add_child(grid)
@@ -251,7 +265,6 @@ func _build_category_section(category: String) -> VBoxContainer:
 	category_grids[category] = grid
 
 	return section
-
 
 func _build_slot_row(category: String) -> PanelContainer:
 	var row := PanelContainer.new()
@@ -307,32 +320,37 @@ func _populate() -> void:
 			grid.add_child(locked_label)
 			continue
 
+		var unlocked_effect_count := 0
+
 		for effect_id in GameState.get_effects_for_category(category):
-			var data: Dictionary = GameState.potion_effect_data.get(effect_id, {})
+			if not GameState.is_potion_effect_unlocked(effect_id):
+				continue
 
-			if GameState.is_potion_effect_unlocked(effect_id):
-				var button: InventoryIconButton = ICON_BUTTON_SCENE.instantiate()
-				grid.add_child(button)
+			var button: InventoryIconButton = ICON_BUTTON_SCENE.instantiate()
+			button.custom_minimum_size = Vector2(45, 45)
+			grid.add_child(button)
 
-				button.setup(effect_id, _get_effect_icon(effect_id))
-				button.hovered.connect(_on_effect_hovered)
-				button.pressed.connect(_on_effect_pressed.bind(effect_id, category))
+			button.icon_rect.offset_left = -6.0
+			button.icon_rect.offset_top = -6.0
+			button.icon_rect.offset_right = 6.0
+			button.icon_rect.offset_bottom = 6.0
 
-				_effect_buttons[effect_id] = button
-			else:
-				var cost: int = data.get("fragment_cost", 0)
+			button.setup(effect_id, _get_effect_icon(effect_id))
+			button.hovered.connect(_on_effect_hovered)
+			button.pressed.connect(_on_effect_pressed.bind(effect_id, category))
 
-				var locked_effect_label := Label.new()
-				locked_effect_label.text = "%s — %d fragments" % [
-					data.get("name", effect_id), cost
-				]
-				locked_effect_label.add_theme_font_override("font", BODY_FONT)
-				locked_effect_label.modulate.a = 0.4
-				grid.add_child(locked_effect_label)
+			_effect_buttons[effect_id] = button
+			unlocked_effect_count += 1
+
+		if unlocked_effect_count == 0:
+			var no_effect_label := Label.new()
+			no_effect_label.text = "No Effect Unlocked"
+			no_effect_label.add_theme_font_override("font", BODY_FONT)
+			no_effect_label.modulate.a = 0.6
+			grid.add_child(no_effect_label)
 
 	_refresh_slots()
 	_clear_detail()
-
 
 func _on_effect_hovered(effect_id: String) -> void:
 	_show_effect_detail(effect_id)
