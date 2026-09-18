@@ -1470,21 +1470,20 @@ func _build_fade_overlay() -> void:
 
 const POTION_CATEGORIES := ["survival", "combat", "utility"]
 
-# fragment_cost is a placeholder — lifetime star_fragments total,
-# never spent/decremented. Tune once the real curve exists (see
-# backlog: star fragment unlock map).
 var potion_effect_data: Dictionary = {
 	"survival_full_heal": {
 		"name": "Vital Draught",
 		"category": "survival",
 		"description": "Restores your HP to full the moment it's drunk.",
 		"fragment_cost": 300,
+		"action": "restore_full_health",
 	},
 	"survival_full_mana": {
 		"name": "Mnemonic Draught",
 		"category": "survival",
 		"description": "Restores your MP to full the moment it's drunk.",
 		"fragment_cost": 300,
+		"action": "restore_full_mp",
 	},
 	"combat_double_sword": {
 		"name": "Ember Edge",
@@ -1492,6 +1491,9 @@ var potion_effect_data: Dictionary = {
 		"description": "Doubles your sword damage for a short time.",
 		"fragment_cost": 600,
 		"duration": 15.0,
+		"modifiers": [
+			{"stat": "sword_damage", "type": "multiply", "value": 2.0}
+		],
 	},
 	"combat_damage_reduction": {
 		"name": "Aegis Draught",
@@ -1499,6 +1501,9 @@ var potion_effect_data: Dictionary = {
 		"description": "Halves incoming combat damage for a short time.",
 		"fragment_cost": 600,
 		"duration": 15.0,
+		"modifiers": [
+			{"stat": "damage_taken", "type": "multiply", "value": 0.5}
+		],
 	},
 	"utility_speed": {
 		"name": "Fleetfoot Draught",
@@ -1506,6 +1511,9 @@ var potion_effect_data: Dictionary = {
 		"description": "Increases movement speed for a short time.",
 		"fragment_cost": 450,
 		"duration": 15.0,
+		"modifiers": [
+			{"stat": "move_speed", "type": "multiply", "value": 1.5}
+		],
 	},
 	"utility_infinite_stamina": {
 		"name": "Tireless Draught",
@@ -1513,6 +1521,9 @@ var potion_effect_data: Dictionary = {
 		"description": "Grants unlimited stamina for a short time.",
 		"fragment_cost": 450,
 		"duration": 15.0,
+		"modifiers": [
+			{"stat": "stamina_cost", "type": "multiply", "value": 0.0}
+		],
 	},
 }
 
@@ -1837,31 +1848,26 @@ func _apply_potion_effect(effect_id: String, player: Node) -> void:
 	var data: Dictionary = potion_effect_data.get(effect_id, {})
 	var duration: float = data.get("duration", 0.0)
 
-	match effect_id:
-		"survival_full_heal":
+	match data.get("action", ""):
+		"restore_full_health":
 			if player.has_method("restore_full_health"):
 				player.restore_full_health()
-
-		"survival_full_mana":
+			return
+		"restore_full_mp":
 			if player.has_method("restore_full_mp"):
 				player.restore_full_mp()
+			return
 
-		"combat_double_sword":
-			if player.has_method("apply_double_sword_damage"):
-				player.apply_double_sword_damage(duration)
+	if not player.has_method("apply_stat_modifier"):
+		return
 
-		"combat_damage_reduction":
-			if player.has_method("apply_damage_reduction"):
-				player.apply_damage_reduction(duration)
-
-		"utility_speed":
-			if player.has_method("apply_speed_boost"):
-				player.apply_speed_boost(duration)
-
-		"utility_infinite_stamina":
-			if player.has_method("apply_infinite_stamina"):
-				player.apply_infinite_stamina(duration)
-
+	for modifier in data.get("modifiers", []):
+		player.apply_stat_modifier(
+			modifier.get("stat", ""),
+			modifier.get("type", "multiply"),
+			modifier.get("value", 1.0),
+			duration
+		)
 
 #  Checkpoint proximity (gates mixing only, not drinking) 
 

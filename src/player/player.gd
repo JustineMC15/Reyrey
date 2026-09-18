@@ -136,7 +136,7 @@ const LITANY_STEP_SPEED_MULTIPLIER := 1.4
 # Ground Slam
 const GROUND_SLAM_FALL_SPEED := 3000.0
 const GROUND_SLAM_ACCEL := 10000.0
-const GROUND_SLAM_DAMAGE := 4
+const GROUND_SLAM_DAMAGE := 2
 const GROUND_SLAM_IMPACT_RADIUS := 140.0
 const GROUND_SLAM_HITSTOP_DURATION := 0.06
 const GROUND_SLAM_SHAKE_STRENGTH := 16.0
@@ -240,18 +240,10 @@ var invincible := false
 var attack_facing_direction := 1.0
 var sword_damage := 1
 var sword_has_hit := false
-var _sword_damage_base := 1
 var current_attack_type: AttackType = AttackType.SWORD
 var pogo_empowered := false
 var _pogo_hazard_bounce_used := false
 
-var damage_reduction_active := false
-var damage_reduction_multiplier := 0.5
-
-var speed_boost_active := false
-var speed_boost_multiplier := 1.5
-
-var infinite_stamina_active := false
 var fire_damage := 3
 var smoke_damage := 1
 var jumps_used := 0
@@ -422,6 +414,44 @@ func _set_facing(direction: float) -> void:
 	if not is_attacking:
 		_apply_direction_to_effects(facing_direction)
 
+# STAT MODIFIERS
+var _active_modifiers: Dictionary = {}
+
+
+func apply_stat_modifier(stat: String, modifier_type: String, value: float, duration: float = 0.0) -> void:
+	if not _active_modifiers.has(stat):
+		_active_modifiers[stat] = []
+
+	var entry := {"type": modifier_type, "value": value}
+	_active_modifiers[stat].append(entry)
+
+	if duration <= 0.0:
+		return
+
+	await get_tree().create_timer(duration).timeout
+
+	if is_instance_valid(self) and _active_modifiers.has(stat):
+		_active_modifiers[stat].erase(entry)
+
+
+func get_stat_multiplier(stat: String) -> float:
+	var result := 1.0
+	for entry in _active_modifiers.get(stat, []):
+		if entry["type"] == "multiply":
+			result *= entry["value"]
+	return result
+
+
+func get_stat_addend(stat: String) -> float:
+	var result := 0.0
+	for entry in _active_modifiers.get(stat, []):
+		if entry["type"] == "add":
+			result += entry["value"]
+	return result
+
+
+func clear_stat_modifiers() -> void:
+	_active_modifiers.clear()
 # DEATH RESET
 
 func reset_after_death() -> void:
@@ -465,14 +495,11 @@ func reset_after_death() -> void:
 	sword_has_hit = false
 	dash_empowered = false
 	dash_hit_enemies.clear()
-	sword_damage = _sword_damage_base
 	current_attack_type = AttackType.SWORD
 	pogo_empowered = false
 	_pogo_hazard_bounce_used = false
-	damage_reduction_active = false
-	speed_boost_active = false
-	infinite_stamina_active = false
 	is_slowed = false
+	clear_stat_modifiers()
 	# Restore player interaction.
 	detection_area.monitoring = true
 	sword_hitbox.monitoring = false
@@ -721,9 +748,11 @@ func sword_attack() -> void:
 
 	await get_tree().physics_frame
 
+	var damage := int(round(sword_damage * get_stat_multiplier("sword_damage")))
+
 	for body in sword_hitbox.get_overlapping_bodies():
 		if body.is_in_group("enemies") or body.is_in_group("attackable"):
-			body.take_damage(sword_damage)
+			body.take_damage(damage)
 			boost_mp_regen()
 
 	for area in sword_hitbox.get_overlapping_areas():
@@ -732,14 +761,35 @@ func sword_attack() -> void:
 
 	sword_hitbox.monitoring = false
 
+
+func upslash_attack() -> void:
+	upslash_hitbox.monitoring = true
+
+	await get_tree().physics_frame
+
+	var damage := int(round(sword_damage * get_stat_multiplier("sword_damage")))
+
+	for body in upslash_hitbox.get_overlapping_bodies():
+		if body.is_in_group("enemies") or body.is_in_group("attackable"):
+			body.take_damage(damage)
+			boost_mp_regen()
+
+	for area in upslash_hitbox.get_overlapping_areas():
+		if area.is_in_group("pogoable_hazard") and area.has_method("play_hit_sound"):
+			area.play_hit_sound()
+
+	upslash_hitbox.monitoring = false
+
+
 func _check_pogo_hit() -> void:
 	var hit_something := false
 	var hit_hazard := false
-	var hazard_areas: Array = []	
+	var hazard_areas: Array = []
+	var damage := int(round(sword_damage * get_stat_multiplier("sword_damage")))
 
 	for body in pogo_hitbox.get_overlapping_bodies():
 		if body.is_in_group("enemies") or body.is_in_group("attackable"):
-			body.take_damage(sword_damage)
+			body.take_damage(damage)
 			boost_mp_regen()
 			hit_something = true
 			sword_sound.play()
@@ -771,22 +821,6 @@ func _check_pogo_hit() -> void:
 		for area in hazard_areas:
 			if area.has_method("play_hit_sound"):
 				area.play_hit_sound()
-
-func upslash_attack() -> void:
-	upslash_hitbox.monitoring = true
-
-	await get_tree().physics_frame
-
-	for body in upslash_hitbox.get_overlapping_bodies():
-		if body.is_in_group("enemies") or body.is_in_group("attackable"):
-			body.take_damage(sword_damage)
-			boost_mp_regen()
-
-	for area in upslash_hitbox.get_overlapping_areas():
-		if area.is_in_group("pogoable_hazard") and area.has_method("play_hit_sound"):
-			area.play_hit_sound()
-
-	upslash_hitbox.monitoring = false
 
 func fire_attack(damage: int) -> void:
 	await get_tree().physics_frame
@@ -1044,10 +1078,7 @@ func _apply_hit_reaction() -> void:
 func take_damage(amount: int) -> void:
 	if invincible or is_dead:
 		return
-
-	if damage_reduction_active:
-		amount = max(0, int(round(amount * damage_reduction_multiplier)))
-
+	amount = max(0, int(round(amount * get_stat_multiplier("damage_taken"))))
 	invincible = true
 	damage_sound.play()
 
@@ -1342,7 +1373,7 @@ func _ready() -> void:
 	)
 	mp_changed.emit(mp, max_mp)
 	stamina_changed.emit(stamina, max_stamina)
-	_sword_damage_base = sword_damage
+
 # PHYSICS PROCESS
 
 func _physics_process(delta: float) -> void:
@@ -1960,13 +1991,10 @@ func _physics_process(delta: float) -> void:
 
 	# MOVEMENT
 
-	var current_speed := SPEED
+	var current_speed := SPEED * get_stat_multiplier("move_speed")
 
 	if is_slowed:
 		current_speed *= slow_multiplier
-
-	if speed_boost_active:
-		current_speed *= speed_boost_multiplier
 
 	if litany_hold_active:
 		current_speed *= LITANY_STEP_SPEED_MULTIPLIER
@@ -2206,47 +2234,14 @@ func restore_full_health() -> void:
 func restore_full_mp() -> void:
 	mp = max_mp
 	mp_changed.emit(mp, max_mp)
-# New functions — near restore_full_health() / restore_full_mp()
 
-func apply_double_sword_damage(duration: float) -> void:
-	sword_damage = _sword_damage_base * 2
-
-	await get_tree().create_timer(duration).timeout
-
-	if is_instance_valid(self):
-		sword_damage = _sword_damage_base
-
-
-func apply_damage_reduction(duration: float) -> void:
-	damage_reduction_active = true
-
-	await get_tree().create_timer(duration).timeout
-
-	if is_instance_valid(self):
-		damage_reduction_active = false
-
-
-func apply_speed_boost(duration: float) -> void:
-	speed_boost_active = true
-
-	await get_tree().create_timer(duration).timeout
-
-	if is_instance_valid(self):
-		speed_boost_active = false
-
-
-func apply_infinite_stamina(duration: float) -> void:
-	infinite_stamina_active = true
-
-	await get_tree().create_timer(duration).timeout
-
-	if is_instance_valid(self):
-		infinite_stamina_active = false
 
 # STAMINA
 
 func spend_stamina(amount: float) -> bool:
-	if infinite_stamina_active:
+	amount *= get_stat_multiplier("stamina_cost")
+
+	if amount <= 0.0:
 		stamina_regen_timer = STAMINA_REGEN_DELAY
 		return true
 
@@ -2256,24 +2251,7 @@ func spend_stamina(amount: float) -> bool:
 	stamina -= amount
 	stamina_regen_timer = STAMINA_REGEN_DELAY
 	stamina_changed.emit(stamina, max_stamina)
-
 	return true
-
-
-# Unused, could be called later if needed
-#func drain_stamina(amount: float) -> bool:
-	#if infinite_stamina_active:
-		#return true
-#
-	#if stamina <= 0.0:
-		#return false
-#
-	#stamina = max(stamina - amount, 0.0)
-	#stamina_regen_timer = STAMINA_REGEN_DELAY
-	#stamina_changed.emit(stamina, max_stamina)
-#
-	#return stamina > 0.0
-
 
 func restore_full_stamina() -> void:
 	stamina = max_stamina
